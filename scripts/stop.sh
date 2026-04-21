@@ -4,7 +4,7 @@
 
 set -euo pipefail
 
-CONTAINER_NAME="mock-server-base"
+CONTAINER_NAME="fictional-drug-and-disease-ref-mock-server"
 
 echo "=== Mock Server 停止スクリプト ==="
 echo ""

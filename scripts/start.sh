@@ -6,8 +6,8 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
-CONTAINER_NAME="mock-server-base"
-IMAGE_NAME="mock-server-base:latest"
+CONTAINER_NAME="fictional-drug-and-disease-ref-mock-server"
+IMAGE_NAME="fictional-drug-and-disease-ref-mock-server:latest"
 
 cd "$PROJECT_DIR"
 
