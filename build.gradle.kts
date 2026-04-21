@@ -45,7 +45,7 @@ dependencies {
 
 ktor {
     fatJar {
-        archiveFileName.set("mock-server-base-all.jar")
+        archiveFileName.set("fictional-drug-and-disease-ref-mock-server-all.jar")
     }
 }
 
