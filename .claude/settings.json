@@ -1,0 +1,86 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./gradlew build:*)",
+      "Bash(./gradlew test:*)",
+      "Bash(./gradlew spotlessCheck:*)",
+      "Bash(./gradlew spotlessApply:*)",
+      "Bash(./gradlew buildFatJar:*)",
+      "Bash(./gradlew clean:*)",
+      "Bash(scripts/setup.sh:*)",
+      "Bash(scripts/start.sh:*)",
+      "Bash(scripts/stop.sh:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git status:*)",
+      "Bash(git branch:*)",
+      "Bash(git ls-tree:*)",
+      "Bash(tree:*)",
+      "Bash(java -version:*)"
+    ],
+    "deny": [
+      "Bash(./gradlew run:*)",
+      "Read(.gradle/**)",
+      "Edit(build/**)",
+      "Write(build/**)",
+      "Edit(.gradle/**)",
+      "Write(.gradle/**)",
+      "Bash(rm -rf:*)",
+      "Edit(.editorconfig)",
+      "Write(.editorconfig)"
+    ],
+    "ask": [
+      "Read(build/**)",
+      "Bash(git push --force:*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/scripts/cc_check_mock_server_health.sh",
+            "timeout": 5000
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/scripts/cc_post_ktlint_format.sh",
+            "timeout": 10000
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/scripts/cc_pre_compact_state.sh",
+            "timeout": 5000
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/scripts/cc_user_prompt_fixture_review.sh",
+            "timeout": 5000
+          }
+        ]
+      }
+    ]
+  }
+}

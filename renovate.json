@@ -1,0 +1,53 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "timezone": "Asia/Tokyo",
+  "schedule": ["before 1am on sunday"],
+  "rebaseWhen": "never",
+  "dependencyDashboard": true,
+  "labels": ["dependencies", "renovate"],
+  "assignees": ["Corvus400"],
+  "packageRules": [
+    {
+      "matchManagers": ["gradle"],
+      "matchPackageNames": ["/^org\\.jetbrains\\.kotlin($|[:.])/"],
+      "groupName": "Kotlin"
+    },
+    {
+      "matchManagers": ["gradle"],
+      "matchPackageNames": ["/^io\\.ktor($|[:.])/"],
+      "groupName": "Ktor"
+    },
+    {
+      "matchManagers": ["gradle"],
+      "matchPackageNames": [
+        "/^io\\.github\\.smiley4:ktor-(openapi|swagger-ui|redoc)$/",
+        "/^io\\.github\\.smiley4:schema-kenerator-/"
+      ],
+      "groupName": "OpenAPI tooling (smiley4)"
+    },
+    {
+      "matchManagers": ["gradle"],
+      "matchPackageNames": [
+        "io.ktor:ktor-server-test-host",
+        "org.jetbrains.kotlin:kotlin-test-junit",
+        "org.jsoup:jsoup"
+      ],
+      "groupName": "Test dependencies"
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "groupName": "GitHub Actions"
+    }
+  ],
+  "prBodyDefinitions": {
+    "Source": "{{#if sourceUrl}}[{{{sourceUrl}}}]({{{sourceUrl}}}){{else}}—{{/if}}"
+  },
+  "prBodyColumns": [
+    "Package",
+    "Change",
+    "Age",
+    "Confidence",
+    "Source"
+  ]
+}

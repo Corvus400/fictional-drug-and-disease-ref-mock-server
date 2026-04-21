@@ -1,0 +1,16 @@
+ktor:
+  application:
+    modules:
+      - io.github.corvus400.mockserverbase.ApplicationKt.module
+  deployment:
+    port: ${PORT:8080}
+    host: ${HOST:0.0.0.0}
+  development: true
+
+# カスタム設定
+# 注: Ktorのプレースホルダー展開（${ENV:default}）はktor.*名前空間に限定されるため、
+#     以下の設定は環境変数 DEFAULT_SCENARIO / ENABLE_ADMIN_API で上書き可能
+#     （MockServerConfig.ktでSystem.getenv()を使用して読み取り）
+mockserver:
+  defaultScenario: default
+  enableAdminApi: true

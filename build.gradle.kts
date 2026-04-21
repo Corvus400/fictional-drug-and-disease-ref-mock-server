@@ -1,0 +1,74 @@
+plugins {
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ktor)
+    alias(libs.plugins.spotless)
+    alias(libs.plugins.detekt)
+    application
+}
+
+group = "io.github.corvus400.mockserverbase"
+version = "0.1.0"
+
+application {
+    mainClass.set("io.github.corvus400.mockserverbase.ApplicationKt")
+}
+
+kotlin {
+    jvmToolchain(21)
+}
+
+dependencies {
+    implementation(libs.ktor.server.core)
+    implementation(libs.ktor.server.host.common)
+    implementation(libs.ktor.server.status.pages)
+    implementation(libs.ktor.server.call.logging)
+    implementation(libs.ktor.server.content.negotiation)
+    implementation(libs.ktor.serialization.kotlinx.json)
+    implementation(libs.ktor.server.netty)
+    implementation(libs.ktor.server.di)
+    implementation(libs.ktor.server.config.yaml)
+    implementation(libs.logback.classic)
+
+    // OpenAPI / Swagger UI / ReDoc
+    implementation(libs.ktor.openapi)
+    implementation(libs.ktor.swagger.ui)
+    implementation(libs.ktor.redoc)
+    implementation(libs.schema.kenerator.core)
+    implementation(libs.schema.kenerator.serialization)
+    implementation(libs.schema.kenerator.swagger)
+
+    testImplementation(libs.ktor.server.test.host)
+    testImplementation(libs.kotlin.test.junit)
+    testImplementation(libs.jsoup)
+}
+
+ktor {
+    fatJar {
+        archiveFileName.set("mock-server-base-all.jar")
+    }
+}
+
+// detekt 静的解析
+detekt {
+    buildUponDefaultConfig = true
+    config.setFrom("$projectDir/config/detekt/detekt.yml")
+    source.setFrom(
+        "src/main/kotlin",
+        "src/test/kotlin",
+    )
+}
+
+// Ktor公式の.editorconfigに準拠した設定
+spotless {
+    kotlin {
+        target("src/**/*.kt")
+        targetExclude("build/**/*.kt")
+        // ktlintは.editorconfigの設定を自動で読み込む
+        ktlint(libs.versions.ktlint.get())
+    }
+    kotlinGradle {
+        target("*.gradle.kts")
+        ktlint(libs.versions.ktlint.get())
+    }
+}
