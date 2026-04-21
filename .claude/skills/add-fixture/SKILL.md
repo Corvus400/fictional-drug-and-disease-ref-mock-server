@@ -1,9 +1,9 @@
 ---
 name: add-fixture
 description: >-
-  **Use this skill proactively** when adding new API endpoints or fixtures to the mock-server-base.
+  **Use this skill proactively** when adding new API endpoints or fixtures to the fictional-drug-and-disease-ref-mock-server.
   Always use this skill (instead of manually creating files) when:
-  - mock-server-baseに新しいAPIエンドポイントを追加するとき
+  - fictional-drug-and-disease-ref-mock-serverに新しいAPIエンドポイントを追加するとき
   - 新しいFixtureProviderを作成するとき
   - scenarioRouteを使用した新しいルートを定義するとき
   - 既存エンドポイントに新しいシナリオ（fixture）を追加するとき

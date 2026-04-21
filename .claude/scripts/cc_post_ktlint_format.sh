@@ -1,6 +1,6 @@
 #!/bin/bash
 # Description: PostToolUse Hook - Write/Edit後に.ktファイルをktlintで自動フォーマット
-# Usage: PostToolUse hook for Write|Edit tool in mock-server-base
+# Usage: PostToolUse hook for Write|Edit tool in fictional-drug-and-disease-ref-mock-server
 # Reference: Harness Engineering Best Practices - 決定論的ツールとガードレール
 
 set -euo pipefail
