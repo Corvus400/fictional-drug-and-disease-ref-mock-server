@@ -7,11 +7,11 @@ plugins {
     application
 }
 
-group = "io.github.corvus400.mockserverbase"
+group = "io.github.corvus400.fictionaldrugdiseaserefmockserver"
 version = "0.1.0"
 
 application {
-    mainClass.set("io.github.corvus400.mockserverbase.ApplicationKt")
+    mainClass.set("io.github.corvus400.fictionaldrugdiseaserefmockserver.ApplicationKt")
 }
 
 kotlin {

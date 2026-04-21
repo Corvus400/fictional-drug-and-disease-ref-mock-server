@@ -1,4 +1,4 @@
-# mock-server-base .editorconfig
+# fictional-drug-and-disease-ref-mock-server .editorconfig
 # 参考: https://github.com/ktorio/ktor/blob/main/.editorconfig（追加ルール）
 root = true
 
