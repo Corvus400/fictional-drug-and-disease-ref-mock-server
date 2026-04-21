@@ -1,11 +1,3 @@
-<!-- TEMPLATE_PLACEHOLDER_MARKER
-置換対象プレースホルダー:
-- {{LAYER_1}} → getItems API 担当の Fixture クラス名
-- {{LAYER_2}} → 検索/カテゴリ API 担当のレジストリクラス名
-- {{LAYER_3}} → カート操作担当のカタログクラス名
-置換後にこのブロックを削除すること
--->
-
 ---
 paths:
   - "src/main/kotlin/**/fixture/**/*.kt"
@@ -26,7 +18,7 @@ Mandatory checks derived from 72+ fix commits. For the full workflow, invoke the
 8. **Legacy + new field pairs**: Set both legacy and new fields when a field was renamed across API versions. iOS/Android version differences mean one side may rely on legacy fields.
 9. **Field name casing**: Match client-side `@SerialName` exactly. All-caps fields like `RESULT`, `RESULT_DETAIL` must use the exact casing — JSON key case mismatch causes deserialization failure.
 10. **POST success → GET state reflection**: When a route returns a POST/PUT success response, switch the related GET endpoint's scenario via `scenarioManager.setOverride()`.
-11. **3-layer product ID registration**: New product IDs must be registered in all 3 layers: `{{LAYER_1}}` (getItems API) + `{{LAYER_2}}` (search/category APIs) + `{{LAYER_3}}` (cart operations).
+11. **Cross-catalog reference integrity**: Drug ↔ disease cross-references must stay referentially consistent. Every ID referenced from one side (`drug_NNNN` or `disease_NNNN`) must exist as a registered fixture on the other side. See `.claude/rules/product-id-registry.md`.
 12. **Scenario map default**: Always include a `"default"` key in the scenario map that matches the `defaultScenario` parameter of `scenarioRoute`.
 13. **Catalog metadata**: Set `scenarioTitles` (Japanese titles for all scenarios) and implement `describeFixture()` (key field values: item count, amount, etc.) for the catalog HTML display.
 14. **MockDateHelper for relative dates**: Use `MockDateHelper` utility functions for future/relative dates (delivery dates, deadlines). Hardcoded dates become "past dates" over time, breaking test results.

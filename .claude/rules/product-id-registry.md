@@ -1,28 +1,36 @@
-<!-- TEMPLATE_PLACEHOLDER_MARKER
-置換対象プレースホルダー:
-- {{LAYER_1}} → getItems API 担当の Fixture クラス名
-- {{LAYER_2}} → 検索/カテゴリ API 担当のレジストリクラス名
-- {{LAYER_3}} → カート操作担当のカタログクラス名
-- {{ID_PATTERN_EXAMPLE}} → サービス固有 ID の例 (例: item-1234)
-置換後にこのブロックを削除すること
--->
-
 ---
 paths:
   - "src/main/kotlin/**/fixture/**/*.kt"
   - "src/main/kotlin/**/catalog/**/*.kt"
 ---
 
-# Product ID Registry Rules
+# Reference Integrity Rules (drug ↔ disease)
 
-Rules for product ID management, derived from failure patterns C1-C3.
+This project exposes two fictional catalogs — drugs and diseases — that reference each other
+(e.g. a drug fixture lists disease IDs it treats, and vice versa). Cross-references must stay
+referentially consistent.
 
-1. **3-layer registration**: New product IDs must be registered in ALL 3 layers:
-   - `{{LAYER_1}}` → entries for the primary item fetch API
-   - `{{LAYER_2}}` → included via a Fixture in the `allFixtures` list (for search/category APIs)
-   - `{{LAYER_3}}` → catalog list entries (for cart add/remove/quantity operations)
-   One missing layer causes silent failures — cart operations silently ignore unregistered IDs.
+1. **ID format**:
+   - Drugs: `drug_NNNN` (4-digit zero-padded, e.g. `drug_0001`)
+   - Diseases: `disease_NNNN` (4-digit zero-padded, e.g. `disease_0001`)
+   - No date/week suffixes; prefer stable long-lived IDs.
 
-2. **ID format**: Use the service-specific ID format (e.g., `{{ID_PATTERN_EXAMPLE}}`). Do not append weekly/date suffixes. Prefer long-lived product IDs that won't be discontinued.
+2. **Referential integrity**: Every drug ID referenced from a disease fixture (and vice versa) MUST
+   exist as a registered fixture on the referenced side. Dangling references are a bug — the API
+   would return IDs the other endpoint cannot resolve.
 
-3. **Verification command**: Run `grep -rn "{{ID_PATTERN_EXAMPLE}}" src/main/kotlin/ --include="*.kt"` and verify hits in all 3 files: `{{LAYER_1}}`, `{{LAYER_2}}` (indirect via Fixture objects), and `{{LAYER_3}}`.
+3. **Manual verification**: Until an automated checker exists, verify references by grep:
+
+   ```bash
+   # IDs referenced from either side must each be defined on their own side.
+   grep -rhoE 'drug_[0-9]{4}'    src/main/kotlin/**/fixture/ | sort -u   # all drug IDs in use
+   grep -rhoE 'disease_[0-9]{4}' src/main/kotlin/**/fixture/ | sort -u   # all disease IDs in use
+   ```
+
+4. **Adding a new ID**: When adding a new drug or disease fixture, also update any cross-reference
+   lists on the opposite side if the new entity relates to existing ones. Missed updates surface as
+   one-sided relationships (e.g. drug lists the disease, but the disease does not list the drug).
+
+5. **Catalog display**: `/__admin/catalog` renders the fixture inventory (see
+   `src/main/kotlin/**/catalog/`). When adding a new drug/disease fixture, confirm it appears on
+   the catalog page so reviewers can spot missing cross-references visually.

@@ -1,9 +1,3 @@
-<!-- TEMPLATE_PLACEHOLDER_MARKER
-置換対象プレースホルダー:
-- {{ID_PATTERN_EXAMPLE}} → サービス固有 ID の例
-置換後にこのブロックを削除すること
--->
-
 ---
 paths:
   - "src/test/kotlin/**/*.kt"
@@ -22,12 +16,13 @@ paths:
 Before running curl commands or test scripts, verify Mock Server is running.
 If not running, start it with `scripts/start.sh` (do not prompt the user — start it yourself).
 
-## Product IDs in Fixtures
+## Entity IDs in Fixtures
 
-When product IDs are needed in fixtures, prefer hall-of-fame (long-lived) product IDs — they are unlikely to become invalid and have realistic image paths.
+Use the project's fixed ID formats; keep IDs stable across test runs.
 
-- Format: `{{ID_PATTERN_EXAMPLE}}` — use the service-specific ID format
-- Exclude date/weekly suffixes
+- Drugs: `drug_NNNN` (4-digit zero-padded, e.g. `drug_0001`)
+- Diseases: `disease_NNNN` (4-digit zero-padded, e.g. `disease_0001`)
+- No date/week suffixes.
 
 ## Admin API Operations in Tests
 
