@@ -1,12 +1,6 @@
-<!-- TEMPLATE_PLACEHOLDER_MARKER
-置換対象プレースホルダー:
-- {{SCAN_TARGET_REPO}} (L47) → コードベーススキャン対象リポジトリ名
-置換後にこのブロックを削除すること
--->
+# fictional-drug-and-disease-ref-mock-server
 
-# mock-server-base
-
-Scenario-based Mock Server template.
+架空の医薬品・疾患リファレンスを返す Scenario-based Mock Server。
 
 ## Build & Test
 
@@ -48,13 +42,10 @@ Enforced by .editorconfig + ktlint (Spotless). Key rules:
 
 - Adding endpoints: use `add-fixture` skill
 - Reviewing fixtures before commit: use `fixture-review` skill
-- Endpoint viability check: use `endpoint-viability-check` skill
-- DTO cross-repo verification: use `dto-verifier` agent
 - Fixture quality (dates, fields, types): `.claude/rules/fixture-quality.md`
 - Dynamic state management (POST/GET linkage): `.claude/rules/dynamic-state.md`
-- Product ID registry (3-layer registration): `.claude/rules/product-id-registry.md`
+- Reference integrity (drug ↔ disease cross references): `.claude/rules/product-id-registry.md`
 - Endpoint implementation (routing, conflicts): `.claude/rules/endpoint-implementation.md`
 - Test conventions & Admin API: `.claude/rules/test-conventions.md`
-- Cross-repo references: `.claude/rules/cross-repo.md`
-- Emulator connection: `.claude/rules/emulator-connection.md`
+- Client (debug) connection: `.claude/rules/emulator-connection.md`
 - Reviewing Renovate dependency update PRs: use `check-update-all-dependencies` skill

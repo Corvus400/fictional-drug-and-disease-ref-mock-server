@@ -45,20 +45,23 @@ Expected: 0 matches. No `http://localhost` in image paths.
 List all `null`, `emptyMap()`, `emptyList()` in changed files and verify against client-side DTO nullability.
 
 ### Type matching (A5)
-For each new/modified field, verify the type matches the corresponding {{API_CLIENT_REPO}} DTO field exactly (Int vs Double, nullable vs non-nullable).
+For each new/modified field, verify the type matches the model's Kotlin declaration exactly
+(Int vs Double vs Long, nullable vs non-nullable). This project is client-agnostic, so validate
+against the server-side model rather than a specific client DTO.
 
-## Step 3: Product ID 3-Layer Check (C1-C3)
+## Step 3: Cross-reference Integrity Check
 
-Extract all `{{ID_PATTERN}}` patterns from changed files:
+Extract drug/disease IDs from changed files:
 ```bash
-grep -oE '{{ID_PATTERN}}[0-9]+' <changed-files> | sort -u
+grep -oE '(drug|disease)_[0-9]{4}' <changed-files> | sort -u
 ```
 
-For each ID, verify 3-layer registration:
+For each ID, confirm references between the two catalogs resolve:
 ```bash
 grep -rn "<ID>" src/main/kotlin/ --include="*.kt"
 ```
-Must appear in: `{{LAYER_1}}`, `{{LAYER_2}}` (indirect via Fixture objects), `{{LAYER_3}}`.
+A `drug_NNNN` referenced from a disease fixture must exist in the drug fixtures, and vice versa.
+See `.claude/rules/product-id-registry.md`.
 
 ## Step 4: Dynamic State Check (B1-B5)
 

@@ -1,61 +1,104 @@
-<!-- TEMPLATE_PLACEHOLDER_MARKER
-置換対象プレースホルダー:
-- {{API_CLIENT_REPO}} → Android アプリリポジトリ名
-- {{APP_DEBUG_DEEPLINK}} → キャッシュクリア用 deeplink スキーム (例: myapp-debug://clearcache)
-- {{APP_PACKAGE_ID}} → Android debug ビルドの package ID (例: com.example.myapp.debug)
-置換後にこのブロックを削除すること
--->
+# Client Connection (Android / iOS / Flutter)
 
-# Android Emulator Connection
+Mock Server listens on HTTP `:8080` (started via `scripts/start.sh`, Apple Container).
+This project is client-agnostic, so the specific client repo is not known; rules below cover Android, iOS, and Flutter.
 
-## Prerequisites
+Primary sources (verified):
+- Android emulator `10.0.2.2` alias: https://developer.android.com/studio/run/emulator-networking-address
+- `adb reverse` syntax: https://developer.android.com/develop/ui/views/layout/webapps/access-local-server
+- Android cleartext policy: https://developer.android.com/training/articles/security-config
+- iOS Simulator shares host network / iOS ATS: https://learn.microsoft.com/en-us/dotnet/maui/data-cloud/local-web-services and https://developer.apple.com/documentation/security/preventing_insecure_network_connections
+- Flutter cleartext policy: https://docs.flutter.dev/release/breaking-changes/network-policy-ios-android
 
-The {{API_CLIENT_REPO}} app must be built from a branch that:
-- adds `network_security_config.xml` to allow cleartext HTTP to localhost (debug builds only)
-- defines `{{APP_DEBUG_DEEPLINK}}` URL scheme for cache clearing via DeepLink
+## URL cheat sheet
 
-## Connection Methods
+| Client                        | URL                                     | Extra setup                                     |
+|-------------------------------|-----------------------------------------|-------------------------------------------------|
+| Android emulator (AVD)        | `http://10.0.2.2:8080`                  | Android cleartext (below)                       |
+| Android device via USB        | `http://localhost:8080` + `adb reverse` | Android cleartext                               |
+| Android device on same LAN    | `http://<host-LAN-IP>:8080`             | Android cleartext for that domain               |
+| iOS Simulator                 | `http://localhost:8080`                 | iOS ATS relaxation (below)                      |
+| iOS device on same LAN        | `http://<host-LAN-IP>:8080`             | ATS relaxation + iOS 14+ local-network consent  |
+| Flutter (Android target)      | Same as Android emulator row            | Debug-only config under `android/app/src/debug` |
+| Flutter (iOS target)          | Same as iOS Simulator row               | Debug-only `Info-debug.plist` ATS block         |
 
-`scripts/start.sh` prints connection URLs on startup. Use one of these methods:
+`scripts/start.sh` prints these URLs on startup. If Apple Container's `-p 8080:8080` is not reachable via `localhost`, the script also prints the container's direct IP (`http://192.168.64.x:8080`) as fallback.
 
-### Method 1: 10.0.2.2 (recommended)
+## Android emulator: `10.0.2.2`
 
-Android emulator maps `10.0.2.2` to the host machine's `localhost`.
+The emulator sits behind a virtual router and cannot see the host network directly. `10.0.2.2` is a reserved alias for the host loopback (`127.0.0.1` on the dev machine). Apps in the emulator must target `http://10.0.2.2:8080` to reach the Mock Server.
 
-1. Start Mock Server: `./scripts/start.sh`
-2. In the {{API_CLIENT_REPO}} debug server settings UI, enter `http://10.0.2.2:8080`
-3. Restart the app
+## Android device / WebView: `adb reverse`
 
-### Method 2: adb reverse
+USB-connected devices (and WebView cases) can use reverse port forwarding:
 
 ```bash
 adb reverse tcp:8080 tcp:8080
 ```
 
-Then configure the app to connect to `http://localhost:8080`.
+After this, the app reaches the host via `http://localhost:8080`. Works for the emulator too.
 
-## Port Mapping Constraint
+## iOS Simulator: host network
 
-Apple Container's `-p 8080:8080` port mapping may not work via `localhost` in some environments. When this happens, `start.sh` displays the container's direct IP address (`http://192.168.64.x:8080`) as a fallback.
+The iOS Simulator reuses the host macOS network stack, so `http://localhost:8080` (or `http://127.0.0.1:8080`) inside the Simulator reaches the Mock Server directly — no alias or port forwarding needed.
 
-## Debug Build Restriction
+## Cleartext HTTP (debug builds only)
 
-Only debug builds allow HTTP (cleartext) communication. This is enforced by `network_security_config.xml` in the {{API_CLIENT_REPO}} project. Release/production builds will not connect to the mock server.
+Android 9+ (API 28+) and iOS 9+ reject cleartext HTTP by default. Enable only in debug builds; never in release.
 
-## Cache Clearing
+### Android (native and Flutter)
 
-After switching scenarios via Admin API, clear the app cache to see updated responses:
+Reference a `network_security_config.xml` from `<application>` in `AndroidManifest.xml`.
 
-```bash
-# Using the helper script
-./clear_cache.sh android                # Cache clear only
-./clear_cache.sh android --refresh-login # Cache clear + re-fetch login API (updates SharedPreferences)
+Domain-scoped (preferred — covers emulator alias and `adb reverse`):
 
-# Using adb directly
-adb shell am start -a android.intent.action.VIEW \
-  -d "{{APP_DEBUG_DEEPLINK}}" {{APP_PACKAGE_ID}}
-
-# With login refresh
-adb shell am start -a android.intent.action.VIEW \
-  -d "{{APP_DEBUG_DEEPLINK}}?refresh_login=true" {{APP_PACKAGE_ID}}
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+  <domain-config cleartextTrafficPermitted="true">
+    <domain includeSubdomains="true">10.0.2.2</domain>
+    <domain includeSubdomains="true">localhost</domain>
+  </domain-config>
+</network-security-config>
 ```
+
+Whole-app (only if domain-scoped is impractical):
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+  <base-config cleartextTrafficPermitted="true" />
+</network-security-config>
+```
+
+Flutter: place the manifest reference and the XML under `android/app/src/debug/...` so release builds are unaffected (Flutter docs, "Insecure HTTP connections are disabled by default").
+
+### iOS (native and Flutter)
+
+Add to `Info.plist` (native) or `Info-debug.plist` (Flutter debug flavor).
+
+Minimal — local networking only (Apple-recommended for dev):
+
+```xml
+<key>NSAppTransportSecurity</key>
+<dict>
+    <key>NSAllowsLocalNetworking</key>
+    <true/>
+</dict>
+```
+
+Broad — allow arbitrary loads (debug only):
+
+```xml
+<key>NSAppTransportSecurity</key>
+<dict>
+    <key>NSAllowsArbitraryLoads</key>
+    <true/>
+</dict>
+```
+
+On iOS 14+ physical devices connecting to a host on the same LAN, the OS may additionally require `NSLocalNetworkUsageDescription` (and `NSBonjourServices` for mDNS discovery) plus a one-time user consent prompt.
+
+## Cache clearing
+
+After switching scenarios via the Admin API, the client may serve cached responses. Each client app is responsible for providing its own cache-clear mechanism (debug menu, deep link, or reinstall). Concrete deep-link schemes are out of scope here because they depend on the client app identity, which this project does not fix.

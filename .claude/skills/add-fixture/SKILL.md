@@ -16,20 +16,21 @@ description: >-
 
 ## Pre-flight Checks (BEFORE implementation)
 
-Before writing any code, complete these checks to prevent the most common failure pattern (70% of all fixes):
+Before writing any code, complete these checks.
 
-1. **DTO field inventory**: Search {{API_CLIENT_REPO}} for the corresponding DTO:
-   ```bash
-   grep -rn "class XxxResponse\|class XxxJson\|class XxxBean" ../{{API_CLIENT_REPO}}/ --include="*.kt" | head -10
-   ```
-   Read the DTO file and list ALL fields with their types and nullability.
+1. **Model shape**: Define or locate the Kotlin model under `src/main/kotlin/.../model/<domain>/` and
+   list every field with its type and nullability. This project is client-agnostic, so derive the
+   shape from the project's own model — not from an external client DTO.
 
 2. **Endpoint route check**: Verify no existing route handles the same path:
    ```bash
    grep -r "path-pattern" src/main/kotlin/ --include="*.kt"
    ```
 
-3. **Screen endpoint coverage**: If implementing for a specific screen, list ALL API calls the screen makes (inspect ViewModel/UseCase or use network trace). Missing sub-endpoints break user interactions.
+3. **Cross-reference impact**: If the new fixture references existing `drug_NNNN` / `disease_NNNN`
+   IDs, confirm they are already defined on the opposite catalog (see
+   `.claude/rules/product-id-registry.md`). If the fixture introduces a new ID that should be
+   referenced from the opposite catalog, plan the reverse-side update in the same change set.
 
 ## New Endpoint (4 steps)
 
@@ -100,7 +101,7 @@ Add `xxxModule(scenarioManager)` call inside `configureRouting()`.
 - Always use `scenarioRoute<T>()` helper (fixed-value responses forbidden)
 - Always implement `FixtureProvider<T>` interface
 - Use named arguments in function calls
-- Product IDs: use long-lived items in `{{ID_PATTERN_EXAMPLE}}` format, no date/week suffix
+- Entity IDs: `drug_NNNN` / `disease_NNNN` (4-digit zero-padded), stable and long-lived, no date/week suffix
 - Max line length: 120 chars
 - Run `./gradlew spotlessCheck` after changes
 
@@ -131,12 +132,11 @@ Post-implementation checks derived from 72+ past fix commits.
 - On POST/PUT success, switch related GET scenarios via `scenarioManager.setOverride()`
   - Example: updPlacement success → switch getPlacement to `placement_enabled`
 
-### Product ID Consistency
-- Verify product IDs (`{{ID_PATTERN_EXAMPLE}}`) exist in all 3 layers:
-  1. `{{LAYER_1}}` (getItems API)
-  2. `{{LAYER_2}}` (search/category APIs)
-  3. `{{LAYER_3}}` (cart operations)
-- Prefer long-lived product IDs
+### Cross-reference Integrity (drug ↔ disease)
+- Whenever a fixture references `drug_NNNN` or `disease_NNNN`, confirm the referenced ID is
+  defined on the opposite catalog.
+- When introducing a new ID, update any reverse-side cross-reference lists in the same change set.
+- Full rule: `.claude/rules/product-id-registry.md`.
 
 ### Parameter Handling
 - Process all query/form parameters the client sends in the Route
@@ -146,11 +146,11 @@ Post-implementation checks derived from 72+ past fix commits.
 
 After completing implementation, verify:
 
-1. **3-layer product ID registration** (if new IDs were added):
+1. **Cross-reference integrity** (if new IDs were added or cross-references introduced):
    ```bash
-   grep -rn "{{ID_PATTERN_EXAMPLE}}" src/main/kotlin/ --include="*.kt"
+   grep -rnE '(drug|disease)_[0-9]{4}' src/main/kotlin/ --include="*.kt"
    ```
-   Must hit `{{LAYER_1}}`, `{{LAYER_2}}` (indirect), and `{{LAYER_3}}`.
+   Every ID referenced from the opposite catalog must resolve to a fixture on its own side.
 
 2. **POST → GET state reflection** (if POST route was added):
    Verify `scenarioManager.setOverride()` is called for all related GET endpoints.
