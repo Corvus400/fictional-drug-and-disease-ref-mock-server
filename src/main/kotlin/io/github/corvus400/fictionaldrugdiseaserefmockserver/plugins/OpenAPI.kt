@@ -78,7 +78,7 @@ private fun buildApiDescription(): String {
         "- **${apiTag.tagName}**: ${apiTag.description}"
     }
     return """
-        |xxx Mock Server は、iOS/Androidアプリ開発用のシナリオベースモックサーバーです。
+        |架空医薬品・疾病 Mock Server は、Flutter/iOS/Androidアプリ開発用のシナリオベースモックサーバーです。
         |
         |## APIカテゴリ
         |$categoryList
