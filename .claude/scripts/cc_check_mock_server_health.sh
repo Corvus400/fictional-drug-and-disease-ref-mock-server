@@ -1,6 +1,6 @@
 #!/bin/bash
 # Description: Mock Server起動確認 - curl/テストコマンド実行前にヘルスチェック
-# Usage: PreToolUse hook for Bash tool in mock-server-base
+# Usage: PreToolUse hook for Bash tool in fictional-drug-and-disease-ref-mock-server
 
 set -euo pipefail
 

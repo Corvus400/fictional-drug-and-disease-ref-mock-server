@@ -1,6 +1,6 @@
 #!/bin/bash
 # Description: UserPromptSubmit Hook - Fixture/Route未コミット変更を検出しLLMにレビューリマインダーを注入
-# Usage: UserPromptSubmit hook in mock-server-base
+# Usage: UserPromptSubmit hook in fictional-drug-and-disease-ref-mock-server
 
 set -euo pipefail
 

@@ -1,4 +1,4 @@
-# detekt configuration for mock-server-base
+# detekt configuration for fictional-drug-and-disease-ref-mock-server
 # buildUponDefaultConfig = true なので、ここではデフォルトからの差分のみ記載
 
 config:

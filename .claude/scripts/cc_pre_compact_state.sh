@@ -1,6 +1,6 @@
 #!/bin/bash
 # Description: PreCompact Hook - コンテキスト圧縮前に作業中ファイルに応じたルールをリマインド
-# Usage: PreCompact hook in mock-server-base
+# Usage: PreCompact hook in fictional-drug-and-disease-ref-mock-server
 
 set -euo pipefail
 
