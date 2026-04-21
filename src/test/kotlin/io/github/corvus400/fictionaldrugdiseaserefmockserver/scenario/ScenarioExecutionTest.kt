@@ -32,7 +32,7 @@ class ScenarioExecutionTest {
 
         val configResponse = client.post("/__admin/configs/sample") {
             contentType(ContentType.Application.Json)
-            setBody("""{"state":"default","delayMs":500}""")
+            setBody("""{"state":"default","delay_ms":500}""")
         }
         assertEquals(HttpStatusCode.OK, configResponse.status)
 
@@ -53,7 +53,7 @@ class ScenarioExecutionTest {
 
         val configResponse = client.post("/__admin/configs/sample") {
             contentType(ContentType.Application.Json)
-            setBody("""{"state":"default","statusCode":500}""")
+            setBody("""{"state":"default","status_code":500}""")
         }
         assertEquals(HttpStatusCode.OK, configResponse.status)
 
@@ -84,7 +84,7 @@ class ScenarioExecutionTest {
 
         client.post("/__admin/configs/sample") {
             contentType(ContentType.Application.Json)
-            setBody("""{"state":"default","statusCode":500}""")
+            setBody("""{"state":"default","status_code":500}""")
         }
 
         val errorResponse = client.get("/api/sample")
@@ -105,7 +105,7 @@ class ScenarioExecutionTest {
 
         val configResponse = client.post("/__admin/configs/sample") {
             contentType(ContentType.Application.Json)
-            setBody("""{"state":"default","delayMs":300,"statusCode":503}""")
+            setBody("""{"state":"default","delay_ms":300,"status_code":503}""")
         }
         assertEquals(HttpStatusCode.OK, configResponse.status)
 
