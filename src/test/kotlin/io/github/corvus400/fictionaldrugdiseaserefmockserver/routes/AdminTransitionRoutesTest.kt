@@ -52,7 +52,7 @@ class AdminTransitionRoutesTest {
         assertEquals(HttpStatusCode.OK, response.status)
         val body = json.decodeFromString<JsonObject>(response.bodyAsText())
         val sampleChain = body["sample"]?.jsonObject
-        assertEquals(0, sampleChain?.get("currentIndex")?.jsonPrimitive?.int)
+        assertEquals(0, sampleChain?.get("current_index")?.jsonPrimitive?.int)
         assertEquals("first", sampleChain?.get("scenarios")?.jsonArray?.get(0)?.jsonPrimitive?.content)
         assertEquals("second", sampleChain?.get("scenarios")?.jsonArray?.get(1)?.jsonPrimitive?.content)
     }
