@@ -13,8 +13,6 @@ val AppJson: Json = Json {
     prettyPrint = false
     isLenient = true
     ignoreUnknownKeys = true
-    // iOS対応: デフォルト値のフィールドもJSONに含める
-    // iOSではisBeginner, isPrimePass等がnon-optionalのため必須
     encodeDefaults = true
     namingStrategy = JsonNamingStrategy.SnakeCase
 }
