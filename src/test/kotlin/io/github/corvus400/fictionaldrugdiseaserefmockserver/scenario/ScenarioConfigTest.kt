@@ -28,7 +28,7 @@ class ScenarioConfigTest {
         application { module() }
         val setResponse = client.post("/__admin/configs/sample-detail") {
             contentType(ContentType.Application.Json)
-            setBody("""{"state":"ServerError","delayMs":2000,"statusCode":500}""")
+            setBody("""{"state":"ServerError","delay_ms":2000,"status_code":500}""")
         }
         assertEquals(HttpStatusCode.OK, setResponse.status)
 
@@ -44,7 +44,7 @@ class ScenarioConfigTest {
         application { module() }
         val setResponse = client.post("/__admin/configs/sample") {
             contentType(ContentType.Application.Json)
-            setBody("""{"state":"Redirect","statusCode":302,"headers":{"Location":"/dashboard"}}""")
+            setBody("""{"state":"Redirect","status_code":302,"headers":{"Location":"/dashboard"}}""")
         }
         assertEquals(HttpStatusCode.OK, setResponse.status)
 
