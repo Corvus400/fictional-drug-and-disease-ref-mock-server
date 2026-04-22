@@ -2,6 +2,8 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.cou
 
 object CountryBucketRepository {
     fun of(country: Country): CountryBucket {
-        TODO("not implemented")
+        return requireNotNull(CountryBucketData.BY_COUNTRY[country]) {
+            "No bucket registered for country=$country"
+        }
     }
 }
