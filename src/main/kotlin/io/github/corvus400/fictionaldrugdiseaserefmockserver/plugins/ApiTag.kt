@@ -19,6 +19,8 @@ enum class ApiTag(
     val description: String,
 ) {
     SAMPLE("Sample", "サンプルAPI (テンプレート動作例)"),
+    DRUG("Drug", "医薬品リファレンスAPI"),
+    DISEASE("Disease", "疾患リファレンスAPI"),
     ADMIN("Admin", "Mock Server管理API（シナリオ切替・状態リセット）"),
     SYSTEM("System", "ヘルスチェック等システムAPI"),
 }
