@@ -20,9 +20,7 @@ class DrugPlaceholderDictionary(
         key: String,
         seed: Long,
     ): String {
-        val placeholderKey =
-            PlaceholderKey.fromJsonKey(key)
-                ?: TODO("sub-cycle 3-6 will convert unknown-key branch into a TASK ORDER VIOLATION error")
+        val placeholderKey = PlaceholderKey.fromJsonKey(key) ?: throwUnknownPlaceholderError(key)
         return when (placeholderKey.category) {
             PlaceholderCategory.A_MEDICAL_VOCABULARY -> medicalVocabulary.resolve(key, seed)
             PlaceholderCategory.B_COINED_NAME -> resolveCoinedName(placeholderKey, seed)
@@ -30,6 +28,25 @@ class DrugPlaceholderDictionary(
             PlaceholderCategory.D_NUMERIC_RANGE -> numericRanges.resolve(key, seed)
         }
     }
+
+    private fun throwUnknownPlaceholderError(key: String): Nothing =
+        error(
+            """
+            Unknown placeholder '{{$key}}' found in DrugParagraphTemplates but not in DrugPlaceholderDictionary.
+
+            TASK ORDER VIOLATION:
+            Placeholder keys MUST NOT be added to DrugParagraphTemplates before
+            their replacement logic exists in DrugPlaceholderDictionary.
+
+            Correct sequence:
+              (1) Add resolver case for '$key' to DrugPlaceholderDictionary
+              (2) Run tests and confirm resolve() succeeds
+              (3) THEN add the '{{$key}}' placeholder to a template string
+
+            DO NOT bypass this error with try/catch, runCatching, or null-fallback.
+            That reintroduces PR #205's raw-placeholder leak (Issue #206).
+            """.trimIndent(),
+        )
 
     private fun resolveDiseaseReference(seed: Long): String {
         check(diseaseProvider.all.isNotEmpty()) {

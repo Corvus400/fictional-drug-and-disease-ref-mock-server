@@ -94,6 +94,28 @@ class DrugPlaceholderDictionaryTest {
     }
 
     @Test
+    fun `resolve throws TASK ORDER VIOLATION error for unregistered placeholder key`() {
+        val dict = buildDict()
+        val seed = stableHash(id = "drug_0001", slot = 0, index = 0)
+        val exception =
+            assertFailsWith<IllegalStateException> {
+                dict.resolve("unknownKey", seed)
+            }
+        val message = exception.message.orEmpty()
+        listOf("TASK ORDER VIOLATION", "Correct sequence", "DO NOT bypass").forEach { keyword ->
+            assertTrue(
+                keyword in message,
+                "Unknown-placeholder error must contain '$keyword' so future contributors see the " +
+                    "ordering rule; got message: '$message'",
+            )
+        }
+        assertTrue(
+            "unknownKey" in message,
+            "Error must echo the offending key name so the callsite is traceable; got: '$message'",
+        )
+    }
+
+    @Test
     fun `resolve returns a registered disease name for the disease key`() {
         val diseases = diseaseFixtures()
         val dict =
