@@ -2,6 +2,7 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.gener
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.DiseaseFixtureProvider
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.placeholder.MedicalVocabularyDictionary
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.placeholder.NumericPlaceholderRanges
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.placeholder.PlaceholderCategory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.placeholder.PlaceholderKey
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.placeholder.TargetMoleculeSuffixes
@@ -74,6 +75,22 @@ class DrugPlaceholderDictionaryTest {
             "resolve('metabolite', $seed) = '$value' must contain katakana " +
                 "(FixmergeNameAdapter.coin returns a katakana string)",
         )
+    }
+
+    @Test
+    fun `resolve delegates every category-D key to NumericPlaceholderRanges`() {
+        val dict = buildDict()
+        val seed = stableHash(id = "drug_0001", slot = 0, index = 0)
+        PlaceholderKey.values()
+            .filter { it.category == PlaceholderCategory.D_NUMERIC_RANGE }
+            .forEach { key ->
+                assertEquals(
+                    NumericPlaceholderRanges.resolve(key.jsonKey, seed),
+                    dict.resolve(key.jsonKey, seed),
+                    "Dictionary.resolve('${key.jsonKey}', $seed) must return the same value " +
+                        "as NumericPlaceholderRanges.resolve since this is a category-D key",
+                )
+            }
     }
 
     @Test
