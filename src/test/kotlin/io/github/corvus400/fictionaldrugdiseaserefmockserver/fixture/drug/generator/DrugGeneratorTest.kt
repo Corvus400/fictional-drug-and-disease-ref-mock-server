@@ -4,6 +4,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.Dis
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.blueprint.DosageFormGroup
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.blueprint.DrugBlueprint
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.blueprint.DrugBlueprintFactory
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.placeholder.PlaceholderDelimiter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.FixmergeNameAdapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.country.CountryBucketRepository
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.country.DrugCountryMapping
@@ -17,6 +18,8 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.neste
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DosageForm
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RouteOfAdministration
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -271,6 +274,21 @@ class DrugGeneratorTest {
         assertTrue(
             drug.dosageRelatedPrecautions.isNotEmpty(),
             "dosageRelatedPrecautions must be non-empty for chronic A or C",
+        )
+    }
+
+    @Test
+    fun `no raw placeholder delimiters survive in any generated drug JSON`() {
+        val allDrugs = buildFreshGenerator().generate(blueprints = DrugBlueprintFactory.build())
+        val json = Json.encodeToString(allDrugs)
+        val residualPlaceholders = PlaceholderDelimiter.REGEX.findAll(json).map { it.value }.toList()
+        assertFalse(
+            actual = residualPlaceholders.isNotEmpty(),
+            message =
+            "Raw placeholder(s) matching ${PlaceholderDelimiter.REGEX.pattern} detected in drug JSON. " +
+                "This test enforces: no placeholder may leak into API response. " +
+                "TASK ORDER RULE: extend DrugPlaceholderDictionary FIRST, then add to templates. " +
+                "First occurrences: ${residualPlaceholders.take(10)}",
         )
     }
 
