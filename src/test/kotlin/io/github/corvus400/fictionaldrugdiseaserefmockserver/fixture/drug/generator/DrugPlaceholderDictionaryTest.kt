@@ -16,6 +16,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.neste
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.TreatmentInfo
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 class DrugPlaceholderDictionaryTest {
@@ -72,6 +73,42 @@ class DrugPlaceholderDictionaryTest {
             value.any { it in KATAKANA_BLOCK },
             "resolve('metabolite', $seed) = '$value' must contain katakana " +
                 "(FixmergeNameAdapter.coin returns a katakana string)",
+        )
+    }
+
+    @Test
+    fun `resolve returns a registered disease name for the disease key`() {
+        val diseases = diseaseFixtures()
+        val dict =
+            DrugPlaceholderDictionary(
+                nameAdapter = FixmergeNameAdapter(),
+                diseaseProvider = DiseaseFixtureProvider(all = diseases),
+            )
+        val seed = stableHash(id = "drug_0001", slot = 0, index = 0)
+        val value = dict.resolve("disease", seed)
+        val registeredNames = diseases.map { it.name }
+        assertTrue(
+            value in registeredNames,
+            "resolve('disease', $seed) = '$value' must be one of registered disease names $registeredNames",
+        )
+    }
+
+    @Test
+    fun `resolve on disease key throws when DiseaseFixtureProvider is empty`() {
+        val dict =
+            DrugPlaceholderDictionary(
+                nameAdapter = FixmergeNameAdapter(),
+                diseaseProvider = DiseaseFixtureProvider(all = emptyList()),
+            )
+        val seed = stableHash(id = "drug_0001", slot = 0, index = 0)
+        val exception =
+            assertFailsWith<IllegalStateException> {
+                dict.resolve("disease", seed)
+            }
+        val message = exception.message.orEmpty()
+        assertTrue(
+            "Drug must be generated after Disease" in message,
+            "Empty-DiseaseFixtureProvider error must mention generation-order rule; got: '$message'",
         )
     }
 
