@@ -15,7 +15,8 @@ class ForbiddenWordChecker(private val forbidden: Set<String>) {
         require(maxRetries > 0) { "maxRetries must be > 0 but was $maxRetries" }
         var seed = initialSeed
         var lastResult: T? = null
-        for (attempt in 0 until maxRetries) {
+        var attempt = 0
+        while (attempt < maxRetries) {
             val candidate = build(seed)
             lastResult = candidate
             val forbiddenHit = isForbidden(name = extractName(candidate))
@@ -24,6 +25,7 @@ class ForbiddenWordChecker(private val forbidden: Set<String>) {
                 return candidate
             }
             seed += 1
+            attempt += 1
         }
         return requireNotNull(lastResult) { "retryUntilClean executed zero iterations (maxRetries=$maxRetries)" }
     }
