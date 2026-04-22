@@ -1,11 +1,13 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator
 
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.placeholder.DiseasePlaceholderDelimiter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.placeholder.DiseasePlaceholderKey
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.placeholder.DiseaseRenderContext
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.stableHash
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class DiseasePlaceholderDictionaryTest {
@@ -53,6 +55,67 @@ class DiseasePlaceholderDictionaryTest {
         val second = dict.resolve("disease", seed = 0L, context = DiseaseRenderContext(selfName = "B"))
         assertEquals("A", first)
         assertEquals("B", second)
+    }
+
+    @Test
+    fun `resolveAll substitutes every placeholder and leaves no delimiter`() {
+        val dict = buildDict()
+        val context = DiseaseRenderContext(selfName = "架空疾患テスト甲")
+        val template = "{{disease}}は、{{mainFeature}}を特徴とする{{chronicity}}疾患である。"
+        val result = dict.resolveAll(template, seed = 42L, context = context)
+        assertFalse(
+            result.contains(DiseasePlaceholderDelimiter.OPEN) ||
+                result.contains(DiseasePlaceholderDelimiter.CLOSE),
+            "resolveAll must consume every placeholder; got: $result",
+        )
+        assertTrue(
+            result.contains("架空疾患テスト甲"),
+            "disease self-reference must be present in resolved output; got: $result",
+        )
+    }
+
+    @Test
+    fun `resolveAll is deterministic for the same seed and template`() {
+        val dict = buildDict()
+        val context = DiseaseRenderContext(selfName = "架空疾患テスト甲")
+        val template = "{{mainFeature}} + {{mainSymptom}} + {{prognosisRate}}"
+        val first = dict.resolveAll(template, seed = 42L, context = context)
+        val second = dict.resolveAll(template, seed = 42L, context = context)
+        assertEquals(first, second)
+    }
+
+    @Test
+    fun `resolveAll varies substitutions across match positions for the same key`() {
+        val dict = buildDict()
+        val context = DiseaseRenderContext(selfName = "架空疾患テスト甲")
+        val template = "{{mainSymptom}} / {{mainSymptom}} / {{mainSymptom}}"
+        val result = dict.resolveAll(template, seed = 42L, context = context)
+        val occurrences = result.split(" / ")
+        assertEquals(3, occurrences.size, "template must yield exactly 3 segments")
+        val distinctCount = occurrences.toSet().size
+        assertTrue(
+            distinctCount >= 2,
+            "same-key placeholders at different match positions must derive seeds independently; " +
+                "got identical substitutions at every position: $result",
+        )
+    }
+
+    @Test
+    fun `renderField picks a template from DiseaseParagraphTemplates and substitutes placeholders`() {
+        val dict = buildDict()
+        val context = DiseaseRenderContext(selfName = "架空疾患テスト甲")
+        val rendered =
+            dict.renderField(
+                field = DiseaseParagraphField.OVERVIEW_DESCRIPTION,
+                seed = 42L,
+                context = context,
+            )
+        assertTrue(rendered.isNotBlank(), "renderField must produce a non-empty paragraph")
+        assertFalse(
+            rendered.contains(DiseasePlaceholderDelimiter.OPEN) ||
+                rendered.contains(DiseasePlaceholderDelimiter.CLOSE),
+            "renderField must consume every placeholder in the picked template; got: $rendered",
+        )
     }
 
     @Test
