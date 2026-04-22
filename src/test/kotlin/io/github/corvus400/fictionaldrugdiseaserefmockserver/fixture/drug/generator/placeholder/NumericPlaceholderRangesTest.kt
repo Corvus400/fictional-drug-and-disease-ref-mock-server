@@ -63,7 +63,8 @@ class NumericPlaceholderRangesTest {
                     )
                     assertTrue(
                         regex.matches(value),
-                        "resolve('$key', $seed) = '$value' does not match /${CATEGORY_D_FORMAT_REGEX[key]}/ under GERMANY locale",
+                        "resolve('$key', $seed) = '$value' does not match " +
+                            "/${CATEGORY_D_FORMAT_REGEX[key]}/ under GERMANY locale",
                     )
                 }
             }
