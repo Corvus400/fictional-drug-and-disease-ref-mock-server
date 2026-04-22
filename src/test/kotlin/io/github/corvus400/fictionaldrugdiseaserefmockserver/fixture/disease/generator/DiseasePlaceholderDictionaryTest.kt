@@ -33,6 +33,27 @@ class DiseasePlaceholderDictionaryTest {
         }
     }
 
+    @Test
+    fun `resolve returns context selfName for disease self-reference placeholder`() {
+        val dict = buildDict()
+        val context = DiseaseRenderContext(selfName = "架空疾患テスト甲")
+        val value = dict.resolve("disease", seed = 0L, context = context)
+        assertEquals(
+            "架空疾患テスト甲",
+            value,
+            "category B_SELF_REFERENCE must return the current disease's selfName verbatim",
+        )
+    }
+
+    @Test
+    fun `resolve for disease placeholder varies when selfName changes`() {
+        val dict = buildDict()
+        val first = dict.resolve("disease", seed = 0L, context = DiseaseRenderContext(selfName = "A"))
+        val second = dict.resolve("disease", seed = 0L, context = DiseaseRenderContext(selfName = "B"))
+        assertEquals("A", first)
+        assertEquals("B", second)
+    }
+
     private fun buildDict(): DiseasePlaceholderDictionary = DiseasePlaceholderDictionary()
 
     companion object {
