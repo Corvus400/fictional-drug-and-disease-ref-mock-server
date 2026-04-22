@@ -4,6 +4,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.Dis
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.placeholder.MedicalVocabularyDictionary
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.placeholder.PlaceholderCategory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.placeholder.PlaceholderKey
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.placeholder.TargetMoleculeSuffixes
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.FixmergeNameAdapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.stableHash
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
@@ -58,6 +59,38 @@ class DrugPlaceholderDictionaryTest {
             }
     }
 
+    @Test
+    fun `resolve returns katakana-bearing coined name for metabolite`() {
+        val dict = buildDict()
+        val seed = stableHash(id = "drug_0001", slot = 0, index = 0)
+        val value = dict.resolve("metabolite", seed)
+        assertTrue(
+            value.isNotBlank(),
+            "resolve('metabolite', $seed) returned blank; must return a coined katakana name",
+        )
+        assertTrue(
+            value.any { it in KATAKANA_BLOCK },
+            "resolve('metabolite', $seed) = '$value' must contain katakana " +
+                "(FixmergeNameAdapter.coin returns a katakana string)",
+        )
+    }
+
+    @Test
+    fun `resolve returns coined name with molecule suffix for targetMolecule`() {
+        val dict = buildDict()
+        val seed = stableHash(id = "drug_0002", slot = 0, index = 0)
+        val value = dict.resolve("targetMolecule", seed)
+        assertTrue(
+            value.isNotBlank(),
+            "resolve('targetMolecule', $seed) returned blank; must return katakana + suffix",
+        )
+        assertTrue(
+            TargetMoleculeSuffixes.all.any { value.endsWith(it) },
+            "resolve('targetMolecule', $seed) = '$value' must end with one of " +
+                "${TargetMoleculeSuffixes.all} (target-molecule classification noun)",
+        )
+    }
+
     private fun buildDict(): DrugPlaceholderDictionary =
         DrugPlaceholderDictionary(
             nameAdapter = FixmergeNameAdapter(),
@@ -93,5 +126,6 @@ class DrugPlaceholderDictionaryTest {
 
     private companion object {
         const val PLACEHOLDER_KEY_COUNT = 64
+        val KATAKANA_BLOCK: CharRange = '゠'..'ヿ'
     }
 }
