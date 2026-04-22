@@ -12,17 +12,9 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.Drug
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DosageForm
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DoseUnit
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RouteOfAdministration
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.StorageTemperature
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.AdverseReactionByFrequency
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.AdverseReactionInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.CompositionInfo
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.DosageInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.Dose
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.IndicationItem
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.NumberedParagraph
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.PackageInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.PhysicochemicalInfo
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.StorageCondition
 
 class DrugGenerator(
     adapter: FixmergeNameAdapter,
@@ -81,48 +73,60 @@ class DrugGenerator(
         inactives: List<CoinedName>,
         manufacturer: CoinedName,
     ): Drug {
+        val drugId =
+            "drug_${blueprint.index.toString().padStart(length = DRUG_ID_PAD_LENGTH, padChar = '0')}"
         return Drug(
-            id = "drug_${blueprint.index.toString().padStart(length = DRUG_ID_PAD_LENGTH, padChar = '0')}",
+            id = drugId,
             genericName = generic.katakana,
             brandName = brand.katakana,
             brandNameKana = brand.katakana,
             atcCode = buildAtcCode(blueprint = blueprint),
+            yjCode = DrugMetaBuilders.buildYjCode(id = drugId),
             therapeuticCategoryName = therapeuticCategoryNameOf(atcFirstLetter = blueprint.atcFirstLetter),
             regulatoryClass = blueprint.regulatoryClasses.toList(),
             dosageForm = dosageFormOf(group = blueprint.dosageFormGroup),
             routeOfAdministration = routeOf(group = blueprint.dosageFormGroup),
-            composition = CompositionInfo(
+            composition =
+            CompositionInfo(
                 activeIngredient = generic.katakana,
                 activeIngredientAmount = Dose(amount = STANDARD_DOSE_AMOUNT, unit = DoseUnit.MG),
                 inactiveIngredients = inactives.map { it.katakana },
                 appearance = APPEARANCE_DESCRIPTION,
             ),
-            contraindications = listOf(
-                NumberedParagraph(order = 1, content = "本剤の成分に対し過敏症の既往歴のある患者"),
-            ),
-            indications = listOf(
-                IndicationItem(order = 1, content = "本剤の効能又は効果に準ずる使用"),
-            ),
-            dosage = DosageInfo(standardDosage = STANDARD_DOSAGE_TEXT),
-            adverseReactions = AdverseReactionInfo(other = AdverseReactionByFrequency()),
-            packages = listOf(
-                PackageInfo(
-                    size = DEFAULT_PACKAGE_SIZE,
-                    storageCondition = StorageCondition(
-                        temperature = StorageTemperature.ROOM_TEMPERATURE,
-                        lightProtection = false,
-                        moistureProtection = false,
-                    ),
-                    expirationMonths = DEFAULT_EXPIRATION_MONTHS,
-                ),
-            ),
-            physicochemicalProperties = PhysicochemicalInfo(
+            warning = DrugClinicalBuilders.buildWarning(id = drugId),
+            contraindications = DrugClinicalBuilders.buildContraindications(id = drugId),
+            indications = DrugClinicalBuilders.buildIndications(id = drugId),
+            indicationsRelatedPrecautions =
+            DrugClinicalBuilders.buildIndicationsRelatedPrecautions(id = drugId),
+            dosage = DrugClinicalBuilders.buildDosage(id = drugId),
+            dosageRelatedPrecautions = DrugClinicalBuilders.buildDosageRelatedPrecautions(id = drugId),
+            importantPrecautions = DrugClinicalBuilders.buildImportantPrecautions(id = drugId),
+            precautionsForSpecificPopulations =
+            DrugClinicalBuilders.buildPrecautionsForSpecificPopulations(id = drugId),
+            interactions = DrugClinicalBuilders.buildInteractions(id = drugId),
+            adverseReactions = DrugClinicalBuilders.buildAdverseReactions(id = drugId),
+            effectsOnLabTests = DrugClinicalBuilders.buildEffectsOnLabTests(id = drugId),
+            overdose = DrugClinicalBuilders.buildOverdose(id = drugId),
+            administrationPrecautions = DrugClinicalBuilders.buildAdministrationPrecautions(id = drugId),
+            otherPrecautions =
+            DrugClinicalBuilders.buildOtherPrecautions(id = drugId, blueprint = blueprint),
+            pharmacokinetics = DrugMetaBuilders.buildPharmacokinetics(id = drugId),
+            clinicalResults = DrugMetaBuilders.buildClinicalResults(id = drugId),
+            pharmacology = DrugMetaBuilders.buildPharmacology(id = drugId),
+            physicochemicalProperties =
+            PhysicochemicalInfo(
                 genericNameEnglish = generic.latin,
                 molecularFormula = DEFAULT_MOLECULAR_FORMULA,
                 description = MOLECULAR_DESCRIPTION,
             ),
+            handlingPrecautions = DrugMetaBuilders.buildHandlingPrecautions(id = drugId),
+            approvalConditions = DrugMetaBuilders.buildApprovalConditions(id = drugId),
+            packages = DrugMetaBuilders.buildPackages(id = drugId),
+            references = DrugMetaBuilders.buildReferences(id = drugId),
+            insuranceNotes = DrugMetaBuilders.buildInsuranceNotes(id = drugId),
             manufacturer = manufacturer.katakana + MANUFACTURER_SUFFIX,
             revisedAt = DEFAULT_REVISED_AT,
+            relatedDiseaseIds = DrugMetaBuilders.buildRelatedDiseaseIds(id = drugId),
         )
     }
 
@@ -173,11 +177,8 @@ class DrugGenerator(
         private const val DRUG_ID_PAD_LENGTH: Int = 4
         private const val ATC_CODE_SUFFIX_MOD: Int = 100
         private const val STANDARD_DOSE_AMOUNT: Double = 10.0
-        private const val DEFAULT_EXPIRATION_MONTHS: Int = 36
         private const val MANUFACTURER_SUFFIX: String = "製薬"
         private const val APPEARANCE_DESCRIPTION: String = "白色の錠剤"
-        private const val STANDARD_DOSAGE_TEXT: String = "通常、成人には1回1錠を1日3回経口投与する。"
-        private const val DEFAULT_PACKAGE_SIZE: String = "100錠"
         private const val DEFAULT_MOLECULAR_FORMULA: String = "C20H25N3O"
         private const val MOLECULAR_DESCRIPTION: String = "白色の結晶性粉末である。"
         private const val DEFAULT_REVISED_AT: String = "2026/04/23"
