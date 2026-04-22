@@ -1,12 +1,12 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.blueprint.DiseaseBlueprint
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.BucketNameCoiner
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.FixmergeNameAdapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.country.CountryBucketRepository
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.country.DiseaseCountryMapping
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixmerge.coinage.CoinedName
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixmerge.nameslot.NameSlot
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.stableHash
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.MedicalDepartment
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.DiagnosticCriteriaInfo
@@ -14,20 +14,22 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.neste
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.TreatmentInfo
 
 class DiseaseGenerator(
-    private val adapter: FixmergeNameAdapter,
+    adapter: FixmergeNameAdapter,
 ) {
+    private val coiner: BucketNameCoiner = BucketNameCoiner(adapter = adapter)
+
     fun generate(blueprint: DiseaseBlueprint): Disease {
         val country = DiseaseCountryMapping.of(chapter = blueprint.icd10Chapter)
         val cities = CountryBucketRepository.of(country = country).cities
         val name =
-            coinFromBucket(
+            coiner.coin(
                 bucket = cities,
                 blueprintIndex = blueprint.index,
                 slot = NameSlot.DISEASE_NAME,
                 offset = 0,
             )
         val synonyms = (0 until SYNONYM_COUNT).map { offset ->
-            coinFromBucket(
+            coiner.coin(
                 bucket = cities,
                 blueprintIndex = blueprint.index,
                 slot = NameSlot.DISEASE_ALIAS,
@@ -35,7 +37,7 @@ class DiseaseGenerator(
             )
         }
         val differentials = (0 until DIFFERENTIAL_COUNT).map { offset ->
-            coinFromBucket(
+            coiner.coin(
                 bucket = cities,
                 blueprintIndex = blueprint.index,
                 slot = NameSlot.DISEASE_DIFFERENTIAL,
@@ -43,7 +45,7 @@ class DiseaseGenerator(
             )
         }
         val complications = (0 until COMPLICATION_COUNT).map { offset ->
-            coinFromBucket(
+            coiner.coin(
                 bucket = cities,
                 blueprintIndex = blueprint.index,
                 slot = NameSlot.DISEASE_COMPLICATION,
@@ -61,18 +63,6 @@ class DiseaseGenerator(
 
     fun generate(blueprints: List<DiseaseBlueprint>): List<Disease> {
         return blueprints.map { generate(blueprint = it) }
-    }
-
-    private fun coinFromBucket(
-        bucket: List<String>,
-        blueprintIndex: Int,
-        slot: NameSlot,
-        offset: Int,
-    ): CoinedName {
-        val sourceIndex = ((blueprintIndex * SEED_INDEX_PRIME) + slot.ordinal + offset).mod(other = bucket.size)
-        val sourceToken = bucket[sourceIndex]
-        val seed = stableHash(id = sourceToken, slot = slot.ordinal, index = 0)
-        return adapter.coin(slot = slot, seed = seed)
     }
 
     private fun buildDisease(
@@ -104,7 +94,6 @@ class DiseaseGenerator(
     }
 
     companion object {
-        private const val SEED_INDEX_PRIME: Int = 31
         private const val SYNONYM_COUNT: Int = 2
         private const val DIFFERENTIAL_COUNT: Int = 2
         private const val COMPLICATION_COUNT: Int = 2
