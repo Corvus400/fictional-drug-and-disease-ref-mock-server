@@ -10,7 +10,6 @@ import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
-import kotlinx.serialization.json.Json
 
 /**
  * OpenAPI仕様生成およびSwagger UI / ReDocを設定
@@ -21,14 +20,11 @@ import kotlinx.serialization.json.Json
  *
  * スキーマはkotlinx.serializationから自動生成。
  * Fixtureオブジェクトがexample値として自動シリアライズされる。
+ * ContentNegotiation と同じ [AppJson] (snake_case naming strategy) を使用することで、
+ * 実レスポンス body と OpenAPI example のキー表記を一致させる。
  */
 fun Application.configureOpenAPI() {
-    val json = Json {
-        prettyPrint = false
-        isLenient = true
-        ignoreUnknownKeys = true
-        encodeDefaults = true
-    }
+    val json = AppJson
 
     install(OpenApi) {
         info {

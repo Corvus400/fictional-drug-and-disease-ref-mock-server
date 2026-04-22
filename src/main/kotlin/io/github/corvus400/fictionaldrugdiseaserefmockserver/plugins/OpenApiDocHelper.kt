@@ -1,5 +1,6 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins
 
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog.EndpointMetadata
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.FixtureProvider
 import io.github.smiley4.ktoropenapi.config.RouteConfig
 import io.ktor.http.HttpStatusCode
@@ -49,6 +50,70 @@ inline fun <reified T : Any> RouteConfig.documentScenarioEndpoint(
                     example(name) {
                         value = fixture
                     }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * `/xxx/{id}` 形式の id 指定詳細取得ルートに OpenAPI ドキュメントを付ける。
+ *
+ * @param metadata ルートのメタデータ (path/method/endpointName/tag/summary)
+ * @param endpointDescription OpenAPI description 本文
+ * @param idParamDescription path parameter `id` の説明
+ * @param exampleFixture 200 OK レスポンス body の example 値。Fixture の実体を渡す
+ */
+inline fun <reified T : Any> RouteConfig.documentIdDetailEndpoint(
+    metadata: EndpointMetadata,
+    endpointDescription: String,
+    idParamDescription: String,
+    exampleFixture: T,
+) {
+    this.summary = metadata.summary
+    tags(metadata.tag.tagName)
+    description = endpointDescription
+    request {
+        pathParameter<String>("id") {
+            description = idParamDescription
+        }
+    }
+    response {
+        code(HttpStatusCode.OK) {
+            description = "`id` で指定された Fixture"
+            body<T> {
+                example("default") {
+                    value = exampleFixture
+                }
+            }
+        }
+        code(HttpStatusCode.NotFound) {
+            description = "指定 id が存在しない"
+        }
+    }
+}
+
+/**
+ * `/xxx` 形式の一覧取得ルートに OpenAPI ドキュメントを付ける。
+ *
+ * @param metadata ルートのメタデータ (path/method/endpointName/tag/summary)
+ * @param endpointDescription OpenAPI description 本文
+ * @param exampleFixtures 200 OK レスポンス body の example 値 (配列全体)
+ */
+inline fun <reified T : Any> RouteConfig.documentListEndpoint(
+    metadata: EndpointMetadata,
+    endpointDescription: String,
+    exampleFixtures: List<T>,
+) {
+    this.summary = metadata.summary
+    tags(metadata.tag.tagName)
+    description = endpointDescription
+    response {
+        code(HttpStatusCode.OK) {
+            description = "Fixture 一覧"
+            body<List<T>> {
+                example("default") {
+                    value = exampleFixtures
                 }
             }
         }
