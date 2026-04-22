@@ -94,6 +94,49 @@ class DrugPlaceholderDictionaryTest {
     }
 
     @Test
+    fun `resolveAll substitutes every placeholder and leaves no delimiter behind`() {
+        val dict = buildDict()
+        val seed = stableHash(id = "drug_0001", slot = 0, index = 0)
+        val template = "本剤投与により {{symptom}} と {{adverseReaction}} が発現することがある。"
+        val result = dict.resolveAll(template = template, seed = seed)
+        assertTrue(
+            "{{" !in result && "}}" !in result,
+            "resolveAll must replace every '{{...}}'; got: '$result'",
+        )
+        assertTrue(
+            "本剤投与により " in result && " と " in result && " が発現することがある。" in result,
+            "resolveAll must preserve non-placeholder text; got: '$result'",
+        )
+    }
+
+    @Test
+    fun `resolveAll derives distinct seeds for repeated occurrences of the same key`() {
+        val dict = buildDict()
+        val seed = stableHash(id = "drug_0001", slot = 0, index = 0)
+        val template = "{{symptom}} / {{symptom}} / {{symptom}}"
+        val result = dict.resolveAll(template = template, seed = seed)
+        val parts = result.split(" / ")
+        assertEquals(3, parts.size, "splitting 3-occurrence template must yield 3 tokens; got: '$result'")
+        assertTrue(
+            parts.toSet().size >= 2,
+            "repeated '{{symptom}}' must be driven by distinct derived seeds so the substitutions vary; " +
+                "got all-identical: '$result'",
+        )
+    }
+
+    @Test
+    fun `renderField returns a fully substituted paragraph string`() {
+        val dict = buildDict()
+        val seed = stableHash(id = "drug_0001", slot = 0, index = 0)
+        val rendered = dict.renderField(field = ParagraphField.STANDARD_DOSAGE, seed = seed)
+        assertTrue(rendered.isNotBlank(), "renderField must return a non-blank paragraph")
+        assertTrue(
+            "{{" !in rendered && "}}" !in rendered,
+            "renderField must contain no raw placeholder delimiter; got: '$rendered'",
+        )
+    }
+
+    @Test
     fun `resolve throws TASK ORDER VIOLATION error for unregistered placeholder key`() {
         val dict = buildDict()
         val seed = stableHash(id = "drug_0001", slot = 0, index = 0)
