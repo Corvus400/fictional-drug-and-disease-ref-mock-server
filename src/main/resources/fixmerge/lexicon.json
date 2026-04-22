@@ -1,0 +1,7544 @@
+[
+  {
+    "token": "Iz'u",
+    "frequency": 230,
+    "pos": "PARTICLE",
+    "meaning": "は",
+    "meaning_kana": "ハ",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "イズ",
+    "source_lines": [
+      "1:2",
+      "1:9",
+      "1:21",
+      "1:22",
+      "1:24"
+    ]
+  },
+  {
+    "token": "N'o",
+    "frequency": 88,
+    "pos": "PARTICLE",
+    "meaning": "の",
+    "meaning_kana": "ノ",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "ノ",
+    "source_lines": [
+      "1:4",
+      "1:7",
+      "1:8",
+      "1:14",
+      "1:16"
+    ]
+  },
+  {
+    "token": "coLL·Kuz",
+    "frequency": 85,
+    "pos": "OTHER",
+    "meaning": "崩しる、からダ　クずレル、カラダ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "クオルクズ",
+    "source_lines": [
+      "7:6",
+      "7:6",
+      "7:7",
+      "7:7",
+      "7:7"
+    ]
+  },
+  {
+    "token": "Nii",
+    "frequency": 75,
+    "pos": "MODAL",
+    "meaning": "ない",
+    "meaning_kana": "ナイ",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "ニー",
+    "source_lines": [
+      "4:16",
+      "4:18",
+      "4:20",
+      "5:17",
+      "6:3"
+    ]
+  },
+  {
+    "token": "KaRaDy",
+    "frequency": 69,
+    "pos": "NOUN",
+    "meaning": "体",
+    "meaning_kana": "カラダ",
+    "pattern_guess": "B",
+    "katakana": "カラディ",
+    "source_lines": [
+      "7:6",
+      "7:6",
+      "7:7",
+      "7:7",
+      "7:8"
+    ]
+  },
+  {
+    "token": "DArime",
+    "frequency": 58,
+    "pos": "NOUN",
+    "meaning": "断罪",
+    "meaning_kana": "ダンザイ",
+    "pattern_guess": "A",
+    "katakana": "ダリメ",
+    "source_lines": [
+      "1:15",
+      "1:15",
+      "1:20",
+      "1:20",
+      "2:14"
+    ]
+  },
+  {
+    "token": "Ah",
+    "frequency": 54,
+    "pos": "OTHER",
+    "meaning": "ちょっと待った！",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "ア",
+    "source_lines": [
+      "8:33",
+      "8:33",
+      "8:37",
+      "8:37",
+      "9:26"
+    ]
+  },
+  {
+    "token": "Ada",
+    "frequency": 44,
+    "pos": "OTHER",
+    "meaning": "あの",
+    "meaning_kana": "アノ",
+    "pattern_guess": "A",
+    "katakana": "アダ",
+    "source_lines": [
+      "1:9",
+      "2:8",
+      "4:1",
+      "4:16",
+      "4:18"
+    ]
+  },
+  {
+    "token": "Bah",
+    "frequency": 40,
+    "pos": "PARTICLE",
+    "meaning": "だ",
+    "meaning_kana": "ダ",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "バ",
+    "source_lines": [
+      "5:13",
+      "6:1",
+      "6:4",
+      "6:15",
+      "6:18"
+    ]
+  },
+  {
+    "token": "WAirTell",
+    "frequency": 39,
+    "pos": "PRONOUN",
+    "meaning": "私",
+    "meaning_kana": "ワタシ",
+    "pattern_guess": "A",
+    "katakana": "ウェイルテル",
+    "source_lines": [
+      "1:2",
+      "2:1",
+      "4:13",
+      "6:3",
+      "6:8"
+    ]
+  },
+  {
+    "token": "LEA",
+    "frequency": 39,
+    "pos": "INTERJ",
+    "meaning": "さあ",
+    "meaning_kana": "サア",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "レア",
+    "source_lines": [
+      "1:15",
+      "1:20",
+      "2:14",
+      "2:19",
+      "2:23"
+    ]
+  },
+  {
+    "token": "ieyWOO",
+    "frequency": 36,
+    "pos": "OTHER",
+    "meaning": "今金て、",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "イエイウォオ",
+    "source_lines": [
+      "1:12",
+      "2:11",
+      "3:14",
+      "5:12",
+      "5:14"
+    ]
+  },
+  {
+    "token": "JIO",
+    "frequency": 31,
+    "pos": "NOUN",
+    "meaning": "女",
+    "meaning_kana": "オンナ",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "ジオ",
+    "source_lines": [
+      "1:1",
+      "1:7",
+      "1:25",
+      "2:6",
+      "2:31"
+    ]
+  },
+  {
+    "token": "rAwTell",
+    "frequency": 31,
+    "pos": "PRONOUN",
+    "meaning": "あなた",
+    "meaning_kana": "アナタ",
+    "pattern_guess": "A",
+    "katakana": "ロウテル",
+    "source_lines": [
+      "1:22",
+      "2:25",
+      "3:5",
+      "4:13",
+      "5:18"
+    ]
+  },
+  {
+    "token": "hArLie",
+    "frequency": 31,
+    "pos": "ADJECTIVE",
+    "meaning": "辛い",
+    "meaning_kana": "ツライ",
+    "pattern_guess": "A",
+    "katakana": "ハーリー",
+    "source_lines": [
+      "7:2",
+      "7:3",
+      "7:4",
+      "7:5",
+      "7:14"
+    ]
+  },
+  {
+    "token": "shi-des",
+    "frequency": 29,
+    "pos": "NOUN",
+    "meaning": "死",
+    "meaning_kana": "シ",
+    "pattern_guess": "C",
+    "katakana": "シデス",
+    "source_lines": [
+      "1:19",
+      "2:18",
+      "2:30",
+      "3:2",
+      "3:13"
+    ]
+  },
+  {
+    "token": "Ado",
+    "frequency": 28,
+    "pos": "OTHER",
+    "meaning": "この",
+    "meaning_kana": "コノ",
+    "pattern_guess": "A",
+    "katakana": "アド",
+    "source_lines": [
+      "11:6",
+      "11:6",
+      "11:6",
+      "11:6",
+      "11:11"
+    ]
+  },
+  {
+    "token": "Alte",
+    "frequency": 27,
+    "pos": "OTHER",
+    "meaning": "今金て、",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "アルトエ",
+    "source_lines": [
+      "23:28",
+      "24:28",
+      "24:38",
+      "24:39",
+      "24:40"
+    ]
+  },
+  {
+    "token": "FineNd",
+    "frequency": 26,
+    "pos": "OTHER",
+    "meaning": "疑いは今夜晴れるんだろう",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ファインエンド",
+    "source_lines": [
+      "1:17",
+      "2:16",
+      "2:29",
+      "3:19",
+      "4:3"
+    ]
+  },
+  {
+    "token": "Pen·Sii",
+    "frequency": 26,
+    "pos": "ADJECTIVE",
+    "meaning": "苦しい",
+    "meaning_kana": "クルシイ",
+    "pattern_guess": "A",
+    "katakana": "ペンシー",
+    "source_lines": [
+      "7:2",
+      "7:3",
+      "7:4",
+      "7:5",
+      "7:14"
+    ]
+  },
+  {
+    "token": "To-ya-ya",
+    "frequency": 25,
+    "pos": "TIME",
+    "meaning": "今夜",
+    "meaning_kana": "コンヤ",
+    "pattern_guess": "C",
+    "katakana": "トヤヤ",
+    "source_lines": [
+      "1:14",
+      "1:15",
+      "1:18",
+      "1:20",
+      "2:13"
+    ]
+  },
+  {
+    "token": "MEif",
+    "frequency": 24,
+    "pos": "NOUN",
+    "meaning": "命",
+    "meaning_kana": "イノチ",
+    "pattern_guess": "A",
+    "katakana": "メイフ",
+    "source_lines": [
+      "1:5",
+      "1:14",
+      "2:4",
+      "2:13",
+      "3:16"
+    ]
+  },
+  {
+    "token": "LiGh·rai",
+    "frequency": 24,
+    "pos": "NOUN",
+    "meaning": "光",
+    "meaning_kana": "ヒカリ",
+    "pattern_guess": "A",
+    "katakana": "ライトライ",
+    "source_lines": [
+      "7:2",
+      "7:3",
+      "7:4",
+      "7:5",
+      "7:14"
+    ]
+  },
+  {
+    "token": "vAni·Ell",
+    "frequency": 24,
+    "pos": "OTHER",
+    "meaning": "光、キエた、苦シい、つらい",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ヴァニエル",
+    "source_lines": [
+      "7:2",
+      "7:3",
+      "7:4",
+      "7:5",
+      "7:14"
+    ]
+  },
+  {
+    "token": "Edo",
+    "frequency": 24,
+    "pos": "OTHER",
+    "meaning": "ここ",
+    "meaning_kana": "ココ",
+    "pattern_guess": "A",
+    "katakana": "エド",
+    "source_lines": [
+      "11:8",
+      "11:8",
+      "11:8",
+      "11:8",
+      "11:14"
+    ]
+  },
+  {
+    "token": "KaRause",
+    "frequency": 22,
+    "pos": "OTHER",
+    "meaning": "逃げルことはボうトく",
+    "meaning_kana": "",
+    "pattern_guess": "B",
+    "katakana": "カラウズ",
+    "source_lines": [
+      "9:37",
+      "9:40",
+      "10:31",
+      "10:34",
+      "11:28"
+    ]
+  },
+  {
+    "token": "oNkhe",
+    "frequency": 22,
+    "pos": "OTHER",
+    "meaning": "悲しいだけ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "オンクヘ",
+    "source_lines": [
+      "11:15",
+      "12:15",
+      "13:3",
+      "19:29",
+      "19:30"
+    ]
+  },
+  {
+    "token": "Vani·tA",
+    "frequency": 21,
+    "pos": "OTHER",
+    "meaning": "慈悲などありはしない。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ヴァニタ",
+    "source_lines": [
+      "1:14",
+      "1:19",
+      "1:26",
+      "1:26",
+      "2:13"
+    ]
+  },
+  {
+    "token": "LaVI",
+    "frequency": 20,
+    "pos": "NOUN",
+    "meaning": "法の悪魔",
+    "meaning_kana": "ホウノアクマ",
+    "pattern_guess": "A",
+    "katakana": "ラヴィ",
+    "source_lines": [
+      "1:13",
+      "1:13",
+      "1:18",
+      "1:18",
+      "1:22"
+    ]
+  },
+  {
+    "token": "Was·Da",
+    "frequency": 19,
+    "pos": "ADJECTIVE",
+    "meaning": "無駄",
+    "meaning_kana": "ムダ",
+    "pattern_guess": "A",
+    "katakana": "ワスダ",
+    "source_lines": [
+      "4:4",
+      "5:6",
+      "5:11",
+      "7:24",
+      "8:24"
+    ]
+  },
+  {
+    "token": "ShouBeK",
+    "frequency": 18,
+    "pos": "MODAL",
+    "meaning": "べき",
+    "meaning_kana": "ベキ",
+    "pattern_guess": "A",
+    "katakana": "ショウベク",
+    "source_lines": [
+      "5:19",
+      "9:38",
+      "9:42",
+      "10:32",
+      "10:36"
+    ]
+  },
+  {
+    "token": "wAsHe",
+    "frequency": 18,
+    "pos": "MODAL",
+    "meaning": "したい",
+    "meaning_kana": "シタイ",
+    "pattern_guess": "A",
+    "katakana": "ワシェ",
+    "source_lines": [
+      "11:16",
+      "11:17",
+      "11:22",
+      "12:16",
+      "12:17"
+    ]
+  },
+  {
+    "token": "Ca-nan",
+    "frequency": 18,
+    "pos": "MODAL",
+    "meaning": "できる",
+    "meaning_kana": "デキル",
+    "pattern_guess": "A",
+    "katakana": "カナン",
+    "source_lines": [
+      "14:9",
+      "14:10",
+      "18:4",
+      "18:21",
+      "19:4"
+    ]
+  },
+  {
+    "token": "ievil",
+    "frequency": 17,
+    "pos": "OTHER",
+    "meaning": "魔女よ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "イエヴィル",
+    "source_lines": [
+      "1:1",
+      "2:31",
+      "4:17",
+      "4:19",
+      "4:21"
+    ]
+  },
+  {
+    "token": "Jiell",
+    "frequency": 17,
+    "pos": "NOUN",
+    "meaning": "地獄",
+    "meaning_kana": "ジゴク",
+    "pattern_guess": "A",
+    "katakana": "ジエル",
+    "source_lines": [
+      "1:9",
+      "2:8",
+      "4:23",
+      "5:2",
+      "6:1"
+    ]
+  },
+  {
+    "token": "showroof",
+    "frequency": 17,
+    "pos": "NOUN",
+    "meaning": "証明",
+    "meaning_kana": "ショウメイ",
+    "pattern_guess": "A",
+    "katakana": "ショウルーフ",
+    "source_lines": [
+      "1:14",
+      "2:13",
+      "3:16",
+      "4:22",
+      "5:1"
+    ]
+  },
+  {
+    "token": "pray·lee",
+    "frequency": 16,
+    "pos": "NOUN",
+    "meaning": "祈り",
+    "meaning_kana": "イノリ",
+    "pattern_guess": "A",
+    "katakana": "プレイリー",
+    "source_lines": [
+      "1:7",
+      "1:7",
+      "1:8",
+      "1:8",
+      "2:6"
+    ]
+  },
+  {
+    "token": "nAddY",
+    "frequency": 16,
+    "pos": "OTHER",
+    "meaning": "仲間はいずれ失うんだろうね",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ナッドイ",
+    "source_lines": [
+      "8:31",
+      "9:24",
+      "9:38",
+      "10:18",
+      "10:32"
+    ]
+  },
+  {
+    "token": "oF",
+    "frequency": 15,
+    "pos": "OTHER",
+    "meaning": "アのショウ女ハ管理シャのモノ",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "オブ",
+    "source_lines": [
+      "1:3",
+      "1:5",
+      "2:2",
+      "2:4",
+      "8:30"
+    ]
+  },
+  {
+    "token": "Was-Da",
+    "frequency": 15,
+    "pos": "OTHER",
+    "meaning": "あなたの祈りは無駄じゃない",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ワスダ",
+    "source_lines": [
+      "16:8",
+      "16:8",
+      "16:20",
+      "16:20",
+      "17:4"
+    ]
+  },
+  {
+    "token": "SiVa",
+    "frequency": 15,
+    "pos": "OTHER",
+    "meaning": "だけど鳥にこの手は届かないんだ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "スイヴァ",
+    "source_lines": [
+      "21:6",
+      "21:10",
+      "21:13",
+      "22:6",
+      "22:10"
+    ]
+  },
+  {
+    "token": "Cocary",
+    "frequency": 15,
+    "pos": "ADJECTIVE",
+    "meaning": "恐い",
+    "meaning_kana": "コワイ",
+    "pattern_guess": "A",
+    "katakana": "コカリー",
+    "source_lines": [
+      "23:10",
+      "24:10",
+      "25:1",
+      "29:6",
+      "29:7"
+    ]
+  },
+  {
+    "token": "yu-Range",
+    "frequency": 14,
+    "pos": "OTHER",
+    "meaning": "果実が実り、疑いが増えるにつけ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ユラングエ",
+    "source_lines": [
+      "1:21",
+      "2:20",
+      "2:24",
+      "3:4",
+      "3:23"
+    ]
+  },
+  {
+    "token": "Ah…",
+    "frequency": 14,
+    "pos": "OTHER",
+    "meaning": "ダンざイを　だンざイラ　アェ…",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "ア",
+    "source_lines": [
+      "7:1",
+      "7:26",
+      "7:27",
+      "7:28",
+      "8:1"
+    ]
+  },
+  {
+    "token": "shid",
+    "frequency": 14,
+    "pos": "VERB",
+    "meaning": "死ぬ",
+    "meaning_kana": "シヌ",
+    "pattern_guess": "A",
+    "katakana": "シド",
+    "source_lines": [
+      "7:22",
+      "8:22",
+      "9:15",
+      "9:37",
+      "10:9"
+    ]
+  },
+  {
+    "token": "LaLau",
+    "frequency": 14,
+    "pos": "VERB",
+    "meaning": "笑う",
+    "meaning_kana": "ワラウ",
+    "pattern_guess": "A",
+    "katakana": "ララウ",
+    "source_lines": [
+      "11:19",
+      "12:19",
+      "12:32",
+      "12:35",
+      "19:35"
+    ]
+  },
+  {
+    "token": "Elden",
+    "frequency": 13,
+    "pos": "OTHER",
+    "meaning": "だれモが追イ詰めタ瞬カんんん",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "エルドエン",
+    "source_lines": [
+      "7:25",
+      "8:25",
+      "8:32",
+      "9:18",
+      "9:25"
+    ]
+  },
+  {
+    "token": "aSte",
+    "frequency": 13,
+    "pos": "PARTICLE",
+    "meaning": "として",
+    "meaning_kana": "トシテ",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "アステ",
+    "source_lines": [
+      "15:7",
+      "15:15",
+      "15:16",
+      "15:17",
+      "21:4"
+    ]
+  },
+  {
+    "token": "kA-ad",
+    "frequency": 13,
+    "pos": "ADJECTIVE",
+    "meaning": "悲しい",
+    "meaning_kana": "カナシイ",
+    "pattern_guess": "A",
+    "katakana": "カアッド",
+    "source_lines": [
+      "18:8",
+      "19:8",
+      "19:29",
+      "19:30",
+      "19:33"
+    ]
+  },
+  {
+    "token": "litt",
+    "frequency": 12,
+    "pos": "OTHER",
+    "meaning": "祈り、少女の罪、",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "リット",
+    "source_lines": [
+      "1:7",
+      "2:6",
+      "4:1",
+      "4:16",
+      "4:18"
+    ]
+  },
+  {
+    "token": "S-ond'",
+    "frequency": 12,
+    "pos": "OTHER",
+    "meaning": "そして不安だらけ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ソンド",
+    "source_lines": [
+      "11:2",
+      "11:12",
+      "11:24",
+      "12:2",
+      "12:12"
+    ]
+  },
+  {
+    "token": "hison'",
+    "frequency": 12,
+    "pos": "NOUN",
+    "meaning": "人",
+    "meaning_kana": "ヒト",
+    "pattern_guess": "B",
+    "katakana": "ヒソン",
+    "source_lines": [
+      "11:12",
+      "11:21",
+      "12:12",
+      "12:21",
+      "21:4"
+    ]
+  },
+  {
+    "token": "deFuTai",
+    "frequency": 12,
+    "pos": "MODAL",
+    "meaning": "絶対",
+    "meaning_kana": "ゼッタイ",
+    "pattern_guess": "A",
+    "katakana": "デフタイ",
+    "source_lines": [
+      "13:3",
+      "18:4",
+      "18:17",
+      "19:4",
+      "19:17"
+    ]
+  },
+  {
+    "token": "S~ond'",
+    "frequency": 11,
+    "pos": "OTHER",
+    "meaning": "慈悲と、そして魔女と",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "スオンド",
+    "source_lines": [
+      "1:5",
+      "2:4",
+      "4:3",
+      "4:3",
+      "4:5"
+    ]
+  },
+  {
+    "token": "Ogun",
+    "frequency": 11,
+    "pos": "VERB",
+    "meaning": "開く",
+    "meaning_kana": "ヒラク",
+    "pattern_guess": "A",
+    "katakana": "オウガン",
+    "source_lines": [
+      "1:9",
+      "2:8",
+      "4:23",
+      "5:2",
+      "11:27"
+    ]
+  },
+  {
+    "token": "kee'on",
+    "frequency": 11,
+    "pos": "VERB",
+    "meaning": "来る",
+    "meaning_kana": "クル",
+    "pattern_guess": "A",
+    "katakana": "キーオン",
+    "source_lines": [
+      "1:10",
+      "2:9",
+      "3:12",
+      "4:1",
+      "5:3"
+    ]
+  },
+  {
+    "token": "itsWA",
+    "frequency": 11,
+    "pos": "TIME",
+    "meaning": "これにて",
+    "meaning_kana": "コレニテ",
+    "pattern_guess": "A",
+    "katakana": "イツワ",
+    "source_lines": [
+      "1:17",
+      "2:16",
+      "3:19",
+      "4:2",
+      "5:4"
+    ]
+  },
+  {
+    "token": "dEs·lee",
+    "frequency": 11,
+    "pos": "OTHER",
+    "meaning": "そシで信仰心はミナにゼツ望をもたらス",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "デスレエ",
+    "source_lines": [
+      "3:10",
+      "3:10",
+      "6:2",
+      "6:9",
+      "8:32"
+    ]
+  },
+  {
+    "token": "Hir",
+    "frequency": 11,
+    "pos": "OTHER",
+    "meaning": "だけど鳥にこの手は届かないんだ",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "ヒル",
+    "source_lines": [
+      "5:9",
+      "5:19",
+      "6:17",
+      "14:10",
+      "21:13"
+    ]
+  },
+  {
+    "token": "PaiTum",
+    "frequency": 11,
+    "pos": "OTHER",
+    "meaning": "痛みは誰もが不可侵な真実の罪",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "パイトゥム",
+    "source_lines": [
+      "6:9",
+      "9:44",
+      "10:38",
+      "11:4",
+      "12:4"
+    ]
+  },
+  {
+    "token": "Seel",
+    "frequency": 11,
+    "pos": "VERB",
+    "meaning": "見る",
+    "meaning_kana": "ミル",
+    "pattern_guess": "A",
+    "katakana": "シール",
+    "source_lines": [
+      "14:10",
+      "21:2",
+      "21:12",
+      "22:2",
+      "22:12"
+    ]
+  },
+  {
+    "token": "Toim",
+    "frequency": 10,
+    "pos": "NOUN",
+    "meaning": "時",
+    "meaning_kana": "トキ",
+    "pattern_guess": "A",
+    "katakana": "トイム",
+    "source_lines": [
+      "1:16",
+      "2:15",
+      "3:13",
+      "3:18",
+      "4:4"
+    ]
+  },
+  {
+    "token": "Kel·tion",
+    "frequency": 10,
+    "pos": "OTHER",
+    "meaning": "囚人は処刑である。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ケルション",
+    "source_lines": [
+      "1:24",
+      "1:24",
+      "3:7",
+      "3:7",
+      "11:4"
+    ]
+  },
+  {
+    "token": "madRazy",
+    "frequency": 10,
+    "pos": "ADJECTIVE",
+    "meaning": "狂った",
+    "meaning_kana": "クルッタ",
+    "pattern_guess": "A",
+    "katakana": "マッドレイジー",
+    "source_lines": [
+      "3:11",
+      "4:16",
+      "4:18",
+      "4:20",
+      "6:12"
+    ]
+  },
+  {
+    "token": "Eda",
+    "frequency": 10,
+    "pos": "OTHER",
+    "meaning": "そこ",
+    "meaning_kana": "ソコ",
+    "pattern_guess": "A",
+    "katakana": "エダ",
+    "source_lines": [
+      "11:7",
+      "11:7",
+      "11:7",
+      "11:7",
+      "12:7"
+    ]
+  },
+  {
+    "token": "tSuTelL",
+    "frequency": 10,
+    "pos": "OTHER",
+    "meaning": "ただ伝える、伝える、伝えるだけ",
+    "meaning_kana": "",
+    "pattern_guess": "B",
+    "katakana": "ツテル",
+    "source_lines": [
+      "13:3",
+      "23:11",
+      "23:11",
+      "23:11",
+      "24:11"
+    ]
+  },
+  {
+    "token": "DaRk",
+    "frequency": 9,
+    "pos": "OTHER",
+    "meaning": "瞬に闇に消えた",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ダルク",
+    "source_lines": [
+      "1:3",
+      "2:2",
+      "18:5",
+      "18:13",
+      "19:5"
+    ]
+  },
+  {
+    "token": "rai",
+    "frequency": 9,
+    "pos": "OTHER",
+    "meaning": "瞬に闇に消えた",
+    "meaning_kana": "",
+    "pattern_guess": "B",
+    "katakana": "ライ",
+    "source_lines": [
+      "1:3",
+      "2:2",
+      "18:5",
+      "18:13",
+      "19:5"
+    ]
+  },
+  {
+    "token": "zanfession",
+    "frequency": 9,
+    "pos": "NOUN",
+    "meaning": "懺悔",
+    "meaning_kana": "ザンゲ",
+    "pattern_guess": "A",
+    "katakana": "ザンフェッション",
+    "source_lines": [
+      "2:15",
+      "3:18",
+      "4:6",
+      "7:24",
+      "8:24"
+    ]
+  },
+  {
+    "token": "Tei-Tance",
+    "frequency": 9,
+    "pos": "OTHER",
+    "meaning": "聞くのを待ち焦がれる矛盾、嘘、抵抗",
+    "meaning_kana": "",
+    "pattern_guess": "C",
+    "katakana": "テイタンス",
+    "source_lines": [
+      "5:11",
+      "18:22",
+      "19:22",
+      "19:31",
+      "20:14"
+    ]
+  },
+  {
+    "token": "WiD",
+    "frequency": 9,
+    "pos": "NOUN",
+    "meaning": "世界",
+    "meaning_kana": "セカイ",
+    "pattern_guess": "A",
+    "katakana": "ウィド",
+    "source_lines": [
+      "6:8",
+      "6:12",
+      "14:12",
+      "15:1",
+      "18:1"
+    ]
+  },
+  {
+    "token": "muRdon",
+    "frequency": 9,
+    "pos": "NOUN",
+    "meaning": "殺人鬼",
+    "meaning_kana": "サツジンキ",
+    "pattern_guess": "A",
+    "katakana": "マードン",
+    "source_lines": [
+      "7:22",
+      "8:22",
+      "9:15",
+      "10:9",
+      "11:9"
+    ]
+  },
+  {
+    "token": "DiGhT",
+    "frequency": 9,
+    "pos": "OTHER",
+    "meaning": "仲間はいずれ失うんだろうね",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ディグト",
+    "source_lines": [
+      "8:31",
+      "9:24",
+      "10:18",
+      "21:14",
+      "22:14"
+    ]
+  },
+  {
+    "token": "FayO",
+    "frequency": 9,
+    "pos": "NOUN",
+    "meaning": "顔",
+    "meaning_kana": "カオ",
+    "pattern_guess": "B",
+    "katakana": "ファヨ",
+    "source_lines": [
+      "8:36",
+      "9:29",
+      "10:23",
+      "13:6",
+      "21:21"
+    ]
+  },
+  {
+    "token": "nAng",
+    "frequency": 9,
+    "pos": "OTHER",
+    "meaning": "長い沈黙に汗と不安",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ナング",
+    "source_lines": [
+      "9:44",
+      "10:38",
+      "14:17",
+      "21:1",
+      "22:1"
+    ]
+  },
+  {
+    "token": "Memoid",
+    "frequency": 9,
+    "pos": "NOUN",
+    "meaning": "記憶",
+    "meaning_kana": "キオク",
+    "pattern_guess": "A",
+    "katakana": "メモイド",
+    "source_lines": [
+      "11:4",
+      "12:4",
+      "14:15",
+      "20:34",
+      "23:23"
+    ]
+  },
+  {
+    "token": "inKel",
+    "frequency": 9,
+    "pos": "OTHER",
+    "meaning": "果実が実り、疑いが増えるにつけ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "インクエル",
+    "source_lines": [
+      "11:10",
+      "12:10",
+      "21:11",
+      "22:11",
+      "23:2"
+    ]
+  },
+  {
+    "token": "hAte",
+    "frequency": 9,
+    "pos": "NOUN",
+    "meaning": "手",
+    "meaning_kana": "テ",
+    "pattern_guess": "A",
+    "katakana": "ハテ",
+    "source_lines": [
+      "13:6",
+      "14:5",
+      "14:7",
+      "21:13",
+      "22:13"
+    ]
+  },
+  {
+    "token": "So-meRRy",
+    "frequency": 9,
+    "pos": "OTHER",
+    "meaning": "ごめんなさい",
+    "meaning_kana": "ゴメンナサイ",
+    "pattern_guess": "A",
+    "katakana": "ソメルルイ",
+    "source_lines": [
+      "14:14",
+      "15:2",
+      "18:10",
+      "19:10",
+      "19:32"
+    ]
+  },
+  {
+    "token": "ReDogh'",
+    "frequency": 9,
+    "pos": "OTHER",
+    "meaning": "だけど鳥にこの手は届かないんだ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "レドグ",
+    "source_lines": [
+      "18:12",
+      "19:12",
+      "20:4",
+      "21:13",
+      "22:13"
+    ]
+  },
+  {
+    "token": "hA-k",
+    "frequency": 9,
+    "pos": "OTHER",
+    "meaning": "話はこじれ",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "ハーク",
+    "source_lines": [
+      "23:14",
+      "23:28",
+      "24:14",
+      "24:28",
+      "25:5"
+    ]
+  },
+  {
+    "token": "blasTOac",
+    "frequency": 8,
+    "pos": "OTHER",
+    "meaning": "そして命の冒涜。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ブラストオアク",
+    "source_lines": [
+      "1:5",
+      "2:4",
+      "4:7",
+      "18:15",
+      "20:7"
+    ]
+  },
+  {
+    "token": "Coa",
+    "frequency": 8,
+    "pos": "OTHER",
+    "meaning": "断罪の法廷",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "コア",
+    "source_lines": [
+      "1:6",
+      "2:5",
+      "18:23",
+      "18:24",
+      "19:23"
+    ]
+  },
+  {
+    "token": "Tain",
+    "frequency": 8,
+    "pos": "OTHER",
+    "meaning": "断罪の法廷",
+    "meaning_kana": "",
+    "pattern_guess": "B",
+    "katakana": "テイン",
+    "source_lines": [
+      "1:6",
+      "2:5",
+      "18:23",
+      "18:24",
+      "19:23"
+    ]
+  },
+  {
+    "token": "Guil-me",
+    "frequency": 8,
+    "pos": "NOUN",
+    "meaning": "罪",
+    "meaning_kana": "ツミ",
+    "pattern_guess": "A",
+    "katakana": "ギルミー",
+    "source_lines": [
+      "1:7",
+      "2:6",
+      "18:17",
+      "19:17",
+      "20:9"
+    ]
+  },
+  {
+    "token": "CraeyTA'",
+    "frequency": 8,
+    "pos": "OTHER",
+    "meaning": "命は最期の瞬間に壊れて消えたのだ。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "クラエイタ",
+    "source_lines": [
+      "1:14",
+      "1:19",
+      "2:13",
+      "2:18",
+      "3:2"
+    ]
+  },
+  {
+    "token": "PyusenS'e",
+    "frequency": 8,
+    "pos": "OTHER",
+    "meaning": "無垢な果実は枝を離れた。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ピュセンスエ",
+    "source_lines": [
+      "1:21",
+      "2:20",
+      "2:24",
+      "3:4",
+      "3:23"
+    ]
+  },
+  {
+    "token": "RacDA-m",
+    "frequency": 8,
+    "pos": "OTHER",
+    "meaning": "無垢な果実は枝を離れた。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ラクダム",
+    "source_lines": [
+      "1:21",
+      "2:20",
+      "2:24",
+      "3:4",
+      "3:23"
+    ]
+  },
+  {
+    "token": "Aw",
+    "frequency": 8,
+    "pos": "OTHER",
+    "meaning": "探し出すんだ",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "アウ",
+    "source_lines": [
+      "6:4",
+      "18:18",
+      "19:18",
+      "20:10",
+      "28:3"
+    ]
+  },
+  {
+    "token": "LiE",
+    "frequency": 8,
+    "pos": "OTHER",
+    "meaning": "法の悪魔が愛を笑ってる",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "リエ",
+    "source_lines": [
+      "11:16",
+      "11:17",
+      "12:16",
+      "12:17",
+      "15:12"
+    ]
+  },
+  {
+    "token": "Ca-nay",
+    "frequency": 8,
+    "pos": "MODAL",
+    "meaning": "できない",
+    "meaning_kana": "デキナイ",
+    "pattern_guess": "A",
+    "katakana": "カネイ",
+    "source_lines": [
+      "13:4",
+      "18:17",
+      "19:17",
+      "20:9",
+      "21:2"
+    ]
+  },
+  {
+    "token": "itsver",
+    "frequency": 8,
+    "pos": "TIME",
+    "meaning": "いつか",
+    "meaning_kana": "イツカ",
+    "pattern_guess": "A",
+    "katakana": "イツバー",
+    "source_lines": [
+      "18:1",
+      "18:21",
+      "19:1",
+      "19:21",
+      "19:37"
+    ]
+  },
+  {
+    "token": "SaymAl",
+    "frequency": 8,
+    "pos": "OTHER",
+    "meaning": "いつか世界が正常を取り戻すことができたら",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "セイマル",
+    "source_lines": [
+      "18:1",
+      "19:1",
+      "20:33",
+      "21:24",
+      "22:24"
+    ]
+  },
+  {
+    "token": "Mof",
+    "frequency": 8,
+    "pos": "OTHER",
+    "meaning": "いつか世界が正常を取り戻すことができたら",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "モフ",
+    "source_lines": [
+      "18:1",
+      "19:1",
+      "19:36",
+      "20:28",
+      "20:33"
+    ]
+  },
+  {
+    "token": "ULieSo",
+    "frequency": 8,
+    "pos": "OTHER",
+    "meaning": "聞くのを待ち焦がれる矛盾、嘘、抵抗",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ウリエソ",
+    "source_lines": [
+      "18:22",
+      "19:22",
+      "20:14",
+      "21:2",
+      "22:2"
+    ]
+  },
+  {
+    "token": "KeyGa",
+    "frequency": 8,
+    "pos": "OTHER",
+    "meaning": "死へのカギが見え隠れしている",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ケイガ",
+    "source_lines": [
+      "21:12",
+      "21:20",
+      "22:12",
+      "22:20",
+      "23:3"
+    ]
+  },
+  {
+    "token": "fAnoSy",
+    "frequency": 8,
+    "pos": "ADJECTIVE",
+    "meaning": "楽しい",
+    "meaning_kana": "タノシイ",
+    "pattern_guess": "A",
+    "katakana": "ファノシー",
+    "source_lines": [
+      "21:22",
+      "22:22",
+      "27:10",
+      "28:12",
+      "29:19"
+    ]
+  },
+  {
+    "token": "LowHEll",
+    "frequency": 7,
+    "pos": "OTHER",
+    "meaning": "闇の牢獄による裁判だった。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ロウヘル",
+    "source_lines": [
+      "1:3",
+      "2:2",
+      "6:2",
+      "11:11",
+      "12:11"
+    ]
+  },
+  {
+    "token": "horMELT",
+    "frequency": 7,
+    "pos": "OTHER",
+    "meaning": "法槌が鳴る",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ホルメルト",
+    "source_lines": [
+      "1:4",
+      "2:3",
+      "18:26",
+      "19:26",
+      "20:18"
+    ]
+  },
+  {
+    "token": "GE-mon",
+    "frequency": 7,
+    "pos": "OTHER",
+    "meaning": "あの地獄の扉は開いている。",
+    "meaning_kana": "",
+    "pattern_guess": "B",
+    "katakana": "ゲモン",
+    "source_lines": [
+      "1:9",
+      "2:8",
+      "4:2",
+      "4:23",
+      "5:2"
+    ]
+  },
+  {
+    "token": "Jus-tom",
+    "frequency": 7,
+    "pos": "OTHER",
+    "meaning": "命は最期の瞬間に壊れて消えたのだ。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ジュストム",
+    "source_lines": [
+      "1:19",
+      "2:18",
+      "3:2",
+      "3:21",
+      "4:9"
+    ]
+  },
+  {
+    "token": "Za-**rk",
+    "frequency": 7,
+    "pos": "OTHER",
+    "meaning": "×××",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ザルク",
+    "source_lines": [
+      "2:21",
+      "2:28",
+      "3:24",
+      "11:4",
+      "12:4"
+    ]
+  },
+  {
+    "token": "sinruits",
+    "frequency": 7,
+    "pos": "NOUN",
+    "meaning": "真実",
+    "meaning_kana": "シンジツ",
+    "pattern_guess": "A",
+    "katakana": "シンルーツ",
+    "source_lines": [
+      "4:2",
+      "5:4",
+      "18:17",
+      "19:17",
+      "20:9"
+    ]
+  },
+  {
+    "token": "Ow",
+    "frequency": 7,
+    "pos": "OTHER",
+    "meaning": "ああ、あなたはお終いだ",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "オウ",
+    "source_lines": [
+      "4:11",
+      "5:9",
+      "6:2",
+      "6:13",
+      "17:9"
+    ]
+  },
+  {
+    "token": "RuGle",
+    "frequency": 7,
+    "pos": "OTHER",
+    "meaning": "聞くのを待ち焦がれる矛盾、嘘、抵抗",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ルグレ",
+    "source_lines": [
+      "6:2",
+      "6:17",
+      "9:41",
+      "10:35",
+      "18:22"
+    ]
+  },
+  {
+    "token": "Meh·BeRac",
+    "frequency": 7,
+    "pos": "OTHER",
+    "meaning": "なガイ痛ミがモたらセいる",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "メベラク",
+    "source_lines": [
+      "6:14",
+      "9:43",
+      "9:43",
+      "10:37",
+      "10:37"
+    ]
+  },
+  {
+    "token": "Acomell",
+    "frequency": 7,
+    "pos": "OTHER",
+    "meaning": "だれモが追イ詰めタ瞬カんんん",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "アクオメル",
+    "source_lines": [
+      "7:25",
+      "8:25",
+      "9:18",
+      "10:12",
+      "21:22"
+    ]
+  },
+  {
+    "token": "mayCs",
+    "frequency": 7,
+    "pos": "OTHER",
+    "meaning": "ノロいガ激シくめい動ふる",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "メイクス",
+    "source_lines": [
+      "8:29",
+      "9:22",
+      "10:16",
+      "23:21",
+      "24:21"
+    ]
+  },
+  {
+    "token": "tEna",
+    "frequency": 7,
+    "pos": "VERB",
+    "meaning": "泣く",
+    "meaning_kana": "ナク",
+    "pattern_guess": "A",
+    "katakana": "テナ",
+    "source_lines": [
+      "11:15",
+      "12:15",
+      "26:11",
+      "26:18",
+      "27:1"
+    ]
+  },
+  {
+    "token": "ChiDd",
+    "frequency": 7,
+    "pos": "NOUN",
+    "meaning": "血",
+    "meaning_kana": "チ",
+    "pattern_guess": "A",
+    "katakana": "チド",
+    "source_lines": [
+      "11:24",
+      "12:24",
+      "26:3",
+      "28:4",
+      "30:8"
+    ]
+  },
+  {
+    "token": "gE-ddoS",
+    "frequency": 7,
+    "pos": "OTHER",
+    "meaning": "いつか世界が正常を取り戻すことができたら",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ゲッドオス",
+    "source_lines": [
+      "14:12",
+      "15:1",
+      "18:1",
+      "19:1",
+      "19:37"
+    ]
+  },
+  {
+    "token": "LAikIll",
+    "frequency": 7,
+    "pos": "VERB",
+    "meaning": "生きる",
+    "meaning_kana": "イキル",
+    "pattern_guess": "A",
+    "katakana": "ライキル",
+    "source_lines": [
+      "18:3",
+      "18:14",
+      "19:3",
+      "19:14",
+      "19:39"
+    ]
+  },
+  {
+    "token": "Doubg",
+    "frequency": 7,
+    "pos": "OTHER",
+    "meaning": "果実が実り、疑いが増えるにつけ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ドウブグ",
+    "source_lines": [
+      "21:11",
+      "22:11",
+      "23:2",
+      "24:2",
+      "24:33"
+    ]
+  },
+  {
+    "token": "ComChiYoi",
+    "frequency": 7,
+    "pos": "ADJECTIVE",
+    "meaning": "心地よい",
+    "meaning_kana": "ココチヨイ",
+    "pattern_guess": "A",
+    "katakana": "コムチヨイ",
+    "source_lines": [
+      "21:22",
+      "22:22",
+      "24:49",
+      "25:40",
+      "27:19"
+    ]
+  },
+  {
+    "token": "Tei·Tance",
+    "frequency": 7,
+    "pos": "OTHER",
+    "meaning": "無駄な抵抗",
+    "meaning_kana": "",
+    "pattern_guess": "C",
+    "katakana": "テイタンクエ",
+    "source_lines": [
+      "30:1",
+      "30:2",
+      "30:3",
+      "30:4",
+      "30:5"
+    ]
+  },
+  {
+    "token": "SaiVI",
+    "frequency": 6,
+    "pos": "OTHER",
+    "meaning": "少女は災である。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "サイヴィ",
+    "source_lines": [
+      "1:25",
+      "1:25",
+      "3:8",
+      "3:8",
+      "26:19"
+    ]
+  },
+  {
+    "token": "FooKah",
+    "frequency": 6,
+    "pos": "ADJECTIVE",
+    "meaning": "愚か",
+    "meaning_kana": "オロカ",
+    "pattern_guess": "A",
+    "katakana": "フーカー",
+    "source_lines": [
+      "5:13",
+      "5:15",
+      "8:34",
+      "9:27",
+      "10:21"
+    ]
+  },
+  {
+    "token": "Lai",
+    "frequency": 6,
+    "pos": "OTHER",
+    "meaning": "既にあなたは死んだようなもの",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "ライ",
+    "source_lines": [
+      "5:18",
+      "6:12",
+      "6:17",
+      "6:18",
+      "14:10"
+    ]
+  },
+  {
+    "token": "Nei",
+    "frequency": 6,
+    "pos": "OTHER",
+    "meaning": "既にあなたは死んだようなもの",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "ネイ",
+    "source_lines": [
+      "5:18",
+      "6:12",
+      "6:17",
+      "6:18",
+      "14:10"
+    ]
+  },
+  {
+    "token": "liit·JIO",
+    "frequency": 6,
+    "pos": "OTHER",
+    "meaning": "アのショウ女ハ管理シャのモノ",
+    "meaning_kana": "",
+    "pattern_guess": "B",
+    "katakana": "リイトジオ",
+    "source_lines": [
+      "8:30",
+      "8:34",
+      "9:23",
+      "9:27",
+      "10:17"
+    ]
+  },
+  {
+    "token": "MoliNg",
+    "frequency": 6,
+    "pos": "OTHER",
+    "meaning": "そシで信仰心はミナにゼツ望をもたらス",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "モリング",
+    "source_lines": [
+      "8:32",
+      "8:34",
+      "9:25",
+      "9:27",
+      "10:19"
+    ]
+  },
+  {
+    "token": "DowGuil",
+    "frequency": 6,
+    "pos": "OTHER",
+    "meaning": "すグ互イに疑ワくをモたらス悪かナざジョたチが",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ドウグイル",
+    "source_lines": [
+      "8:34",
+      "9:27",
+      "10:21",
+      "23:12",
+      "24:12"
+    ]
+  },
+  {
+    "token": "ObTell",
+    "frequency": 6,
+    "pos": "PRONOUN",
+    "meaning": "あの人",
+    "meaning_kana": "アノヒト",
+    "pattern_guess": "A",
+    "katakana": "オブテル",
+    "source_lines": [
+      "8:38",
+      "8:40",
+      "9:31",
+      "9:33",
+      "10:25"
+    ]
+  },
+  {
+    "token": "tEnEky",
+    "frequency": 6,
+    "pos": "OTHER",
+    "meaning": "わたし、アなた、アのひと、誰",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "テネクイ",
+    "source_lines": [
+      "8:39",
+      "8:41",
+      "9:32",
+      "9:34",
+      "10:26"
+    ]
+  },
+  {
+    "token": "Zelln",
+    "frequency": 6,
+    "pos": "OTHER",
+    "meaning": "テき",
+    "meaning_kana": "テキ",
+    "pattern_guess": "A",
+    "katakana": "ゼルン",
+    "source_lines": [
+      "8:40",
+      "9:33",
+      "10:25",
+      "10:27",
+      "21:26"
+    ]
+  },
+  {
+    "token": "rEcanRey",
+    "frequency": 6,
+    "pos": "OTHER",
+    "meaning": "すごく聞ケいが拗レつツあル",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "レクアンレイ",
+    "source_lines": [
+      "11:1",
+      "11:23",
+      "12:1",
+      "12:23",
+      "26:12"
+    ]
+  },
+  {
+    "token": "son'",
+    "frequency": 6,
+    "pos": "OTHER",
+    "meaning": "干の汗をかき",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "ソン",
+    "source_lines": [
+      "11:15",
+      "12:15",
+      "14:17",
+      "23:15",
+      "24:15"
+    ]
+  },
+  {
+    "token": "aZaGara",
+    "frequency": 6,
+    "pos": "OTHER",
+    "meaning": "千ネん、泣きながらまつだケ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "アザガラ",
+    "source_lines": [
+      "11:15",
+      "12:15",
+      "14:6",
+      "14:8",
+      "29:4"
+    ]
+  },
+  {
+    "token": "ha",
+    "frequency": 6,
+    "pos": "OTHER",
+    "meaning": "ハハ、ハハハ",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "ハ",
+    "source_lines": [
+      "11:18",
+      "11:18",
+      "11:18",
+      "12:18",
+      "12:18"
+    ]
+  },
+  {
+    "token": "forYulvu",
+    "frequency": 6,
+    "pos": "OTHER",
+    "meaning": "ここでは命を置涜する存在は許されない",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "フォリュルヴ",
+    "source_lines": [
+      "11:21",
+      "12:21",
+      "18:15",
+      "19:15",
+      "20:7"
+    ]
+  },
+  {
+    "token": "Co-Jundic",
+    "frequency": 6,
+    "pos": "OTHER",
+    "meaning": "聞くのを待ち焦がれる矛盾、嘘、抵抗",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "クオジュンドイク",
+    "source_lines": [
+      "13:10",
+      "18:22",
+      "19:22",
+      "20:14",
+      "21:10"
+    ]
+  },
+  {
+    "token": "AyAmis",
+    "frequency": 6,
+    "pos": "NOUN",
+    "meaning": "過ち",
+    "meaning_kana": "アヤマチ",
+    "pattern_guess": "A",
+    "katakana": "アヤミス",
+    "source_lines": [
+      "13:10",
+      "15:21",
+      "21:4",
+      "22:4",
+      "23:9"
+    ]
+  },
+  {
+    "token": "muR",
+    "frequency": 6,
+    "pos": "OTHER",
+    "meaning": "そんな酷い方法で殺すなんて",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "ムル",
+    "source_lines": [
+      "13:11",
+      "21:17",
+      "22:17",
+      "28:19",
+      "29:11"
+    ]
+  },
+  {
+    "token": "meKaMo",
+    "frequency": 6,
+    "pos": "MODAL",
+    "meaning": "かもしれない",
+    "meaning_kana": "カモシレナイ",
+    "pattern_guess": "A",
+    "katakana": "メカモ",
+    "source_lines": [
+      "14:11",
+      "21:19",
+      "22:19",
+      "23:12",
+      "24:12"
+    ]
+  },
+  {
+    "token": "May-Ring",
+    "frequency": 6,
+    "pos": "OTHER",
+    "meaning": "法槌が鳴る",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "マイリング",
+    "source_lines": [
+      "15:5",
+      "15:19",
+      "16:3",
+      "18:26",
+      "19:26"
+    ]
+  },
+  {
+    "token": "Taven",
+    "frequency": 6,
+    "pos": "NOUN",
+    "meaning": "天国",
+    "meaning_kana": "テンゴク",
+    "pattern_guess": "A",
+    "katakana": "テイヴン",
+    "source_lines": [
+      "15:15",
+      "16:13",
+      "17:10",
+      "17:15",
+      "19:27"
+    ]
+  },
+  {
+    "token": "namuN'a",
+    "frequency": 6,
+    "pos": "OTHER",
+    "meaning": "流離の者たちが枯れることなく共鳴し求む。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ナムナ",
+    "source_lines": [
+      "16:8",
+      "16:8",
+      "16:20",
+      "16:20",
+      "17:4"
+    ]
+  },
+  {
+    "token": "Nill",
+    "frequency": 6,
+    "pos": "OTHER",
+    "meaning": "流離の者たちが枯れることなく共鳴し求む。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ニル",
+    "source_lines": [
+      "16:8",
+      "16:8",
+      "16:20",
+      "16:20",
+      "17:4"
+    ]
+  },
+  {
+    "token": "Sen-Choose",
+    "frequency": 6,
+    "pos": "NOUN",
+    "meaning": "選択肢",
+    "meaning_kana": "センタクシ",
+    "pattern_guess": "A",
+    "katakana": "センチューズ",
+    "source_lines": [
+      "18:19",
+      "19:19",
+      "19:36",
+      "20:11",
+      "20:28"
+    ]
+  },
+  {
+    "token": "anxAn",
+    "frequency": 6,
+    "pos": "OTHER",
+    "meaning": "長い沈黙に汗と不安",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "アンクスアン",
+    "source_lines": [
+      "21:1",
+      "22:1",
+      "24:51",
+      "25:42",
+      "26:17"
+    ]
+  },
+  {
+    "token": "mitAfiL",
+    "frequency": 6,
+    "pos": "OTHER",
+    "meaning": "果実が実り、疑いが増えるにつけ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ミタフィル",
+    "source_lines": [
+      "21:11",
+      "22:11",
+      "23:2",
+      "24:2",
+      "24:33"
+    ]
+  },
+  {
+    "token": "UshiLse",
+    "frequency": 6,
+    "pos": "OTHER",
+    "meaning": "仲間はいずれ失うんだろうね",
+    "meaning_kana": "",
+    "pattern_guess": "B",
+    "katakana": "ウシルセ",
+    "source_lines": [
+      "21:14",
+      "22:14",
+      "23:5",
+      "24:5",
+      "24:36"
+    ]
+  },
+  {
+    "token": "Ya-Rame",
+    "frequency": 6,
+    "pos": "OTHER",
+    "meaning": "焼ける痛み",
+    "meaning_kana": "",
+    "pattern_guess": "B",
+    "katakana": "ヤラメ",
+    "source_lines": [
+      "28:2",
+      "28:3",
+      "28:4",
+      "30:6",
+      "30:7"
+    ]
+  },
+  {
+    "token": "shi·des",
+    "frequency": 5,
+    "pos": "NOUN",
+    "meaning": "死",
+    "meaning_kana": "シ",
+    "pattern_guess": "C",
+    "katakana": "シデス",
+    "source_lines": [
+      "1:1",
+      "6:15",
+      "6:15",
+      "6:15",
+      "6:15"
+    ]
+  },
+  {
+    "token": "sent-ky",
+    "frequency": 5,
+    "pos": "NOUN",
+    "meaning": "審判",
+    "meaning_kana": "シンパン",
+    "pattern_guess": "A",
+    "katakana": "セントキー",
+    "source_lines": [
+      "1:3",
+      "2:2",
+      "3:10",
+      "21:5",
+      "22:5"
+    ]
+  },
+  {
+    "token": "to-Bi",
+    "frequency": 5,
+    "pos": "OTHER",
+    "meaning": "お前はなんと最悪な法の悪魔か。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "トビ",
+    "source_lines": [
+      "1:22",
+      "2:25",
+      "2:28",
+      "3:5",
+      "5:19"
+    ]
+  },
+  {
+    "token": "merc·lee",
+    "frequency": 5,
+    "pos": "OTHER",
+    "meaning": "慈悲と、そして魔女と",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "マーシーリー",
+    "source_lines": [
+      "1:26",
+      "3:9",
+      "4:17",
+      "4:19",
+      "4:21"
+    ]
+  },
+  {
+    "token": "namuNa",
+    "frequency": 5,
+    "pos": "OTHER",
+    "meaning": "あぁ、あの無残に焼ける臭い",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ナムナ",
+    "source_lines": [
+      "4:9",
+      "28:3",
+      "28:4",
+      "30:7",
+      "30:7"
+    ]
+  },
+  {
+    "token": "SuZai",
+    "frequency": 5,
+    "pos": "OTHER",
+    "meaning": "あぁ、あの無残に焼ける臭い",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "スザイ",
+    "source_lines": [
+      "6:5",
+      "28:3",
+      "28:4",
+      "30:7",
+      "30:8"
+    ]
+  },
+  {
+    "token": "Za·**rk",
+    "frequency": 5,
+    "pos": "OTHER",
+    "meaning": "×××",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ザルク",
+    "source_lines": [
+      "6:19",
+      "7:23",
+      "8:23",
+      "9:16",
+      "10:10"
+    ]
+  },
+  {
+    "token": "kAn·deN",
+    "frequency": 5,
+    "pos": "OTHER",
+    "meaning": "アのショウ女ハ管理シャのモノ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "カンドエン",
+    "source_lines": [
+      "8:30",
+      "9:23",
+      "9:43",
+      "10:17",
+      "10:37"
+    ]
+  },
+  {
+    "token": "iTohRable",
+    "frequency": 5,
+    "pos": "OTHER",
+    "meaning": "愛フレいわ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "イトラブレ",
+    "source_lines": [
+      "8:35",
+      "9:28",
+      "10:22",
+      "26:1",
+      "29:12"
+    ]
+  },
+  {
+    "token": "MokpOSe",
+    "frequency": 5,
+    "pos": "OTHER",
+    "meaning": "もクてきだから",
+    "meaning_kana": "モクテキダカラ",
+    "pattern_guess": "A",
+    "katakana": "モクポセ",
+    "source_lines": [
+      "11:2",
+      "11:31",
+      "12:2",
+      "12:28",
+      "12:31"
+    ]
+  },
+  {
+    "token": "wAretAi",
+    "frequency": 5,
+    "pos": "OTHER",
+    "meaning": "聞くのを待ち焦がれる矛盾、嘘、抵抗",
+    "meaning_kana": "",
+    "pattern_guess": "B",
+    "katakana": "ワレタイ",
+    "source_lines": [
+      "11:15",
+      "12:15",
+      "18:22",
+      "19:22",
+      "20:14"
+    ]
+  },
+  {
+    "token": "GoMi",
+    "frequency": 5,
+    "pos": "OTHER",
+    "meaning": "イ大な力みを求メテ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ゴミ",
+    "source_lines": [
+      "11:22",
+      "11:25",
+      "12:22",
+      "12:25",
+      "14:9"
+    ]
+  },
+  {
+    "token": "eXi'",
+    "frequency": 5,
+    "pos": "OTHER",
+    "meaning": "ここでは命を置涜する存在は許されない",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "エクスイ",
+    "source_lines": [
+      "13:1",
+      "13:2",
+      "13:10",
+      "19:15",
+      "20:7"
+    ]
+  },
+  {
+    "token": "HoEll",
+    "frequency": 5,
+    "pos": "OTHER",
+    "meaning": "だから不安を抱える人は証拠を必ず残す",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ホエル",
+    "source_lines": [
+      "13:2",
+      "24:51",
+      "25:42",
+      "27:3",
+      "29:3"
+    ]
+  },
+  {
+    "token": "LaVl",
+    "frequency": 5,
+    "pos": "OTHER",
+    "meaning": "法の悪魔が愛を笑ってる",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ラヴル",
+    "source_lines": [
+      "13:5",
+      "22:31",
+      "23:29",
+      "24:29",
+      "25:20"
+    ]
+  },
+  {
+    "token": "oRe",
+    "frequency": 5,
+    "pos": "PARTICLE",
+    "meaning": "を",
+    "meaning_kana": "ヲ",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "オレ",
+    "source_lines": [
+      "14:1",
+      "14:2",
+      "14:3",
+      "14:4",
+      "14:6"
+    ]
+  },
+  {
+    "token": "muRm",
+    "frequency": 5,
+    "pos": "NOUN",
+    "meaning": "殺人",
+    "meaning_kana": "サツジン",
+    "pattern_guess": "A",
+    "katakana": "マーム",
+    "source_lines": [
+      "14:13",
+      "21:7",
+      "22:7",
+      "26:10",
+      "26:17"
+    ]
+  },
+  {
+    "token": "fOre",
+    "frequency": 5,
+    "pos": "OTHER",
+    "meaning": "証明は確実だ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "フォレ",
+    "source_lines": [
+      "18:7",
+      "19:7",
+      "21:28",
+      "22:28",
+      "26:12"
+    ]
+  },
+  {
+    "token": "KolSu",
+    "frequency": 5,
+    "pos": "OTHER",
+    "meaning": "声は届かず",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "コルス",
+    "source_lines": [
+      "18:12",
+      "19:12",
+      "20:4",
+      "21:29",
+      "22:29"
+    ]
+  },
+  {
+    "token": "S-oud'",
+    "frequency": 5,
+    "pos": "OTHER",
+    "meaning": "そして私は生き残る",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "スオウド",
+    "source_lines": [
+      "18:14",
+      "19:14",
+      "19:36",
+      "20:6",
+      "20:28"
+    ]
+  },
+  {
+    "token": "SurColl",
+    "frequency": 5,
+    "pos": "OTHER",
+    "meaning": "私は生きるんだ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "スルクオル",
+    "source_lines": [
+      "18:20",
+      "19:20",
+      "20:12",
+      "21:27",
+      "22:27"
+    ]
+  },
+  {
+    "token": "icyWOO",
+    "frequency": 5,
+    "pos": "TIME",
+    "meaning": "今",
+    "meaning_kana": "イマ",
+    "pattern_guess": "A",
+    "katakana": "アイシーウー",
+    "source_lines": [
+      "18:25",
+      "19:25",
+      "20:17",
+      "27:16",
+      "28:9"
+    ]
+  },
+  {
+    "token": "Know-Truw",
+    "frequency": 5,
+    "pos": "OTHER",
+    "meaning": "魔女のなれはてが笑っているのが分かる",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ノウトゥルー",
+    "source_lines": [
+      "19:35",
+      "20:27",
+      "24:49",
+      "25:40",
+      "27:13"
+    ]
+  },
+  {
+    "token": "baErl",
+    "frequency": 5,
+    "pos": "OTHER",
+    "meaning": "ここに仄暗い閃きの光はある",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "バエルル",
+    "source_lines": [
+      "19:36",
+      "20:28",
+      "23:13",
+      "24:13",
+      "25:4"
+    ]
+  },
+  {
+    "token": "sAiMoku",
+    "frequency": 5,
+    "pos": "OTHER",
+    "meaning": "この沈黙は見世物で",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "サイモク",
+    "source_lines": [
+      "21:1",
+      "22:1",
+      "23:25",
+      "24:25",
+      "25:16"
+    ]
+  },
+  {
+    "token": "a-Wet",
+    "frequency": 5,
+    "pos": "OTHER",
+    "meaning": "干の汗をかき",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "アウェト",
+    "source_lines": [
+      "21:1",
+      "22:1",
+      "23:15",
+      "24:15",
+      "25:6"
+    ]
+  },
+  {
+    "token": "NAi",
+    "frequency": 5,
+    "pos": "OTHER",
+    "meaning": "なぜ",
+    "meaning_kana": "ナゼ",
+    "pattern_guess": "A",
+    "katakana": "ナイ",
+    "source_lines": [
+      "21:7",
+      "22:7",
+      "23:18",
+      "24:18",
+      "25:9"
+    ]
+  },
+  {
+    "token": "Ja-Da",
+    "frequency": 5,
+    "pos": "OTHER",
+    "meaning": "でも、ただ矛盾を探し出すしか",
+    "meaning_kana": "",
+    "pattern_guess": "B",
+    "katakana": "ジャダ",
+    "source_lines": [
+      "21:10",
+      "22:10",
+      "23:11",
+      "24:11",
+      "25:2"
+    ]
+  },
+  {
+    "token": "HiLible",
+    "frequency": 5,
+    "pos": "OTHER",
+    "meaning": "全ての元凶は醜い言い争い",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ヒリブレ",
+    "source_lines": [
+      "21:17",
+      "22:17",
+      "23:28",
+      "24:28",
+      "25:19"
+    ]
+  },
+  {
+    "token": "We-Ho",
+    "frequency": 5,
+    "pos": "OTHER",
+    "meaning": "なんでこんなに悲しく、辛い方法なんだろう",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ウェホ",
+    "source_lines": [
+      "21:18",
+      "22:18",
+      "23:18",
+      "24:18",
+      "25:9"
+    ]
+  },
+  {
+    "token": "CalmSey",
+    "frequency": 5,
+    "pos": "OTHER",
+    "meaning": "冷静に",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "カームセイ",
+    "source_lines": [
+      "21:25",
+      "22:25",
+      "23:8",
+      "24:8",
+      "27:2"
+    ]
+  },
+  {
+    "token": "Ligh-Luw",
+    "frequency": 5,
+    "pos": "OTHER",
+    "meaning": "軽々しくこの場を支配している",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "リグルウ",
+    "source_lines": [
+      "23:30",
+      "24:30",
+      "25:21",
+      "28:12",
+      "30:17"
+    ]
+  },
+  {
+    "token": "pris'jeen",
+    "frequency": 4,
+    "pos": "NOUN",
+    "meaning": "囚人",
+    "meaning_kana": "シュウジン",
+    "pattern_guess": "B",
+    "katakana": "プリスジーン",
+    "source_lines": [
+      "1:1",
+      "1:24",
+      "2:31",
+      "3:7"
+    ]
+  },
+  {
+    "token": "to·Bi",
+    "frequency": 4,
+    "pos": "OTHER",
+    "meaning": "那とは極悪で最悪なことなんだ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "トビ",
+    "source_lines": [
+      "6:4",
+      "6:4",
+      "6:8",
+      "6:8"
+    ]
+  },
+  {
+    "token": "Soda",
+    "frequency": 4,
+    "pos": "OTHER",
+    "meaning": "犯人はそれほど狂っていたんだ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ソダ",
+    "source_lines": [
+      "6:10",
+      "18:16",
+      "19:16",
+      "20:8"
+    ]
+  },
+  {
+    "token": "Matill",
+    "frequency": 4,
+    "pos": "OTHER",
+    "meaning": "マだ死ナない殺人キがうるサイ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "マティル",
+    "source_lines": [
+      "7:22",
+      "8:22",
+      "9:15",
+      "10:9"
+    ]
+  },
+  {
+    "token": "nOi·sAi",
+    "frequency": 4,
+    "pos": "OTHER",
+    "meaning": "マだ死ナない殺人キがうるサイ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ノイサイ",
+    "source_lines": [
+      "7:22",
+      "8:22",
+      "9:15",
+      "10:9"
+    ]
+  },
+  {
+    "token": "Jus·tom",
+    "frequency": 4,
+    "pos": "OTHER",
+    "meaning": "だれモが追イ詰めタ瞬カんんん",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ジュストオム",
+    "source_lines": [
+      "7:25",
+      "8:25",
+      "9:18",
+      "10:12"
+    ]
+  },
+  {
+    "token": "NahBeRum",
+    "frequency": 4,
+    "pos": "OTHER",
+    "meaning": "アのショウ女ハ管理シャのモノ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ナベルム",
+    "source_lines": [
+      "8:30",
+      "9:23",
+      "10:17",
+      "22:31"
+    ]
+  },
+  {
+    "token": "cATah·Guy",
+    "frequency": 4,
+    "pos": "OTHER",
+    "meaning": "すグ互イに疑ワくをモたらス悪かナざジョたチが",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "クアタグイ",
+    "source_lines": [
+      "8:34",
+      "9:27",
+      "10:21",
+      "30:27"
+    ]
+  },
+  {
+    "token": "FinecloWt",
+    "frequency": 4,
+    "pos": "OTHER",
+    "meaning": "我がヨスがをサガしダすいうコトヲ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "フィネクロウト",
+    "source_lines": [
+      "11:3",
+      "12:3",
+      "21:10",
+      "22:10"
+    ]
+  },
+  {
+    "token": "AbiRyok",
+    "frequency": 4,
+    "pos": "OTHER",
+    "meaning": "ヒらクのう力",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "アビリョク",
+    "source_lines": [
+      "11:27",
+      "11:30",
+      "12:27",
+      "12:30"
+    ]
+  },
+  {
+    "token": "YowEAk",
+    "frequency": 4,
+    "pos": "OTHER",
+    "meaning": "だから言うのも悲しい言葉を弱く、強く、長く、短く",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ヨウェアク",
+    "source_lines": [
+      "13:1",
+      "23:10",
+      "24:10",
+      "25:1"
+    ]
+  },
+  {
+    "token": "cIIrOi",
+    "frequency": 4,
+    "pos": "OTHER",
+    "meaning": "懺悔は弱者が必要な呪いだ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "クイーロイ",
+    "source_lines": [
+      "13:1",
+      "14:1",
+      "14:2",
+      "14:3"
+    ]
+  },
+  {
+    "token": "tSuYoNg",
+    "frequency": 4,
+    "pos": "OTHER",
+    "meaning": "だから言うのも悲しい言葉を弱く、強く、長く、短く",
+    "meaning_kana": "",
+    "pattern_guess": "B",
+    "katakana": "ツヨング",
+    "source_lines": [
+      "13:2",
+      "23:10",
+      "24:10",
+      "25:1"
+    ]
+  },
+  {
+    "token": "imJune",
+    "frequency": 4,
+    "pos": "OTHER",
+    "meaning": "不純を許してと",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "イムジュネ",
+    "source_lines": [
+      "13:6",
+      "23:20",
+      "24:20",
+      "25:11"
+    ]
+  },
+  {
+    "token": "yO-pare",
+    "frequency": 4,
+    "pos": "OTHER",
+    "meaning": "呪いを手に",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ヨパレ",
+    "source_lines": [
+      "14:1",
+      "14:2",
+      "14:3",
+      "14:4"
+    ]
+  },
+  {
+    "token": "pray·lce",
+    "frequency": 4,
+    "pos": "OTHER",
+    "meaning": "誰かが笑って笑って立ち歩くことをしなくなるまで",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "プライルクエ",
+    "source_lines": [
+      "14:6",
+      "14:8",
+      "15:12",
+      "15:12"
+    ]
+  },
+  {
+    "token": "LiGhrai",
+    "frequency": 4,
+    "pos": "OTHER",
+    "meaning": "ここに仄暗い閃きの光はある",
+    "meaning_kana": "",
+    "pattern_guess": "B",
+    "katakana": "リグライ",
+    "source_lines": [
+      "14:10",
+      "23:13",
+      "24:13",
+      "25:4"
+    ]
+  },
+  {
+    "token": "Owk",
+    "frequency": 4,
+    "pos": "OTHER",
+    "meaning": "地獄か天国か",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "オーク",
+    "source_lines": [
+      "14:11",
+      "19:27",
+      "20:19",
+      "27:17"
+    ]
+  },
+  {
+    "token": "LaiNei",
+    "frequency": 4,
+    "pos": "OTHER",
+    "meaning": "そんな酷い方法で殺すなんて",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ライネイ",
+    "source_lines": [
+      "15:5",
+      "21:17",
+      "22:17",
+      "22:31"
+    ]
+  },
+  {
+    "token": "Evera",
+    "frequency": 4,
+    "pos": "OTHER",
+    "meaning": "誰かが笑って誰かを笑えるようになるまで",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "エヴェラ",
+    "source_lines": [
+      "15:13",
+      "16:9",
+      "16:21",
+      "17:6"
+    ]
+  },
+  {
+    "token": "seE",
+    "frequency": 4,
+    "pos": "OTHER",
+    "meaning": "「r0nil seE tAmaE」",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "セエ",
+    "source_lines": [
+      "15:14",
+      "16:12",
+      "17:8",
+      "17:14"
+    ]
+  },
+  {
+    "token": "atto",
+    "frequency": 4,
+    "pos": "OTHER",
+    "meaning": "憧憬の旅かりで。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "アットオ",
+    "source_lines": [
+      "16:1",
+      "16:13",
+      "17:15",
+      "17:17"
+    ]
+  },
+  {
+    "token": "oRei",
+    "frequency": 4,
+    "pos": "PARTICLE",
+    "meaning": "しなさい",
+    "meaning_kana": "シナサイ",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "オレイ",
+    "source_lines": [
+      "16:4",
+      "29:2",
+      "29:10",
+      "29:26"
+    ]
+  },
+  {
+    "token": "Gil·flee",
+    "frequency": 4,
+    "pos": "OTHER",
+    "meaning": "さながら上着さえあれば追えるのが隠れた。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ギルフレエ",
+    "source_lines": [
+      "16:10",
+      "16:10",
+      "17:12",
+      "17:12"
+    ]
+  },
+  {
+    "token": "aSle",
+    "frequency": 4,
+    "pos": "OTHER",
+    "meaning": "この場の見えない雲の。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "アスレ",
+    "source_lines": [
+      "16:15",
+      "17:9",
+      "17:10",
+      "17:16"
+    ]
+  },
+  {
+    "token": "gu-n",
+    "frequency": 4,
+    "pos": "OTHER",
+    "meaning": "悲しい結末はすぐそこにきている",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "グン",
+    "source_lines": [
+      "18:8",
+      "19:8",
+      "29:1",
+      "32:16"
+    ]
+  },
+  {
+    "token": "En-NOte",
+    "frequency": 4,
+    "pos": "OTHER",
+    "meaning": "魔女のなれはてが笑っているのが分かる",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "エンノテ",
+    "source_lines": [
+      "19:35",
+      "20:27",
+      "21:6",
+      "22:6"
+    ]
+  },
+  {
+    "token": "Sonikah",
+    "frequency": 4,
+    "pos": "OTHER",
+    "meaning": "もし私とあなたに選択肢があれば",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ソニカ",
+    "source_lines": [
+      "19:36",
+      "20:28",
+      "21:29",
+      "22:29"
+    ]
+  },
+  {
+    "token": "showence",
+    "frequency": 4,
+    "pos": "NOUN",
+    "meaning": "証拠",
+    "meaning_kana": "ショウコ",
+    "pattern_guess": "A",
+    "katakana": "ショウエンス",
+    "source_lines": [
+      "21:20",
+      "22:20",
+      "24:51",
+      "25:42"
+    ]
+  },
+  {
+    "token": "wE-MitTa",
+    "frequency": 4,
+    "pos": "OTHER",
+    "meaning": "ちょっと待っの声で瞬間、何かが入ってきた",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ウェミットア",
+    "source_lines": [
+      "21:29",
+      "22:29",
+      "23:1",
+      "24:1"
+    ]
+  },
+  {
+    "token": "Elerden",
+    "frequency": 4,
+    "pos": "OTHER",
+    "meaning": "普間違って死にたくなんかないんだから",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "エレルドエン",
+    "source_lines": [
+      "23:9",
+      "24:9",
+      "24:50",
+      "25:41"
+    ]
+  },
+  {
+    "token": "conf-Soy",
+    "frequency": 4,
+    "pos": "OTHER",
+    "meaning": "全ての元凶は醜い言い争い",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "クオンフソイ",
+    "source_lines": [
+      "23:28",
+      "24:28",
+      "25:19",
+      "26:4"
+    ]
+  },
+  {
+    "token": "WastIget",
+    "frequency": 4,
+    "pos": "OTHER",
+    "meaning": "今金てを忘れて帰りたい",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ワストイゲト",
+    "source_lines": [
+      "24:40",
+      "24:46",
+      "25:31",
+      "25:37"
+    ]
+  },
+  {
+    "token": "riEl",
+    "frequency": 4,
+    "pos": "OTHER",
+    "meaning": "今金てを忘れて帰りたい",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "リエル",
+    "source_lines": [
+      "24:40",
+      "24:46",
+      "25:31",
+      "25:37"
+    ]
+  },
+  {
+    "token": "i·zana-vited",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "私が導かれたのは",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "イザナバイテッド",
+    "source_lines": [
+      "1:2",
+      "2:1",
+      "4:10"
+    ]
+  },
+  {
+    "token": "Sar-gedy",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "法廷は惨劇であった。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "サルゲドイ",
+    "source_lines": [
+      "1:6",
+      "2:5",
+      "4:9"
+    ]
+  },
+  {
+    "token": "mu·Yon",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "あの地獄の扉は開いている。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ムヨン",
+    "source_lines": [
+      "1:9",
+      "2:8",
+      "6:13"
+    ]
+  },
+  {
+    "token": "TainI",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "閉廷だ！",
+    "meaning_kana": "",
+    "pattern_guess": "B",
+    "katakana": "タイニ",
+    "source_lines": [
+      "1:23",
+      "2:26",
+      "3:6"
+    ]
+  },
+  {
+    "token": "Ha",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "ハハ、ハハハ",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "ハ",
+    "source_lines": [
+      "2:22",
+      "11:18",
+      "12:18"
+    ]
+  },
+  {
+    "token": "senty-hungment",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "この裁判は狂っている。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "セントイウングメント",
+    "source_lines": [
+      "3:11",
+      "11:14",
+      "12:14"
+    ]
+  },
+  {
+    "token": "oCcurreLe",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "なぜあなたは殺人を犯したの",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "オカーレル",
+    "source_lines": [
+      "6:1",
+      "21:7",
+      "22:7"
+    ]
+  },
+  {
+    "token": "McMe",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "意味なんてない",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ムクメ",
+    "source_lines": [
+      "6:11",
+      "6:11",
+      "26:6"
+    ]
+  },
+  {
+    "token": "eUrDi",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "ノロいガ激シくめい動ふる",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "エウルドイ",
+    "source_lines": [
+      "8:29",
+      "9:22",
+      "10:16"
+    ]
+  },
+  {
+    "token": "Figeh·Sii",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "ノロいガ激シくめい動ふる",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "フィゲスイー",
+    "source_lines": [
+      "8:29",
+      "9:22",
+      "10:16"
+    ]
+  },
+  {
+    "token": "iIsWA",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "こレで仲間／証明がデきるだロウ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "イースワ",
+    "source_lines": [
+      "8:31",
+      "9:24",
+      "10:18"
+    ]
+  },
+  {
+    "token": "Ca·nan",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "こレで仲間／証明がデきるだロウ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "クアナン",
+    "source_lines": [
+      "8:31",
+      "9:24",
+      "10:18"
+    ]
+  },
+  {
+    "token": "S·ond'",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "こレで仲間／証明がデきるだロウ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ソンド",
+    "source_lines": [
+      "8:31",
+      "9:24",
+      "10:18"
+    ]
+  },
+  {
+    "token": "fAyKoh",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "そシで信仰心はミナにゼツ望をもたらス",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ファイコ",
+    "source_lines": [
+      "8:32",
+      "9:25",
+      "10:19"
+    ]
+  },
+  {
+    "token": "kOhi",
+    "frequency": 3,
+    "pos": "NOUN",
+    "meaning": "心",
+    "meaning_kana": "ココロ",
+    "pattern_guess": "B",
+    "katakana": "コヒ",
+    "source_lines": [
+      "8:32",
+      "9:25",
+      "10:19"
+    ]
+  },
+  {
+    "token": "gu·n",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "すグ互イに疑ワくをモたらス悪かナざジョたチが",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "グン",
+    "source_lines": [
+      "8:34",
+      "9:27",
+      "10:21"
+    ]
+  },
+  {
+    "token": "Trench",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "なカま、トも達ん嬢ヤノしリがしへいスルべきなのヨ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "トレンク",
+    "source_lines": [
+      "9:38",
+      "10:32",
+      "27:18"
+    ]
+  },
+  {
+    "token": "Ukcept",
+    "frequency": 3,
+    "pos": "VERB",
+    "meaning": "受け入れる",
+    "meaning_kana": "ウケイレル",
+    "pattern_guess": "A",
+    "katakana": "ウクセプト",
+    "source_lines": [
+      "9:42",
+      "10:36",
+      "26:3"
+    ]
+  },
+  {
+    "token": "nEYar",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "千ネん、泣きながらまつだケ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ネヤル",
+    "source_lines": [
+      "11:15",
+      "12:15",
+      "14:17"
+    ]
+  },
+  {
+    "token": "neYo",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "わたしニはあノ神がヒツよう",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ネヨ",
+    "source_lines": [
+      "11:25",
+      "12:25",
+      "13:1"
+    ]
+  },
+  {
+    "token": "TadACt",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "そう、正しさを喧伝することこそが絶対だ",
+    "meaning_kana": "",
+    "pattern_guess": "B",
+    "katakana": "タダクト",
+    "source_lines": [
+      "13:3",
+      "13:7",
+      "26:6"
+    ]
+  },
+  {
+    "token": "San-kAtoH",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "冒涜をありがとう",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "サンカト",
+    "source_lines": [
+      "14:14",
+      "28:13",
+      "30:18"
+    ]
+  },
+  {
+    "token": "mY",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "美しさはこの産業を",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "ムイ",
+    "source_lines": [
+      "15:18",
+      "16:2",
+      "17:18"
+    ]
+  },
+  {
+    "token": "of",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "幸福の女が数え切れないほど記憶に鎖いていた。",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "オフ",
+    "source_lines": [
+      "16:3",
+      "16:4",
+      "16:4"
+    ]
+  },
+  {
+    "token": "Firellu",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "証明する手段を尽くしてみます。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "フィレルウ",
+    "source_lines": [
+      "16:9",
+      "16:21",
+      "17:6"
+    ]
+  },
+  {
+    "token": "LlE",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "さながら上着さえあれば追えるのが隠れた。",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "ルエ",
+    "source_lines": [
+      "16:10",
+      "17:7",
+      "17:12"
+    ]
+  },
+  {
+    "token": "yOull",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "[yOull seE tAma-E]",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ヨウル",
+    "source_lines": [
+      "16:12",
+      "17:8",
+      "17:14"
+    ]
+  },
+  {
+    "token": "Gnil·me",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "述べた文化的発掘を続けてもらう可能性を。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "グニルメ",
+    "source_lines": [
+      "16:13",
+      "17:10",
+      "17:15"
+    ]
+  },
+  {
+    "token": "LaYl",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "今また気を取り戻しているものよ！",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ライル",
+    "source_lines": [
+      "16:17",
+      "16:18",
+      "17:2"
+    ]
+  },
+  {
+    "token": "AccUhEarts",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "私は告発する",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "アククウヘアルトス",
+    "source_lines": [
+      "18:11",
+      "19:11",
+      "20:2"
+    ]
+  },
+  {
+    "token": "Su·ReAlly",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "瞬に闇に消えた",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "スレアルイ",
+    "source_lines": [
+      "18:13",
+      "19:13",
+      "20:5"
+    ]
+  },
+  {
+    "token": "FineciuWi",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "探し出すんだ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "フィネクイウウィ",
+    "source_lines": [
+      "18:18",
+      "19:18",
+      "20:10"
+    ]
+  },
+  {
+    "token": "Meh·BeRar",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "いつかの向こうへ逃げることができるはず",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "メベラル",
+    "source_lines": [
+      "18:21",
+      "19:21",
+      "20:13"
+    ]
+  },
+  {
+    "token": "CracyTA'",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "壊れた殺人鬼は",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "クラクイタ",
+    "source_lines": [
+      "19:28",
+      "20:20",
+      "32:18"
+    ]
+  },
+  {
+    "token": "LAikIII",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "生きるんだ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ライキイー",
+    "source_lines": [
+      "22:32",
+      "22:33",
+      "28:6"
+    ]
+  },
+  {
+    "token": "Coword",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "だから言うのも悲しい言葉を弱く、強く、長く、短く",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "クオウォルド",
+    "source_lines": [
+      "23:10",
+      "24:10",
+      "25:1"
+    ]
+  },
+  {
+    "token": "ShojikA",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "だから言うのも悲しい言葉を弱く、強く、長く、短く",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ショジカ",
+    "source_lines": [
+      "23:10",
+      "24:10",
+      "25:1"
+    ]
+  },
+  {
+    "token": "nOznki",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "ここに仄暗い閃きの光はある",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ノズンクイ",
+    "source_lines": [
+      "23:13",
+      "24:13",
+      "25:4"
+    ]
+  },
+  {
+    "token": "DaRkrai",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "ここに仄暗い閃きの光はある",
+    "meaning_kana": "",
+    "pattern_guess": "C",
+    "katakana": "ダルクライ",
+    "source_lines": [
+      "23:13",
+      "24:13",
+      "25:4"
+    ]
+  },
+  {
+    "token": "euji-rel",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "話はこじれ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "エウジレル",
+    "source_lines": [
+      "23:14",
+      "24:14",
+      "25:5"
+    ]
+  },
+  {
+    "token": "anxAu",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "そして不安だらけ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "アンクスアウ",
+    "source_lines": [
+      "23:16",
+      "24:16",
+      "25:7"
+    ]
+  },
+  {
+    "token": "iNiFicAnce",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "意義って...",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "イニフィクアンクエ",
+    "source_lines": [
+      "23:19",
+      "24:19",
+      "25:10"
+    ]
+  },
+  {
+    "token": "yOuLogiVe",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "不純を許してと",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ヨウロギヴェ",
+    "source_lines": [
+      "23:20",
+      "24:20",
+      "25:11"
+    ]
+  },
+  {
+    "token": "CoaTain",
+    "frequency": 3,
+    "pos": "NOUN",
+    "meaning": "法廷",
+    "meaning_kana": "ホウテイ",
+    "pattern_guess": "A",
+    "katakana": "コアテイン",
+    "source_lines": [
+      "23:22",
+      "24:22",
+      "25:13"
+    ]
+  },
+  {
+    "token": "JokeDan",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "冗談でしょ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ジョケダン",
+    "source_lines": [
+      "23:24",
+      "24:24",
+      "25:15"
+    ]
+  },
+  {
+    "token": "Per-SemOn",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "この沈黙は見世物で",
+    "meaning_kana": "",
+    "pattern_guess": "B",
+    "katakana": "ペルセモン",
+    "source_lines": [
+      "23:25",
+      "24:25",
+      "25:16"
+    ]
+  },
+  {
+    "token": "ShiFey",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "失敗だ",
+    "meaning_kana": "",
+    "pattern_guess": "B",
+    "katakana": "シフェイ",
+    "source_lines": [
+      "23:26",
+      "24:26",
+      "25:17"
+    ]
+  },
+  {
+    "token": "mOurce",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "全ての元凶は醜い言い争い",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "モウルクエ",
+    "source_lines": [
+      "23:28",
+      "24:28",
+      "25:19"
+    ]
+  },
+  {
+    "token": "d0miHite",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "軽々しくこの場を支配している",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ドミヒテ",
+    "source_lines": [
+      "23:30",
+      "24:30",
+      "25:21"
+    ]
+  },
+  {
+    "token": "Accli",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "私だけが告発できる",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "アククリ",
+    "source_lines": [
+      "23:32",
+      "24:32",
+      "25:23"
+    ]
+  },
+  {
+    "token": "Su-Zu",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "今金て、何もかも投げ出したい",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "スズ",
+    "source_lines": [
+      "24:43",
+      "25:34",
+      "27:8"
+    ]
+  },
+  {
+    "token": "Ro-Coh",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "冒涜の境を叫び、争いの証拠はここに集っている",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ロクオ",
+    "source_lines": [
+      "26:4",
+      "29:17",
+      "31:3"
+    ]
+  },
+  {
+    "token": "deRaw",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "泣いても、逆らうことができない",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "デロウ",
+    "source_lines": [
+      "26:18",
+      "27:7",
+      "32:22"
+    ]
+  },
+  {
+    "token": "Per·SemOn",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "軽い命はたのしい見世物",
+    "meaning_kana": "",
+    "pattern_guess": "B",
+    "katakana": "ペルスエモン",
+    "source_lines": [
+      "28:12",
+      "30:17",
+      "32:4"
+    ]
+  },
+  {
+    "token": "EmA",
+    "frequency": 3,
+    "pos": "OTHER",
+    "meaning": "エマよ※2",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "エマ",
+    "source_lines": [
+      "30:12",
+      "30:12",
+      "30:12"
+    ]
+  },
+  {
+    "token": "hung·gement",
+    "frequency": 2,
+    "pos": "NOUN",
+    "meaning": "判決",
+    "meaning_kana": "ハンケツ",
+    "pattern_guess": "A",
+    "katakana": "ハングジメント",
+    "source_lines": [
+      "1:1",
+      "2:30"
+    ]
+  },
+  {
+    "token": "mayCtION",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "鳴動する法槌と、",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "マイクトイオン",
+    "source_lines": [
+      "1:4",
+      "2:3"
+    ]
+  },
+  {
+    "token": "zanCrue",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "残酷な真実。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ザンクルエ",
+    "source_lines": [
+      "1:8",
+      "2:7"
+    ]
+  },
+  {
+    "token": "sinRuit",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "残酷な真実。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "スインルイト",
+    "source_lines": [
+      "1:8",
+      "2:7"
+    ]
+  },
+  {
+    "token": "kce'on",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "来る。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ククエオン",
+    "source_lines": [
+      "1:11",
+      "2:10"
+    ]
+  },
+  {
+    "token": "Syu",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "閉廷だ！",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "スユ",
+    "source_lines": [
+      "1:23",
+      "2:26"
+    ]
+  },
+  {
+    "token": "LaLaLa",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "ラララ…",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ラララ",
+    "source_lines": [
+      "4:15",
+      "29:18"
+    ]
+  },
+  {
+    "token": "DaRk·rai",
+    "frequency": 2,
+    "pos": "NOUN",
+    "meaning": "闇",
+    "meaning_kana": "ヤミ",
+    "pattern_guess": "A",
+    "katakana": "ダークライ",
+    "source_lines": [
+      "5:12",
+      "5:14"
+    ]
+  },
+  {
+    "token": "WiU",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "あの世界は明るくも",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "ウィウ",
+    "source_lines": [
+      "5:16",
+      "32:15"
+    ]
+  },
+  {
+    "token": "Su·ReaDy",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "既にあなたは死んだようなもの",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "スレアドイ",
+    "source_lines": [
+      "5:18",
+      "6:1"
+    ]
+  },
+  {
+    "token": "rXi'",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "飛者は最低な存在だと分かるべきなのにね",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "ルクスイ",
+    "source_lines": [
+      "5:19",
+      "18:15"
+    ]
+  },
+  {
+    "token": "Ca·nay",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "絶望の牢獄から逃げることはできない",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "クアナイ",
+    "source_lines": [
+      "6:2",
+      "6:17"
+    ]
+  },
+  {
+    "token": "eXi",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "あの存在…",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "エクスイ",
+    "source_lines": [
+      "6:7",
+      "6:17"
+    ]
+  },
+  {
+    "token": "N'u",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "私の世界は酷悪で最低で",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "ヌ",
+    "source_lines": [
+      "6:8",
+      "6:13"
+    ]
+  },
+  {
+    "token": "eNkhe",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "血、痛み、絶望まで",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "エンクヘ",
+    "source_lines": [
+      "6:9",
+      "6:14"
+    ]
+  },
+  {
+    "token": "FuWana",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "花のような私が好きなのに",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "フワナ",
+    "source_lines": [
+      "6:18",
+      "27:7"
+    ]
+  },
+  {
+    "token": "Zellu",
+    "frequency": 2,
+    "pos": "PRONOUN",
+    "meaning": "皆",
+    "meaning_kana": "ミナ",
+    "pattern_guess": "A",
+    "katakana": "ゼル",
+    "source_lines": [
+      "8:38",
+      "9:31"
+    ]
+  },
+  {
+    "token": "LaLan",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "だから死んデほしい",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ララン",
+    "source_lines": [
+      "9:36",
+      "10:30"
+    ]
+  },
+  {
+    "token": "SaLook",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "だから死んデほしい",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "サロオク",
+    "source_lines": [
+      "9:36",
+      "10:30"
+    ]
+  },
+  {
+    "token": "IraPiss",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "だから死んデほしい",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "イラピッス",
+    "source_lines": [
+      "9:36",
+      "10:30"
+    ]
+  },
+  {
+    "token": "wAsIle",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ワスイレ",
+    "source_lines": [
+      "9:37",
+      "10:31"
+    ]
+  },
+  {
+    "token": "ULlcSo",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "なカま、トも達ん嬢ヤノしリがしへいスルべきなのヨ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ウルクソ",
+    "source_lines": [
+      "9:38",
+      "10:32"
+    ]
+  },
+  {
+    "token": "CaNoSiri",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "なカま、トも達ん嬢ヤノしリがしへいスルべきなのヨ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "クアノスイリ",
+    "source_lines": [
+      "9:38",
+      "10:32"
+    ]
+  },
+  {
+    "token": "dOmiHite",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "なカま、トも達ん嬢ヤノしリがしへいスルべきなのヨ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ドミヒテ",
+    "source_lines": [
+      "9:38",
+      "10:32"
+    ]
+  },
+  {
+    "token": "LaVJ",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "逃げルことはボうトく",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ラヴジ",
+    "source_lines": [
+      "9:40",
+      "10:34"
+    ]
+  },
+  {
+    "token": "blasfQac",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "うけ入レルべきだワ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ブラスフクアク",
+    "source_lines": [
+      "9:41",
+      "10:35"
+    ]
+  },
+  {
+    "token": "Kanather",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "すごく聞ケいが拗レつツあル",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "カナトヘル",
+    "source_lines": [
+      "11:1",
+      "12:1"
+    ]
+  },
+  {
+    "token": "enJi-rel",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "すごく聞ケいが拗レつツあル",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "エンジレル",
+    "source_lines": [
+      "11:1",
+      "12:1"
+    ]
+  },
+  {
+    "token": "ShiRing",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "すごく聞ケいが拗レつツあル",
+    "meaning_kana": "",
+    "pattern_guess": "C",
+    "katakana": "シリング",
+    "source_lines": [
+      "11:1",
+      "12:1"
+    ]
+  },
+  {
+    "token": "sAgAin",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "そしてモく的はふたたびミウレなう",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "サガイン",
+    "source_lines": [
+      "11:2",
+      "12:2"
+    ]
+  },
+  {
+    "token": "UshiLOse",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "そしてモく的はふたたびミウレなう",
+    "meaning_kana": "",
+    "pattern_guess": "B",
+    "katakana": "ウシロセ",
+    "source_lines": [
+      "11:2",
+      "12:2"
+    ]
+  },
+  {
+    "token": "DiviLJIO",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "我がヨスがをサガしダすいうコトヲ",
+    "meaning_kana": "",
+    "pattern_guess": "B",
+    "katakana": "ディヴィルジオ",
+    "source_lines": [
+      "11:3",
+      "12:3"
+    ]
+  },
+  {
+    "token": "fOrAba",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "そしてあノ人ノたメならバ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "フォラバ",
+    "source_lines": [
+      "11:12",
+      "12:12"
+    ]
+  },
+  {
+    "token": "Ukecept",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "死をうけ入レ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ウケクエプト",
+    "source_lines": [
+      "11:13",
+      "12:13"
+    ]
+  },
+  {
+    "token": "cOreak",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "ここも、誰デも、コわス、戴バんデ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "クオレアク",
+    "source_lines": [
+      "11:14",
+      "12:14"
+    ]
+  },
+  {
+    "token": "gDir",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "イ大な力みを求メテ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "グディル",
+    "source_lines": [
+      "11:22",
+      "12:22"
+    ]
+  },
+  {
+    "token": "UnneYo",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "なか ま、カン係はふよう",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ウンヌエヨ",
+    "source_lines": [
+      "11:23",
+      "12:23"
+    ]
+  },
+  {
+    "token": "MisGael",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "過ちは許されない",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ミスガエル",
+    "source_lines": [
+      "13:4",
+      "32:12"
+    ]
+  },
+  {
+    "token": "QuYakuliy",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "早く殺すべきなのだ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "クウヤクリイ",
+    "source_lines": [
+      "13:11",
+      "13:12"
+    ]
+  },
+  {
+    "token": "tone",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "十三の手",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "トーン",
+    "source_lines": [
+      "14:5",
+      "14:7"
+    ]
+  },
+  {
+    "token": "san",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "十三の手",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "サン",
+    "source_lines": [
+      "14:5",
+      "14:7"
+    ]
+  },
+  {
+    "token": "weRel",
+    "frequency": 2,
+    "pos": "VERB",
+    "meaning": "迎える",
+    "meaning_kana": "ムカエル",
+    "pattern_guess": "A",
+    "katakana": "ウェレル",
+    "source_lines": [
+      "14:9",
+      "31:4"
+    ]
+  },
+  {
+    "token": "Seu-Choose",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "これにて世界は選択肢を取り戻す",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "セウチョオセ",
+    "source_lines": [
+      "14:12",
+      "15:1"
+    ]
+  },
+  {
+    "token": "kiNbOO",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "殺人は禁忌故",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "キンボオ",
+    "source_lines": [
+      "14:13",
+      "26:17"
+    ]
+  },
+  {
+    "token": "S-ond",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "そして",
+    "meaning_kana": "ソシテ",
+    "pattern_guess": "A",
+    "katakana": "スオンド",
+    "source_lines": [
+      "15:4",
+      "15:11"
+    ]
+  },
+  {
+    "token": "namnVa",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "繰り返す繰り返す立ち繰り返す繰り返す立ち繰り返す",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ナムンヴァ",
+    "source_lines": [
+      "15:10",
+      "15:10"
+    ]
+  },
+  {
+    "token": "Sar·gedv",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "憧憬の旅かりで。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "サルゲドヴ",
+    "source_lines": [
+      "16:1",
+      "17:17"
+    ]
+  },
+  {
+    "token": "iN",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "[iN mY Luv]",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "イン",
+    "source_lines": [
+      "16:2",
+      "17:18"
+    ]
+  },
+  {
+    "token": "Luv",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "[iN mY Luv]",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "ルヴ",
+    "source_lines": [
+      "16:2",
+      "17:18"
+    ]
+  },
+  {
+    "token": "CraryTA'",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "さながら上着さえあれば追えるのが隠れた。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "クラルイタ",
+    "source_lines": [
+      "16:10",
+      "17:7"
+    ]
+  },
+  {
+    "token": "Cro·ll",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "述べた文化的発掘を続けてもらう可能性を。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "クロル",
+    "source_lines": [
+      "16:13",
+      "17:15"
+    ]
+  },
+  {
+    "token": "Dei·ma·cafe",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "述べた文化的発掘を続けてもらう可能性を。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "デイマクアフェ",
+    "source_lines": [
+      "16:13",
+      "17:15"
+    ]
+  },
+  {
+    "token": "FineloWl",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "励み出す。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "フィネロウル",
+    "source_lines": [
+      "16:16",
+      "17:1"
+    ]
+  },
+  {
+    "token": "shoralls",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "励み出す。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ショラルス",
+    "source_lines": [
+      "16:16",
+      "17:1"
+    ]
+  },
+  {
+    "token": "flo·paya",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "泣いてもいいんだよ。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "フロパヤ",
+    "source_lines": [
+      "16:19",
+      "17:3"
+    ]
+  },
+  {
+    "token": "Syu·Iain",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "泣いてもいいんだよ。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "スユイアイン",
+    "source_lines": [
+      "16:19",
+      "17:3"
+    ]
+  },
+  {
+    "token": "merr·Ier",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "練習した勇敢さを持てることの喜びって何が。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "メルリエル",
+    "source_lines": [
+      "16:21",
+      "17:6"
+    ]
+  },
+  {
+    "token": "lAma-E",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "[yOull seE lAma-E]",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ラマエ",
+    "source_lines": [
+      "17:8",
+      "17:14"
+    ]
+  },
+  {
+    "token": "KetZen",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "悲しい結末はすぐそこにきている",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ケトゼン",
+    "source_lines": [
+      "18:8",
+      "19:8"
+    ]
+  },
+  {
+    "token": "mn·You",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "いつかの向こうへ逃げることができるはず",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ムニョウ",
+    "source_lines": [
+      "18:21",
+      "20:13"
+    ]
+  },
+  {
+    "token": "mnRmon",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "壊れた殺人鬼は",
+    "meaning_kana": "",
+    "pattern_guess": "B",
+    "katakana": "ムンルモン",
+    "source_lines": [
+      "19:28",
+      "20:20"
+    ]
+  },
+  {
+    "token": "Oh",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "悲しいだけ",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "オ",
+    "source_lines": [
+      "19:34",
+      "20:26"
+    ]
+  },
+  {
+    "token": "ievilJIO",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "魔女のなれはてが笑っているのが分かる",
+    "meaning_kana": "",
+    "pattern_guess": "C",
+    "katakana": "イエヴィルジオ",
+    "source_lines": [
+      "19:35",
+      "20:27"
+    ]
+  },
+  {
+    "token": "Sch-mal",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "さあ、いつか世界が正常を取り戻すことができたら",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "スクマル",
+    "source_lines": [
+      "19:37",
+      "20:29"
+    ]
+  },
+  {
+    "token": "Mo-f",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "さあ、いつか世界が正常を取り戻すことができたら",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "モフ",
+    "source_lines": [
+      "19:37",
+      "20:29"
+    ]
+  },
+  {
+    "token": "E-gOtable",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "居心地の悪い",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "エゴタブレ",
+    "source_lines": [
+      "21:3",
+      "22:3"
+    ]
+  },
+  {
+    "token": "littJIO",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "だけど少女が至るなれはて",
+    "meaning_kana": "",
+    "pattern_guess": "B",
+    "katakana": "リットジオ",
+    "source_lines": [
+      "21:6",
+      "22:6"
+    ]
+  },
+  {
+    "token": "RE-lal",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "だけど少女が至るなれはて",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "レラル",
+    "source_lines": [
+      "21:6",
+      "22:6"
+    ]
+  },
+  {
+    "token": "cOnzAi",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "これで断罪の...",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "クオンザイ",
+    "source_lines": [
+      "21:9",
+      "22:9"
+    ]
+  },
+  {
+    "token": "Imne-Nai",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "有り得ない",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "イムネナイ",
+    "source_lines": [
+      "21:16",
+      "22:16"
+    ]
+  },
+  {
+    "token": "ShiFrey",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "冷静に",
+    "meaning_kana": "",
+    "pattern_guess": "B",
+    "katakana": "シフレイ",
+    "source_lines": [
+      "21:25",
+      "22:25"
+    ]
+  },
+  {
+    "token": "AccUhEarls",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "確実に告発する",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "アククウヘアルルス",
+    "source_lines": [
+      "21:28",
+      "22:28"
+    ]
+  },
+  {
+    "token": "kec'on",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "ちょっと待っの声で瞬間、何かが入ってきた",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ケクオン",
+    "source_lines": [
+      "21:29",
+      "22:29"
+    ]
+  },
+  {
+    "token": "zanCruc",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "残虐な言葉が口から出る",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ザンクルク",
+    "source_lines": [
+      "21:30",
+      "22:30"
+    ]
+  },
+  {
+    "token": "Coward",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "残虐な言葉が口から出る",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "クオワルド",
+    "source_lines": [
+      "21:30",
+      "22:30"
+    ]
+  },
+  {
+    "token": "Kuth",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "残虐な言葉が口から出る",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "クト",
+    "source_lines": [
+      "21:30",
+      "22:30"
+    ]
+  },
+  {
+    "token": "Dasou",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "残虐な言葉が口から出る",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ダソウ",
+    "source_lines": [
+      "21:30",
+      "22:30"
+    ]
+  },
+  {
+    "token": "Figch·Sli",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "今金て、何もかも投げ出したい",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "フィグクスリ",
+    "source_lines": [
+      "24:43",
+      "25:34"
+    ]
+  },
+  {
+    "token": "cOmmiCus",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "罪はどんな人でも犯すものなんだ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "クオンムイクウス",
+    "source_lines": [
+      "24:50",
+      "25:41"
+    ]
+  },
+  {
+    "token": "uOLeave",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "だから不安を抱える人は証拠を必ず残す",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ウオレアヴェ",
+    "source_lines": [
+      "24:51",
+      "25:42"
+    ]
+  },
+  {
+    "token": "Lai-Nei",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "体がひどく滝の砂のようで",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ライネイ",
+    "source_lines": [
+      "26:7",
+      "27:18"
+    ]
+  },
+  {
+    "token": "KeiZen",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "雄こんな結末は求めてないんだ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ケイゼン",
+    "source_lines": [
+      "26:15",
+      "32:19"
+    ]
+  },
+  {
+    "token": "pAciKa'",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "静かな空間でただ懺悔をする",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "パクイカ",
+    "source_lines": [
+      "27:5",
+      "29:22"
+    ]
+  },
+  {
+    "token": "KuwPace",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "静かな空間でただ懺悔をする",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "クウパクエ",
+    "source_lines": [
+      "27:5",
+      "31:3"
+    ]
+  },
+  {
+    "token": "kOht",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "だけど、人として心は捨てられない",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "コト",
+    "source_lines": [
+      "27:8",
+      "27:9"
+    ]
+  },
+  {
+    "token": "rATah·Guy",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "さぁ、お互いに笑おう",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ラタグイ",
+    "source_lines": [
+      "27:11",
+      "28:19"
+    ]
+  },
+  {
+    "token": "muRmon",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "法の悪魔と殺人鬼は笑む",
+    "meaning_kana": "",
+    "pattern_guess": "B",
+    "katakana": "ムルモン",
+    "source_lines": [
+      "28:8",
+      "30:13"
+    ]
+  },
+  {
+    "token": "HaHaHa",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "私がどうせあなたを抱いていくから",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ハハハ",
+    "source_lines": [
+      "29:3",
+      "29:21"
+    ]
+  },
+  {
+    "token": "hAnT",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "あぁ、この命、なんて美しいのかしら",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ハント",
+    "source_lines": [
+      "29:5",
+      "29:19"
+    ]
+  },
+  {
+    "token": "QaYakelly",
+    "frequency": 2,
+    "pos": "OTHER",
+    "meaning": "早く呪いが広がらないから",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "クアヤケルイ",
+    "source_lines": [
+      "32:5",
+      "32:19"
+    ]
+  },
+  {
+    "token": "zaufession",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "懺悔の時間となった。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ザウフェッスイオン",
+    "source_lines": [
+      "1:16"
+    ]
+  },
+  {
+    "token": "liti",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "少女は災である。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "リティ",
+    "source_lines": [
+      "1:25"
+    ]
+  },
+  {
+    "token": "lalala",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "(Ha lalala...)",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ラララ",
+    "source_lines": [
+      "2:22"
+    ]
+  },
+  {
+    "token": "Syn",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "閉廷だ！",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "スイン",
+    "source_lines": [
+      "3:6"
+    ]
+  },
+  {
+    "token": "litti",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "少女は災である。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "リットイ",
+    "source_lines": [
+      "3:8"
+    ]
+  },
+  {
+    "token": "merc·ler",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "慈悲は壊れて消える",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "メルクレル",
+    "source_lines": [
+      "4:8"
+    ]
+  },
+  {
+    "token": "ker'on",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "死が誘われたの",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ケロン",
+    "source_lines": [
+      "4:10"
+    ]
+  },
+  {
+    "token": "mo·Yon",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "あの世界は明るくも",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "モヨン",
+    "source_lines": [
+      "5:16"
+    ]
+  },
+  {
+    "token": "Sha-Rui",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "あの世界は明るくも",
+    "meaning_kana": "",
+    "pattern_guess": "B",
+    "katakana": "シャルイ",
+    "source_lines": [
+      "5:16"
+    ]
+  },
+  {
+    "token": "BuggAh'",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "あの世界は明るくも",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ブグガ",
+    "source_lines": [
+      "5:16"
+    ]
+  },
+  {
+    "token": "GoKun",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "行くことはないの",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ゴクン",
+    "source_lines": [
+      "5:17"
+    ]
+  },
+  {
+    "token": "Know·Trow",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "飛者は最低な存在だと分かるべきなのにね",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "クノウトロウ",
+    "source_lines": [
+      "5:19"
+    ]
+  },
+  {
+    "token": "Imne·Nai",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "有り得ない惨劇は既に起こってる",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "イムネナイ",
+    "source_lines": [
+      "6:1"
+    ]
+  },
+  {
+    "token": "Sac·gedy",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "有り得ない惨劇は既に起こってる",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "サクゲドイ",
+    "source_lines": [
+      "6:1"
+    ]
+  },
+  {
+    "token": "le'n",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "有り得ない惨劇は既に起こってる",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "レン",
+    "source_lines": [
+      "6:1"
+    ]
+  },
+  {
+    "token": "Guil·me",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "那とは極悪で最悪なことなんだ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "グイルメ",
+    "source_lines": [
+      "6:4"
+    ]
+  },
+  {
+    "token": "Ya·Rame",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "焼けた臭いが",
+    "meaning_kana": "",
+    "pattern_guess": "B",
+    "katakana": "ヤラメ",
+    "source_lines": [
+      "6:5"
+    ]
+  },
+  {
+    "token": "ChilDd",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "血、痛み、絶望まで",
+    "meaning_kana": "",
+    "pattern_guess": "B",
+    "katakana": "チルドド",
+    "source_lines": [
+      "6:9"
+    ]
+  },
+  {
+    "token": "hung·ement",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "ああ、あの、あの刑決の先に",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ウングエメント",
+    "source_lines": [
+      "6:13"
+    ]
+  },
+  {
+    "token": "mu·Yen",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "あの先には帰らしあれだけ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ムイェン",
+    "source_lines": [
+      "6:14"
+    ]
+  },
+  {
+    "token": "LaLa",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "ラ ラ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ララ",
+    "source_lines": [
+      "6:16"
+    ]
+  },
+  {
+    "token": "Sike",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "花のような私が好きなのに",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "スイケ",
+    "source_lines": [
+      "6:18"
+    ]
+  },
+  {
+    "token": "MukpOSe",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "目テキだから",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ムクポセ",
+    "source_lines": [
+      "11:28"
+    ]
+  },
+  {
+    "token": "Eleden",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "ここも、誰デも、コウス、戴バんデ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "エレデン",
+    "source_lines": [
+      "12:14"
+    ]
+  },
+  {
+    "token": "yOnLugiVe",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "許しは愚かな強者が抱える罪さだ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ヨンルギヴェ",
+    "source_lines": [
+      "13:2"
+    ]
+  },
+  {
+    "token": "aLFish",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "許しは愚かな強者が抱える罪さだ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "アルフイス",
+    "source_lines": [
+      "13:2"
+    ]
+  },
+  {
+    "token": "dA-Evenimo",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "手と顔が疎れていくとしても",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ダエヴェニモ",
+    "source_lines": [
+      "13:6"
+    ]
+  },
+  {
+    "token": "kOhl",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "心は正しさで満たしていく",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "コル",
+    "source_lines": [
+      "13:7"
+    ]
+  },
+  {
+    "token": "mitAFiL",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "心は正しさで満たしていく",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ミタフィル",
+    "source_lines": [
+      "13:7"
+    ]
+  },
+  {
+    "token": "DoubgIli",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "私は疑わない",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ドウブギリ",
+    "source_lines": [
+      "13:9"
+    ]
+  },
+  {
+    "token": "sAvOte",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "祈りながら今捧げ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "サボーテ",
+    "source_lines": [
+      "14:6"
+    ]
+  },
+  {
+    "token": "linAg",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "祈り繋ぎ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "リナグ",
+    "source_lines": [
+      "14:8"
+    ]
+  },
+  {
+    "token": "gDie",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "さすれば偉大な神を迎えよう",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "グディエ",
+    "source_lines": [
+      "14:9"
+    ]
+  },
+  {
+    "token": "Jleil",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "もしくは地獄の絶望やもしれぬ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ジレイル",
+    "source_lines": [
+      "14:11"
+    ]
+  },
+  {
+    "token": "rAWell",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "あながち間違ってはいないかもしれない",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ラウェル",
+    "source_lines": [
+      "15:3"
+    ]
+  },
+  {
+    "token": "Sikes~more",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "あながち間違ってはいないかもしれない",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "スイケスモレ",
+    "source_lines": [
+      "15:3"
+    ]
+  },
+  {
+    "token": "MEH",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "命は際の刹那の分岐点において限りなく続いていた",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "メ",
+    "source_lines": [
+      "15:5"
+    ]
+  },
+  {
+    "token": "mayCHON",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "命は際の刹那の分岐点において限りなく続いていた",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "マイチョン",
+    "source_lines": [
+      "15:5"
+    ]
+  },
+  {
+    "token": "yOnLngiVe",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "命は際の刹那の分岐点において限りなく続いていた",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ヨンルングイヴェ",
+    "source_lines": [
+      "15:5"
+    ]
+  },
+  {
+    "token": "dEsHiMay",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "感情は揺れながら目覚めの鐘を鳴らしていた",
+    "meaning_kana": "",
+    "pattern_guess": "B",
+    "katakana": "デシマイ",
+    "source_lines": [
+      "15:6"
+    ]
+  },
+  {
+    "token": "YonBiMEif",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "感情は揺れながら目覚めの鐘を鳴らしていた",
+    "meaning_kana": "",
+    "pattern_guess": "B",
+    "katakana": "ヨンビメイフ",
+    "source_lines": [
+      "15:6"
+    ]
+  },
+  {
+    "token": "KelZen",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "この体が正しさの悪魔であるべきなのだ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ケルゼン",
+    "source_lines": [
+      "15:7"
+    ]
+  },
+  {
+    "token": "show-bol",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "この体が正しさの悪魔であるべきなのだ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ショウボル",
+    "source_lines": [
+      "15:7"
+    ]
+  },
+  {
+    "token": "amxAn",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "だからこそ行動が開かれる意味があるのだと",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "アムクスアン",
+    "source_lines": [
+      "15:8"
+    ]
+  },
+  {
+    "token": "deMall",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "だからこそ行動が開かれる意味があるのだと",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "デマル",
+    "source_lines": [
+      "15:8"
+    ]
+  },
+  {
+    "token": "HiLtnle",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "だからこそ行動が開かれる意味があるのだと",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ヒルトンレ",
+    "source_lines": [
+      "15:8"
+    ]
+  },
+  {
+    "token": "shownece",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "だからこそ行動が開かれる意味があるのだと",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ショウネクエ",
+    "source_lines": [
+      "15:8"
+    ]
+  },
+  {
+    "token": "RoGie",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "この選びたなびたなびたないではないのだ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ロギエ",
+    "source_lines": [
+      "15:9"
+    ]
+  },
+  {
+    "token": "ClecTA",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "誰かが笑って笑って立ち歩くことをしなくなるまで",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "クレクトア",
+    "source_lines": [
+      "15:12"
+    ]
+  },
+  {
+    "token": "Vani·rA",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "誰かが笑って笑って立ち歩くことをしなくなるまで",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ヴァニラ",
+    "source_lines": [
+      "15:12"
+    ]
+  },
+  {
+    "token": "mercy·lce",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "誰かが笑って誰かを笑えるようになるまで",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "メルクイルクエ",
+    "source_lines": [
+      "15:13"
+    ]
+  },
+  {
+    "token": "FireIlu",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "誰かが笑って誰かを笑えるようになるまで",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "フィレイル",
+    "source_lines": [
+      "15:13"
+    ]
+  },
+  {
+    "token": "r0nil",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "「r0nil seE tAmaE」",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ルニル",
+    "source_lines": [
+      "15:14"
+    ]
+  },
+  {
+    "token": "tAmaE",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "「r0nil seE tAmaE」",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "タマエ",
+    "source_lines": [
+      "15:14"
+    ]
+  },
+  {
+    "token": "GuiLur",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "誰かの選びを優先することの意義を",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "グイルル",
+    "source_lines": [
+      "15:15"
+    ]
+  },
+  {
+    "token": "CRUzebary",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "誰かの選びを優先することの意義を",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "クルゼバルイ",
+    "source_lines": [
+      "15:15"
+    ]
+  },
+  {
+    "token": "Ae",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "都市のある場所を超えることに意味があるのだと",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "アエ",
+    "source_lines": [
+      "15:16"
+    ]
+  },
+  {
+    "token": "cherWel",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "都市のある場所を超えることに意味があるのだと",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "チェルウェル",
+    "source_lines": [
+      "15:16"
+    ]
+  },
+  {
+    "token": "Sar-gedr",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "この国の産業を推進することの",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "サルゲドル",
+    "source_lines": [
+      "15:17"
+    ]
+  },
+  {
+    "token": "Law",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "美しさはこの産業を",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ラウ",
+    "source_lines": [
+      "15:18"
+    ]
+  },
+  {
+    "token": "MEir",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "増進させると同時に社会を変革させていく",
+    "meaning_kana": "",
+    "pattern_guess": "B",
+    "katakana": "メイル",
+    "source_lines": [
+      "15:19"
+    ]
+  },
+  {
+    "token": "berCHON",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "増進させると同時に社会を変革させていく",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ベルチョン",
+    "source_lines": [
+      "15:19"
+    ]
+  },
+  {
+    "token": "SoeTsa",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "産業の発展が社会全体の福祉を向上させることに貢献するのだ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ソエツァ",
+    "source_lines": [
+      "15:20"
+    ]
+  },
+  {
+    "token": "senlky",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "産業の発展が社会全体の福祉を向上させることに貢献するのだ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "センルクイ",
+    "source_lines": [
+      "15:20"
+    ]
+  },
+  {
+    "token": "fOrncf",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "産業の発展が社会全体の福祉を向上させることに貢献するのだ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "フォルンクフ",
+    "source_lines": [
+      "15:20"
+    ]
+  },
+  {
+    "token": "laves-MEY",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "産業の発展が社会全体の福祉を向上させることに貢献するのだ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ラヴェスメイ",
+    "source_lines": [
+      "15:20"
+    ]
+  },
+  {
+    "token": "Zen'ward",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "産業の発展が社会全体の福祉を向上させることに貢献するのだ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ゼンワルド",
+    "source_lines": [
+      "15:20"
+    ]
+  },
+  {
+    "token": "Do-ss",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "産業の発展が社会全体の福祉を向上させることに貢献するのだ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ドッス",
+    "source_lines": [
+      "15:20"
+    ]
+  },
+  {
+    "token": "Fir",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "産業の発展が社会全体の福祉を向上させることに貢献するのだ",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "フィル",
+    "source_lines": [
+      "15:20"
+    ]
+  },
+  {
+    "token": "uRei",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "産業の発展が社会全体の福祉を向上させることに貢献するのだ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ウレイ",
+    "source_lines": [
+      "15:20"
+    ]
+  },
+  {
+    "token": "Vani·su",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "産業の発展が社会全体の福祉を向上させることに貢献するのだ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ヴァニス",
+    "source_lines": [
+      "15:20"
+    ]
+  },
+  {
+    "token": "Clearall",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "矛盾は解消し得るものである",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "クレアラル",
+    "source_lines": [
+      "15:21"
+    ]
+  },
+  {
+    "token": "hecCHON",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "愛を宿す一つの星影。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ヘクチョン",
+    "source_lines": [
+      "16:3"
+    ]
+  },
+  {
+    "token": "So-T'sa",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "幸福の女が数え切れないほど記憶に鎖いていた。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ソツァ",
+    "source_lines": [
+      "16:4"
+    ]
+  },
+  {
+    "token": "sen·ky",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "幸福の女が数え切れないほど記憶に鎖いていた。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "センクイ",
+    "source_lines": [
+      "16:4"
+    ]
+  },
+  {
+    "token": "fOrE",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "幸福の女が数え切れないほど記憶に鎖いていた。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "フォレ",
+    "source_lines": [
+      "16:4"
+    ]
+  },
+  {
+    "token": "inves-MEY",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "幸福の女が数え切れないほど記憶に鎖いていた。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "インヴェスメイ",
+    "source_lines": [
+      "16:4"
+    ]
+  },
+  {
+    "token": "Zen·ward",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "幸福の女が数え切れないほど記憶に鎖いていた。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ゼンワルド",
+    "source_lines": [
+      "16:4"
+    ]
+  },
+  {
+    "token": "Do·se",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "幸福の女が数え切れないほど記憶に鎖いていた。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ドセ",
+    "source_lines": [
+      "16:4"
+    ]
+  },
+  {
+    "token": "Fin",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "幸福の女が数え切れないほど記憶に鎖いていた。",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "フィン",
+    "source_lines": [
+      "16:4"
+    ]
+  },
+  {
+    "token": "Vani'su",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "幸福の女が数え切れないほど記憶に鎖いていた。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ヴァニス",
+    "source_lines": [
+      "16:4"
+    ]
+  },
+  {
+    "token": "AYamis",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "想い出を振り返ることにした。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "アヤミス",
+    "source_lines": [
+      "16:5"
+    ]
+  },
+  {
+    "token": "ClearaIl",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "想い出を振り返ることにした。",
+    "meaning_kana": "",
+    "pattern_guess": "C",
+    "katakana": "クレアライル",
+    "source_lines": [
+      "16:5"
+    ]
+  },
+  {
+    "token": "Hark·sin·Cracy",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "この世界で生かされている理由が。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ハルクスインクラクイ",
+    "source_lines": [
+      "16:6"
+    ]
+  },
+  {
+    "token": "showeure",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "この世界で生かされている理由が。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ショウェウレ",
+    "source_lines": [
+      "16:6"
+    ]
+  },
+  {
+    "token": "LowlEll",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "誰かに出会えて愛しておくれ！",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ロウレル",
+    "source_lines": [
+      "16:7"
+    ]
+  },
+  {
+    "token": "BuGle",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "誰かに出会えて愛しておくれ！",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ブグレ",
+    "source_lines": [
+      "16:7"
+    ]
+  },
+  {
+    "token": "BugAll",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "それです。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ブガル",
+    "source_lines": [
+      "16:11"
+    ]
+  },
+  {
+    "token": "tAma-E",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "[yOull seE tAma-E]",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "タマエ",
+    "source_lines": [
+      "16:12"
+    ]
+  },
+  {
+    "token": "Slikes·more",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "続けてください。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "スリケスモレ",
+    "source_lines": [
+      "16:14"
+    ]
+  },
+  {
+    "token": "S-noil",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "この場の見えない雲の。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "スノイル",
+    "source_lines": [
+      "17:5"
+    ]
+  },
+  {
+    "token": "An",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "この場の見えない雲の。",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "アン",
+    "source_lines": [
+      "17:9"
+    ]
+  },
+  {
+    "token": "rAktell",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "この場の見えない雲の。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ラクテル",
+    "source_lines": [
+      "17:9"
+    ]
+  },
+  {
+    "token": "CRilzchary",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "雇用者自身の場に携わった十年間で練えるのか。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "クリルズチャルイ",
+    "source_lines": [
+      "17:10"
+    ]
+  },
+  {
+    "token": "BuggAll",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "あかつき的の真実を蓄積することはできる。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ブグガル",
+    "source_lines": [
+      "17:11"
+    ]
+  },
+  {
+    "token": "CaeriTA'",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "さのことで。",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "クアエリタ",
+    "source_lines": [
+      "17:12"
+    ]
+  },
+  {
+    "token": "Or",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "この場の見えない",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "オル",
+    "source_lines": [
+      "17:13"
+    ]
+  },
+  {
+    "token": "PaiFum",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "痛みは誰もが不可侵な真実の罪",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "パイフム",
+    "source_lines": [
+      "18:17"
+    ]
+  },
+  {
+    "token": "ElasTOac",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "ここでは命を置涜する存在は許されない",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "エラストオアク",
+    "source_lines": [
+      "19:15"
+    ]
+  },
+  {
+    "token": "mn·Yon",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "いつかの向こうへ逃げることができるはず",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ムニョン",
+    "source_lines": [
+      "19:21"
+    ]
+  },
+  {
+    "token": "MEit",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "ここでは命を置涜する存在は許されない",
+    "meaning_kana": "",
+    "pattern_guess": "B",
+    "katakana": "メイト",
+    "source_lines": [
+      "20:7"
+    ]
+  },
+  {
+    "token": "fAnSy",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "あなたとのあの楽しかった思い出を",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ファンスイ",
+    "source_lines": [
+      "20:34"
+    ]
+  },
+  {
+    "token": "Baru",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "居心地の悪い",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "バル",
+    "source_lines": [
+      "21:3"
+    ]
+  },
+  {
+    "token": "Barn",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "居心地の悪い",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "バルン",
+    "source_lines": [
+      "22:3"
+    ]
+  },
+  {
+    "token": "SurC",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "生存の選択肢がうるさく、愛おしいと追ってくるよ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "スルク",
+    "source_lines": [
+      "26:1"
+    ]
+  },
+  {
+    "token": "nOi-Ai",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "生存の選択肢がうるさく、愛おしいと追ってくるよ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ノイアイ",
+    "source_lines": [
+      "26:1"
+    ]
+  },
+  {
+    "token": "mAloom",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "生存の選択肢がうるさく、愛おしいと追ってくるよ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "マロオム",
+    "source_lines": [
+      "26:1"
+    ]
+  },
+  {
+    "token": "dEs-Ier",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "思い出は絶望をもたらす",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "デスイエル",
+    "source_lines": [
+      "26:2"
+    ]
+  },
+  {
+    "token": "MeiNig",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "思い出は絶望をもたらす",
+    "meaning_kana": "",
+    "pattern_guess": "B",
+    "katakana": "メイニグ",
+    "source_lines": [
+      "26:2"
+    ]
+  },
+  {
+    "token": "harMELT",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "選命の死が血を受け入れる法の鍵",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ハルメルト",
+    "source_lines": [
+      "26:3"
+    ]
+  },
+  {
+    "token": "dEstiMay",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "選命の死が血を受け入れる法の鍵",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "デストイマイ",
+    "source_lines": [
+      "26:3"
+    ]
+  },
+  {
+    "token": "ULieSu",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "冒涜の境を叫び、争いの証拠はここに集っている",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ウリエス",
+    "source_lines": [
+      "26:4"
+    ]
+  },
+  {
+    "token": "showrence",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "冒涜の境を叫び、争いの証拠はここに集っている",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ショウレンクエ",
+    "source_lines": [
+      "26:4"
+    ]
+  },
+  {
+    "token": "DaRk-rai",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "暗い感情",
+    "meaning_kana": "",
+    "pattern_guess": "C",
+    "katakana": "ダルクライ",
+    "source_lines": [
+      "26:5"
+    ]
+  },
+  {
+    "token": "eMajeh",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "暗い感情",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "エマジェ",
+    "source_lines": [
+      "26:5"
+    ]
+  },
+  {
+    "token": "sAnAnd",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "体がひどく滝の砂のようで",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "サナンド",
+    "source_lines": [
+      "26:7"
+    ]
+  },
+  {
+    "token": "Kaanather",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "体がひどく滝の砂のようで",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "カアナトヘル",
+    "source_lines": [
+      "26:7"
+    ]
+  },
+  {
+    "token": "kiRstY",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "体がひどく滝の砂のようで",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "キルストイ",
+    "source_lines": [
+      "26:7"
+    ]
+  },
+  {
+    "token": "RE-ial",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "追い詰めるところまできて、私は狂った",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "レイアル",
+    "source_lines": [
+      "26:8"
+    ]
+  },
+  {
+    "token": "ArcIlhEarti",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "今夜、危険すなんだ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "アルクイルヘアルトイ",
+    "source_lines": [
+      "26:9"
+    ]
+  },
+  {
+    "token": "Sar-grdy",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "殺人の惨劇なんかいらないのに",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "サルグルドイ",
+    "source_lines": [
+      "26:10"
+    ]
+  },
+  {
+    "token": "CaNuSiri",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "被告人は罵り、泣きわめき",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "クアヌスイリ",
+    "source_lines": [
+      "26:11"
+    ]
+  },
+  {
+    "token": "roji-rei",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "二人の関係は確実に傷み、傷み、抵抗を余儀なくされる",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ロジレイ",
+    "source_lines": [
+      "26:12"
+    ]
+  },
+  {
+    "token": "tei-Tance",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "二人の関係は確実に傷み、傷み、抵抗を余儀なくされる",
+    "meaning_kana": "",
+    "pattern_guess": "C",
+    "katakana": "テイタンクエ",
+    "source_lines": [
+      "26:12"
+    ]
+  },
+  {
+    "token": "S-und",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "真実、そして辛い理由が合わせて",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "スウンド",
+    "source_lines": [
+      "26:13"
+    ]
+  },
+  {
+    "token": "hArLir",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "真実、そして辛い理由が合わせて",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ハルルイル",
+    "source_lines": [
+      "26:13"
+    ]
+  },
+  {
+    "token": "LyzuIIu",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "真実、そして辛い理由が合わせて",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ルイズイーウ",
+    "source_lines": [
+      "26:13"
+    ]
+  },
+  {
+    "token": "KaSt",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "過去の門が開かれるんだ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "カスト",
+    "source_lines": [
+      "26:14"
+    ]
+  },
+  {
+    "token": "Dqun",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "過去の門が開かれるんだ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ドクウン",
+    "source_lines": [
+      "26:14"
+    ]
+  },
+  {
+    "token": "Eiden",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "雄こんな結末は求めてないんだ",
+    "meaning_kana": "",
+    "pattern_guess": "B",
+    "katakana": "エイデン",
+    "source_lines": [
+      "26:15"
+    ]
+  },
+  {
+    "token": "SaymAL",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "禁忌の殺人に対して、不安を正常なことで",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "サイマル",
+    "source_lines": [
+      "26:17"
+    ]
+  },
+  {
+    "token": "ca-nay",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "泣いても、逆らうことができない",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "クアナイ",
+    "source_lines": [
+      "26:18"
+    ]
+  },
+  {
+    "token": "Mel",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "もしあの災禍のない現実だったらと思うんだ",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "メル",
+    "source_lines": [
+      "26:19"
+    ]
+  },
+  {
+    "token": "riNjify",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "もしあの災禍のない現実だったらと思うんだ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "リンジフイ",
+    "source_lines": [
+      "26:19"
+    ]
+  },
+  {
+    "token": "wE-MisTa",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "ちょっと待った！",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ウェミストア",
+    "source_lines": [
+      "26:20"
+    ]
+  },
+  {
+    "token": "tour",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "十、九、八、七、六、五、四、三、二、一",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "トウル",
+    "source_lines": [
+      "26:21"
+    ]
+  },
+  {
+    "token": "nakyu",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "十、九、八、七、六、五、四、三、二、一",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ナキュ",
+    "source_lines": [
+      "26:21"
+    ]
+  },
+  {
+    "token": "rchi",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "十、九、八、七、六、五、四、三、二、一",
+    "meaning_kana": "",
+    "pattern_guess": "B",
+    "katakana": "ルチ",
+    "source_lines": [
+      "26:21"
+    ]
+  },
+  {
+    "token": "naven",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "十、九、八、七、六、五、四、三、二、一",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ナヴェン",
+    "source_lines": [
+      "26:21"
+    ]
+  },
+  {
+    "token": "sik",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "十、九、八、七、六、五、四、三、二、一",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "スイク",
+    "source_lines": [
+      "26:21"
+    ]
+  },
+  {
+    "token": "fago",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "十、九、八、七、六、五、四、三、二、一",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ファゴ",
+    "source_lines": [
+      "26:21"
+    ]
+  },
+  {
+    "token": "foshi",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "十、九、八、七、六、五、四、三、二、一",
+    "meaning_kana": "",
+    "pattern_guess": "B",
+    "katakana": "フォシ",
+    "source_lines": [
+      "26:21"
+    ]
+  },
+  {
+    "token": "sau",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "十、九、八、七、六、五、四、三、二、一",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "サウ",
+    "source_lines": [
+      "26:21"
+    ]
+  },
+  {
+    "token": "tuni",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "十、九、八、七、六、五、四、三、二、一",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "トゥニ",
+    "source_lines": [
+      "26:21"
+    ]
+  },
+  {
+    "token": "wachi",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "十、九、八、七、六、五、四、三、二、一",
+    "meaning_kana": "",
+    "pattern_guess": "B",
+    "katakana": "ワチ",
+    "source_lines": [
+      "26:21"
+    ]
+  },
+  {
+    "token": "Ja·Da",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "静かな空間でただ懺悔をする",
+    "meaning_kana": "",
+    "pattern_guess": "B",
+    "katakana": "ジャダ",
+    "source_lines": [
+      "27:5"
+    ]
+  },
+  {
+    "token": "riNjity",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "現実は無垢で",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "リンジトイ",
+    "source_lines": [
+      "27:6"
+    ]
+  },
+  {
+    "token": "OhTell",
+    "frequency": 1,
+    "pos": "PRONOUN",
+    "meaning": "私たち",
+    "meaning_kana": "ワタシタチ",
+    "pattern_guess": "A",
+    "katakana": "オウテル",
+    "source_lines": [
+      "27:7"
+    ]
+  },
+  {
+    "token": "Little",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "心が動いて、ちょっと恥ずかしいけど",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "リットレ",
+    "source_lines": [
+      "27:9"
+    ]
+  },
+  {
+    "token": "emBasy",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "心が動いて、ちょっと恥ずかしいけど",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "エンブアスイ",
+    "source_lines": [
+      "27:9"
+    ]
+  },
+  {
+    "token": "SayNaji",
+    "frequency": 1,
+    "pos": "ADJECTIVE",
+    "meaning": "同じ",
+    "meaning_kana": "オナジ",
+    "pattern_guess": "A",
+    "katakana": "セイナジ",
+    "source_lines": [
+      "27:14"
+    ]
+  },
+  {
+    "token": "Dony-Toim",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "どんな時でも聞くよ",
+    "meaning_kana": "",
+    "pattern_guess": "C",
+    "katakana": "ドニートイム",
+    "source_lines": [
+      "27:15"
+    ]
+  },
+  {
+    "token": "He-K",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "どんな時でも聞くよ",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "ヒーク",
+    "source_lines": [
+      "27:15"
+    ]
+  },
+  {
+    "token": "hATurI",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "始めよ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ハトゥリ",
+    "source_lines": [
+      "28:20"
+    ]
+  },
+  {
+    "token": "hArLic",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "辛い旅路はもうすぐ終わるわ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ハルルイク",
+    "source_lines": [
+      "29:1"
+    ]
+  },
+  {
+    "token": "Tarip",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "辛い旅路はもうすぐ終わるわ",
+    "meaning_kana": "",
+    "pattern_guess": "B",
+    "katakana": "タリプ",
+    "source_lines": [
+      "29:1"
+    ]
+  },
+  {
+    "token": "smELL",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "疑うのはやめなさい",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "スメル",
+    "source_lines": [
+      "29:2"
+    ]
+  },
+  {
+    "token": "Duny-How",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "私がどうせあなたを抱いていくから",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ダニーハウ",
+    "source_lines": [
+      "29:3"
+    ]
+  },
+  {
+    "token": "coLL-Kuz",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "泣きながら砕れる果実",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "クオルクズ",
+    "source_lines": [
+      "29:4"
+    ]
+  },
+  {
+    "token": "beAnkShi",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "あぁ、この命、なんて美しいのかしら",
+    "meaning_kana": "",
+    "pattern_guess": "B",
+    "katakana": "ベアンクシ",
+    "source_lines": [
+      "29:5"
+    ]
+  },
+  {
+    "token": "QuYakully",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "すぐにでも連れていきたいの",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "クウヤクルイ",
+    "source_lines": [
+      "29:11"
+    ]
+  },
+  {
+    "token": "Was·nAi",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "だけどもったいないわ",
+    "meaning_kana": "ダケドモッタイナイワ",
+    "pattern_guess": "A",
+    "katakana": "ワスナイ",
+    "source_lines": [
+      "29:13"
+    ]
+  },
+  {
+    "token": "al-Fish",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "ただ苦しい叫びを",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "アルフィス",
+    "source_lines": [
+      "29:16"
+    ]
+  },
+  {
+    "token": "Pen-Sii",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "ラララ",
+    "meaning_kana": "ラララ",
+    "pattern_guess": "A",
+    "katakana": "ペンスイー",
+    "source_lines": [
+      "29:17"
+    ]
+  },
+  {
+    "token": "GoKuu",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "さぁ、静かに今夜逝きましょう",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ゴクウ",
+    "source_lines": [
+      "29:22"
+    ]
+  },
+  {
+    "token": "ReDegh",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "さぁ、飛者よ、手を伸ばして",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "レデグ",
+    "source_lines": [
+      "29:23"
+    ]
+  },
+  {
+    "token": "yOUlowly",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "ゆっくりとゆっくりと",
+    "meaning_kana": "ユックリトユックリト",
+    "pattern_guess": "A",
+    "katakana": "ヨウロウルイ",
+    "source_lines": [
+      "29:25"
+    ]
+  },
+  {
+    "token": "LAiklll",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "この生きる少女",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ライクルル",
+    "source_lines": [
+      "30:10"
+    ]
+  },
+  {
+    "token": "JIO※1",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "魔女よ※1",
+    "meaning_kana": "",
+    "pattern_guess": "B",
+    "katakana": "ジオ",
+    "source_lines": [
+      "30:11"
+    ]
+  },
+  {
+    "token": "EmA※2",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "エマよ※2",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "エマ",
+    "source_lines": [
+      "30:12"
+    ]
+  },
+  {
+    "token": "hATur1",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "始めよ",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ハトゥル",
+    "source_lines": [
+      "30:28"
+    ]
+  },
+  {
+    "token": "Reka",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "血の赤は心地よく",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "レカ",
+    "source_lines": [
+      "31:1"
+    ]
+  },
+  {
+    "token": "Blo",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "青の顔は美しい",
+    "meaning_kana": "",
+    "pattern_guess": "UNKNOWN",
+    "katakana": "ブロ",
+    "source_lines": [
+      "31:2"
+    ]
+  },
+  {
+    "token": "beAukShi",
+    "frequency": 1,
+    "pos": "ADJECTIVE",
+    "meaning": "美しい",
+    "meaning_kana": "ウツクシイ",
+    "pattern_guess": "A",
+    "katakana": "ビューティーシー",
+    "source_lines": [
+      "31:2"
+    ]
+  },
+  {
+    "token": "Eirden",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "誰でもいい",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "エイルドエン",
+    "source_lines": [
+      "32:2"
+    ]
+  },
+  {
+    "token": "Batte",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "この災いは恐らくあの方によってもたらされた見世物",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "バットエ",
+    "source_lines": [
+      "32:4"
+    ]
+  },
+  {
+    "token": "MotiNg",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "この災いは恐らくあの方によってもたらされた見世物",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "モティング",
+    "source_lines": [
+      "32:4"
+    ]
+  },
+  {
+    "token": "rUirDi",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "早く呪いが広がらないから",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ルイルドイ",
+    "source_lines": [
+      "32:5"
+    ]
+  },
+  {
+    "token": "HiroDemic",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "早く呪いが広がらないから",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ヒロデミク",
+    "source_lines": [
+      "32:5"
+    ]
+  },
+  {
+    "token": "hisou",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "人は死ぬべきなのだから",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ヒソウ",
+    "source_lines": [
+      "32:6"
+    ]
+  },
+  {
+    "token": "merc·-lee",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "慈悲なんて欲しがるな",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "メルクレエ",
+    "source_lines": [
+      "32:7"
+    ]
+  },
+  {
+    "token": "Haisu",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "真実は隠される",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ハイス",
+    "source_lines": [
+      "32:9"
+    ]
+  },
+  {
+    "token": "Divil",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "大魔女が怖いから",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ディヴィル",
+    "source_lines": [
+      "32:11"
+    ]
+  },
+  {
+    "token": "sHo-puise",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "衝動的な少女は大抵過ちを犯す",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ショプイセ",
+    "source_lines": [
+      "32:12"
+    ]
+  },
+  {
+    "token": "Commity",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "衝動的な少女は大抵過ちを犯す",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "クオンムイトイ",
+    "source_lines": [
+      "32:12"
+    ]
+  },
+  {
+    "token": "eLowKe",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "だから進化のようね",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "エロウケ",
+    "source_lines": [
+      "32:13"
+    ]
+  },
+  {
+    "token": "eOreak",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "世界を壊す魔女は",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "エオレアク",
+    "source_lines": [
+      "32:15"
+    ]
+  },
+  {
+    "token": "hArlie",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "辛い、たのしい",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ハルルイエ",
+    "source_lines": [
+      "32:17"
+    ]
+  },
+  {
+    "token": "Tsu-dUlll",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "長い話はつまらないの",
+    "meaning_kana": "",
+    "pattern_guess": "B",
+    "katakana": "ツドゥルル",
+    "source_lines": [
+      "32:20"
+    ]
+  },
+  {
+    "token": "Figch·Sii",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "激しい罵り合いをして",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "フィグクスイー",
+    "source_lines": [
+      "32:21"
+    ]
+  },
+  {
+    "token": "LaNoSiri",
+    "frequency": 1,
+    "pos": "OTHER",
+    "meaning": "激しい罵り合いをして",
+    "meaning_kana": "",
+    "pattern_guess": "A",
+    "katakana": "ラノスイリ",
+    "source_lines": [
+      "32:21"
+    ]
+  }
+]
