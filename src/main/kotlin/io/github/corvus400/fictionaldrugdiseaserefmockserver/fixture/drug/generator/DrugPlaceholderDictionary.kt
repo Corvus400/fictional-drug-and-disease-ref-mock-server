@@ -27,7 +27,7 @@ class DrugPlaceholderDictionary(
             PlaceholderCategory.A_MEDICAL_VOCABULARY -> medicalVocabulary.resolve(key, seed)
             PlaceholderCategory.B_COINED_NAME -> resolveCoinedName(placeholderKey, seed)
             PlaceholderCategory.C_DISEASE_REFERENCE -> resolveDiseaseReference(seed)
-            PlaceholderCategory.D_NUMERIC_RANGE -> TODO("sub-cycle 3-5 will delegate to NumericPlaceholderRanges")
+            PlaceholderCategory.D_NUMERIC_RANGE -> numericRanges.resolve(key, seed)
         }
     }
 
