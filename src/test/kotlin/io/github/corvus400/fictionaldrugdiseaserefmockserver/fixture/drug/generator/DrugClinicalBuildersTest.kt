@@ -23,8 +23,8 @@ class DrugClinicalBuildersTest {
             assertFalse(
                 actual = "{{" in paragraph.content || "}}" in paragraph.content,
                 message =
-                    "buildWarning paragraph must contain no raw '{{...}}' after Dictionary wiring; " +
-                        "got content='${paragraph.content}'",
+                "buildWarning paragraph must contain no raw '{{...}}' after Dictionary wiring; " +
+                    "got content='${paragraph.content}'",
             )
         }
     }
@@ -39,14 +39,14 @@ class DrugClinicalBuildersTest {
             assertFalse(
                 actual = "{{" in entry.clinicalSymptom || "}}" in entry.clinicalSymptom,
                 message =
-                    "buildInteractions clinicalSymptom must contain no raw '{{...}}'; " +
-                        "got='${entry.clinicalSymptom}'",
+                "buildInteractions clinicalSymptom must contain no raw '{{...}}'; " +
+                    "got='${entry.clinicalSymptom}'",
             )
             assertFalse(
                 actual = "{{" in entry.mechanism || "}}" in entry.mechanism,
                 message =
-                    "buildInteractions mechanism must contain no raw '{{...}}'; " +
-                        "got='${entry.mechanism}'",
+                "buildInteractions mechanism must contain no raw '{{...}}'; " +
+                    "got='${entry.mechanism}'",
             )
         }
     }

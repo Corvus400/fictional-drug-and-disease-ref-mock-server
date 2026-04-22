@@ -162,7 +162,10 @@ internal object DrugClinicalBuilders {
         )
     }
 
-    fun buildPrecautionsForSpecificPopulations(id: String, dict: DrugPlaceholderDictionary): List<PrecautionPopulation> {
+    fun buildPrecautionsForSpecificPopulations(
+        id: String,
+        dict: DrugPlaceholderDictionary,
+    ): List<PrecautionPopulation> {
         val countSeed =
             stableHash(id = id, slot = DrugFieldSlot.PRECAUTION_POPULATION_CATEGORY.ordinal, index = 0)
         val count = ValueRangeGenerator.pickCount(seed = countSeed, range = SHORT_LIST_COUNT_RANGE)

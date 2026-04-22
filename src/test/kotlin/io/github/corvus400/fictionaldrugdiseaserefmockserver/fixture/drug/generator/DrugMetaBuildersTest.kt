@@ -31,8 +31,8 @@ class DrugMetaBuildersTest {
             assertFalse(
                 actual = "{{" in value || "}}" in value,
                 message =
-                    "buildPharmacokinetics.$fieldName must contain no raw '{{...}}' after " +
-                        "Dictionary wiring; got='$value'",
+                "buildPharmacokinetics.$fieldName must contain no raw '{{...}}' after " +
+                    "Dictionary wiring; got='$value'",
             )
         }
     }
