@@ -10,179 +10,141 @@ private fun derive(
     salt: Long,
 ): Long = seed xor salt
 
-private fun Double.formatNumeric(): String = "%.1f".format(this)
+private fun pickUnit(
+    seed: Long,
+    units: List<String>,
+): String = if (units.size == 1) units.first() else ValueRangeGenerator.pickOne(derive(seed, UNIT_SALT), units)
+
+private fun Double.formatOneDecimal(): String = "%.1f".format(this)
+
+private sealed interface NumericFormatter {
+    fun render(seed: Long): String
+}
+
+private class IntFormatter(
+    val range: IntRange,
+    val multiplier: Int = 1,
+    val offset: Int = 0,
+    val units: List<String>,
+) : NumericFormatter {
+    override fun render(seed: Long): String {
+        val value = offset + ValueRangeGenerator.pickInRange(seed, range) * multiplier
+        return "$value ${pickUnit(seed, units)}"
+    }
+}
+
+private class DoubleFormatter(
+    val range: IntRange,
+    val scaleFactor: Double,
+    val units: List<String> = emptyList(),
+) : NumericFormatter {
+    override fun render(seed: Long): String {
+        val value = ValueRangeGenerator.pickInRange(seed, range) * scaleFactor
+        val formatted = value.formatOneDecimal()
+        return if (units.isEmpty()) formatted else "$formatted ${pickUnit(seed, units)}"
+    }
+}
+
+private class InequalityFormatter(
+    val range: IntRange,
+    val prefix: String,
+    val zeroPadWidth: Int,
+) : NumericFormatter {
+    override fun render(seed: Long): String {
+        val bucket = ValueRangeGenerator.pickInRange(seed, range)
+        return "$prefix${bucket.toString().padStart(zeroPadWidth, '0')}"
+    }
+}
+
+private class IntRangeFormatter(
+    val startRange: IntRange,
+    val endOffsetRange: IntRange,
+    val unit: String,
+) : NumericFormatter {
+    override fun render(seed: Long): String {
+        val start = ValueRangeGenerator.pickInRange(seed, startRange)
+        val end =
+            ValueRangeGenerator.pickInRange(
+                derive(seed, RANGE_END_SALT),
+                (start + endOffsetRange.first)..(start + endOffsetRange.last),
+            )
+        return "$start - $end $unit"
+    }
+}
+
+private class DoubleRangeFormatter(
+    val startRange: IntRange,
+    val endOffsetRange: IntRange,
+    val scaleFactor: Double,
+    val units: List<String>,
+) : NumericFormatter {
+    override fun render(seed: Long): String {
+        val startBucket = ValueRangeGenerator.pickInRange(seed, startRange)
+        val endBucket =
+            ValueRangeGenerator.pickInRange(
+                derive(seed, RANGE_END_SALT),
+                (startBucket + endOffsetRange.first)..(startBucket + endOffsetRange.last),
+            )
+        val start = (startBucket * scaleFactor).formatOneDecimal()
+        val end = (endBucket * scaleFactor).formatOneDecimal()
+        return "$start - $end ${pickUnit(seed, units)}"
+    }
+}
 
 object NumericPlaceholderRanges {
     fun resolve(
         key: String,
         seed: Long,
     ): String {
-        val builder =
-            BUILDERS[key]
+        val formatter =
+            FORMATTERS[key]
                 ?: error(
                     "Unknown category-D placeholder key '$key'. " +
                         "NumericPlaceholderRanges covers only the 32 category-D numeric keys. " +
                         "Other categories (A/B/C) are resolved by DrugPlaceholderDictionary.",
                 )
-        return builder(seed)
+        return formatter.render(seed)
     }
 
-    private val BUILDERS: Map<String, (Long) -> String> =
+    private val FORMATTERS: Map<String, NumericFormatter> =
         mapOf(
-            "auc" to { seed ->
-                val bucket = ValueRangeGenerator.pickInRange(seed, 0..98)
-                val value = 100 + bucket * 50
-                val unit = ValueRangeGenerator.pickOne(derive(seed, UNIT_SALT), listOf("ng·h/mL", "μg·h/mL"))
-                "$value $unit"
-            },
-            "bioavailability" to { seed ->
-                "${ValueRangeGenerator.pickInRange(seed, 10..99)} %"
-            },
-            "cmax" to { seed ->
-                val bucket = ValueRangeGenerator.pickInRange(seed, 1..200)
-                val value = bucket * 0.5
-                val unit = ValueRangeGenerator.pickOne(derive(seed, UNIT_SALT), listOf("ng/mL", "μg/mL"))
-                "${value.formatNumeric()} $unit"
-            },
-            "cnsRatio" to { seed ->
-                val bucket = ValueRangeGenerator.pickInRange(seed, 1..500)
-                val value = bucket * 0.1
-                "${value.formatNumeric()} %"
-            },
-            "doseAmount" to { seed ->
-                val bucket = ValueRangeGenerator.pickInRange(seed, 1..100)
-                val value = bucket * 5
-                val unit = ValueRangeGenerator.pickOne(derive(seed, UNIT_SALT), listOf("μg", "mg", "g"))
-                "$value $unit"
-            },
-            "dosePerKg" to { seed ->
-                val bucket = ValueRangeGenerator.pickInRange(seed, 1..200)
-                val value = bucket * 0.1
-                "${value.formatNumeric()} mg/kg"
-            },
-            "durationDays" to { seed ->
-                val n = ValueRangeGenerator.pickInRange(seed, 1..90)
-                val suffix = ValueRangeGenerator.pickOne(derive(seed, UNIT_SALT), listOf("日", "日間"))
-                "$n $suffix"
-            },
-            "durationWeeks" to { seed ->
-                "${ValueRangeGenerator.pickInRange(seed, 1..52)} 週間"
-            },
-            "efficacyRate" to { seed ->
-                val bucket = ValueRangeGenerator.pickInRange(seed, 100..999)
-                val value = bucket * 0.1
-                "${value.formatNumeric()} %"
-            },
-            "fecalExcretionRatio" to { seed ->
-                val bucket = ValueRangeGenerator.pickInRange(seed, 0..990)
-                val value = bucket * 0.1
-                "${value.formatNumeric()} %"
-            },
-            "foodEffectRatio" to { seed ->
-                val bucket = ValueRangeGenerator.pickInRange(seed, 5..30)
-                val value = bucket * 0.1
-                "${value.formatNumeric()} 倍"
-            },
-            "frequency" to { seed ->
-                "${ValueRangeGenerator.pickInRange(seed, 1..4)} 回"
-            },
-            "halfLife" to { seed ->
-                val bucket = ValueRangeGenerator.pickInRange(seed, 2..48)
-                val value = bucket * 0.5
-                "${value.formatNumeric()} 時間"
-            },
-            "ic50" to { seed ->
-                val bucket = ValueRangeGenerator.pickInRange(seed, 1..1000)
-                val value = bucket * 0.1
-                "${value.formatNumeric()} nM"
-            },
-            "interval" to { seed ->
-                val bucket = ValueRangeGenerator.pickInRange(seed, 1..6)
-                "${bucket * 4} 時間"
-            },
-            "maxDailyDose" to { seed ->
-                val bucket = ValueRangeGenerator.pickInRange(seed, 1..30)
-                val value = bucket * 100
-                val unit = ValueRangeGenerator.pickOne(derive(seed, UNIT_SALT), listOf("mg", "g"))
-                "$value $unit"
-            },
-            "meltingPoint" to { seed ->
-                "${ValueRangeGenerator.pickInRange(seed, 80..300)} ℃"
-            },
-            "packageSize" to { seed ->
-                val bucket = ValueRangeGenerator.pickInRange(seed, 1..10)
-                val value = bucket * 10
-                val unit = ValueRangeGenerator.pickOne(derive(seed, UNIT_SALT), listOf("錠", "包", "本"))
-                "$value $unit"
-            },
-            "patientCount" to { seed ->
-                val bucket = ValueRangeGenerator.pickInRange(seed, 1..20)
-                "${bucket * 100} 例"
-            },
-            "pKa" to { seed ->
-                val bucket = ValueRangeGenerator.pickInRange(seed, 20..100)
-                val value = bucket * 0.1
-                value.formatNumeric()
-            },
-            "proteinBinding" to { seed ->
-                "${ValueRangeGenerator.pickInRange(seed, 10..99)} %"
-            },
-            "pValue" to { seed ->
-                val bucket = ValueRangeGenerator.pickInRange(seed, 1..50)
-                val threeDigits = bucket.toString().padStart(3, '0')
-                "< 0.$threeDigits"
-            },
-            "reductionRatio" to { seed ->
-                val bucket = ValueRangeGenerator.pickInRange(seed, 1..19)
-                "${bucket * 5} %"
-            },
-            "referenceRange" to { seed ->
-                val startBucket = ValueRangeGenerator.pickInRange(seed, 10..80)
-                val endBucket = ValueRangeGenerator.pickInRange(
-                    derive(seed, RANGE_END_SALT),
-                    (startBucket + 5)..(startBucket + 50)
-                )
-                val start = startBucket * 0.1
-                val end = endBucket * 0.1
-                val unit = ValueRangeGenerator.pickOne(derive(seed, UNIT_SALT), listOf("mg/dL", "μg/mL", "nmol/L"))
-                "${start.formatNumeric()} - ${end.formatNumeric()} $unit"
-            },
-            "reimbursementDurationDays" to { seed ->
-                "${ValueRangeGenerator.pickInRange(seed, 14..180)} 日"
-            },
-            "retentionRate" to { seed ->
-                "${ValueRangeGenerator.pickInRange(seed, 10..99)} %"
-            },
-            "stableDuration" to { seed ->
-                val bucket = ValueRangeGenerator.pickInRange(seed, 1..10)
-                val unit = ValueRangeGenerator.pickOne(derive(seed, UNIT_SALT), listOf("か月", "年"))
-                "${bucket * 6} $unit"
-            },
-            "storageTemperature" to { seed ->
-                val start = ValueRangeGenerator.pickInRange(seed, 1..20)
-                val end = ValueRangeGenerator.pickInRange(derive(seed, RANGE_END_SALT), (start + 1)..(start + 10))
-                "$start - $end ℃"
-            },
-            "tmax" to { seed ->
-                val bucket = ValueRangeGenerator.pickInRange(seed, 1..24)
-                val value = bucket * 0.5
-                "${value.formatNumeric()} 時間"
-            },
-            "totalDailyDose" to { seed ->
-                val bucket = ValueRangeGenerator.pickInRange(seed, 1..30)
-                val value = bucket * 100
-                val unit = ValueRangeGenerator.pickOne(derive(seed, UNIT_SALT), listOf("mg", "g"))
-                "$value $unit"
-            },
-            "urinaryExcretionRatio" to { seed ->
-                val bucket = ValueRangeGenerator.pickInRange(seed, 0..990)
-                val value = bucket * 0.1
-                "${value.formatNumeric()} %"
-            },
-            "volumeOfDistribution" to { seed ->
-                val bucket = ValueRangeGenerator.pickInRange(seed, 1..100)
-                val value = bucket * 0.1
-                "${value.formatNumeric()} L/kg"
-            },
+            "auc" to IntFormatter(range = 0..98, multiplier = 50, offset = 100, units = listOf("ng·h/mL", "μg·h/mL")),
+            "bioavailability" to IntFormatter(range = 10..99, units = listOf("%")),
+            "cmax" to DoubleFormatter(range = 1..200, scaleFactor = 0.5, units = listOf("ng/mL", "μg/mL")),
+            "cnsRatio" to DoubleFormatter(range = 1..500, scaleFactor = 0.1, units = listOf("%")),
+            "doseAmount" to IntFormatter(range = 1..100, multiplier = 5, units = listOf("μg", "mg", "g")),
+            "dosePerKg" to DoubleFormatter(range = 1..200, scaleFactor = 0.1, units = listOf("mg/kg")),
+            "durationDays" to IntFormatter(range = 1..90, units = listOf("日", "日間")),
+            "durationWeeks" to IntFormatter(range = 1..52, units = listOf("週間")),
+            "efficacyRate" to DoubleFormatter(range = 100..999, scaleFactor = 0.1, units = listOf("%")),
+            "fecalExcretionRatio" to DoubleFormatter(range = 0..990, scaleFactor = 0.1, units = listOf("%")),
+            "foodEffectRatio" to DoubleFormatter(range = 5..30, scaleFactor = 0.1, units = listOf("倍")),
+            "frequency" to IntFormatter(range = 1..4, units = listOf("回")),
+            "halfLife" to DoubleFormatter(range = 2..48, scaleFactor = 0.5, units = listOf("時間")),
+            "ic50" to DoubleFormatter(range = 1..1000, scaleFactor = 0.1, units = listOf("nM")),
+            "interval" to IntFormatter(range = 1..6, multiplier = 4, units = listOf("時間")),
+            "maxDailyDose" to IntFormatter(range = 1..30, multiplier = 100, units = listOf("mg", "g")),
+            "meltingPoint" to IntFormatter(range = 80..300, units = listOf("℃")),
+            "packageSize" to IntFormatter(range = 1..10, multiplier = 10, units = listOf("錠", "包", "本")),
+            "patientCount" to IntFormatter(range = 1..20, multiplier = 100, units = listOf("例")),
+            "pKa" to DoubleFormatter(range = 20..100, scaleFactor = 0.1),
+            "proteinBinding" to IntFormatter(range = 10..99, units = listOf("%")),
+            "pValue" to InequalityFormatter(range = 1..50, prefix = "< 0.", zeroPadWidth = 3),
+            "reductionRatio" to IntFormatter(range = 1..19, multiplier = 5, units = listOf("%")),
+            "referenceRange" to
+                DoubleRangeFormatter(
+                    startRange = 10..80,
+                    endOffsetRange = 5..50,
+                    scaleFactor = 0.1,
+                    units = listOf("mg/dL", "μg/mL", "nmol/L"),
+                ),
+            "reimbursementDurationDays" to IntFormatter(range = 14..180, units = listOf("日")),
+            "retentionRate" to IntFormatter(range = 10..99, units = listOf("%")),
+            "stableDuration" to IntFormatter(range = 1..10, multiplier = 6, units = listOf("か月", "年")),
+            "storageTemperature" to IntRangeFormatter(startRange = 1..20, endOffsetRange = 1..10, unit = "℃"),
+            "tmax" to DoubleFormatter(range = 1..24, scaleFactor = 0.5, units = listOf("時間")),
+            "totalDailyDose" to IntFormatter(range = 1..30, multiplier = 100, units = listOf("mg", "g")),
+            "urinaryExcretionRatio" to DoubleFormatter(range = 0..990, scaleFactor = 0.1, units = listOf("%")),
+            "volumeOfDistribution" to DoubleFormatter(range = 1..100, scaleFactor = 0.1, units = listOf("L/kg")),
         )
 }
