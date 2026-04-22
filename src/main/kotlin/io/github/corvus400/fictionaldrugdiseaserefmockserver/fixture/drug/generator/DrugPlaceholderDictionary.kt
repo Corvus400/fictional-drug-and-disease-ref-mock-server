@@ -9,6 +9,9 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.genera
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.placeholder.TargetMoleculeSuffixes
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.FixmergeNameAdapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixmerge.nameslot.NameSlot
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.stableHash
+
+private val PLACEHOLDER_REGEX = Regex("""\{\{([a-zA-Z0-9]+)\}\}""")
 
 class DrugPlaceholderDictionary(
     private val medicalVocabulary: MedicalVocabularyDictionary = MedicalVocabularyDictionary,
@@ -28,6 +31,33 @@ class DrugPlaceholderDictionary(
             PlaceholderCategory.D_NUMERIC_RANGE -> numericRanges.resolve(key, seed)
         }
     }
+
+    fun resolveAll(
+        template: String,
+        seed: Long,
+    ): String {
+        val result =
+            PLACEHOLDER_REGEX.replace(template) { match ->
+                val key = match.groupValues[1]
+                val derivedSeed =
+                    stableHash(
+                        id = "$seed:$key:${match.range.first}",
+                        slot = 0,
+                        index = 0,
+                    )
+                resolve(key, derivedSeed)
+            }
+        check("{{" !in result && "}}" !in result) {
+            "Raw placeholder delimiter survived resolveAll — a resolver branch must have returned a " +
+                "string still containing '{{' or '}}'. Inspect resolve() outputs. result='$result'"
+        }
+        return result
+    }
+
+    fun renderField(
+        field: ParagraphField,
+        seed: Long,
+    ): String = resolveAll(template = DrugParagraphTemplates.pickTemplate(field, seed), seed = seed)
 
     private fun throwUnknownPlaceholderError(key: String): Nothing =
         error(
