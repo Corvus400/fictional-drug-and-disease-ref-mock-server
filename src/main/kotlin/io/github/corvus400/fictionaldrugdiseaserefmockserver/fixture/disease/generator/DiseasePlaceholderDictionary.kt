@@ -20,8 +20,7 @@ class DiseasePlaceholderDictionary(
                 )
         return when (placeholderKey.category) {
             DiseasePlaceholderCategory.A_MEDICAL_VOCABULARY -> medicalVocabulary.resolve(key, seed)
-            DiseasePlaceholderCategory.B_SELF_REFERENCE ->
-                TODO("B_SELF_REFERENCE not implemented yet (key=$key)")
+            DiseasePlaceholderCategory.B_SELF_REFERENCE -> context.selfName
             DiseasePlaceholderCategory.D_NUMERIC_RANGE ->
                 TODO("D_NUMERIC_RANGE not implemented yet (key=$key)")
         }
