@@ -1,8 +1,10 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.placeholder
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.stableHash
+import java.util.Locale
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class NumericPlaceholderRangesTest {
@@ -42,8 +44,54 @@ class NumericPlaceholderRangesTest {
         }
     }
 
+    @Test
+    fun `resolve renders dot-decimal regardless of JVM default locale`() {
+        val originalLocale = Locale.getDefault()
+        try {
+            Locale.setDefault(Locale.GERMANY)
+            DECIMAL_BEARING_KEYS.forEach { key ->
+                val regex = requireNotNull(CATEGORY_D_FORMAT_REGEX[key]) { "regex missing for '$key'" }.toRegex()
+                repeat(LOCALE_SAMPLE_SIZE) { index ->
+                    val seed = stableHash(id = "drug_${index.toString().padStart(4, '0')}", slot = 0, index = 0)
+                    val value = NumericPlaceholderRanges.resolve(key, seed)
+                    assertFalse(
+                        value.contains(','),
+                        "resolve('$key', $seed) = '$value' contains ',' — numeric formatting must be " +
+                            "locale-independent (use Locale.ROOT / String.format(Locale.ROOT, ...)); " +
+                            "otherwise Apple Container / CI in de_DE / fr_FR / similar locales emits " +
+                            "comma decimals that break regex contracts.",
+                    )
+                    assertTrue(
+                        regex.matches(value),
+                        "resolve('$key', $seed) = '$value' does not match /${CATEGORY_D_FORMAT_REGEX[key]}/ under GERMANY locale",
+                    )
+                }
+            }
+        } finally {
+            Locale.setDefault(originalLocale)
+        }
+    }
+
     private companion object {
         const val FORMAT_SAMPLE_SIZE = 50
+        const val LOCALE_SAMPLE_SIZE = 20
+
+        val DECIMAL_BEARING_KEYS =
+            listOf(
+                "cmax",
+                "cnsRatio",
+                "dosePerKg",
+                "efficacyRate",
+                "fecalExcretionRatio",
+                "foodEffectRatio",
+                "halfLife",
+                "ic50",
+                "pKa",
+                "referenceRange",
+                "tmax",
+                "urinaryExcretionRatio",
+                "volumeOfDistribution",
+            )
 
         val CATEGORY_D_KEYS =
             listOf(
