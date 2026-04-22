@@ -5,6 +5,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.gen
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.stableHash
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 class DiseasePlaceholderDictionaryTest {
@@ -52,6 +53,29 @@ class DiseasePlaceholderDictionaryTest {
         val second = dict.resolve("disease", seed = 0L, context = DiseaseRenderContext(selfName = "B"))
         assertEquals("A", first)
         assertEquals("B", second)
+    }
+
+    @Test
+    fun `resolve throws TASK ORDER VIOLATION for unknown placeholder key`() {
+        val dict = buildDict()
+        val context = DiseaseRenderContext(selfName = "架空疾患テスト甲")
+        val error =
+            assertFailsWith<IllegalStateException> {
+                dict.resolve("unknownPlaceholderKey", seed = 0L, context = context)
+            }
+        val message = error.message.orEmpty()
+        listOf(
+            "unknownPlaceholderKey",
+            "TASK ORDER VIOLATION",
+            "DiseaseParagraphTemplates",
+            "DiseasePlaceholderDictionary",
+            "DO NOT bypass",
+        ).forEach { keyword ->
+            assertTrue(
+                message.contains(keyword),
+                "error message must mention '$keyword' to direct developers to the correct fix; got: $message",
+            )
+        }
     }
 
     private fun buildDict(): DiseasePlaceholderDictionary = DiseasePlaceholderDictionary()
