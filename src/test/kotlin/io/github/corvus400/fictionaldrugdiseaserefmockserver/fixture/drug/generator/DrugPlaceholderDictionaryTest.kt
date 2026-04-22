@@ -1,6 +1,8 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.DiseaseFixtureProvider
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.placeholder.MedicalVocabularyDictionary
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.placeholder.PlaceholderCategory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.placeholder.PlaceholderKey
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.FixmergeNameAdapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.stableHash
@@ -38,6 +40,22 @@ class DrugPlaceholderDictionaryTest {
                     "every placeholder key must yield a non-empty substitution string",
             )
         }
+    }
+
+    @Test
+    fun `resolve delegates every category-A key to MedicalVocabularyDictionary`() {
+        val dict = buildDict()
+        val seed = stableHash(id = "drug_0001", slot = 0, index = 0)
+        PlaceholderKey.values()
+            .filter { it.category == PlaceholderCategory.A_MEDICAL_VOCABULARY }
+            .forEach { key ->
+                assertEquals(
+                    MedicalVocabularyDictionary.resolve(key.jsonKey, seed),
+                    dict.resolve(key.jsonKey, seed),
+                    "Dictionary.resolve('${key.jsonKey}', $seed) must return the same value " +
+                        "as MedicalVocabularyDictionary.resolve since this is a category-A key",
+                )
+            }
     }
 
     private fun buildDict(): DrugPlaceholderDictionary =
