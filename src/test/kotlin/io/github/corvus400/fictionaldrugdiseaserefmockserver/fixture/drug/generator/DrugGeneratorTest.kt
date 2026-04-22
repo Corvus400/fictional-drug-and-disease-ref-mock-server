@@ -6,7 +6,9 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.bluepr
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.FixmergeNameAdapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.country.CountryBucketRepository
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.country.DrugCountryMapping
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DosageForm
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RouteOfAdministration
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -114,5 +116,150 @@ class DrugGeneratorTest {
             assertTrue(drug.genericName.isNotBlank(), "genericName blank for ${drug.id}")
             assertTrue(drug.manufacturer.isNotBlank(), "manufacturer blank for ${drug.id}")
         }
+    }
+
+    @Test
+    fun `generate returns a Drug with all 37 top-level fields populated (non-null and non-empty)`() {
+        val drug = generator.generate(blueprint = sampleBlueprint)
+
+        // 9 文字列フィールド: 非 blank
+        assertTrue(drug.id.isNotBlank(), "id blank")
+        assertTrue(drug.genericName.isNotBlank(), "genericName blank")
+        assertTrue(drug.brandName.isNotBlank(), "brandName blank")
+        assertTrue(drug.brandNameKana.isNotBlank(), "brandNameKana blank")
+        assertTrue(drug.atcCode.isNotBlank(), "atcCode blank")
+        val yjCode = assertNotNull(drug.yjCode, "yjCode null")
+        assertTrue(yjCode.isNotBlank(), "yjCode blank")
+        assertTrue(drug.therapeuticCategoryName.isNotBlank(), "therapeuticCategoryName blank")
+        assertTrue(drug.manufacturer.isNotBlank(), "manufacturer blank")
+        assertTrue(drug.revisedAt.isNotBlank(), "revisedAt blank")
+
+        // 10 非 null 構造フィールド
+        assertNotNull(drug.dosageForm, "dosageForm null")
+        assertNotNull(drug.routeOfAdministration, "routeOfAdministration null")
+        assertNotNull(drug.composition, "composition null")
+        assertNotNull(drug.dosage, "dosage null")
+        assertNotNull(drug.adverseReactions, "adverseReactions null")
+        assertNotNull(drug.interactions, "interactions null")
+        assertNotNull(drug.overdose, "overdose null")
+        assertNotNull(drug.pharmacokinetics, "pharmacokinetics null")
+        assertNotNull(drug.pharmacology, "pharmacology null")
+        assertNotNull(drug.physicochemicalProperties, "physicochemicalProperties null")
+
+        // 18 List フィールド: 非 empty
+        assertTrue(drug.regulatoryClass.isNotEmpty(), "regulatoryClass empty")
+        assertTrue(drug.warning.isNotEmpty(), "warning empty")
+        assertTrue(drug.contraindications.isNotEmpty(), "contraindications empty")
+        assertTrue(drug.indications.isNotEmpty(), "indications empty")
+        assertTrue(drug.indicationsRelatedPrecautions.isNotEmpty(), "indicationsRelatedPrecautions empty")
+        assertTrue(drug.dosageRelatedPrecautions.isNotEmpty(), "dosageRelatedPrecautions empty")
+        assertTrue(drug.importantPrecautions.isNotEmpty(), "importantPrecautions empty")
+        assertTrue(
+            drug.precautionsForSpecificPopulations.isNotEmpty(),
+            "precautionsForSpecificPopulations empty",
+        )
+        assertTrue(drug.effectsOnLabTests.isNotEmpty(), "effectsOnLabTests empty")
+        assertTrue(drug.administrationPrecautions.isNotEmpty(), "administrationPrecautions empty")
+        assertTrue(drug.otherPrecautions.isNotEmpty(), "otherPrecautions empty")
+        assertTrue(drug.clinicalResults.isNotEmpty(), "clinicalResults empty")
+        assertTrue(drug.handlingPrecautions.isNotEmpty(), "handlingPrecautions empty")
+        assertTrue(drug.approvalConditions.isNotEmpty(), "approvalConditions empty")
+        assertTrue(drug.packages.isNotEmpty(), "packages empty")
+        assertTrue(drug.references.isNotEmpty(), "references empty")
+        assertTrue(drug.insuranceNotes.isNotEmpty(), "insuranceNotes empty")
+        assertTrue(drug.relatedDiseaseIds.isNotEmpty(), "relatedDiseaseIds empty")
+    }
+
+    @Test
+    fun `generate for injection blueprint populates pharmacokinetics and administrationPrecautions`() {
+        val injectionBlueprint =
+            DrugBlueprintFactory.build().first { it.dosageFormGroup == DosageFormGroup.INJECTION }
+        val drug = generator.generate(blueprint = injectionBlueprint)
+
+        assertEquals(RouteOfAdministration.INJECTION_ROUTE, drug.routeOfAdministration)
+        assertNotNull(drug.pharmacokinetics, "pharmacokinetics must be non-null for injection")
+        assertTrue(
+            drug.administrationPrecautions.isNotEmpty(),
+            "administrationPrecautions must be non-empty for injection",
+        )
+    }
+
+    @Test
+    fun `generate for external blueprint populates administrationPrecautions`() {
+        val externalBlueprint =
+            DrugBlueprintFactory.build().first { it.dosageFormGroup == DosageFormGroup.EXTERNAL }
+        val drug = generator.generate(blueprint = externalBlueprint)
+
+        assertTrue(
+            drug.dosageForm in
+                setOf(
+                    DosageForm.OINTMENT,
+                    DosageForm.CREAM,
+                    DosageForm.PATCH,
+                    DosageForm.EYE_DROPS,
+                    DosageForm.NASAL_SPRAY,
+                ),
+            "dosageForm '${drug.dosageForm}' is not an external form",
+        )
+        assertTrue(
+            drug.administrationPrecautions.isNotEmpty(),
+            "administrationPrecautions must be non-empty for external",
+        )
+    }
+
+    @Test
+    fun `generate for biological L-group blueprint populates handlingPrecautions and warning`() {
+        val biologicalBlueprint =
+            DrugBlueprintFactory.build().first { it.atcFirstLetter == 'L' && it.isBiological }
+        val drug = generator.generate(blueprint = biologicalBlueprint)
+
+        assertTrue(
+            drug.handlingPrecautions.isNotEmpty(),
+            "handlingPrecautions must be non-empty for biological",
+        )
+        assertTrue(drug.warning.isNotEmpty(), "warning must be non-empty for biological")
+    }
+
+    @Test
+    fun `generate for poison or potent blueprint populates warning`() {
+        val blueprint =
+            DrugBlueprintFactory.build().first { bp ->
+                RegulatoryClass.POISON in bp.regulatoryClasses ||
+                    RegulatoryClass.POTENT in bp.regulatoryClasses
+            }
+        val drug = generator.generate(blueprint = blueprint)
+
+        assertTrue(drug.warning.isNotEmpty(), "warning must be non-empty for poison or potent")
+    }
+
+    @Test
+    fun `generate for psychotropic or narcotic blueprint populates insuranceNotes`() {
+        val blueprint =
+            DrugBlueprintFactory.build().first { bp ->
+                RegulatoryClass.NARCOTIC in bp.regulatoryClasses ||
+                    RegulatoryClass.PSYCHOTROPIC_1 in bp.regulatoryClasses ||
+                    RegulatoryClass.PSYCHOTROPIC_2 in bp.regulatoryClasses ||
+                    RegulatoryClass.PSYCHOTROPIC_3 in bp.regulatoryClasses
+            }
+        val drug = generator.generate(blueprint = blueprint)
+
+        assertTrue(
+            drug.insuranceNotes.isNotEmpty(),
+            "insuranceNotes must be non-empty for psychotropic or narcotic",
+        )
+    }
+
+    @Test
+    fun `generate for chronic A or C blueprint populates dosageRelatedPrecautions`() {
+        val blueprint =
+            DrugBlueprintFactory.build().first { bp ->
+                bp.atcFirstLetter in setOf('A', 'C') && bp.isChronicPrescription
+            }
+        val drug = generator.generate(blueprint = blueprint)
+
+        assertTrue(
+            drug.dosageRelatedPrecautions.isNotEmpty(),
+            "dosageRelatedPrecautions must be non-empty for chronic A or C",
+        )
     }
 }
