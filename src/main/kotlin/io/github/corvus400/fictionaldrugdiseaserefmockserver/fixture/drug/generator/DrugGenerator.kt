@@ -2,12 +2,12 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.gener
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.blueprint.DosageFormGroup
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.blueprint.DrugBlueprint
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.BucketNameCoiner
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.FixmergeNameAdapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.country.CountryBucketRepository
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.country.DrugCountryMapping
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixmerge.coinage.CoinedName
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixmerge.nameslot.NameSlot
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.stableHash
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.Drug
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DosageForm
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DoseUnit
@@ -25,27 +25,29 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.P
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.StorageCondition
 
 class DrugGenerator(
-    private val adapter: FixmergeNameAdapter,
+    adapter: FixmergeNameAdapter,
 ) {
+    private val coiner: BucketNameCoiner = BucketNameCoiner(adapter = adapter)
+
     fun generate(blueprint: DrugBlueprint): Drug {
         val country = DrugCountryMapping.of(atcFirstLetter = blueprint.atcFirstLetter)
         val bucket = CountryBucketRepository.of(country = country)
         val brand =
-            coinFromBucket(
+            coiner.coin(
                 bucket = bucket.cuisine,
                 blueprintIndex = blueprint.index,
                 slot = NameSlot.DRUG_BRAND,
-                offset = 0
+                offset = 0,
             )
         val generic =
-            coinFromBucket(
+            coiner.coin(
                 bucket = bucket.cuisine,
                 blueprintIndex = blueprint.index,
                 slot = NameSlot.DRUG_GENERIC,
-                offset = 0
+                offset = 0,
             )
         val inactives = (0 until INACTIVE_INGREDIENT_COUNT).map { offset ->
-            coinFromBucket(
+            coiner.coin(
                 bucket = bucket.beverage,
                 blueprintIndex = blueprint.index,
                 slot = NameSlot.DRUG_INACTIVE_INGREDIENT,
@@ -53,11 +55,11 @@ class DrugGenerator(
             )
         }
         val manufacturer =
-            coinFromBucket(
+            coiner.coin(
                 bucket = bucket.beverage,
                 blueprintIndex = blueprint.index,
                 slot = NameSlot.DRUG_MANUFACTURER,
-                offset = 0
+                offset = 0,
             )
         return buildDrug(
             blueprint = blueprint,
@@ -70,18 +72,6 @@ class DrugGenerator(
 
     fun generate(blueprints: List<DrugBlueprint>): List<Drug> {
         return blueprints.map { generate(blueprint = it) }
-    }
-
-    private fun coinFromBucket(
-        bucket: List<String>,
-        blueprintIndex: Int,
-        slot: NameSlot,
-        offset: Int,
-    ): CoinedName {
-        val sourceIndex = ((blueprintIndex * SEED_INDEX_PRIME) + slot.ordinal + offset).mod(other = bucket.size)
-        val sourceToken = bucket[sourceIndex]
-        val seed = stableHash(id = sourceToken, slot = slot.ordinal, index = 0)
-        return adapter.coin(slot = slot, seed = seed)
     }
 
     private fun buildDrug(
@@ -179,7 +169,6 @@ class DrugGenerator(
         }
 
     companion object {
-        private const val SEED_INDEX_PRIME: Int = 31
         private const val INACTIVE_INGREDIENT_COUNT: Int = 3
         private const val DRUG_ID_PAD_LENGTH: Int = 4
         private const val ATC_CODE_SUFFIX_MOD: Int = 100
