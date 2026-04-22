@@ -12,7 +12,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.Drug
 class DrugFixtureProvider(
     val all: List<Drug>,
 ) {
-    fun getById(id: String): Drug? {
-        TODO("not implemented: id=$id")
-    }
+    private val byId: Map<String, Drug> = all.associateBy { it.id }
+
+    fun getById(id: String): Drug? = byId[id]
 }

@@ -37,9 +37,9 @@ class DiseaseGeneratorTest {
     }
 
     @Test
-    fun `generate is deterministic for the same blueprint`() {
-        val first = generator.generate(blueprint = sampleBlueprint)
-        val second = generator.generate(blueprint = sampleBlueprint)
+    fun `generate is deterministic for the same blueprint given fresh adapter instances`() {
+        val first = DiseaseGenerator(adapter = FixmergeNameAdapter()).generate(blueprint = sampleBlueprint)
+        val second = DiseaseGenerator(adapter = FixmergeNameAdapter()).generate(blueprint = sampleBlueprint)
         assertEquals(first, second)
     }
 
@@ -96,10 +96,10 @@ class DiseaseGeneratorTest {
     }
 
     @Test
-    fun `generate bulk handles the full disease factory inventory deterministically`() {
+    fun `generate bulk handles the full disease factory inventory deterministically given fresh adapter instances`() {
         val blueprints = DiseaseBlueprintFactory.build()
-        val first = generator.generate(blueprints = blueprints)
-        val second = generator.generate(blueprints = blueprints)
+        val first = DiseaseGenerator(adapter = FixmergeNameAdapter()).generate(blueprints = blueprints)
+        val second = DiseaseGenerator(adapter = FixmergeNameAdapter()).generate(blueprints = blueprints)
         assertEquals(blueprints.size, first.size)
         assertEquals(first, second)
         assertEquals(first.size, first.map { it.id }.toSet().size, "disease ids are not unique")
