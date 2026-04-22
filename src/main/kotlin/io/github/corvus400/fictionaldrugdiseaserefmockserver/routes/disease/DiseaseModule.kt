@@ -5,8 +5,9 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog.EndpointMet
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog.ScenarioMeta
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog.toEntry
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.DiseaseFixtureProvider
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.ApiTag
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.documentIdDetailEndpoint
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.documentListEndpoint
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.scenario.ScenarioManager
 import io.github.smiley4.ktoropenapi.get
 import io.ktor.http.HttpMethod
@@ -46,18 +47,12 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
     val provider: DiseaseFixtureProvider by dependencies
     routing {
         get("/diseases/{id}", {
-            summary = diseaseDetailMetadata.summary
-            tags(diseaseDetailMetadata.tag.tagName)
-            description = "`id` で指定した疾患詳細 Fixture を返す。"
-            request {
-                pathParameter<String>("id") {
-                    description = "疾患 ID (`disease_NNNN` 形式)"
-                }
-            }
-            response {
-                code(HttpStatusCode.OK) { body<Disease> { description = "疾患詳細" } }
-                code(HttpStatusCode.NotFound) { description = "指定 id が存在しない" }
-            }
+            documentIdDetailEndpoint(
+                metadata = diseaseDetailMetadata,
+                endpointDescription = "`id` で指定した疾患詳細 Fixture を返す。",
+                idParamDescription = "疾患 ID (`disease_NNNN` 形式)",
+                exampleFixture = provider.all.first(),
+            )
         }) {
             val id = call.parameters["id"].orEmpty()
             val disease = provider.getById(id = id)
@@ -68,12 +63,11 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
             }
         }
         get("/diseases", {
-            summary = diseaseListMetadata.summary
-            tags(diseaseListMetadata.tag.tagName)
-            description = "起動時に生成された全疾患 Fixture を配列で返す。"
-            response {
-                code(HttpStatusCode.OK) { body<List<Disease>> { description = "疾患一覧" } }
-            }
+            documentListEndpoint(
+                metadata = diseaseListMetadata,
+                endpointDescription = "起動時に生成された全疾患 Fixture を配列で返す。",
+                exampleFixtures = provider.all.take(n = 2),
+            )
         }) {
             call.respond(provider.all)
         }
