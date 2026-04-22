@@ -34,23 +34,24 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.R
  * 用法用量に関連する注意 / 薬物動態) が分類軸 6 群で常に 1 件以上を保証する。
  */
 internal object DrugClinicalBuilders {
-    fun buildContraindications(id: String): List<NumberedParagraph> {
+    fun buildContraindications(id: String, dict: DrugPlaceholderDictionary): List<NumberedParagraph> {
         return buildNumberedParagraphs(
             id = id,
+            dict = dict,
             slot = DrugFieldSlot.WARNING,
             field = ParagraphField.CONTRAINDICATION_CONTENT,
             countRange = CONTRAINDICATION_COUNT_RANGE,
         )
     }
 
-    fun buildIndications(id: String): List<IndicationItem> {
+    fun buildIndications(id: String, dict: DrugPlaceholderDictionary): List<IndicationItem> {
         val seed = stableHash(id = id, slot = DrugFieldSlot.DOSAGE_STANDARD.ordinal, index = 0)
         val count = ValueRangeGenerator.pickCount(seed = seed, range = INDICATION_COUNT_RANGE)
         return (0 until count).map { offset ->
             IndicationItem(
                 order = offset + 1,
                 content =
-                DrugParagraphTemplates.pickTemplate(
+                dict.renderField(
                     field = ParagraphField.INDICATION_CONTENT,
                     seed =
                     stableHash(
@@ -63,23 +64,24 @@ internal object DrugClinicalBuilders {
         }
     }
 
-    fun buildIndicationsRelatedPrecautions(id: String): List<NumberedParagraph> {
+    fun buildIndicationsRelatedPrecautions(id: String, dict: DrugPlaceholderDictionary): List<NumberedParagraph> {
         return buildNumberedParagraphs(
             id = id,
+            dict = dict,
             slot = DrugFieldSlot.INDICATION_RELATED_PRECAUTION,
             field = ParagraphField.INDICATION_RELATED_PRECAUTION,
             countRange = SHORT_LIST_COUNT_RANGE,
         )
     }
 
-    fun buildDosage(id: String): DosageInfo {
+    fun buildDosage(id: String, dict: DrugPlaceholderDictionary): DosageInfo {
         val standardSeed = stableHash(id = id, slot = DrugFieldSlot.DOSAGE_STANDARD.ordinal, index = 0)
         val ageSeed = stableHash(id = id, slot = DrugFieldSlot.DOSAGE_AGE.ordinal, index = 0)
         val renalSeed = stableHash(id = id, slot = DrugFieldSlot.DOSAGE_RENAL.ordinal, index = 0)
         val hepaticSeed = stableHash(id = id, slot = DrugFieldSlot.DOSAGE_HEPATIC.ordinal, index = 0)
         return DosageInfo(
             standardDosage =
-            DrugParagraphTemplates.pickTemplate(
+            dict.renderField(
                 field = ParagraphField.STANDARD_DOSAGE,
                 seed = standardSeed,
             ),
@@ -93,7 +95,7 @@ internal object DrugClinicalBuilders {
                         label = "6 歳以上 12 歳未満",
                     ),
                     dose =
-                    DrugParagraphTemplates.pickTemplate(
+                    dict.renderField(
                         field = ParagraphField.AGE_DOSE,
                         seed = ageSeed,
                     ),
@@ -110,7 +112,7 @@ internal object DrugClinicalBuilders {
                         label = "30-59 mL/min、中等度腎機能低下",
                     ),
                     dose =
-                    DrugParagraphTemplates.pickTemplate(
+                    dict.renderField(
                         field = ParagraphField.RENAL_DOSE,
                         seed = renalSeed,
                     ),
@@ -121,7 +123,7 @@ internal object DrugClinicalBuilders {
                 HepaticDose(
                     severity = HepaticSeverity.MODERATE,
                     dose =
-                    DrugParagraphTemplates.pickTemplate(
+                    dict.renderField(
                         field = ParagraphField.HEPATIC_DOSE,
                         seed = hepaticSeed,
                     ),
@@ -130,34 +132,37 @@ internal object DrugClinicalBuilders {
         )
     }
 
-    fun buildWarning(id: String): List<NumberedParagraph> {
+    fun buildWarning(id: String, dict: DrugPlaceholderDictionary): List<NumberedParagraph> {
         return buildNumberedParagraphs(
             id = id,
+            dict = dict,
             slot = DrugFieldSlot.WARNING,
             field = ParagraphField.WARNING_CONTENT,
             countRange = SHORT_LIST_COUNT_RANGE,
         )
     }
 
-    fun buildDosageRelatedPrecautions(id: String): List<NumberedParagraph> {
+    fun buildDosageRelatedPrecautions(id: String, dict: DrugPlaceholderDictionary): List<NumberedParagraph> {
         return buildNumberedParagraphs(
             id = id,
+            dict = dict,
             slot = DrugFieldSlot.DOSAGE_RELATED_PRECAUTION,
             field = ParagraphField.DOSAGE_RELATED_PRECAUTION,
             countRange = SHORT_LIST_COUNT_RANGE,
         )
     }
 
-    fun buildImportantPrecautions(id: String): List<NumberedParagraph> {
+    fun buildImportantPrecautions(id: String, dict: DrugPlaceholderDictionary): List<NumberedParagraph> {
         return buildNumberedParagraphs(
             id = id,
+            dict = dict,
             slot = DrugFieldSlot.IMPORTANT_PRECAUTION,
             field = ParagraphField.IMPORTANT_PRECAUTION,
             countRange = SHORT_LIST_COUNT_RANGE,
         )
     }
 
-    fun buildPrecautionsForSpecificPopulations(id: String): List<PrecautionPopulation> {
+    fun buildPrecautionsForSpecificPopulations(id: String, dict: DrugPlaceholderDictionary): List<PrecautionPopulation> {
         val countSeed =
             stableHash(id = id, slot = DrugFieldSlot.PRECAUTION_POPULATION_CATEGORY.ordinal, index = 0)
         val count = ValueRangeGenerator.pickCount(seed = countSeed, range = SHORT_LIST_COUNT_RANGE)
@@ -178,7 +183,7 @@ internal object DrugClinicalBuilders {
             PrecautionPopulation(
                 category = ValueRangeGenerator.pickOne(seed = categorySeed, candidates = categories),
                 note =
-                DrugParagraphTemplates.pickTemplate(
+                dict.renderField(
                     field = ParagraphField.PRECAUTION_POPULATION_NOTE,
                     seed = noteSeed,
                 ),
@@ -186,7 +191,7 @@ internal object DrugClinicalBuilders {
         }
     }
 
-    fun buildInteractions(id: String): InteractionInfo {
+    fun buildInteractions(id: String, dict: DrugPlaceholderDictionary): InteractionInfo {
         val prohibitedSeed =
             stableHash(id = id, slot = DrugFieldSlot.INTERACTION_PROHIBITED.ordinal, index = 0)
         val cautionSeed =
@@ -197,12 +202,12 @@ internal object DrugClinicalBuilders {
                 InteractionEntry(
                     displayName = "他の $DRUG_CATEGORY_PLACEHOLDER",
                     clinicalSymptom =
-                    DrugParagraphTemplates.pickTemplate(
+                    dict.renderField(
                         field = ParagraphField.INTERACTION_SYMPTOM,
                         seed = prohibitedSeed,
                     ),
                     mechanism =
-                    DrugParagraphTemplates.pickTemplate(
+                    dict.renderField(
                         field = ParagraphField.INTERACTION_MECHANISM,
                         seed = prohibitedSeed,
                     ),
@@ -213,12 +218,12 @@ internal object DrugClinicalBuilders {
                 InteractionEntry(
                     displayName = "$DRUG_CATEGORY_PLACEHOLDER 系薬剤",
                     clinicalSymptom =
-                    DrugParagraphTemplates.pickTemplate(
+                    dict.renderField(
                         field = ParagraphField.INTERACTION_SYMPTOM,
                         seed = cautionSeed,
                     ),
                     mechanism =
-                    DrugParagraphTemplates.pickTemplate(
+                    dict.renderField(
                         field = ParagraphField.INTERACTION_MECHANISM,
                         seed = cautionSeed,
                     ),
@@ -227,7 +232,7 @@ internal object DrugClinicalBuilders {
         )
     }
 
-    fun buildAdverseReactions(id: String): AdverseReactionInfo {
+    fun buildAdverseReactions(id: String, dict: DrugPlaceholderDictionary): AdverseReactionInfo {
         val seriousCountSeed =
             stableHash(id = id, slot = DrugFieldSlot.ADVERSE_SERIOUS.ordinal, index = 0)
         val seriousCount =
@@ -254,17 +259,17 @@ internal object DrugClinicalBuilders {
                         candidates = FrequencyBand.entries.toList(),
                     ),
                     symptom =
-                    DrugParagraphTemplates.pickTemplate(
+                    dict.renderField(
                         field = ParagraphField.ADVERSE_SYMPTOM,
                         seed = nameSeed,
                     ),
                     initialSigns =
-                    DrugParagraphTemplates.pickTemplate(
+                    dict.renderField(
                         field = ParagraphField.ADVERSE_INITIAL_SIGNS,
                         seed = nameSeed,
                     ),
                     countermeasure =
-                    DrugParagraphTemplates.pickTemplate(
+                    dict.renderField(
                         field = ParagraphField.ADVERSE_COUNTERMEASURE,
                         seed = nameSeed,
                     ),
@@ -282,47 +287,54 @@ internal object DrugClinicalBuilders {
         )
     }
 
-    fun buildEffectsOnLabTests(id: String): List<NumberedParagraph> {
+    fun buildEffectsOnLabTests(id: String, dict: DrugPlaceholderDictionary): List<NumberedParagraph> {
         return buildNumberedParagraphs(
             id = id,
+            dict = dict,
             slot = DrugFieldSlot.EFFECT_ON_LAB,
             field = ParagraphField.EFFECT_ON_LAB,
             countRange = SHORT_LIST_COUNT_RANGE,
         )
     }
 
-    fun buildOverdose(id: String): OverdoseInfo {
+    fun buildOverdose(id: String, dict: DrugPlaceholderDictionary): OverdoseInfo {
         val symptomsSeed = stableHash(id = id, slot = DrugFieldSlot.OVERDOSE_SYMPTOMS.ordinal, index = 0)
         val managementSeed =
             stableHash(id = id, slot = DrugFieldSlot.OVERDOSE_MANAGEMENT.ordinal, index = 0)
         return OverdoseInfo(
             symptoms =
-            DrugParagraphTemplates.pickTemplate(
+            dict.renderField(
                 field = ParagraphField.OVERDOSE_SYMPTOMS,
                 seed = symptomsSeed,
             ),
             management =
-            DrugParagraphTemplates.pickTemplate(
+            dict.renderField(
                 field = ParagraphField.OVERDOSE_MANAGEMENT,
                 seed = managementSeed,
             ),
         )
     }
 
-    fun buildAdministrationPrecautions(id: String): List<NumberedParagraph> {
+    fun buildAdministrationPrecautions(id: String, dict: DrugPlaceholderDictionary): List<NumberedParagraph> {
         return buildNumberedParagraphs(
             id = id,
+            dict = dict,
             slot = DrugFieldSlot.ADMINISTRATION_PRECAUTION,
             field = ParagraphField.ADMINISTRATION_PRECAUTION,
             countRange = SHORT_LIST_COUNT_RANGE,
         )
     }
 
-    fun buildOtherPrecautions(id: String, blueprint: DrugBlueprint): List<NumberedParagraph> {
+    fun buildOtherPrecautions(
+        id: String,
+        dict: DrugPlaceholderDictionary,
+        blueprint: DrugBlueprint,
+    ): List<NumberedParagraph> {
         // blueprint 引数は将来の軸別カスタマイズ拡張用 (現時点では count/内容に影響しない)
         val seedOffset = if (blueprint.isChronicPrescription) 1 else 0
         return buildNumberedParagraphs(
             id = id,
+            dict = dict,
             slot = DrugFieldSlot.OTHER_PRECAUTION,
             field = ParagraphField.OTHER_PRECAUTION,
             countRange = SHORT_LIST_COUNT_RANGE,
@@ -332,6 +344,7 @@ internal object DrugClinicalBuilders {
 
     private fun buildNumberedParagraphs(
         id: String,
+        dict: DrugPlaceholderDictionary,
         slot: DrugFieldSlot,
         field: ParagraphField,
         countRange: IntRange,
@@ -343,7 +356,7 @@ internal object DrugClinicalBuilders {
             NumberedParagraph(
                 order = offset + 1,
                 content =
-                DrugParagraphTemplates.pickTemplate(
+                dict.renderField(
                     field = field,
                     seed =
                     stableHash(

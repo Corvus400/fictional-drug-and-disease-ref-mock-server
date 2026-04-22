@@ -18,6 +18,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.P
 
 class DrugGenerator(
     adapter: FixmergeNameAdapter,
+    private val placeholderDictionary: DrugPlaceholderDictionary,
 ) {
     private val coiner: BucketNameCoiner = BucketNameCoiner(adapter = adapter)
 
@@ -93,37 +94,59 @@ class DrugGenerator(
                 inactiveIngredients = inactives.map { it.katakana },
                 appearance = APPEARANCE_DESCRIPTION,
             ),
-            warning = DrugClinicalBuilders.buildWarning(id = drugId),
-            contraindications = DrugClinicalBuilders.buildContraindications(id = drugId),
-            indications = DrugClinicalBuilders.buildIndications(id = drugId),
+            warning = DrugClinicalBuilders.buildWarning(id = drugId, dict = placeholderDictionary),
+            contraindications =
+            DrugClinicalBuilders.buildContraindications(id = drugId, dict = placeholderDictionary),
+            indications = DrugClinicalBuilders.buildIndications(id = drugId, dict = placeholderDictionary),
             indicationsRelatedPrecautions =
-            DrugClinicalBuilders.buildIndicationsRelatedPrecautions(id = drugId),
-            dosage = DrugClinicalBuilders.buildDosage(id = drugId),
-            dosageRelatedPrecautions = DrugClinicalBuilders.buildDosageRelatedPrecautions(id = drugId),
-            importantPrecautions = DrugClinicalBuilders.buildImportantPrecautions(id = drugId),
+            DrugClinicalBuilders.buildIndicationsRelatedPrecautions(
+                id = drugId,
+                dict = placeholderDictionary,
+            ),
+            dosage = DrugClinicalBuilders.buildDosage(id = drugId, dict = placeholderDictionary),
+            dosageRelatedPrecautions =
+            DrugClinicalBuilders.buildDosageRelatedPrecautions(id = drugId, dict = placeholderDictionary),
+            importantPrecautions =
+            DrugClinicalBuilders.buildImportantPrecautions(id = drugId, dict = placeholderDictionary),
             precautionsForSpecificPopulations =
-            DrugClinicalBuilders.buildPrecautionsForSpecificPopulations(id = drugId),
-            interactions = DrugClinicalBuilders.buildInteractions(id = drugId),
-            adverseReactions = DrugClinicalBuilders.buildAdverseReactions(id = drugId),
-            effectsOnLabTests = DrugClinicalBuilders.buildEffectsOnLabTests(id = drugId),
-            overdose = DrugClinicalBuilders.buildOverdose(id = drugId),
-            administrationPrecautions = DrugClinicalBuilders.buildAdministrationPrecautions(id = drugId),
+            DrugClinicalBuilders.buildPrecautionsForSpecificPopulations(
+                id = drugId,
+                dict = placeholderDictionary,
+            ),
+            interactions =
+            DrugClinicalBuilders.buildInteractions(id = drugId, dict = placeholderDictionary),
+            adverseReactions =
+            DrugClinicalBuilders.buildAdverseReactions(id = drugId, dict = placeholderDictionary),
+            effectsOnLabTests =
+            DrugClinicalBuilders.buildEffectsOnLabTests(id = drugId, dict = placeholderDictionary),
+            overdose = DrugClinicalBuilders.buildOverdose(id = drugId, dict = placeholderDictionary),
+            administrationPrecautions =
+            DrugClinicalBuilders.buildAdministrationPrecautions(id = drugId, dict = placeholderDictionary),
             otherPrecautions =
-            DrugClinicalBuilders.buildOtherPrecautions(id = drugId, blueprint = blueprint),
-            pharmacokinetics = DrugMetaBuilders.buildPharmacokinetics(id = drugId),
-            clinicalResults = DrugMetaBuilders.buildClinicalResults(id = drugId),
-            pharmacology = DrugMetaBuilders.buildPharmacology(id = drugId),
+            DrugClinicalBuilders.buildOtherPrecautions(
+                id = drugId,
+                dict = placeholderDictionary,
+                blueprint = blueprint,
+            ),
+            pharmacokinetics =
+            DrugMetaBuilders.buildPharmacokinetics(id = drugId, dict = placeholderDictionary),
+            clinicalResults =
+            DrugMetaBuilders.buildClinicalResults(id = drugId, dict = placeholderDictionary),
+            pharmacology = DrugMetaBuilders.buildPharmacology(id = drugId, dict = placeholderDictionary),
             physicochemicalProperties =
             PhysicochemicalInfo(
                 genericNameEnglish = generic.latin,
                 molecularFormula = DEFAULT_MOLECULAR_FORMULA,
                 description = MOLECULAR_DESCRIPTION,
             ),
-            handlingPrecautions = DrugMetaBuilders.buildHandlingPrecautions(id = drugId),
-            approvalConditions = DrugMetaBuilders.buildApprovalConditions(id = drugId),
+            handlingPrecautions =
+            DrugMetaBuilders.buildHandlingPrecautions(id = drugId, dict = placeholderDictionary),
+            approvalConditions =
+            DrugMetaBuilders.buildApprovalConditions(id = drugId, dict = placeholderDictionary),
             packages = DrugMetaBuilders.buildPackages(id = drugId),
             references = DrugMetaBuilders.buildReferences(id = drugId),
-            insuranceNotes = DrugMetaBuilders.buildInsuranceNotes(id = drugId),
+            insuranceNotes =
+            DrugMetaBuilders.buildInsuranceNotes(id = drugId, dict = placeholderDictionary),
             manufacturer = manufacturer.katakana + MANUFACTURER_SUFFIX,
             revisedAt = DEFAULT_REVISED_AT,
             relatedDiseaseIds = DrugMetaBuilders.buildRelatedDiseaseIds(id = drugId),

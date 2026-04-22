@@ -8,6 +8,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.gen
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.DrugFixtureProvider
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.blueprint.DrugBlueprintFactory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.DrugGenerator
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.DrugPlaceholderDictionary
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.FixmergeNameAdapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.scenario.ScenarioManager
 import io.ktor.server.application.Application
@@ -16,13 +17,18 @@ import io.ktor.server.plugins.di.dependencies
 fun Application.configureDependencies() {
     val config = loadMockServerConfig()
     // `FixmergeNameAdapter` は drug/disease で共有する singleton。
-    // drug → disease の順で一括生成し、先着決定論と drug/disease 間の
-    // katakana 重複排除 (検証・成功基準 #6) を両立する。
+    // disease → drug の順で生成し、{{disease}} placeholder が参照する
+    // DiseaseFixtureProvider を DrugPlaceholderDictionary 経由で DrugGenerator に注入する
+    // (Issue #206 カテゴリ C 参照整合性)。
     val adapter = FixmergeNameAdapter()
-    val drugs = DrugGenerator(adapter = adapter).generate(blueprints = DrugBlueprintFactory.build())
     val diseases = DiseaseGenerator(adapter = adapter).generate(blueprints = DiseaseBlueprintFactory.build())
-    val drugProvider = DrugFixtureProvider(all = drugs)
     val diseaseProvider = DiseaseFixtureProvider(all = diseases)
+    val placeholderDictionary =
+        DrugPlaceholderDictionary(nameAdapter = adapter, diseaseProvider = diseaseProvider)
+    val drugs =
+        DrugGenerator(adapter = adapter, placeholderDictionary = placeholderDictionary)
+            .generate(blueprints = DrugBlueprintFactory.build())
+    val drugProvider = DrugFixtureProvider(all = drugs)
     dependencies {
         provide<MockServerConfig> { config }
         provide<ScenarioManager> { ScenarioManager(config.defaultScenario) }
