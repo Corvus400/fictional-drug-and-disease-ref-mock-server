@@ -32,7 +32,7 @@ class MedicalVocabularyDictionaryTest {
         CATEGORY_A_KEYS.forEach { key ->
             val values =
                 (0 until SEED_SAMPLE_SIZE)
-                    .map { index -> stableHash(id = key, slot = 1, index = index) }
+                    .map { index -> stableHash(id = "drug_${index.toString().padStart(4, '0')}", slot = 0, index = 0) }
                     .map { seed -> MedicalVocabularyDictionary.resolve(key, seed) }
                     .toSet()
             assertTrue(
