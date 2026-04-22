@@ -91,7 +91,7 @@ class OpenApiDocTest {
         application { module() }
         val response = client.get("/openapi.json")
         val spec = json.decodeFromString<JsonObject>(response.bodyAsText())
-        val description = spec["info"]?.jsonObject?.get("description")?.jsonPrimitive?.content ?: ""
+        val description = spec["info"]?.jsonObject?.get("description")?.jsonPrimitive?.content.orEmpty()
 
         assertTrue(
             description.contains("APIカテゴリ").not() || description.contains("26").not(),
@@ -104,7 +104,7 @@ class OpenApiDocTest {
         application { module() }
         val response = client.get("/openapi.json")
         val spec = json.decodeFromString<JsonObject>(response.bodyAsText())
-        val description = spec["info"]?.jsonObject?.get("description")?.jsonPrimitive?.content ?: ""
+        val description = spec["info"]?.jsonObject?.get("description")?.jsonPrimitive?.content.orEmpty()
 
         ApiTag.entries.forEach { apiTag ->
             assertTrue(
