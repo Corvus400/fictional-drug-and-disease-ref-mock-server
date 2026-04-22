@@ -1,9 +1,11 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture
 
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.DiseaseFixtureProvider
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.blueprint.DiseaseBlueprintFactory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.DiseaseGenerator
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.blueprint.DrugBlueprintFactory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.DrugGenerator
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.DrugPlaceholderDictionary
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.FixmergeNameAdapter
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -21,8 +23,16 @@ class DrugDiseaseDisjointnessTest {
     @Test
     fun `drug name set and disease name set are disjoint when FixmergeNameAdapter is shared`() {
         val adapter = FixmergeNameAdapter()
-        val drugs = DrugGenerator(adapter = adapter).generate(blueprints = DrugBlueprintFactory.build())
-        val diseases = DiseaseGenerator(adapter = adapter).generate(blueprints = DiseaseBlueprintFactory.build())
+        val diseases =
+            DiseaseGenerator(adapter = adapter).generate(blueprints = DiseaseBlueprintFactory.build())
+        val placeholderDictionary =
+            DrugPlaceholderDictionary(
+                nameAdapter = adapter,
+                diseaseProvider = DiseaseFixtureProvider(all = diseases),
+            )
+        val drugs =
+            DrugGenerator(adapter = adapter, placeholderDictionary = placeholderDictionary)
+                .generate(blueprints = DrugBlueprintFactory.build())
 
         val drugNames: Set<String> =
             drugs.flatMap {
