@@ -17,30 +17,30 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.S
  * 関連疾患 ID / yjCode / package) の決定論的 populate を担う。
  */
 internal object DrugMetaBuilders {
-    fun buildPharmacokinetics(id: String): PharmacokineticsInfo {
+    fun buildPharmacokinetics(id: String, dict: DrugPlaceholderDictionary): PharmacokineticsInfo {
         return PharmacokineticsInfo(
             bloodConcentration =
-            DrugParagraphTemplates.pickTemplate(
+            dict.renderField(
                 field = ParagraphField.PHARMACOKINETICS_BLOOD,
                 seed = stableHash(id = id, slot = DrugFieldSlot.PK_BLOOD.ordinal, index = 0),
             ),
             absorption =
-            DrugParagraphTemplates.pickTemplate(
+            dict.renderField(
                 field = ParagraphField.PHARMACOKINETICS_ABSORPTION,
                 seed = stableHash(id = id, slot = DrugFieldSlot.PK_ABSORPTION.ordinal, index = 0),
             ),
             distribution =
-            DrugParagraphTemplates.pickTemplate(
+            dict.renderField(
                 field = ParagraphField.PHARMACOKINETICS_DISTRIBUTION,
                 seed = stableHash(id = id, slot = DrugFieldSlot.PK_DISTRIBUTION.ordinal, index = 0),
             ),
             metabolism =
-            DrugParagraphTemplates.pickTemplate(
+            dict.renderField(
                 field = ParagraphField.PHARMACOKINETICS_METABOLISM,
                 seed = stableHash(id = id, slot = DrugFieldSlot.PK_METABOLISM.ordinal, index = 0),
             ),
             excretion =
-            DrugParagraphTemplates.pickTemplate(
+            dict.renderField(
                 field = ParagraphField.PHARMACOKINETICS_EXCRETION,
                 seed = stableHash(id = id, slot = DrugFieldSlot.PK_EXCRETION.ordinal, index = 0),
             ),
@@ -53,7 +53,7 @@ internal object DrugMetaBuilders {
         )
     }
 
-    fun buildClinicalResults(id: String): List<ClinicalResultSection> {
+    fun buildClinicalResults(id: String, dict: DrugPlaceholderDictionary): List<ClinicalResultSection> {
         val countSeed = stableHash(id = id, slot = DrugFieldSlot.CLINICAL_RESULT.ordinal, index = 0)
         val count = ValueRangeGenerator.pickCount(seed = countSeed, range = CLINICAL_RESULT_RANGE)
         val headings = listOf("有効性", "安全性", "長期投与試験")
@@ -67,7 +67,7 @@ internal object DrugMetaBuilders {
             ClinicalResultSection(
                 heading = headings[offset % headings.size],
                 content =
-                DrugParagraphTemplates.pickTemplate(
+                dict.renderField(
                     field = ParagraphField.CLINICAL_RESULT_CONTENT,
                     seed = contentSeed,
                 ),
@@ -75,10 +75,10 @@ internal object DrugMetaBuilders {
         }
     }
 
-    fun buildPharmacology(id: String): PharmacologyInfo {
+    fun buildPharmacology(id: String, dict: DrugPlaceholderDictionary): PharmacologyInfo {
         return PharmacologyInfo(
             mechanism =
-            DrugParagraphTemplates.pickTemplate(
+            dict.renderField(
                 field = ParagraphField.PHARMACOLOGY_MECHANISM,
                 seed =
                 stableHash(
@@ -88,7 +88,7 @@ internal object DrugMetaBuilders {
                 ),
             ),
             effect =
-            DrugParagraphTemplates.pickTemplate(
+            dict.renderField(
                 field = ParagraphField.PHARMACOLOGY_EFFECT,
                 seed =
                 stableHash(
@@ -100,17 +100,19 @@ internal object DrugMetaBuilders {
         )
     }
 
-    fun buildHandlingPrecautions(id: String): List<NumberedParagraph> {
+    fun buildHandlingPrecautions(id: String, dict: DrugPlaceholderDictionary): List<NumberedParagraph> {
         return buildNumberedParagraphs(
             id = id,
+            dict = dict,
             slot = DrugFieldSlot.HANDLING,
             field = ParagraphField.HANDLING_CONTENT,
         )
     }
 
-    fun buildApprovalConditions(id: String): List<NumberedParagraph> {
+    fun buildApprovalConditions(id: String, dict: DrugPlaceholderDictionary): List<NumberedParagraph> {
         return buildNumberedParagraphs(
             id = id,
+            dict = dict,
             slot = DrugFieldSlot.APPROVAL_CONDITION,
             field = ParagraphField.APPROVAL_CONDITION,
         )
@@ -127,9 +129,10 @@ internal object DrugMetaBuilders {
         }
     }
 
-    fun buildInsuranceNotes(id: String): List<NumberedParagraph> {
+    fun buildInsuranceNotes(id: String, dict: DrugPlaceholderDictionary): List<NumberedParagraph> {
         return buildNumberedParagraphs(
             id = id,
+            dict = dict,
             slot = DrugFieldSlot.INSURANCE_NOTE,
             field = ParagraphField.INSURANCE_NOTE,
         )
@@ -185,6 +188,7 @@ internal object DrugMetaBuilders {
 
     private fun buildNumberedParagraphs(
         id: String,
+        dict: DrugPlaceholderDictionary,
         slot: DrugFieldSlot,
         field: ParagraphField,
     ): List<NumberedParagraph> {
@@ -194,7 +198,7 @@ internal object DrugMetaBuilders {
             NumberedParagraph(
                 order = offset + 1,
                 content =
-                DrugParagraphTemplates.pickTemplate(
+                dict.renderField(
                     field = field,
                     seed = stableHash(id = id, slot = slot.ordinal, index = offset + 1),
                 ),

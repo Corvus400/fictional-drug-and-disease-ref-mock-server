@@ -1,11 +1,19 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator
 
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.DiseaseFixtureProvider
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.blueprint.DosageFormGroup
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.blueprint.DrugBlueprint
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.blueprint.DrugBlueprintFactory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.FixmergeNameAdapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.country.CountryBucketRepository
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.country.DrugCountryMapping
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Chronicity
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.MedicalDepartment
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.DiagnosticCriteriaInfo
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.SymptomInfo
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.TreatmentInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DosageForm
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RouteOfAdministration
@@ -17,7 +25,8 @@ import kotlin.test.assertTrue
 
 class DrugGeneratorTest {
     private val adapter: FixmergeNameAdapter = FixmergeNameAdapter()
-    private val generator: DrugGenerator = DrugGenerator(adapter = adapter)
+    private val generator: DrugGenerator =
+        DrugGenerator(adapter = adapter, placeholderDictionary = buildTestDictionary(adapter))
 
     private val sampleBlueprint: DrugBlueprint =
         DrugBlueprint(
@@ -47,8 +56,10 @@ class DrugGeneratorTest {
 
     @Test
     fun `generate is deterministic for the same blueprint given fresh adapter instances`() {
-        val first = DrugGenerator(adapter = FixmergeNameAdapter()).generate(blueprint = sampleBlueprint)
-        val second = DrugGenerator(adapter = FixmergeNameAdapter()).generate(blueprint = sampleBlueprint)
+        val first =
+            buildFreshGenerator().generate(blueprint = sampleBlueprint)
+        val second =
+            buildFreshGenerator().generate(blueprint = sampleBlueprint)
         assertEquals(first, second)
     }
 
@@ -106,8 +117,8 @@ class DrugGeneratorTest {
     @Test
     fun `generate bulk handles the full 120-drug factory inventory deterministically given fresh adapter instances`() {
         val blueprints = DrugBlueprintFactory.build()
-        val first = DrugGenerator(adapter = FixmergeNameAdapter()).generate(blueprints = blueprints)
-        val second = DrugGenerator(adapter = FixmergeNameAdapter()).generate(blueprints = blueprints)
+        val first = buildFreshGenerator().generate(blueprints = blueprints)
+        val second = buildFreshGenerator().generate(blueprints = blueprints)
         assertEquals(blueprints.size, first.size)
         assertEquals(first, second)
         assertEquals(first.size, first.map { it.id }.toSet().size, "drug ids are not unique")
@@ -278,5 +289,47 @@ class DrugGeneratorTest {
                 )
             }
         }
+    }
+
+    private companion object {
+        fun buildFreshGenerator(): DrugGenerator {
+            val adapter = FixmergeNameAdapter()
+            return DrugGenerator(
+                adapter = adapter,
+                placeholderDictionary = buildTestDictionary(adapter),
+            )
+        }
+
+        fun buildTestDictionary(adapter: FixmergeNameAdapter): DrugPlaceholderDictionary =
+            DrugPlaceholderDictionary(
+                nameAdapter = adapter,
+                diseaseProvider = DiseaseFixtureProvider(all = testDiseaseFixtures()),
+            )
+
+        fun testDiseaseFixtures(): List<Disease> =
+            listOf(
+                makeTestDisease(id = "disease_0000", name = "架空疾患甲"),
+                makeTestDisease(id = "disease_0001", name = "架空疾患乙"),
+            )
+
+        fun makeTestDisease(
+            id: String,
+            name: String,
+        ): Disease =
+            Disease(
+                id = id,
+                name = name,
+                nameKana = "カクウシッカン",
+                icd10Chapter = Icd10Chapter.CHAPTER_X,
+                medicalDepartment = listOf(MedicalDepartment.INTERNAL_MEDICINE),
+                chronicity = Chronicity.CHRONIC,
+                infectious = false,
+                summary = "テスト用の架空疾患です。",
+                etiology = "テスト用の病因です。",
+                symptoms = SymptomInfo(mainSymptoms = listOf("テスト症状")),
+                diagnosticCriteria = DiagnosticCriteriaInfo(required = listOf("テスト診断基準")),
+                treatments = TreatmentInfo(),
+                revisedAt = "2026/01/01",
+            )
     }
 }
