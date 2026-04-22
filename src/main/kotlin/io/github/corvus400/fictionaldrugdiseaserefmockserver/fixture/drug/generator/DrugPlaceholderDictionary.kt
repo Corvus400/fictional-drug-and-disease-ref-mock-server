@@ -5,6 +5,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.Dis
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.placeholder.MedicalVocabularyDictionary
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.placeholder.NumericPlaceholderRanges
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.placeholder.PlaceholderCategory
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.placeholder.PlaceholderContractMessages
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.placeholder.PlaceholderDelimiter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.placeholder.PlaceholderKey
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.placeholder.TargetMoleculeSuffixes
@@ -60,23 +61,7 @@ class DrugPlaceholderDictionary(
     ): String = resolveAll(template = DrugParagraphTemplates.pickTemplate(field, seed), seed = seed)
 
     private fun throwUnknownPlaceholderError(key: String): Nothing =
-        error(
-            """
-            Unknown placeholder '{{$key}}' found in DrugParagraphTemplates but not in DrugPlaceholderDictionary.
-
-            TASK ORDER VIOLATION:
-            Placeholder keys MUST NOT be added to DrugParagraphTemplates before
-            their replacement logic exists in DrugPlaceholderDictionary.
-
-            Correct sequence:
-              (1) Add resolver case for '$key' to DrugPlaceholderDictionary
-              (2) Run tests and confirm resolve() succeeds
-              (3) THEN add the '{{$key}}' placeholder to a template string
-
-            DO NOT bypass this error with try/catch, runCatching, or null-fallback.
-            That reintroduces PR #205's raw-placeholder leak (Issue #206).
-            """.trimIndent(),
-        )
+        error(PlaceholderContractMessages.unknownPlaceholderError(key = key))
 
     private fun resolveDiseaseReference(seed: Long): String {
         check(diseaseProvider.all.isNotEmpty()) {

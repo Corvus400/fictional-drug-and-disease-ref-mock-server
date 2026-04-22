@@ -4,6 +4,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.Dis
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.blueprint.DosageFormGroup
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.blueprint.DrugBlueprint
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.blueprint.DrugBlueprintFactory
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.placeholder.PlaceholderContractMessages
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.placeholder.PlaceholderDelimiter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.FixmergeNameAdapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.country.CountryBucketRepository
@@ -285,10 +286,10 @@ class DrugGeneratorTest {
         assertFalse(
             actual = residualPlaceholders.isNotEmpty(),
             message =
-            "Raw placeholder(s) matching ${PlaceholderDelimiter.REGEX.pattern} detected in drug JSON. " +
-                "This test enforces: no placeholder may leak into API response. " +
-                "TASK ORDER RULE: extend DrugPlaceholderDictionary FIRST, then add to templates. " +
-                "First occurrences: ${residualPlaceholders.take(10)}",
+            PlaceholderContractMessages.residualDelimiterDetected(
+                pattern = PlaceholderDelimiter.REGEX.pattern,
+                firstOccurrences = residualPlaceholders.take(n = 10),
+            ),
         )
     }
 
