@@ -3,7 +3,9 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.cou
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
 
 object DiseaseCountryMapping {
+    private val COUNTRIES: List<Country> = Country.entries
+
     fun of(chapter: Icd10Chapter): Country {
-        TODO("not implemented")
+        return COUNTRIES[chapter.ordinal % COUNTRIES.size]
     }
 }
