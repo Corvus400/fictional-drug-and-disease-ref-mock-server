@@ -1,0 +1,78 @@
+package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.placeholder
+
+enum class PlaceholderKey(val jsonKey: String) {
+    ACTION("action"),
+    ADVERSE_REACTION("adverseReaction"),
+    AGE_GROUP("ageGroup"),
+    COMORBIDITY("comorbidity"),
+    COUNTERMEASURE("countermeasure"),
+    DRUG_CATEGORY("drugCategory"),
+    EFFECT("effect"),
+    ENDPOINT("endpoint"),
+    ENZYME("enzyme"),
+    EXAM("exam"),
+    EXCRETION_ROUTE("excretionRoute"),
+    FREQUENCY_BAND("frequencyBand"),
+    HEPATIC_LEVEL("hepaticLevel"),
+    INSURANCE_RULE("insuranceRule"),
+    IONIZATION_FORM("ionizationForm"),
+    LAB_RESULT("labResult"),
+    MECHANISM("mechanism"),
+    MODEL_NAME("modelName"),
+    MODEL_TYPE("modelType"),
+    PATHWAY("pathway"),
+    POPULATION_CATEGORY("populationCategory"),
+    POST_MARKETING_PLAN("postMarketingPlan"),
+    RENAL_LEVEL("renalLevel"),
+    ROUTE("route"),
+    SOLVENT_POLARITY("solventPolarity"),
+    STUDY_DURATION("studyDuration"),
+    SYMPTOM("symptom"),
+    TISSUE_TYPE("tissueType"),
+    TRAINING_PROGRAM("trainingProgram"),
+
+    METABOLITE("metabolite"),
+    TARGET_MOLECULE("targetMolecule"),
+
+    DISEASE("disease"),
+
+    AUC("auc"),
+    BIOAVAILABILITY("bioavailability"),
+    CMAX("cmax"),
+    CNS_RATIO("cnsRatio"),
+    DOSE_AMOUNT("doseAmount"),
+    DOSE_PER_KG("dosePerKg"),
+    DURATION_DAYS("durationDays"),
+    DURATION_WEEKS("durationWeeks"),
+    EFFICACY_RATE("efficacyRate"),
+    FECAL_EXCRETION_RATIO("fecalExcretionRatio"),
+    FOOD_EFFECT_RATIO("foodEffectRatio"),
+    FREQUENCY("frequency"),
+    HALF_LIFE("halfLife"),
+    IC50("ic50"),
+    INTERVAL("interval"),
+    MAX_DAILY_DOSE("maxDailyDose"),
+    MELTING_POINT("meltingPoint"),
+    PACKAGE_SIZE("packageSize"),
+    PATIENT_COUNT("patientCount"),
+    P_KA("pKa"),
+    PROTEIN_BINDING("proteinBinding"),
+    P_VALUE("pValue"),
+    REDUCTION_RATIO("reductionRatio"),
+    REFERENCE_RANGE("referenceRange"),
+    REIMBURSEMENT_DURATION_DAYS("reimbursementDurationDays"),
+    RETENTION_RATE("retentionRate"),
+    STABLE_DURATION("stableDuration"),
+    STORAGE_TEMPERATURE("storageTemperature"),
+    TMAX("tmax"),
+    TOTAL_DAILY_DOSE("totalDailyDose"),
+    URINARY_EXCRETION_RATIO("urinaryExcretionRatio"),
+    VOLUME_OF_DISTRIBUTION("volumeOfDistribution"),
+    ;
+
+    companion object {
+        private val BY_JSON_KEY: Map<String, PlaceholderKey> = values().associateBy { it.jsonKey }
+
+        fun fromJsonKey(jsonKey: String): PlaceholderKey? = BY_JSON_KEY[jsonKey]
+    }
+}
