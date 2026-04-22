@@ -5,6 +5,10 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog.ModuleRegis
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.config.MockServerConfig
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.adminRoutes
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.common.placeholderImageModule
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.disease.diseaseCatalogEntries
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.disease.diseaseModule
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.drug.drugCatalogEntries
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.drug.drugModule
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.sample.sampleCatalogEntries
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.sample.sampleModule
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.scenario.ScenarioManager
@@ -25,6 +29,14 @@ private val allModules: List<ModuleRegistration> = listOf(
     ModuleRegistration(
         catalogEntries = sampleCatalogEntries,
         configure = { sm -> sampleModule(sm) },
+    ),
+    ModuleRegistration(
+        catalogEntries = drugCatalogEntries,
+        configure = { sm -> drugModule(sm) },
+    ),
+    ModuleRegistration(
+        catalogEntries = diseaseCatalogEntries,
+        configure = { sm -> diseaseModule(sm) },
     ),
 )
 
