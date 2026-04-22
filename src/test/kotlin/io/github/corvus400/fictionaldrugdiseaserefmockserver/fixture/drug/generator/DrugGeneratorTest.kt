@@ -2,6 +2,7 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.gener
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.blueprint.DosageFormGroup
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.blueprint.DrugBlueprint
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.blueprint.DrugBlueprintFactory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.FixmergeNameAdapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.country.CountryBucketRepository
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.country.DrugCountryMapping
@@ -97,6 +98,21 @@ class DrugGeneratorTest {
         assertEquals(3, drugs.size)
         for ((i, drug) in drugs.withIndex()) {
             assertEquals("drug_${i.toString().padStart(4, '0')}", drug.id)
+        }
+    }
+
+    @Test
+    fun `generate bulk handles the full 120-drug factory inventory deterministically`() {
+        val blueprints = DrugBlueprintFactory.build()
+        val first = generator.generate(blueprints = blueprints)
+        val second = generator.generate(blueprints = blueprints)
+        assertEquals(blueprints.size, first.size)
+        assertEquals(first, second)
+        assertEquals(first.size, first.map { it.id }.toSet().size, "drug ids are not unique")
+        for (drug in first) {
+            assertTrue(drug.brandName.isNotBlank(), "brandName blank for ${drug.id}")
+            assertTrue(drug.genericName.isNotBlank(), "genericName blank for ${drug.id}")
+            assertTrue(drug.manufacturer.isNotBlank(), "manufacturer blank for ${drug.id}")
         }
     }
 }
