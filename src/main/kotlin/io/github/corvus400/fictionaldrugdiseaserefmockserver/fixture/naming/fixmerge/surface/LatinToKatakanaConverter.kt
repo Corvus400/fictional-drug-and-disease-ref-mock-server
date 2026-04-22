@@ -65,18 +65,20 @@ class LatinToKatakanaConverter(private val ruleset: LatinToKanaRuleset) {
         var index = 0
         while (index < input.length) {
             val matched = tryLongestMatch(input = input, start = index)
-            if (matched != null) {
-                result.append(matched.second)
-                index += matched.first
-                continue
-            }
             val coda = ruleset.finalConsonantRules[input[index].toString()]
-            if (coda != null) {
-                result.append(coda)
-                index += 1
-                continue
+            when {
+                matched != null -> {
+                    result.append(matched.second)
+                    index += matched.first
+                }
+                coda != null -> {
+                    result.append(coda)
+                    index += 1
+                }
+                else -> {
+                    index += 1
+                }
             }
-            index += 1
         }
         return result.toString()
     }

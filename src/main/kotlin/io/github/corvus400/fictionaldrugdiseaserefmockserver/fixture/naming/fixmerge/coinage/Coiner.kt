@@ -5,10 +5,11 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixm
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixmerge.lexicon.LexiconEntry
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixmerge.lexicon.Pattern
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixmerge.nameslot.NameSlot
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixmerge.surface.LatinToKatakanaConverter
 
 class Coiner(
     lexicon: Lexicon,
-    private val converter: io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixmerge.surface.LatinToKatakanaConverter,
+    private val converter: LatinToKatakanaConverter,
     private val checker: ForbiddenWordChecker,
 ) {
     private val poolA: List<String> = collectFragmentPool(entries = lexicon.filterByPattern(pattern = Pattern.A))
