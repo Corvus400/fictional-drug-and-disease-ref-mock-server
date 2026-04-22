@@ -5,13 +5,12 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.Dis
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.placeholder.MedicalVocabularyDictionary
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.placeholder.NumericPlaceholderRanges
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.placeholder.PlaceholderCategory
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.placeholder.PlaceholderDelimiter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.placeholder.PlaceholderKey
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.placeholder.TargetMoleculeSuffixes
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.FixmergeNameAdapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixmerge.nameslot.NameSlot
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.stableHash
-
-private val PLACEHOLDER_REGEX = Regex("""\{\{([a-zA-Z0-9]+)\}\}""")
 
 class DrugPlaceholderDictionary(
     private val medicalVocabulary: MedicalVocabularyDictionary = MedicalVocabularyDictionary,
@@ -37,7 +36,7 @@ class DrugPlaceholderDictionary(
         seed: Long,
     ): String {
         val result =
-            PLACEHOLDER_REGEX.replace(template) { match ->
+            PlaceholderDelimiter.REGEX.replace(template) { match ->
                 val key = match.groupValues[1]
                 val derivedSeed =
                     stableHash(
@@ -47,9 +46,10 @@ class DrugPlaceholderDictionary(
                     )
                 resolve(key, derivedSeed)
             }
-        check("{{" !in result && "}}" !in result) {
+        check(PlaceholderDelimiter.OPEN !in result && PlaceholderDelimiter.CLOSE !in result) {
             "Raw placeholder delimiter survived resolveAll — a resolver branch must have returned a " +
-                "string still containing '{{' or '}}'. Inspect resolve() outputs. result='$result'"
+                "string still containing '${PlaceholderDelimiter.OPEN}' or '${PlaceholderDelimiter.CLOSE}'. " +
+                "Inspect resolve() outputs. result='$result'"
         }
         return result
     }
