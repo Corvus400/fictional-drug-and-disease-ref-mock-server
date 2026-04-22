@@ -1,17 +1,196 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator
 
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.blueprint.DosageFormGroup
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.blueprint.DrugBlueprint
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.FixmergeNameAdapter
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.country.CountryBucketRepository
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.country.DrugCountryMapping
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixmerge.coinage.CoinedName
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixmerge.nameslot.NameSlot
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.stableHash
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.Drug
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DosageForm
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DoseUnit
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RouteOfAdministration
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.StorageTemperature
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.AdverseReactionByFrequency
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.AdverseReactionInfo
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.CompositionInfo
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.DosageInfo
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.Dose
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.IndicationItem
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.NumberedParagraph
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.PackageInfo
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.PhysicochemicalInfo
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.StorageCondition
 
 class DrugGenerator(
     private val adapter: FixmergeNameAdapter,
 ) {
     fun generate(blueprint: DrugBlueprint): Drug {
-        TODO("not implemented")
+        val country = DrugCountryMapping.of(atcFirstLetter = blueprint.atcFirstLetter)
+        val bucket = CountryBucketRepository.of(country = country)
+        val brand =
+            coinFromBucket(
+                bucket = bucket.cuisine,
+                blueprintIndex = blueprint.index,
+                slot = NameSlot.DRUG_BRAND,
+                offset = 0
+            )
+        val generic =
+            coinFromBucket(
+                bucket = bucket.cuisine,
+                blueprintIndex = blueprint.index,
+                slot = NameSlot.DRUG_GENERIC,
+                offset = 0
+            )
+        val inactives = (0 until INACTIVE_INGREDIENT_COUNT).map { offset ->
+            coinFromBucket(
+                bucket = bucket.beverage,
+                blueprintIndex = blueprint.index,
+                slot = NameSlot.DRUG_INACTIVE_INGREDIENT,
+                offset = offset,
+            )
+        }
+        val manufacturer =
+            coinFromBucket(
+                bucket = bucket.beverage,
+                blueprintIndex = blueprint.index,
+                slot = NameSlot.DRUG_MANUFACTURER,
+                offset = 0
+            )
+        return buildDrug(
+            blueprint = blueprint,
+            brand = brand,
+            generic = generic,
+            inactives = inactives,
+            manufacturer = manufacturer,
+        )
     }
 
     fun generate(blueprints: List<DrugBlueprint>): List<Drug> {
-        TODO("not implemented")
+        return blueprints.map { generate(blueprint = it) }
+    }
+
+    private fun coinFromBucket(
+        bucket: List<String>,
+        blueprintIndex: Int,
+        slot: NameSlot,
+        offset: Int,
+    ): CoinedName {
+        val sourceIndex = ((blueprintIndex * SEED_INDEX_PRIME) + slot.ordinal + offset).mod(other = bucket.size)
+        val sourceToken = bucket[sourceIndex]
+        val seed = stableHash(id = sourceToken, slot = slot.ordinal, index = 0)
+        return adapter.coin(slot = slot, seed = seed)
+    }
+
+    private fun buildDrug(
+        blueprint: DrugBlueprint,
+        brand: CoinedName,
+        generic: CoinedName,
+        inactives: List<CoinedName>,
+        manufacturer: CoinedName,
+    ): Drug {
+        return Drug(
+            id = "drug_${blueprint.index.toString().padStart(length = DRUG_ID_PAD_LENGTH, padChar = '0')}",
+            genericName = generic.katakana,
+            brandName = brand.katakana,
+            brandNameKana = brand.katakana,
+            atcCode = buildAtcCode(blueprint = blueprint),
+            therapeuticCategoryName = therapeuticCategoryNameOf(atcFirstLetter = blueprint.atcFirstLetter),
+            regulatoryClass = blueprint.regulatoryClasses.toList(),
+            dosageForm = dosageFormOf(group = blueprint.dosageFormGroup),
+            routeOfAdministration = routeOf(group = blueprint.dosageFormGroup),
+            composition = CompositionInfo(
+                activeIngredient = generic.katakana,
+                activeIngredientAmount = Dose(amount = STANDARD_DOSE_AMOUNT, unit = DoseUnit.MG),
+                inactiveIngredients = inactives.map { it.katakana },
+                appearance = APPEARANCE_DESCRIPTION,
+            ),
+            contraindications = listOf(
+                NumberedParagraph(order = 1, content = "本剤の成分に対し過敏症の既往歴のある患者"),
+            ),
+            indications = listOf(
+                IndicationItem(order = 1, content = "本剤の効能又は効果に準ずる使用"),
+            ),
+            dosage = DosageInfo(standardDosage = STANDARD_DOSAGE_TEXT),
+            adverseReactions = AdverseReactionInfo(other = AdverseReactionByFrequency()),
+            packages = listOf(
+                PackageInfo(
+                    size = DEFAULT_PACKAGE_SIZE,
+                    storageCondition = StorageCondition(
+                        temperature = StorageTemperature.ROOM_TEMPERATURE,
+                        lightProtection = false,
+                        moistureProtection = false,
+                    ),
+                    expirationMonths = DEFAULT_EXPIRATION_MONTHS,
+                ),
+            ),
+            physicochemicalProperties = PhysicochemicalInfo(
+                genericNameEnglish = generic.latin,
+                molecularFormula = DEFAULT_MOLECULAR_FORMULA,
+                description = MOLECULAR_DESCRIPTION,
+            ),
+            manufacturer = manufacturer.katakana + MANUFACTURER_SUFFIX,
+            revisedAt = DEFAULT_REVISED_AT,
+        )
+    }
+
+    private fun buildAtcCode(blueprint: DrugBlueprint): String {
+        val suffix = (blueprint.index % ATC_CODE_SUFFIX_MOD).toString().padStart(length = 2, padChar = '0')
+        return "${blueprint.atcFirstLetter}01AA$suffix"
+    }
+
+    private fun dosageFormOf(group: DosageFormGroup): DosageForm =
+        when (group) {
+            DosageFormGroup.ORAL -> DosageForm.TABLET
+            DosageFormGroup.EXTERNAL -> DosageForm.OINTMENT
+            DosageFormGroup.INJECTION -> DosageForm.INJECTION_FORM
+            DosageFormGroup.INHALATION -> DosageForm.INHALER
+            DosageFormGroup.OPHTHALMIC -> DosageForm.EYE_DROPS
+        }
+
+    private fun routeOf(group: DosageFormGroup): RouteOfAdministration =
+        when (group) {
+            DosageFormGroup.ORAL -> RouteOfAdministration.ORAL
+            DosageFormGroup.EXTERNAL -> RouteOfAdministration.TOPICAL
+            DosageFormGroup.INJECTION -> RouteOfAdministration.INJECTION_ROUTE
+            DosageFormGroup.INHALATION -> RouteOfAdministration.INHALATION
+            DosageFormGroup.OPHTHALMIC -> RouteOfAdministration.OPHTHALMIC
+        }
+
+    private fun therapeuticCategoryNameOf(atcFirstLetter: Char): String =
+        when (atcFirstLetter) {
+            'A' -> "消化器系および代謝"
+            'B' -> "血液および造血器"
+            'C' -> "循環器系"
+            'D' -> "皮膚科用"
+            'G' -> "泌尿生殖器系およびホルモン製剤"
+            'H' -> "全身性ホルモン製剤"
+            'J' -> "感染症治療薬"
+            'L' -> "抗腫瘍剤および免疫調節剤"
+            'M' -> "筋骨格系"
+            'N' -> "神経系"
+            'P' -> "抗寄生虫剤"
+            'R' -> "呼吸器系"
+            'S' -> "感覚器"
+            'V' -> "その他"
+            else -> error("unsupported ATC first letter '$atcFirstLetter'")
+        }
+
+    companion object {
+        private const val SEED_INDEX_PRIME: Int = 31
+        private const val INACTIVE_INGREDIENT_COUNT: Int = 3
+        private const val DRUG_ID_PAD_LENGTH: Int = 4
+        private const val ATC_CODE_SUFFIX_MOD: Int = 100
+        private const val STANDARD_DOSE_AMOUNT: Double = 10.0
+        private const val DEFAULT_EXPIRATION_MONTHS: Int = 36
+        private const val MANUFACTURER_SUFFIX: String = "製薬"
+        private const val APPEARANCE_DESCRIPTION: String = "白色の錠剤"
+        private const val STANDARD_DOSAGE_TEXT: String = "通常、成人には1回1錠を1日3回経口投与する。"
+        private const val DEFAULT_PACKAGE_SIZE: String = "100錠"
+        private const val DEFAULT_MOLECULAR_FORMULA: String = "C20H25N3O"
+        private const val MOLECULAR_DESCRIPTION: String = "白色の結晶性粉末である。"
+        private const val DEFAULT_REVISED_AT: String = "2026/04/23"
     }
 }
