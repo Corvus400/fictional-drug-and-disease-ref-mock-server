@@ -4,10 +4,14 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog.EndpointEnt
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog.EndpointMetadata
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog.ScenarioMeta
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog.toEntry
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.DrugFixtureProvider
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.ApiTag
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.scenario.ScenarioManager
 import io.ktor.http.HttpMethod
+import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
+import io.ktor.server.plugins.di.dependencies
+import io.ktor.server.response.respond
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 
@@ -38,12 +42,19 @@ val drugCatalogEntries: List<EndpointEntry> = listOf(
 
 @Suppress("UnusedParameter")
 fun Application.drugModule(scenarioManager: ScenarioManager) {
+    val provider: DrugFixtureProvider by dependencies
     routing {
         get("/drugs/{id}") {
-            throw NotImplementedError("drug detail route not implemented")
+            val id = call.parameters["id"].orEmpty()
+            val drug = provider.getById(id = id)
+            if (drug == null) {
+                call.respond(status = HttpStatusCode.NotFound, message = mapOf("error" to "drug not found: $id"))
+            } else {
+                call.respond(drug)
+            }
         }
         get("/drugs") {
-            throw NotImplementedError("drug list route not implemented")
+            call.respond(provider.all)
         }
     }
 }

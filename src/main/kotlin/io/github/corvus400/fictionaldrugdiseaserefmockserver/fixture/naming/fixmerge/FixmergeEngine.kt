@@ -8,14 +8,27 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixm
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixmerge.surface.LatinToKatakanaConverter
 
 interface FixmergeEngine {
-    fun coinName(slot: NameSlot, seed: Long): CoinedName
+    /**
+     * [excludeKatakanaSet] に含まれるカタカナ表記が出た場合、engine 内部で seed+1 の
+     * retry を行い、除外集合に該当しない CoinedName を返す。既存呼び出し (2 引数) は
+     * `emptySet()` を forward するため従来挙動を維持する。mock-server 独自拡張。
+     */
+    fun coinName(
+        slot: NameSlot,
+        seed: Long,
+        excludeKatakanaSet: Set<String> = emptySet(),
+    ): CoinedName
 }
 
 class DefaultFixmergeEngine(
     private val coiner: Coiner,
 ) : FixmergeEngine {
-    override fun coinName(slot: NameSlot, seed: Long): CoinedName {
-        return coiner.coin(slot = slot, seed = seed)
+    override fun coinName(
+        slot: NameSlot,
+        seed: Long,
+        excludeKatakanaSet: Set<String>,
+    ): CoinedName {
+        return coiner.coin(slot = slot, seed = seed, excludeKatakanaSet = excludeKatakanaSet)
     }
 }
 
