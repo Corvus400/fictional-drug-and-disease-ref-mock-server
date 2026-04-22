@@ -8,10 +8,6 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.coun
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixmerge.coinage.CoinedName
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixmerge.nameslot.NameSlot
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.MedicalDepartment
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.DiagnosticCriteriaInfo
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.SymptomInfo
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.TreatmentInfo
 
 class DiseaseGenerator(
     adapter: FixmergeNameAdapter,
@@ -72,23 +68,41 @@ class DiseaseGenerator(
         differentials: List<CoinedName>,
         complications: List<CoinedName>,
     ): Disease {
+        val diseaseId =
+            "disease_${blueprint.index.toString().padStart(length = DISEASE_ID_PAD_LENGTH, padChar = '0')}"
         return Disease(
-            id = "disease_${blueprint.index.toString().padStart(length = DISEASE_ID_PAD_LENGTH, padChar = '0')}",
+            id = diseaseId,
             name = name.katakana,
             nameKana = name.katakana,
             nameEnglish = name.latin,
             icd10Chapter = blueprint.icd10Chapter,
-            medicalDepartment = listOf(MedicalDepartment.INTERNAL_MEDICINE),
+            medicalDepartment = DiseaseNestedBuilders.buildMedicalDepartment(
+                id = diseaseId,
+                chapter = blueprint.icd10Chapter,
+            ),
             chronicity = blueprint.chronicity,
             infectious = blueprint.isInfectious,
             synonyms = synonyms.map { it.katakana },
-            summary = DEFAULT_SUMMARY,
-            etiology = DEFAULT_ETIOLOGY,
-            symptoms = SymptomInfo(mainSymptoms = listOf(DEFAULT_MAIN_SYMPTOM)),
-            diagnosticCriteria = DiagnosticCriteriaInfo(required = listOf(DEFAULT_DIAGNOSTIC_REQUIREMENT)),
+            summary = DiseaseNestedBuilders.buildSummary(id = diseaseId),
+            epidemiology = DiseaseNestedBuilders.buildEpidemiology(id = diseaseId),
+            etiology = DiseaseNestedBuilders.buildEtiology(id = diseaseId),
+            symptoms = DiseaseNestedBuilders.buildSymptoms(id = diseaseId),
+            diagnosticCriteria = DiseaseNestedBuilders.buildDiagnosticCriteria(id = diseaseId),
+            requiredExams = DiseaseNestedBuilders.buildRequiredExams(
+                id = diseaseId,
+                chapter = blueprint.icd10Chapter,
+            ),
+            severityGrading = DiseaseNestedBuilders.buildSeverityGrading(id = diseaseId),
             differentialDiagnoses = differentials.map { it.katakana },
             complications = complications.map { it.katakana },
-            treatments = TreatmentInfo(),
+            treatments = DiseaseNestedBuilders.buildTreatments(id = diseaseId),
+            prognosis = DiseaseNestedBuilders.buildPrognosis(id = diseaseId),
+            prevention = DiseaseNestedBuilders.buildPrevention(id = diseaseId),
+            relatedDrugIds = DiseaseNestedBuilders.buildRelatedDrugIds(id = diseaseId),
+            relatedDiseaseIds = DiseaseNestedBuilders.buildRelatedDiseaseIds(
+                id = diseaseId,
+                selfIndex = blueprint.index,
+            ),
             revisedAt = DEFAULT_REVISED_AT,
         )
     }
@@ -98,10 +112,6 @@ class DiseaseGenerator(
         private const val DIFFERENTIAL_COUNT: Int = 2
         private const val COMPLICATION_COUNT: Int = 2
         private const val DISEASE_ID_PAD_LENGTH: Int = 4
-        private const val DEFAULT_SUMMARY: String = "本疾患の概要記述"
-        private const val DEFAULT_ETIOLOGY: String = "病因は複合的要因によると考えられる"
-        private const val DEFAULT_MAIN_SYMPTOM: String = "倦怠感"
-        private const val DEFAULT_DIAGNOSTIC_REQUIREMENT: String = "臨床症状の確認"
         private const val DEFAULT_REVISED_AT: String = "2026/04/23"
     }
 }

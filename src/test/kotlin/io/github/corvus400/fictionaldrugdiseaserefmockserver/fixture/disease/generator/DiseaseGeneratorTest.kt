@@ -5,11 +5,14 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.blu
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.FixmergeNameAdapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.country.CountryBucketRepository
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.country.DiseaseCountryMapping
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Chronicity
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.ExamCategory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class DiseaseGeneratorTest {
@@ -107,5 +110,211 @@ class DiseaseGeneratorTest {
             assertTrue(disease.name.isNotBlank(), "name blank for ${disease.id}")
             assertTrue(disease.nameKana.isNotBlank(), "nameKana blank for ${disease.id}")
         }
+    }
+
+    // Red-1: 全 24 フィールド populated (sample blueprint + 80 件全件)
+    @Test
+    fun `generate returns a Disease with all 24 top-level fields populated (non-null and non-empty)`() {
+        val disease = generator.generate(blueprint = sampleBlueprint)
+        assertAllFieldsPopulated(disease = disease)
+
+        val blueprints = DiseaseBlueprintFactory.build()
+        val diseases = generator.generate(blueprints = blueprints)
+        for (generated in diseases) {
+            assertAllFieldsPopulated(disease = generated)
+        }
+    }
+
+    // Red-2: Ch.I 感染症・寄生虫症 条件必須
+    @Test
+    fun `generate for CHAPTER_I blueprints populates infectious epidemiology riskFactors and prevention`() {
+        val blueprints =
+            DiseaseBlueprintFactory.build().filter { it.icd10Chapter == Icd10Chapter.CHAPTER_I }
+        assertTrue(blueprints.isNotEmpty(), "no CHAPTER_I blueprint present in factory")
+        for (blueprint in blueprints) {
+            val disease = generator.generate(blueprint = blueprint)
+            assertTrue(
+                disease.infectious,
+                "CHAPTER_I disease ${disease.id} must be infectious",
+            )
+            val epidemiology = assertNotNull(
+                disease.epidemiology,
+                "CHAPTER_I disease ${disease.id} must have epidemiology",
+            )
+            assertTrue(
+                epidemiology.riskFactors.isNotEmpty(),
+                "CHAPTER_I disease ${disease.id} must have epidemiology.riskFactors " +
+                    "(transmission routes)",
+            )
+            assertTrue(
+                disease.prevention.isNotEmpty(),
+                "CHAPTER_I disease ${disease.id} must have prevention items",
+            )
+            assertNotNull(
+                disease.symptoms.onsetPattern,
+                "CHAPTER_I disease ${disease.id} must have symptoms.onsetPattern",
+            )
+        }
+    }
+
+    // Red-3: Ch.II 新生物 条件必須
+    @Test
+    fun `generate for CHAPTER_II blueprints populates severityGrading and prognosis`() {
+        val blueprints =
+            DiseaseBlueprintFactory.build().filter { it.icd10Chapter == Icd10Chapter.CHAPTER_II }
+        assertTrue(blueprints.isNotEmpty(), "no CHAPTER_II blueprint present in factory")
+        for (blueprint in blueprints) {
+            val disease = generator.generate(blueprint = blueprint)
+            assertNotNull(
+                disease.severityGrading,
+                "CHAPTER_II disease ${disease.id} must have severityGrading",
+            )
+            val prognosis = assertNotNull(
+                disease.prognosis,
+                "CHAPTER_II disease ${disease.id} must have prognosis",
+            )
+            assertTrue(
+                prognosis.isNotBlank(),
+                "CHAPTER_II disease ${disease.id} prognosis must be non-blank",
+            )
+        }
+    }
+
+    // Red-4: Ch.IV 内分泌・栄養・代謝疾患 条件必須 (慢性)
+    @Test
+    fun `generate for CHAPTER_IV CHRONIC blueprints populates pharmacological treatments and requiredExams`() {
+        val blueprints = DiseaseBlueprintFactory.build()
+            .filter {
+                it.icd10Chapter == Icd10Chapter.CHAPTER_IV && it.chronicity == Chronicity.CHRONIC
+            }
+        assertTrue(blueprints.isNotEmpty(), "no CHAPTER_IV + CHRONIC blueprint present in factory")
+        for (blueprint in blueprints) {
+            val disease = generator.generate(blueprint = blueprint)
+            assertTrue(
+                disease.treatments.pharmacological.isNotEmpty(),
+                "CHAPTER_IV+CHRONIC disease ${disease.id} must have pharmacological treatments",
+            )
+            assertTrue(
+                disease.requiredExams.size >= MIN_CHAPTER_IV_EXAM_COUNT,
+                "CHAPTER_IV+CHRONIC disease ${disease.id} must have at least " +
+                    "$MIN_CHAPTER_IV_EXAM_COUNT requiredExams, got ${disease.requiredExams.size}",
+            )
+        }
+    }
+
+    // Red-5: Ch.V 精神・行動の障害 条件必須
+    @Test
+    fun `generate for CHAPTER_V blueprints populates diagnosticCriteria and at least three mainSymptoms`() {
+        val blueprints =
+            DiseaseBlueprintFactory.build().filter { it.icd10Chapter == Icd10Chapter.CHAPTER_V }
+        assertTrue(blueprints.isNotEmpty(), "no CHAPTER_V blueprint present in factory")
+        for (blueprint in blueprints) {
+            val disease = generator.generate(blueprint = blueprint)
+            assertTrue(
+                disease.diagnosticCriteria.required.isNotEmpty(),
+                "CHAPTER_V disease ${disease.id} must have diagnosticCriteria.required",
+            )
+            assertTrue(
+                disease.symptoms.mainSymptoms.size >= MIN_CHAPTER_V_MAIN_SYMPTOMS,
+                "CHAPTER_V disease ${disease.id} must have at least " +
+                    "$MIN_CHAPTER_V_MAIN_SYMPTOMS mainSymptoms, " +
+                    "got ${disease.symptoms.mainSymptoms.size}",
+            )
+            assertTrue(
+                disease.relatedDrugIds.isNotEmpty(),
+                "CHAPTER_V disease ${disease.id} must have relatedDrugIds (psychotropics)",
+            )
+        }
+    }
+
+    // Red-6: Ch.IX 循環器系疾患 条件必須
+    @Test
+    fun `generate for CHAPTER_IX blueprints populates severityGrading and imaging requiredExams`() {
+        val blueprints =
+            DiseaseBlueprintFactory.build().filter { it.icd10Chapter == Icd10Chapter.CHAPTER_IX }
+        assertTrue(blueprints.isNotEmpty(), "no CHAPTER_IX blueprint present in factory")
+        for (blueprint in blueprints) {
+            val disease = generator.generate(blueprint = blueprint)
+            assertNotNull(
+                disease.severityGrading,
+                "CHAPTER_IX disease ${disease.id} must have severityGrading",
+            )
+            assertTrue(
+                disease.requiredExams.any { it.category == ExamCategory.IMAGING },
+                "CHAPTER_IX disease ${disease.id} must include at least one IMAGING exam",
+            )
+        }
+    }
+
+    // Red-7: Ch.XV 妊娠・分娩・産褥 条件必須
+    @Test
+    fun `generate for CHAPTER_XV blueprints populates epidemiology onsetAgeRange and sexRatio`() {
+        val blueprints =
+            DiseaseBlueprintFactory.build().filter { it.icd10Chapter == Icd10Chapter.CHAPTER_XV }
+        assertTrue(blueprints.isNotEmpty(), "no CHAPTER_XV blueprint present in factory")
+        for (blueprint in blueprints) {
+            val disease = generator.generate(blueprint = blueprint)
+            val epidemiology = assertNotNull(
+                disease.epidemiology,
+                "CHAPTER_XV disease ${disease.id} must have epidemiology",
+            )
+            assertNotNull(
+                epidemiology.onsetAgeRange,
+                "CHAPTER_XV disease ${disease.id} must have epidemiology.onsetAgeRange",
+            )
+            assertNotNull(
+                epidemiology.sexRatio,
+                "CHAPTER_XV disease ${disease.id} must have epidemiology.sexRatio",
+            )
+        }
+    }
+
+    private fun assertAllFieldsPopulated(disease: Disease) {
+        assertTrue(disease.id.isNotBlank(), "id blank for ${disease.id}")
+        assertTrue(disease.name.isNotBlank(), "name blank for ${disease.id}")
+        assertTrue(disease.nameKana.isNotBlank(), "nameKana blank for ${disease.id}")
+        val nameEnglish = assertNotNull(disease.nameEnglish, "nameEnglish null for ${disease.id}")
+        assertTrue(nameEnglish.isNotBlank(), "nameEnglish blank for ${disease.id}")
+        assertTrue(disease.summary.isNotBlank(), "summary blank for ${disease.id}")
+        assertTrue(disease.etiology.isNotBlank(), "etiology blank for ${disease.id}")
+        assertTrue(disease.revisedAt.isNotBlank(), "revisedAt blank for ${disease.id}")
+        assertTrue(
+            disease.symptoms.mainSymptoms.isNotEmpty(),
+            "mainSymptoms empty for ${disease.id}",
+        )
+        assertTrue(
+            disease.diagnosticCriteria.required.isNotEmpty(),
+            "diagnosticCriteria.required empty for ${disease.id}",
+        )
+        val prognosis = assertNotNull(disease.prognosis, "prognosis null for ${disease.id}")
+        assertTrue(prognosis.isNotBlank(), "prognosis blank for ${disease.id}")
+        assertNotNull(disease.epidemiology, "epidemiology null for ${disease.id}")
+        assertNotNull(disease.severityGrading, "severityGrading null for ${disease.id}")
+        assertTrue(
+            disease.medicalDepartment.isNotEmpty(),
+            "medicalDepartment empty for ${disease.id}",
+        )
+        assertTrue(disease.synonyms.isNotEmpty(), "synonyms empty for ${disease.id}")
+        assertTrue(disease.requiredExams.isNotEmpty(), "requiredExams empty for ${disease.id}")
+        assertTrue(
+            disease.differentialDiagnoses.isNotEmpty(),
+            "differentialDiagnoses empty for ${disease.id}",
+        )
+        assertTrue(disease.complications.isNotEmpty(), "complications empty for ${disease.id}")
+        assertTrue(
+            disease.treatments.pharmacological.isNotEmpty(),
+            "treatments.pharmacological empty for ${disease.id}",
+        )
+        assertTrue(disease.prevention.isNotEmpty(), "prevention empty for ${disease.id}")
+        assertTrue(disease.relatedDrugIds.isNotEmpty(), "relatedDrugIds empty for ${disease.id}")
+        assertTrue(
+            disease.relatedDiseaseIds.isNotEmpty(),
+            "relatedDiseaseIds empty for ${disease.id}",
+        )
+    }
+
+    companion object {
+        private const val MIN_CHAPTER_IV_EXAM_COUNT: Int = 2
+        private const val MIN_CHAPTER_V_MAIN_SYMPTOMS: Int = 3
     }
 }
