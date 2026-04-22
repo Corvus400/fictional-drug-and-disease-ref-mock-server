@@ -262,4 +262,21 @@ class DrugGeneratorTest {
             "dosageRelatedPrecautions must be non-empty for chronic A or C",
         )
     }
+
+    @Test
+    fun `relatedDiseaseIds reference only existing disease IDs for all blueprints`() {
+        val existingDiseaseIds: Set<String> =
+            (0..79).map { "disease_${it.toString().padStart(length = 4, padChar = '0')}" }.toSet()
+        val drugs = generator.generate(blueprints = DrugBlueprintFactory.build())
+
+        drugs.forEach { drug ->
+            drug.relatedDiseaseIds.forEach { diseaseId ->
+                assertTrue(
+                    diseaseId in existingDiseaseIds,
+                    "drug ${drug.id} references non-existent disease $diseaseId " +
+                        "(valid range: disease_0000..disease_0079)",
+                )
+            }
+        }
+    }
 }

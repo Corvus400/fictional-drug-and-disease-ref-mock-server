@@ -206,7 +206,7 @@ internal object DrugMetaBuilders {
     private val CLINICAL_RESULT_RANGE: IntRange = 1..3
     private val REFERENCE_RANGE: IntRange = 1..3
     private val RELATED_DISEASE_RANGE: IntRange = 1..2
-    private val DISEASE_INDEX_RANGE: IntRange = 1..80
+    private val DISEASE_INDEX_RANGE: IntRange = 0..79
     private val YJ_DIGIT_RANGE_6: IntRange = 0..999_999
     private val EXPIRATION_RANGE: IntRange = 24..60
 
