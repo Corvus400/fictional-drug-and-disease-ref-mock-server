@@ -3,6 +3,7 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.ge
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.placeholder.DiseaseMedicalVocabulary
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.placeholder.DiseaseNumericPlaceholderRanges
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.placeholder.DiseasePlaceholderCategory
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.placeholder.DiseasePlaceholderContractMessages
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.placeholder.DiseasePlaceholderKey
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.placeholder.DiseaseRenderContext
 
@@ -17,9 +18,7 @@ class DiseasePlaceholderDictionary(
     ): String {
         val placeholderKey =
             DiseasePlaceholderKey.fromJsonKey(key)
-                ?: TODO(
-                    "Unknown-placeholder error path not implemented yet (key=$key seed=$seed selfName=${context.selfName})",
-                )
+                ?: error(DiseasePlaceholderContractMessages.unknownPlaceholderError(key = key))
         return when (placeholderKey.category) {
             DiseasePlaceholderCategory.A_MEDICAL_VOCABULARY -> medicalVocabulary.resolve(key, seed)
             DiseasePlaceholderCategory.B_SELF_REFERENCE -> context.selfName
