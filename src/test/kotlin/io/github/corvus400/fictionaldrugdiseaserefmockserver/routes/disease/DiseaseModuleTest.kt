@@ -25,8 +25,8 @@ class DiseaseModuleTest {
         assertEquals(HttpStatusCode.OK, response.status)
         val body = json.decodeFromString<JsonObject>(response.bodyAsText())
         val name = body["name"]?.jsonPrimitive?.content
-        val nameKana = body["nameKana"]?.jsonPrimitive?.content
-        val nameEnglish = body["nameEnglish"]?.jsonPrimitive?.content
+        val nameKana = body["name_kana"]?.jsonPrimitive?.content
+        val nameEnglish = body["name_english"]?.jsonPrimitive?.content
         assertNotNull(name)
         assertTrue(name.isNotBlank(), "name must be non-blank")
         assertNotNull(nameKana)

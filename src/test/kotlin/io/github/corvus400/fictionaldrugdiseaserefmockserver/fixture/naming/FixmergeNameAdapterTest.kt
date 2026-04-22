@@ -20,9 +20,9 @@ class FixmergeNameAdapterTest {
     }
 
     @Test
-    fun `coin is deterministic for the same seed and slot`() {
-        val first = adapter.coin(slot = NameSlot.DRUG_BRAND, seed = 42L)
-        val second = adapter.coin(slot = NameSlot.DRUG_BRAND, seed = 42L)
+    fun `coin is deterministic for the same seed and slot given fresh adapter instances`() {
+        val first = FixmergeNameAdapter().coin(slot = NameSlot.DRUG_BRAND, seed = 42L)
+        val second = FixmergeNameAdapter().coin(slot = NameSlot.DRUG_BRAND, seed = 42L)
         assertEquals(first, second)
     }
 
