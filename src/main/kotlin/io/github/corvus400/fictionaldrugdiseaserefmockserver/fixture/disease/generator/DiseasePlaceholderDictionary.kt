@@ -1,12 +1,14 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.placeholder.DiseaseMedicalVocabulary
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.placeholder.DiseaseNumericPlaceholderRanges
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.placeholder.DiseasePlaceholderCategory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.placeholder.DiseasePlaceholderKey
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.placeholder.DiseaseRenderContext
 
 class DiseasePlaceholderDictionary(
     private val medicalVocabulary: DiseaseMedicalVocabulary = DiseaseMedicalVocabulary,
+    private val numericRanges: DiseaseNumericPlaceholderRanges = DiseaseNumericPlaceholderRanges,
 ) {
     fun resolve(
         key: String,
@@ -21,8 +23,7 @@ class DiseasePlaceholderDictionary(
         return when (placeholderKey.category) {
             DiseasePlaceholderCategory.A_MEDICAL_VOCABULARY -> medicalVocabulary.resolve(key, seed)
             DiseasePlaceholderCategory.B_SELF_REFERENCE -> context.selfName
-            DiseasePlaceholderCategory.D_NUMERIC_RANGE ->
-                TODO("D_NUMERIC_RANGE not implemented yet (key=$key)")
+            DiseasePlaceholderCategory.D_NUMERIC_RANGE -> numericRanges.resolve(key, seed)
         }
     }
 
