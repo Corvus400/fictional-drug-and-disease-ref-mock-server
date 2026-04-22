@@ -26,9 +26,18 @@ class DrugPlaceholderDictionary(
         return when (placeholderKey.category) {
             PlaceholderCategory.A_MEDICAL_VOCABULARY -> medicalVocabulary.resolve(key, seed)
             PlaceholderCategory.B_COINED_NAME -> resolveCoinedName(placeholderKey, seed)
-            PlaceholderCategory.C_DISEASE_REFERENCE -> TODO("sub-cycle 3-4 will look up DiseaseFixtureProvider")
+            PlaceholderCategory.C_DISEASE_REFERENCE -> resolveDiseaseReference(seed)
             PlaceholderCategory.D_NUMERIC_RANGE -> TODO("sub-cycle 3-5 will delegate to NumericPlaceholderRanges")
         }
+    }
+
+    private fun resolveDiseaseReference(seed: Long): String {
+        check(diseaseProvider.all.isNotEmpty()) {
+            "DiseaseFixtureProvider is empty. " +
+                "Generation order may be wrong — Drug must be generated after Disease, " +
+                "so that {{disease}} placeholder can reference an existing disease fixture."
+        }
+        return ValueRangeGenerator.pickOne(seed, diseaseProvider.all).name
     }
 
     private fun resolveCoinedName(
