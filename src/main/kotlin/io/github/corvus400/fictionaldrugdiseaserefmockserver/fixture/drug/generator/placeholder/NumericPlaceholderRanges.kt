@@ -1,6 +1,7 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.placeholder
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.common.ValueRangeGenerator
+import java.util.Locale
 
 private const val UNIT_SALT: Long = 0x5A5A5A5A5A5A5A5AL
 private const val RANGE_END_SALT: Long = 0x3C3C3C3C3C3C3C3CL
@@ -15,7 +16,7 @@ private fun pickUnit(
     units: List<String>,
 ): String = if (units.size == 1) units.first() else ValueRangeGenerator.pickOne(derive(seed, UNIT_SALT), units)
 
-private fun Double.formatOneDecimal(): String = "%.1f".format(this)
+private fun Double.formatOneDecimal(): String = String.format(Locale.ROOT, "%.1f", this)
 
 private sealed interface NumericFormatter {
     fun render(seed: Long): String
