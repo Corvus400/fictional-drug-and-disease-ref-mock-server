@@ -20,6 +20,35 @@ class DiseaseFixtureValidatorTest {
     }
 
     @Test
+    fun `validate detects sequential-id gap when an id is replaced with an out-of-range id`() {
+        val original = fullInventory[2]
+        val injected = original.copy(id = "disease_0080")
+        val diseases = fullInventory.map { disease ->
+            if (disease.id == original.id) injected else disease
+        }
+
+        val violations = DiseaseFixtureValidator.validate(diseases = diseases)
+
+        assertTrue(
+            actual = violations.any { violation ->
+                violation.field == "id" &&
+                    violation.message.contains(other = "sequential") &&
+                    violation.diseaseId == original.id
+            },
+            message = "expected sequential-id missing violation for ${original.id} " +
+                "but got $violations",
+        )
+        assertTrue(
+            actual = violations.any { violation ->
+                violation.field == "id" &&
+                    violation.message.contains(other = "out of range") &&
+                    violation.diseaseId == "disease_0080"
+            },
+            message = "expected out-of-range violation for disease_0080 but got $violations",
+        )
+    }
+
+    @Test
     fun `validate detects duplicate id violation when two diseases share the same id`() {
         val firstDisease = fullInventory[0]
         val secondDisease = fullInventory[1]
