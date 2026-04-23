@@ -19,6 +19,23 @@ class DiseaseFixtureValidatorTest {
     }
 
     @Test
+    fun `validate detects requiredExams empty violation on an injected disease`() {
+        val original = fullInventory.first()
+        val injected = original.copy(requiredExams = emptyList())
+        val diseases = listOf(injected) + fullInventory.drop(n = 1)
+
+        val violations = DiseaseFixtureValidator.validate(diseases = diseases)
+
+        assertTrue(
+            actual = violations.any { violation ->
+                violation.diseaseId == original.id && violation.field == "requiredExams"
+            },
+            message = "expected requiredExams-empty violation for ${original.id} " +
+                "but got $violations",
+        )
+    }
+
+    @Test
     fun `validate detects mainSymptoms empty violation on an injected disease`() {
         val original = fullInventory.first()
         val injected = original.copy(
