@@ -46,6 +46,15 @@ class DiseaseGeneratorTest {
     }
 
     @Test
+    fun `generate returns revisedAt in ISO 8601 YYYY-MM-DD form`() {
+        val disease = generator.generate(blueprint = sampleBlueprint)
+        assertTrue(
+            actual = disease.revisedAt.matches(ISO_8601_DATE_PATTERN),
+            message = "revisedAt must be ISO 8601 YYYY-MM-DD but was '${disease.revisedAt}'",
+        )
+    }
+
+    @Test
     fun `generate is deterministic for the same blueprint given fresh adapter instances`() {
         val first = DiseaseGenerator(
             adapter = FixmergeNameAdapter(),
@@ -351,5 +360,6 @@ class DiseaseGeneratorTest {
         private const val MIN_CHAPTER_IV_EXAM_COUNT: Int = 2
         private const val MIN_CHAPTER_V_MAIN_SYMPTOMS: Int = 3
         private const val RESIDUAL_SAMPLE_LIMIT: Int = 10
+        private val ISO_8601_DATE_PATTERN: Regex = Regex("""^\d{4}-\d{2}-\d{2}$""")
     }
 }
