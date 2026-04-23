@@ -1,5 +1,6 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator
 
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.IsoDateFormatter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.blueprint.DosageFormGroup
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.blueprint.DrugBlueprint
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.BucketNameCoiner
@@ -15,6 +16,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.Ro
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.CompositionInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.Dose
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.PhysicochemicalInfo
+import java.time.LocalDate
 
 class DrugGenerator(
     adapter: FixmergeNameAdapter,
@@ -204,6 +206,7 @@ class DrugGenerator(
         private const val APPEARANCE_DESCRIPTION: String = "白色の錠剤"
         private const val DEFAULT_MOLECULAR_FORMULA: String = "C20H25N3O"
         private const val MOLECULAR_DESCRIPTION: String = "白色の結晶性粉末である。"
-        private const val DEFAULT_REVISED_AT: String = "2026/04/23"
+        private val DEFAULT_REVISED_AT: String =
+            IsoDateFormatter.formatDate(date = LocalDate.of(2026, 4, 23))
     }
 }
