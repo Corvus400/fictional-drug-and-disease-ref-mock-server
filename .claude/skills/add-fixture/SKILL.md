@@ -110,9 +110,10 @@ Add `xxxModule(scenarioManager)` call inside `configureRouting()`.
 Post-implementation checks derived from 72+ past fix commits.
 
 ### Date Format
-- Use `yyyy/MM/dd` (`yyyy-MM-dd` is forbidden)
-- With time: `yyyy/MM/dd HH:mm:ss`
-- Use MockDateHelper for relative dates
+- Emit all dates through `IsoDateFormatter` (ISO 8601: spec `YYYY-MM-DD`, with time `YYYY-MM-DDThh:mm:ss`)
+- `yyyy/MM/dd` is forbidden
+- Inside Kotlin `DateTimeFormatter` patterns the year letter is lowercase `yyyy` — uppercase `YYYY` is week-based-year and will mis-render the last week of December
+- Do not hardcode date strings; build values with `IsoDateFormatter.formatDate(date = LocalDate.of(...))`
 
 ### Field Compatibility (iOS/Android)
 - Include both legacy and new fields when a field was renamed across API versions
