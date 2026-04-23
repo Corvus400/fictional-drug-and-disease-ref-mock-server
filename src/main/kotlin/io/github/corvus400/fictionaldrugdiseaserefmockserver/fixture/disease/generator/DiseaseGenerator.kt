@@ -1,5 +1,6 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator
 
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.IsoDateFormatter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.blueprint.DiseaseBlueprint
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.placeholder.DiseaseRenderContext
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.BucketNameCoiner
@@ -9,6 +10,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.coun
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixmerge.coinage.CoinedName
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixmerge.nameslot.NameSlot
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
+import java.time.LocalDate
 
 class DiseaseGenerator(
     adapter: FixmergeNameAdapter,
@@ -139,6 +141,7 @@ class DiseaseGenerator(
         private const val DIFFERENTIAL_COUNT: Int = 2
         private const val COMPLICATION_COUNT: Int = 2
         private const val DISEASE_ID_PAD_LENGTH: Int = 4
-        private const val DEFAULT_REVISED_AT: String = "2026/04/23"
+        private val DEFAULT_REVISED_AT: String =
+            IsoDateFormatter.formatDate(date = LocalDate.of(2026, 4, 23))
     }
 }
