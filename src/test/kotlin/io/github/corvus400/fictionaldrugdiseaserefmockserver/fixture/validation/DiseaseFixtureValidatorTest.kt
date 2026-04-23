@@ -20,6 +20,25 @@ class DiseaseFixtureValidatorTest {
     }
 
     @Test
+    fun `validate detects duplicate id violation when two diseases share the same id`() {
+        val firstDisease = fullInventory[0]
+        val secondDisease = fullInventory[1]
+        val injected = secondDisease.copy(id = firstDisease.id)
+        val diseases = listOf(firstDisease, injected) + fullInventory.drop(n = 2)
+
+        val violations = DiseaseFixtureValidator.validate(diseases = diseases)
+
+        assertTrue(
+            actual = violations.any { violation ->
+                violation.diseaseId == firstDisease.id &&
+                    violation.field == "id" &&
+                    violation.message.contains(other = "unique")
+            },
+            message = "expected duplicate-id violation for ${firstDisease.id} but got $violations",
+        )
+    }
+
+    @Test
     fun `validate detects CHAPTER_V fewer-than-three mainSymptoms violation on an injected disease`() {
         val original = fullInventory.first { disease ->
             disease.icd10Chapter == Icd10Chapter.CHAPTER_V
