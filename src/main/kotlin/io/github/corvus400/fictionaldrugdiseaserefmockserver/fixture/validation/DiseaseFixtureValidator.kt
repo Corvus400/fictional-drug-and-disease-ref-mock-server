@@ -1,6 +1,7 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.validation
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.ExamCategory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
 
 data class DiseaseViolation(
@@ -72,19 +73,19 @@ object DiseaseFixtureValidator {
         return when (disease.icd10Chapter) {
             Icd10Chapter.CHAPTER_I -> chapterOneViolations(disease = disease)
             Icd10Chapter.CHAPTER_II -> chapterTwoViolations(disease = disease)
+            Icd10Chapter.CHAPTER_IV -> chapterFourViolations(disease = disease)
             Icd10Chapter.CHAPTER_V -> chapterFiveViolations(disease = disease)
+            Icd10Chapter.CHAPTER_IX -> chapterNineViolations(disease = disease)
+            Icd10Chapter.CHAPTER_XV -> chapterFifteenViolations(disease = disease)
             Icd10Chapter.CHAPTER_III,
-            Icd10Chapter.CHAPTER_IV,
             Icd10Chapter.CHAPTER_VI,
             Icd10Chapter.CHAPTER_VII,
             Icd10Chapter.CHAPTER_VIII,
-            Icd10Chapter.CHAPTER_IX,
             Icd10Chapter.CHAPTER_X,
             Icd10Chapter.CHAPTER_XI,
             Icd10Chapter.CHAPTER_XII,
             Icd10Chapter.CHAPTER_XIII,
             Icd10Chapter.CHAPTER_XIV,
-            Icd10Chapter.CHAPTER_XV,
             Icd10Chapter.CHAPTER_XVI,
             Icd10Chapter.CHAPTER_XVII,
             Icd10Chapter.CHAPTER_XVIII,
@@ -143,6 +144,20 @@ object DiseaseFixtureValidator {
         }
     }
 
+    private fun chapterFourViolations(disease: Disease): List<DiseaseViolation> {
+        return buildList {
+            if (disease.treatments.pharmacological.isEmpty()) {
+                add(
+                    DiseaseViolation(
+                        diseaseId = disease.id,
+                        field = "treatments.pharmacological",
+                        message = "CHAPTER_IV disease must have at least 1 pharmacological treatment",
+                    ),
+                )
+            }
+        }
+    }
+
     private fun chapterFiveViolations(disease: Disease): List<DiseaseViolation> {
         return buildList {
             if (disease.diagnosticCriteria.required.isEmpty()) {
@@ -161,6 +176,63 @@ object DiseaseFixtureValidator {
                         field = "symptoms.mainSymptoms",
                         message = "CHAPTER_V disease must have at least " +
                             "$MIN_CHAPTER_V_MAIN_SYMPTOMS mainSymptoms",
+                    ),
+                )
+            }
+        }
+    }
+
+    private fun chapterNineViolations(disease: Disease): List<DiseaseViolation> {
+        return buildList {
+            if (disease.severityGrading == null) {
+                add(
+                    DiseaseViolation(
+                        diseaseId = disease.id,
+                        field = "severityGrading",
+                        message = "CHAPTER_IX disease must have severityGrading populated",
+                    ),
+                )
+            }
+            if (disease.requiredExams.none { exam -> exam.category == ExamCategory.IMAGING }) {
+                add(
+                    DiseaseViolation(
+                        diseaseId = disease.id,
+                        field = "requiredExams",
+                        message = "CHAPTER_IX disease must include at least one IMAGING exam",
+                    ),
+                )
+            }
+        }
+    }
+
+    private fun chapterFifteenViolations(disease: Disease): List<DiseaseViolation> {
+        return buildList {
+            val epidemiology = disease.epidemiology
+            if (epidemiology == null) {
+                add(
+                    DiseaseViolation(
+                        diseaseId = disease.id,
+                        field = "epidemiology",
+                        message = "CHAPTER_XV disease must have epidemiology populated",
+                    ),
+                )
+                return@buildList
+            }
+            if (epidemiology.onsetAgeRange == null) {
+                add(
+                    DiseaseViolation(
+                        diseaseId = disease.id,
+                        field = "epidemiology.onsetAgeRange",
+                        message = "CHAPTER_XV disease must have onsetAgeRange populated",
+                    ),
+                )
+            }
+            if (epidemiology.sexRatio == null) {
+                add(
+                    DiseaseViolation(
+                        diseaseId = disease.id,
+                        field = "epidemiology.sexRatio",
+                        message = "CHAPTER_XV disease must have sexRatio populated",
                     ),
                 )
             }
