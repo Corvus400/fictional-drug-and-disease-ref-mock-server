@@ -110,6 +110,41 @@ object DrugFixtureValidator {
                 message = "poison or potent drug requires warning size >= 1",
             )
         }
+        if (isExternalTopical(drug = drug) && drug.administrationPrecautions.isEmpty()) {
+            violations += Violation(
+                drugId = drug.id,
+                field = "administrationPrecautions",
+                message = "external topical requires administrationPrecautions size >= 1",
+            )
+        }
+        if (isBiological(drug = drug) && drug.handlingPrecautions.isEmpty()) {
+            violations += Violation(
+                drugId = drug.id,
+                field = "handlingPrecautions",
+                message = "biological product requires handlingPrecautions size >= 1",
+            )
+        }
+        if (isBiological(drug = drug) && drug.warning.isEmpty()) {
+            violations += Violation(
+                drugId = drug.id,
+                field = "warning",
+                message = "biological product requires warning size >= 1",
+            )
+        }
+        if (isNarcoticOrPsychotropic(drug = drug) && drug.insuranceNotes.isEmpty()) {
+            violations += Violation(
+                drugId = drug.id,
+                field = "insuranceNotes",
+                message = "narcotic or psychotropic drug requires insuranceNotes size >= 1",
+            )
+        }
+        if (isChronicPrescription(drug = drug) && drug.dosageRelatedPrecautions.isEmpty()) {
+            violations += Violation(
+                drugId = drug.id,
+                field = "dosageRelatedPrecautions",
+                message = "chronic long-term prescription drug requires dosageRelatedPrecautions size >= 1",
+            )
+        }
         return violations
     }
 
@@ -120,6 +155,38 @@ object DrugFixtureValidator {
     private fun isPoisonOrPotent(drug: Drug): Boolean =
         RegulatoryClass.POISON in drug.regulatoryClass ||
             RegulatoryClass.POTENT in drug.regulatoryClass
+
+    private fun isExternalTopical(drug: Drug): Boolean =
+        drug.dosageForm in EXTERNAL_TOPICAL_FORMS
+
+    private fun isBiological(drug: Drug): Boolean =
+        RegulatoryClass.BIOLOGICAL in drug.regulatoryClass ||
+            RegulatoryClass.SPECIFIED_BIOLOGICAL in drug.regulatoryClass
+
+    private fun isNarcoticOrPsychotropic(drug: Drug): Boolean =
+        drug.regulatoryClass.any { it in NARCOTIC_OR_PSYCHOTROPIC_CLASSES }
+
+    private fun isChronicPrescription(drug: Drug): Boolean =
+        drug.atcCode.firstOrNull() in CHRONIC_ATC_LETTERS
+
+    private val CHRONIC_ATC_LETTERS: Set<Char?> = setOf('A', 'C')
+
+    private val NARCOTIC_OR_PSYCHOTROPIC_CLASSES: Set<RegulatoryClass> =
+        setOf(
+            RegulatoryClass.NARCOTIC,
+            RegulatoryClass.PSYCHOTROPIC_1,
+            RegulatoryClass.PSYCHOTROPIC_2,
+            RegulatoryClass.PSYCHOTROPIC_3,
+        )
+
+    private val EXTERNAL_TOPICAL_FORMS: Set<DosageForm> =
+        setOf(
+            DosageForm.OINTMENT,
+            DosageForm.CREAM,
+            DosageForm.PATCH,
+            DosageForm.EYE_DROPS,
+            DosageForm.NASAL_SPRAY,
+        )
 
     private const val ID_PAD_LENGTH: Int = 4
     private val ID_PATTERN: Regex = Regex(pattern = """^drug_(\d{4})$""")
