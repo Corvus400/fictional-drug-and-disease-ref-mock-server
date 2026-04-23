@@ -340,10 +340,10 @@ class DiseaseGeneratorTest {
         assertTrue(
             actual = residualPlaceholders.isEmpty(),
             message =
-                DiseasePlaceholderContractMessages.residualDelimiterDetected(
-                    pattern = DiseasePlaceholderDelimiter.REGEX.pattern,
-                    firstOccurrences = residualPlaceholders.take(n = RESIDUAL_SAMPLE_LIMIT),
-                ),
+            DiseasePlaceholderContractMessages.residualDelimiterDetected(
+                pattern = DiseasePlaceholderDelimiter.REGEX.pattern,
+                firstOccurrences = residualPlaceholders.take(n = RESIDUAL_SAMPLE_LIMIT),
+            ),
         )
     }
 
