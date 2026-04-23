@@ -180,6 +180,134 @@ class DrugFixtureValidatorTest {
     }
 
     @Test
+    fun `validate reports an external violation for missing administrationPrecautions`() {
+        val drugs = buildFreshGenerator().generate(blueprints = DrugBlueprintFactory.build())
+        val external = drugs.first { drug -> drug.dosageForm == DosageForm.OINTMENT }
+        val corrupted = external.copy(administrationPrecautions = emptyList())
+        val withCorrupted = drugs.map { drug -> if (drug.id == external.id) corrupted else drug }
+
+        val violations = DrugFixtureValidator.validate(drugs = withCorrupted)
+
+        assertEquals(
+            expected = 1,
+            actual = violations.size,
+            message = "expected exactly 1 violation but got $violations",
+        )
+        val violation = violations.single()
+        assertEquals(expected = external.id, actual = violation.drugId)
+        assertEquals(expected = "administrationPrecautions", actual = violation.field)
+        assertTrue(
+            actual = "external" in violation.message,
+            message = "expected 'external' in message but was '${violation.message}'",
+        )
+    }
+
+    @Test
+    fun `validate reports a biological violation when handlingPrecautions is empty`() {
+        val drugs = buildFreshGenerator().generate(blueprints = DrugBlueprintFactory.build())
+        val base = drugs.first()
+        val corrupted = base.copy(
+            regulatoryClass = listOf(RegulatoryClass.BIOLOGICAL),
+            handlingPrecautions = emptyList(),
+        )
+        val withCorrupted = drugs.map { drug -> if (drug.id == base.id) corrupted else drug }
+
+        val violations = DrugFixtureValidator.validate(drugs = withCorrupted)
+
+        assertEquals(
+            expected = 1,
+            actual = violations.size,
+            message = "expected exactly 1 violation but got $violations",
+        )
+        val violation = violations.single()
+        assertEquals(expected = base.id, actual = violation.drugId)
+        assertEquals(expected = "handlingPrecautions", actual = violation.field)
+        assertTrue(
+            actual = "biological" in violation.message,
+            message = "expected 'biological' in message but was '${violation.message}'",
+        )
+    }
+
+    @Test
+    fun `validate reports a biological violation when warning is empty`() {
+        val drugs = buildFreshGenerator().generate(blueprints = DrugBlueprintFactory.build())
+        val base = drugs.first()
+        val corrupted = base.copy(
+            regulatoryClass = listOf(RegulatoryClass.SPECIFIED_BIOLOGICAL),
+            warning = emptyList(),
+        )
+        val withCorrupted = drugs.map { drug -> if (drug.id == base.id) corrupted else drug }
+
+        val violations = DrugFixtureValidator.validate(drugs = withCorrupted)
+
+        assertEquals(
+            expected = 1,
+            actual = violations.size,
+            message = "expected exactly 1 violation but got $violations",
+        )
+        val violation = violations.single()
+        assertEquals(expected = base.id, actual = violation.drugId)
+        assertEquals(expected = "warning", actual = violation.field)
+        assertTrue(
+            actual = "biological" in violation.message,
+            message = "expected 'biological' in message but was '${violation.message}'",
+        )
+    }
+
+    @Test
+    fun `validate reports a narcotic or psychotropic violation when insuranceNotes is empty`() {
+        val drugs = buildFreshGenerator().generate(blueprints = DrugBlueprintFactory.build())
+        val controlled = drugs.first { drug ->
+            RegulatoryClass.NARCOTIC in drug.regulatoryClass ||
+                RegulatoryClass.PSYCHOTROPIC_1 in drug.regulatoryClass ||
+                RegulatoryClass.PSYCHOTROPIC_2 in drug.regulatoryClass ||
+                RegulatoryClass.PSYCHOTROPIC_3 in drug.regulatoryClass
+        }
+        val corrupted = controlled.copy(insuranceNotes = emptyList())
+        val withCorrupted = drugs.map { drug -> if (drug.id == controlled.id) corrupted else drug }
+
+        val violations = DrugFixtureValidator.validate(drugs = withCorrupted)
+
+        assertEquals(
+            expected = 1,
+            actual = violations.size,
+            message = "expected exactly 1 violation but got $violations",
+        )
+        val violation = violations.single()
+        assertEquals(expected = controlled.id, actual = violation.drugId)
+        assertEquals(expected = "insuranceNotes", actual = violation.field)
+        assertTrue(
+            actual = "narcotic" in violation.message || "psychotropic" in violation.message,
+            message = "expected narcotic/psychotropic hint in message but was '${violation.message}'",
+        )
+    }
+
+    @Test
+    fun `validate reports a chronic violation when dosageRelatedPrecautions is empty`() {
+        val drugs = buildFreshGenerator().generate(blueprints = DrugBlueprintFactory.build())
+        val chronic = drugs.first { drug ->
+            drug.atcCode.firstOrNull() == 'A' || drug.atcCode.firstOrNull() == 'C'
+        }
+        val corrupted = chronic.copy(dosageRelatedPrecautions = emptyList())
+        val withCorrupted = drugs.map { drug -> if (drug.id == chronic.id) corrupted else drug }
+
+        val violations = DrugFixtureValidator.validate(drugs = withCorrupted)
+
+        assertEquals(
+            expected = 1,
+            actual = violations.size,
+            message = "expected exactly 1 violation but got $violations",
+        )
+        val violation = violations.single()
+        assertEquals(expected = chronic.id, actual = violation.drugId)
+        assertEquals(expected = "dosageRelatedPrecautions", actual = violation.field)
+        assertTrue(
+            actual = "chronic" in violation.message,
+            message = "expected 'chronic' in message but was '${violation.message}'",
+        )
+    }
+
+    @Test
     fun `validate reports a size violation when indications is empty`() {
         val drugs = buildFreshGenerator().generate(blueprints = DrugBlueprintFactory.build())
         val corrupted = drugs.first().copy(indications = emptyList())
