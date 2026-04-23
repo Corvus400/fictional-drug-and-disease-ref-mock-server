@@ -3,6 +3,7 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.DiseaseFixtureProvider
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.blueprint.DiseaseBlueprintFactory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.DiseaseGenerator
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.DiseasePlaceholderDictionary
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.blueprint.DrugBlueprintFactory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.DrugGenerator
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.DrugPlaceholderDictionary
@@ -24,7 +25,10 @@ class DrugDiseaseDisjointnessTest {
     fun `drug name set and disease name set are disjoint when FixmergeNameAdapter is shared`() {
         val adapter = FixmergeNameAdapter()
         val diseases =
-            DiseaseGenerator(adapter = adapter).generate(blueprints = DiseaseBlueprintFactory.build())
+            DiseaseGenerator(
+                adapter = adapter,
+                placeholderDictionary = DiseasePlaceholderDictionary(),
+            ).generate(blueprints = DiseaseBlueprintFactory.build())
         val placeholderDictionary =
             DrugPlaceholderDictionary(
                 nameAdapter = adapter,
