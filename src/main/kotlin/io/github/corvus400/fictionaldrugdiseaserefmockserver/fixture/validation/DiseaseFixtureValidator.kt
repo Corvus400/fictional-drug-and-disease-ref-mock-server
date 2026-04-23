@@ -13,7 +13,55 @@ object DiseaseFixtureValidator {
     fun validate(diseases: List<Disease>): List<DiseaseViolation> {
         return checkFieldMinimumCounts(diseases = diseases) +
             checkConditionalFields(diseases = diseases) +
-            checkIdUniqueness(diseases = diseases)
+            checkIdUniqueness(diseases = diseases) +
+            checkIdSequential(diseases = diseases)
+    }
+
+    private fun checkIdSequential(diseases: List<Disease>): List<DiseaseViolation> {
+        val observed = mutableSetOf<Int>()
+        val violations = mutableListOf<DiseaseViolation>()
+        for (disease in diseases) {
+            val match = DISEASE_ID_PATTERN.matchEntire(input = disease.id)
+            if (match == null) {
+                violations.add(
+                    DiseaseViolation(
+                        diseaseId = disease.id,
+                        field = "id",
+                        message = "id must match 'disease_NNNN' pattern",
+                    ),
+                )
+            } else {
+                observed.add(match.groupValues[1].toInt())
+            }
+        }
+        val expectedSize = diseases.size
+        for (expected in 0 until expectedSize) {
+            if (expected !in observed) {
+                violations.add(
+                    DiseaseViolation(
+                        diseaseId = formatDiseaseId(index = expected),
+                        field = "id",
+                        message = "sequential id missing from 0..${expectedSize - 1}",
+                    ),
+                )
+            }
+        }
+        for (value in observed) {
+            if (value >= expectedSize) {
+                violations.add(
+                    DiseaseViolation(
+                        diseaseId = formatDiseaseId(index = value),
+                        field = "id",
+                        message = "sequential id out of range 0..${expectedSize - 1}",
+                    ),
+                )
+            }
+        }
+        return violations.toList()
+    }
+
+    private fun formatDiseaseId(index: Int): String {
+        return "disease_${index.toString().padStart(length = DISEASE_ID_PAD_LENGTH, padChar = '0')}"
     }
 
     private fun checkConditionalFields(diseases: List<Disease>): List<DiseaseViolation> {
@@ -120,6 +168,8 @@ object DiseaseFixtureValidator {
     }
 
     private const val MIN_CHAPTER_V_MAIN_SYMPTOMS: Int = 3
+    private const val DISEASE_ID_PAD_LENGTH: Int = 4
+    private val DISEASE_ID_PATTERN: Regex = Regex(pattern = """^disease_(\d{4})$""")
 
     private fun checkFieldMinimumCounts(diseases: List<Disease>): List<DiseaseViolation> {
         return diseases.flatMap { disease -> fieldMinimumCountViolationsFor(disease = disease) }
