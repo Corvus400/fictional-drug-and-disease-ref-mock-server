@@ -20,6 +20,27 @@ class DiseaseFixtureValidatorTest {
     }
 
     @Test
+    fun `validate detects CHAPTER_II missing severityGrading violation on an injected disease`() {
+        val original = fullInventory.first { disease ->
+            disease.icd10Chapter == Icd10Chapter.CHAPTER_II
+        }
+        val injected = original.copy(severityGrading = null)
+        val diseases = fullInventory.map { disease ->
+            if (disease.id == original.id) injected else disease
+        }
+
+        val violations = DiseaseFixtureValidator.validate(diseases = diseases)
+
+        assertTrue(
+            actual = violations.any { violation ->
+                violation.diseaseId == original.id && violation.field == "severityGrading"
+            },
+            message = "expected CHAPTER_II severityGrading=null violation for ${original.id} " +
+                "but got $violations",
+        )
+    }
+
+    @Test
     fun `validate detects CHAPTER_I non-infectious violation on an injected disease`() {
         val original = fullInventory.first { disease ->
             disease.icd10Chapter == Icd10Chapter.CHAPTER_I

@@ -23,7 +23,7 @@ object DiseaseFixtureValidator {
     private fun conditionalFieldViolationsFor(disease: Disease): List<DiseaseViolation> {
         return when (disease.icd10Chapter) {
             Icd10Chapter.CHAPTER_I -> chapterOneViolations(disease = disease)
-            Icd10Chapter.CHAPTER_II,
+            Icd10Chapter.CHAPTER_II -> chapterTwoViolations(disease = disease)
             Icd10Chapter.CHAPTER_III,
             Icd10Chapter.CHAPTER_IV,
             Icd10Chapter.CHAPTER_V,
@@ -65,6 +65,30 @@ object DiseaseFixtureValidator {
                         diseaseId = disease.id,
                         field = "epidemiology",
                         message = "CHAPTER_I disease must have epidemiology populated",
+                    ),
+                )
+            }
+        }
+    }
+
+    private fun chapterTwoViolations(disease: Disease): List<DiseaseViolation> {
+        return buildList {
+            if (disease.severityGrading == null) {
+                add(
+                    DiseaseViolation(
+                        diseaseId = disease.id,
+                        field = "severityGrading",
+                        message = "CHAPTER_II disease must have severityGrading populated",
+                    ),
+                )
+            }
+            val prognosis = disease.prognosis
+            if (prognosis == null || prognosis.isBlank()) {
+                add(
+                    DiseaseViolation(
+                        diseaseId = disease.id,
+                        field = "prognosis",
+                        message = "CHAPTER_II disease must have non-blank prognosis",
                     ),
                 )
             }
