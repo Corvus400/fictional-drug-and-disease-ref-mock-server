@@ -15,15 +15,28 @@ object DiseaseFixtureValidator {
     }
 
     private fun checkFieldMinimumCounts(diseases: List<Disease>): List<DiseaseViolation> {
-        return diseases.mapNotNull { disease ->
+        return diseases.flatMap { disease -> fieldMinimumCountViolationsFor(disease = disease) }
+    }
+
+    private fun fieldMinimumCountViolationsFor(disease: Disease): List<DiseaseViolation> {
+        return buildList {
             if (disease.symptoms.mainSymptoms.isEmpty()) {
-                DiseaseViolation(
-                    diseaseId = disease.id,
-                    field = "symptoms.mainSymptoms",
-                    message = "mainSymptoms must have at least 1 entry",
+                add(
+                    DiseaseViolation(
+                        diseaseId = disease.id,
+                        field = "symptoms.mainSymptoms",
+                        message = "mainSymptoms must have at least 1 entry",
+                    ),
                 )
-            } else {
-                null
+            }
+            if (disease.requiredExams.isEmpty()) {
+                add(
+                    DiseaseViolation(
+                        diseaseId = disease.id,
+                        field = "requiredExams",
+                        message = "requiredExams must have at least 1 entry",
+                    ),
+                )
             }
         }
     }
