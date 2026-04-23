@@ -44,12 +44,14 @@ class DrugFixtureValidatorTest {
             actual = violations.size,
             message = "expected exactly 1 violation but got $violations",
         )
-        val violation = violations.single()
-        assertEquals(expected = corrupted.id, actual = violation.drugId)
-        assertEquals(expected = "contraindications", actual = violation.field)
-        assertTrue(
-            actual = "size >= 1" in violation.message,
-            message = "expected 'size >= 1' in message but was '${violation.message}'",
+        assertContainsFixtureViolation(
+            violations = violations,
+            expected = FixtureViolation(
+                entityType = ENTITY_TYPE_DRUG,
+                entityId = corrupted.id,
+                field = "contraindications",
+                message = "contraindications size >= 1 required",
+            ),
         )
     }
 
@@ -70,19 +72,23 @@ class DrugFixtureValidatorTest {
             actual = violations.size,
             message = "expected exactly 2 violations but got $violations",
         )
-        assertTrue(
-            actual = violations.all { it.drugId == injection.id },
-            message = "expected all violations on ${injection.id} but got $violations",
+        assertContainsFixtureViolation(
+            violations = violations,
+            expected = FixtureViolation(
+                entityType = ENTITY_TYPE_DRUG,
+                entityId = injection.id,
+                field = "pharmacokinetics",
+                message = "injection requires non-null pharmacokinetics",
+            ),
         )
-        assertTrue(
-            actual = violations.any { v -> v.field == "pharmacokinetics" && "injection" in v.message },
-            message = "expected pharmacokinetics violation with injection message but got $violations",
-        )
-        assertTrue(
-            actual = violations.any { v ->
-                v.field == "administrationPrecautions" && "injection" in v.message
-            },
-            message = "expected administrationPrecautions violation with injection message but got $violations",
+        assertContainsFixtureViolation(
+            violations = violations,
+            expected = FixtureViolation(
+                entityType = ENTITY_TYPE_DRUG,
+                entityId = injection.id,
+                field = "administrationPrecautions",
+                message = "injection requires administrationPrecautions size >= 1",
+            ),
         )
     }
 
@@ -94,15 +100,15 @@ class DrugFixtureValidatorTest {
 
         val violations = DrugFixtureValidator.validate(drugs = gapList)
 
-        val sequentialViolations = violations.filter { v ->
-            v.field == "id" && "sequential" in v.message
-        }
-        assertEquals(
-            expected = 1,
-            actual = sequentialViolations.size,
-            message = "expected exactly 1 sequential violation but got $violations",
+        assertContainsFixtureViolation(
+            violations = violations,
+            expected = FixtureViolation(
+                entityType = ENTITY_TYPE_DRUG,
+                entityId = missingId,
+                field = "id",
+                message = "id sequential violation: 2 missing from sequence",
+            ),
         )
-        assertEquals(expected = missingId, actual = sequentialViolations.single().drugId)
     }
 
     @Test
@@ -116,17 +122,15 @@ class DrugFixtureValidatorTest {
 
         val violations = DrugFixtureValidator.validate(drugs = withDuplicate)
 
-        val idViolations = violations.filter { it.field == "id" }
-        assertTrue(
-            actual = idViolations.isNotEmpty(),
-            message = "expected at least one id violation but got $violations",
+        assertContainsFixtureViolation(
+            violations = violations,
+            expected = FixtureViolation(
+                entityType = ENTITY_TYPE_DRUG,
+                entityId = duplicateId,
+                field = "id",
+                message = "duplicate id found: appears 2 times",
+            ),
         )
-        val duplicateViolation = idViolations.firstOrNull { v -> "duplicate" in v.message }
-        assertTrue(
-            actual = duplicateViolation != null,
-            message = "expected a duplicate id violation but got $violations",
-        )
-        assertEquals(expected = duplicateId, actual = duplicateViolation?.drugId)
     }
 
     @Test
@@ -148,12 +152,14 @@ class DrugFixtureValidatorTest {
             actual = violations.size,
             message = "expected exactly 1 violation but got $violations",
         )
-        val violation = violations.single()
-        assertEquals(expected = poisonOrPotent.id, actual = violation.drugId)
-        assertEquals(expected = "warning", actual = violation.field)
-        assertTrue(
-            actual = "poison" in violation.message || "potent" in violation.message,
-            message = "expected poison/potent hint in message but was '${violation.message}'",
+        assertContainsFixtureViolation(
+            violations = violations,
+            expected = FixtureViolation(
+                entityType = ENTITY_TYPE_DRUG,
+                entityId = poisonOrPotent.id,
+                field = "warning",
+                message = "poison or potent drug requires warning size >= 1",
+            ),
         )
     }
 
@@ -170,12 +176,14 @@ class DrugFixtureValidatorTest {
             actual = violations.size,
             message = "expected exactly 1 violation but got $violations",
         )
-        val violation = violations.single()
-        assertEquals(expected = corrupted.id, actual = violation.drugId)
-        assertEquals(expected = "packages", actual = violation.field)
-        assertTrue(
-            actual = "size >= 1" in violation.message,
-            message = "expected 'size >= 1' in message but was '${violation.message}'",
+        assertContainsFixtureViolation(
+            violations = violations,
+            expected = FixtureViolation(
+                entityType = ENTITY_TYPE_DRUG,
+                entityId = corrupted.id,
+                field = "packages",
+                message = "packages size >= 1 required",
+            ),
         )
     }
 
@@ -193,12 +201,14 @@ class DrugFixtureValidatorTest {
             actual = violations.size,
             message = "expected exactly 1 violation but got $violations",
         )
-        val violation = violations.single()
-        assertEquals(expected = external.id, actual = violation.drugId)
-        assertEquals(expected = "administrationPrecautions", actual = violation.field)
-        assertTrue(
-            actual = "external" in violation.message,
-            message = "expected 'external' in message but was '${violation.message}'",
+        assertContainsFixtureViolation(
+            violations = violations,
+            expected = FixtureViolation(
+                entityType = ENTITY_TYPE_DRUG,
+                entityId = external.id,
+                field = "administrationPrecautions",
+                message = "external topical requires administrationPrecautions size >= 1",
+            ),
         )
     }
 
@@ -219,12 +229,14 @@ class DrugFixtureValidatorTest {
             actual = violations.size,
             message = "expected exactly 1 violation but got $violations",
         )
-        val violation = violations.single()
-        assertEquals(expected = base.id, actual = violation.drugId)
-        assertEquals(expected = "handlingPrecautions", actual = violation.field)
-        assertTrue(
-            actual = "biological" in violation.message,
-            message = "expected 'biological' in message but was '${violation.message}'",
+        assertContainsFixtureViolation(
+            violations = violations,
+            expected = FixtureViolation(
+                entityType = ENTITY_TYPE_DRUG,
+                entityId = base.id,
+                field = "handlingPrecautions",
+                message = "biological product requires handlingPrecautions size >= 1",
+            ),
         )
     }
 
@@ -245,12 +257,14 @@ class DrugFixtureValidatorTest {
             actual = violations.size,
             message = "expected exactly 1 violation but got $violations",
         )
-        val violation = violations.single()
-        assertEquals(expected = base.id, actual = violation.drugId)
-        assertEquals(expected = "warning", actual = violation.field)
-        assertTrue(
-            actual = "biological" in violation.message,
-            message = "expected 'biological' in message but was '${violation.message}'",
+        assertContainsFixtureViolation(
+            violations = violations,
+            expected = FixtureViolation(
+                entityType = ENTITY_TYPE_DRUG,
+                entityId = base.id,
+                field = "warning",
+                message = "biological product requires warning size >= 1",
+            ),
         )
     }
 
@@ -273,12 +287,14 @@ class DrugFixtureValidatorTest {
             actual = violations.size,
             message = "expected exactly 1 violation but got $violations",
         )
-        val violation = violations.single()
-        assertEquals(expected = controlled.id, actual = violation.drugId)
-        assertEquals(expected = "insuranceNotes", actual = violation.field)
-        assertTrue(
-            actual = "narcotic" in violation.message || "psychotropic" in violation.message,
-            message = "expected narcotic/psychotropic hint in message but was '${violation.message}'",
+        assertContainsFixtureViolation(
+            violations = violations,
+            expected = FixtureViolation(
+                entityType = ENTITY_TYPE_DRUG,
+                entityId = controlled.id,
+                field = "insuranceNotes",
+                message = "narcotic or psychotropic drug requires insuranceNotes size >= 1",
+            ),
         )
     }
 
@@ -298,12 +314,14 @@ class DrugFixtureValidatorTest {
             actual = violations.size,
             message = "expected exactly 1 violation but got $violations",
         )
-        val violation = violations.single()
-        assertEquals(expected = chronic.id, actual = violation.drugId)
-        assertEquals(expected = "dosageRelatedPrecautions", actual = violation.field)
-        assertTrue(
-            actual = "chronic" in violation.message,
-            message = "expected 'chronic' in message but was '${violation.message}'",
+        assertContainsFixtureViolation(
+            violations = violations,
+            expected = FixtureViolation(
+                entityType = ENTITY_TYPE_DRUG,
+                entityId = chronic.id,
+                field = "dosageRelatedPrecautions",
+                message = "chronic long-term prescription drug requires dosageRelatedPrecautions size >= 1",
+            ),
         )
     }
 
@@ -320,16 +338,30 @@ class DrugFixtureValidatorTest {
             actual = violations.size,
             message = "expected exactly 1 violation but got $violations",
         )
-        val violation = violations.single()
-        assertEquals(expected = corrupted.id, actual = violation.drugId)
-        assertEquals(expected = "indications", actual = violation.field)
-        assertTrue(
-            actual = "size >= 1" in violation.message,
-            message = "expected 'size >= 1' in message but was '${violation.message}'",
+        assertContainsFixtureViolation(
+            violations = violations,
+            expected = FixtureViolation(
+                entityType = ENTITY_TYPE_DRUG,
+                entityId = corrupted.id,
+                field = "indications",
+                message = "indications size >= 1 required",
+            ),
         )
     }
 
     private companion object {
+        const val ENTITY_TYPE_DRUG: String = "drug"
+
+        fun assertContainsFixtureViolation(
+            violations: List<*>,
+            expected: FixtureViolation,
+        ) {
+            assertTrue(
+                actual = violations.any { violation -> violation == expected },
+                message = "expected $expected to be present but got $violations",
+            )
+        }
+
         fun buildFreshGenerator(): DrugGenerator {
             val adapter = FixmergeNameAdapter()
             return DrugGenerator(

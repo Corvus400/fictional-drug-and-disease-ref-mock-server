@@ -29,22 +29,23 @@ class DiseaseFixtureValidatorTest {
 
         val violations = DiseaseFixtureValidator.validate(diseases = diseases)
 
-        assertTrue(
-            actual = violations.any { violation ->
-                violation.field == "id" &&
-                    violation.message.contains(other = "sequential") &&
-                    violation.diseaseId == original.id
-            },
-            message = "expected sequential-id missing violation for ${original.id} " +
-                "but got $violations",
+        assertContainsFixtureViolation(
+            violations = violations,
+            expected = FixtureViolation(
+                entityType = ENTITY_TYPE_DISEASE,
+                entityId = original.id,
+                field = "id",
+                message = "sequential id missing from 0..79",
+            ),
         )
-        assertTrue(
-            actual = violations.any { violation ->
-                violation.field == "id" &&
-                    violation.message.contains(other = "out of range") &&
-                    violation.diseaseId == "disease_0080"
-            },
-            message = "expected out-of-range violation for disease_0080 but got $violations",
+        assertContainsFixtureViolation(
+            violations = violations,
+            expected = FixtureViolation(
+                entityType = ENTITY_TYPE_DISEASE,
+                entityId = "disease_0080",
+                field = "id",
+                message = "sequential id out of range 0..79",
+            ),
         )
     }
 
@@ -57,13 +58,14 @@ class DiseaseFixtureValidatorTest {
 
         val violations = DiseaseFixtureValidator.validate(diseases = diseases)
 
-        assertTrue(
-            actual = violations.any { violation ->
-                violation.diseaseId == firstDisease.id &&
-                    violation.field == "id" &&
-                    violation.message.contains(other = "unique")
-            },
-            message = "expected duplicate-id violation for ${firstDisease.id} but got $violations",
+        assertContainsFixtureViolation(
+            violations = violations,
+            expected = FixtureViolation(
+                entityType = ENTITY_TYPE_DISEASE,
+                entityId = firstDisease.id,
+                field = "id",
+                message = "id must be unique but appears 2 times",
+            ),
         )
     }
 
@@ -83,14 +85,14 @@ class DiseaseFixtureValidatorTest {
 
         val violations = DiseaseFixtureValidator.validate(diseases = diseases)
 
-        assertTrue(
-            actual = violations.any { violation ->
-                violation.diseaseId == original.id &&
-                    violation.field == "symptoms.mainSymptoms" &&
-                    violation.message.contains(other = "CHAPTER_V")
-            },
-            message = "expected CHAPTER_V mainSymptoms<3 violation for ${original.id} " +
-                "but got $violations",
+        assertContainsFixtureViolation(
+            violations = violations,
+            expected = FixtureViolation(
+                entityType = ENTITY_TYPE_DISEASE,
+                entityId = original.id,
+                field = "symptoms.mainSymptoms",
+                message = "CHAPTER_V disease must have at least 3 mainSymptoms",
+            ),
         )
     }
 
@@ -106,12 +108,14 @@ class DiseaseFixtureValidatorTest {
 
         val violations = DiseaseFixtureValidator.validate(diseases = diseases)
 
-        assertTrue(
-            actual = violations.any { violation ->
-                violation.diseaseId == original.id && violation.field == "severityGrading"
-            },
-            message = "expected CHAPTER_II severityGrading=null violation for ${original.id} " +
-                "but got $violations",
+        assertContainsFixtureViolation(
+            violations = violations,
+            expected = FixtureViolation(
+                entityType = ENTITY_TYPE_DISEASE,
+                entityId = original.id,
+                field = "severityGrading",
+                message = "CHAPTER_II disease must have severityGrading populated",
+            ),
         )
     }
 
@@ -127,12 +131,14 @@ class DiseaseFixtureValidatorTest {
 
         val violations = DiseaseFixtureValidator.validate(diseases = diseases)
 
-        assertTrue(
-            actual = violations.any { violation ->
-                violation.diseaseId == original.id && violation.field == "infectious"
-            },
-            message = "expected CHAPTER_I infectious=false violation for ${original.id} " +
-                "but got $violations",
+        assertContainsFixtureViolation(
+            violations = violations,
+            expected = FixtureViolation(
+                entityType = ENTITY_TYPE_DISEASE,
+                entityId = original.id,
+                field = "infectious",
+                message = "CHAPTER_I disease must have infectious=true",
+            ),
         )
     }
 
@@ -144,12 +150,14 @@ class DiseaseFixtureValidatorTest {
 
         val violations = DiseaseFixtureValidator.validate(diseases = diseases)
 
-        assertTrue(
-            actual = violations.any { violation ->
-                violation.diseaseId == original.id && violation.field == "requiredExams"
-            },
-            message = "expected requiredExams-empty violation for ${original.id} " +
-                "but got $violations",
+        assertContainsFixtureViolation(
+            violations = violations,
+            expected = FixtureViolation(
+                entityType = ENTITY_TYPE_DISEASE,
+                entityId = original.id,
+                field = "requiredExams",
+                message = "requiredExams must have at least 1 entry",
+            ),
         )
     }
 
@@ -163,12 +171,14 @@ class DiseaseFixtureValidatorTest {
 
         val violations = DiseaseFixtureValidator.validate(diseases = diseases)
 
-        assertTrue(
-            actual = violations.any { violation ->
-                violation.diseaseId == original.id && violation.field == "symptoms.mainSymptoms"
-            },
-            message = "expected mainSymptoms-empty violation for ${original.id} " +
-                "but got $violations",
+        assertContainsFixtureViolation(
+            violations = violations,
+            expected = FixtureViolation(
+                entityType = ENTITY_TYPE_DISEASE,
+                entityId = original.id,
+                field = "symptoms.mainSymptoms",
+                message = "mainSymptoms must have at least 1 entry",
+            ),
         )
     }
 
@@ -178,5 +188,19 @@ class DiseaseFixtureValidatorTest {
             placeholderDictionary = DiseasePlaceholderDictionary(),
         )
         return generator.generate(blueprints = DiseaseBlueprintFactory.build())
+    }
+
+    private companion object {
+        const val ENTITY_TYPE_DISEASE: String = "disease"
+
+        fun assertContainsFixtureViolation(
+            violations: List<*>,
+            expected: FixtureViolation,
+        ) {
+            assertTrue(
+                actual = violations.any { violation -> violation == expected },
+                message = "expected $expected to be present but got $violations",
+            )
+        }
     }
 }
