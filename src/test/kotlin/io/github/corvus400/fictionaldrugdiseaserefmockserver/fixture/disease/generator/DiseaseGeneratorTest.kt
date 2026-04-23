@@ -2,6 +2,8 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.ge
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.blueprint.DiseaseBlueprint
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.blueprint.DiseaseBlueprintFactory
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.placeholder.DiseasePlaceholderContractMessages
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.placeholder.DiseasePlaceholderDelimiter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.FixmergeNameAdapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.country.CountryBucketRepository
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.country.DiseaseCountryMapping
@@ -9,6 +11,8 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disea
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Chronicity
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.ExamCategory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -327,8 +331,25 @@ class DiseaseGeneratorTest {
         )
     }
 
+    @Test
+    fun `no raw placeholder delimiters survive in any generated disease JSON`() {
+        val diseases = generator.generate(blueprints = DiseaseBlueprintFactory.build())
+        val json = Json.encodeToString(diseases)
+        val residualPlaceholders =
+            DiseasePlaceholderDelimiter.REGEX.findAll(input = json).map { it.value }.toList()
+        assertTrue(
+            actual = residualPlaceholders.isEmpty(),
+            message =
+                DiseasePlaceholderContractMessages.residualDelimiterDetected(
+                    pattern = DiseasePlaceholderDelimiter.REGEX.pattern,
+                    firstOccurrences = residualPlaceholders.take(n = RESIDUAL_SAMPLE_LIMIT),
+                ),
+        )
+    }
+
     companion object {
         private const val MIN_CHAPTER_IV_EXAM_COUNT: Int = 2
         private const val MIN_CHAPTER_V_MAIN_SYMPTOMS: Int = 3
+        private const val RESIDUAL_SAMPLE_LIMIT: Int = 10
     }
 }
