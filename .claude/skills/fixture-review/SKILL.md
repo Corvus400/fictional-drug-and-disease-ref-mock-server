@@ -31,9 +31,9 @@ Run these grep checks on all changed fixture/model files:
 
 ### Date format (A1)
 ```bash
-grep -n 'yyyy-MM-dd' <changed-files>
+grep -nE 'yyyy/MM/dd|[0-9]{4}/[0-9]{2}/[0-9]{2}' <changed-files>
 ```
-Expected: 0 matches. All dates must use `yyyy/MM/dd`.
+Expected: 0 matches. All dates must use `IsoDateFormatter` (ISO 8601 `YYYY-MM-DD` / `YYYY-MM-DDThh:mm:ss`).
 
 ### Image paths (A2)
 ```bash
