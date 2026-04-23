@@ -10,7 +10,22 @@ data class DiseaseViolation(
 
 object DiseaseFixtureValidator {
     fun validate(diseases: List<Disease>): List<DiseaseViolation> {
-        return checkIdUniqueness(diseases = diseases)
+        return checkFieldMinimumCounts(diseases = diseases) +
+            checkIdUniqueness(diseases = diseases)
+    }
+
+    private fun checkFieldMinimumCounts(diseases: List<Disease>): List<DiseaseViolation> {
+        return diseases.mapNotNull { disease ->
+            if (disease.symptoms.mainSymptoms.isEmpty()) {
+                DiseaseViolation(
+                    diseaseId = disease.id,
+                    field = "symptoms.mainSymptoms",
+                    message = "mainSymptoms must have at least 1 entry",
+                )
+            } else {
+                null
+            }
+        }
     }
 
     private fun checkIdUniqueness(diseases: List<Disease>): List<DiseaseViolation> {
