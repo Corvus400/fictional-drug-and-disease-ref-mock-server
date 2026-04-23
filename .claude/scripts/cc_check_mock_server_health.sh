@@ -1,10 +1,12 @@
 #!/bin/bash
 # Description: Mock Server起動確認 - curl/テストコマンド実行前にヘルスチェック
 # Usage: PreToolUse hook for Bash tool in fictional-drug-and-disease-ref-mock-server
+# PreToolUse hooks receive tool input via stdin (Claude Code spec)
 
 set -euo pipefail
 
-COMMAND=$(echo "$TOOL_INPUT" | jq -r '.command // empty')
+INPUT=$(cat)
+COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty')
 
 # コマンドが空なら素通し
 if [ -z "$COMMAND" ]; then
