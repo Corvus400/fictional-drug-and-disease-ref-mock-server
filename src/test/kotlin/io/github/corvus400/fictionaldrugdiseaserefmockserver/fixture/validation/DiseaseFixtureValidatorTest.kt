@@ -5,6 +5,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.gen
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.DiseasePlaceholderDictionary
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.FixmergeNameAdapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -16,6 +17,27 @@ class DiseaseFixtureValidatorTest {
     fun `validate returns empty violations for the full 80-disease factory inventory`() {
         val violations = DiseaseFixtureValidator.validate(diseases = fullInventory)
         assertEquals(emptyList(), violations)
+    }
+
+    @Test
+    fun `validate detects CHAPTER_I non-infectious violation on an injected disease`() {
+        val original = fullInventory.first { disease ->
+            disease.icd10Chapter == Icd10Chapter.CHAPTER_I
+        }
+        val injected = original.copy(infectious = false)
+        val diseases = fullInventory.map { disease ->
+            if (disease.id == original.id) injected else disease
+        }
+
+        val violations = DiseaseFixtureValidator.validate(diseases = diseases)
+
+        assertTrue(
+            actual = violations.any { violation ->
+                violation.diseaseId == original.id && violation.field == "infectious"
+            },
+            message = "expected CHAPTER_I infectious=false violation for ${original.id} " +
+                "but got $violations",
+        )
     }
 
     @Test
