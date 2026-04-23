@@ -4,29 +4,26 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disea
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.ExamCategory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
 
-data class DiseaseViolation(
-    val diseaseId: String,
-    val field: String,
-    val message: String,
-)
-
 object DiseaseFixtureValidator {
-    fun validate(diseases: List<Disease>): List<DiseaseViolation> {
+    private const val ENTITY_TYPE: String = "disease"
+
+    fun validate(diseases: List<Disease>): List<FixtureViolation> {
         return checkFieldMinimumCounts(diseases = diseases) +
             checkConditionalFields(diseases = diseases) +
             checkIdUniqueness(diseases = diseases) +
             checkIdSequential(diseases = diseases)
     }
 
-    private fun checkIdSequential(diseases: List<Disease>): List<DiseaseViolation> {
+    private fun checkIdSequential(diseases: List<Disease>): List<FixtureViolation> {
         val observed = mutableSetOf<Int>()
-        val violations = mutableListOf<DiseaseViolation>()
+        val violations = mutableListOf<FixtureViolation>()
         for (disease in diseases) {
             val match = DISEASE_ID_PATTERN.matchEntire(input = disease.id)
             if (match == null) {
                 violations.add(
-                    DiseaseViolation(
-                        diseaseId = disease.id,
+                    FixtureViolation(
+                        entityType = ENTITY_TYPE,
+                        entityId = disease.id,
                         field = "id",
                         message = "id must match 'disease_NNNN' pattern",
                     ),
@@ -39,8 +36,9 @@ object DiseaseFixtureValidator {
         for (expected in 0 until expectedSize) {
             if (expected !in observed) {
                 violations.add(
-                    DiseaseViolation(
-                        diseaseId = formatDiseaseId(index = expected),
+                    FixtureViolation(
+                        entityType = ENTITY_TYPE,
+                        entityId = formatDiseaseId(index = expected),
                         field = "id",
                         message = "sequential id missing from 0..${expectedSize - 1}",
                     ),
@@ -50,8 +48,9 @@ object DiseaseFixtureValidator {
         for (value in observed) {
             if (value >= expectedSize) {
                 violations.add(
-                    DiseaseViolation(
-                        diseaseId = formatDiseaseId(index = value),
+                    FixtureViolation(
+                        entityType = ENTITY_TYPE,
+                        entityId = formatDiseaseId(index = value),
                         field = "id",
                         message = "sequential id out of range 0..${expectedSize - 1}",
                     ),
@@ -65,11 +64,11 @@ object DiseaseFixtureValidator {
         return "disease_${index.toString().padStart(length = DISEASE_ID_PAD_LENGTH, padChar = '0')}"
     }
 
-    private fun checkConditionalFields(diseases: List<Disease>): List<DiseaseViolation> {
+    private fun checkConditionalFields(diseases: List<Disease>): List<FixtureViolation> {
         return diseases.flatMap { disease -> conditionalFieldViolationsFor(disease = disease) }
     }
 
-    private fun conditionalFieldViolationsFor(disease: Disease): List<DiseaseViolation> {
+    private fun conditionalFieldViolationsFor(disease: Disease): List<FixtureViolation> {
         return when (disease.icd10Chapter) {
             Icd10Chapter.CHAPTER_I -> chapterOneViolations(disease = disease)
             Icd10Chapter.CHAPTER_II -> chapterTwoViolations(disease = disease)
@@ -97,12 +96,13 @@ object DiseaseFixtureValidator {
         }
     }
 
-    private fun chapterOneViolations(disease: Disease): List<DiseaseViolation> {
+    private fun chapterOneViolations(disease: Disease): List<FixtureViolation> {
         return buildList {
             if (!disease.infectious) {
                 add(
-                    DiseaseViolation(
-                        diseaseId = disease.id,
+                    FixtureViolation(
+                        entityType = ENTITY_TYPE,
+                        entityId = disease.id,
                         field = "infectious",
                         message = "CHAPTER_I disease must have infectious=true",
                     ),
@@ -110,8 +110,9 @@ object DiseaseFixtureValidator {
             }
             if (disease.epidemiology == null) {
                 add(
-                    DiseaseViolation(
-                        diseaseId = disease.id,
+                    FixtureViolation(
+                        entityType = ENTITY_TYPE,
+                        entityId = disease.id,
                         field = "epidemiology",
                         message = "CHAPTER_I disease must have epidemiology populated",
                     ),
@@ -120,12 +121,13 @@ object DiseaseFixtureValidator {
         }
     }
 
-    private fun chapterTwoViolations(disease: Disease): List<DiseaseViolation> {
+    private fun chapterTwoViolations(disease: Disease): List<FixtureViolation> {
         return buildList {
             if (disease.severityGrading == null) {
                 add(
-                    DiseaseViolation(
-                        diseaseId = disease.id,
+                    FixtureViolation(
+                        entityType = ENTITY_TYPE,
+                        entityId = disease.id,
                         field = "severityGrading",
                         message = "CHAPTER_II disease must have severityGrading populated",
                     ),
@@ -134,8 +136,9 @@ object DiseaseFixtureValidator {
             val prognosis = disease.prognosis
             if (prognosis == null || prognosis.isBlank()) {
                 add(
-                    DiseaseViolation(
-                        diseaseId = disease.id,
+                    FixtureViolation(
+                        entityType = ENTITY_TYPE,
+                        entityId = disease.id,
                         field = "prognosis",
                         message = "CHAPTER_II disease must have non-blank prognosis",
                     ),
@@ -144,12 +147,13 @@ object DiseaseFixtureValidator {
         }
     }
 
-    private fun chapterFourViolations(disease: Disease): List<DiseaseViolation> {
+    private fun chapterFourViolations(disease: Disease): List<FixtureViolation> {
         return buildList {
             if (disease.treatments.pharmacological.isEmpty()) {
                 add(
-                    DiseaseViolation(
-                        diseaseId = disease.id,
+                    FixtureViolation(
+                        entityType = ENTITY_TYPE,
+                        entityId = disease.id,
                         field = "treatments.pharmacological",
                         message = "CHAPTER_IV disease must have at least 1 pharmacological treatment",
                     ),
@@ -158,12 +162,13 @@ object DiseaseFixtureValidator {
         }
     }
 
-    private fun chapterFiveViolations(disease: Disease): List<DiseaseViolation> {
+    private fun chapterFiveViolations(disease: Disease): List<FixtureViolation> {
         return buildList {
             if (disease.diagnosticCriteria.required.isEmpty()) {
                 add(
-                    DiseaseViolation(
-                        diseaseId = disease.id,
+                    FixtureViolation(
+                        entityType = ENTITY_TYPE,
+                        entityId = disease.id,
                         field = "diagnosticCriteria.required",
                         message = "CHAPTER_V disease must have diagnosticCriteria.required populated",
                     ),
@@ -171,8 +176,9 @@ object DiseaseFixtureValidator {
             }
             if (disease.symptoms.mainSymptoms.size < MIN_CHAPTER_V_MAIN_SYMPTOMS) {
                 add(
-                    DiseaseViolation(
-                        diseaseId = disease.id,
+                    FixtureViolation(
+                        entityType = ENTITY_TYPE,
+                        entityId = disease.id,
                         field = "symptoms.mainSymptoms",
                         message = "CHAPTER_V disease must have at least " +
                             "$MIN_CHAPTER_V_MAIN_SYMPTOMS mainSymptoms",
@@ -182,12 +188,13 @@ object DiseaseFixtureValidator {
         }
     }
 
-    private fun chapterNineViolations(disease: Disease): List<DiseaseViolation> {
+    private fun chapterNineViolations(disease: Disease): List<FixtureViolation> {
         return buildList {
             if (disease.severityGrading == null) {
                 add(
-                    DiseaseViolation(
-                        diseaseId = disease.id,
+                    FixtureViolation(
+                        entityType = ENTITY_TYPE,
+                        entityId = disease.id,
                         field = "severityGrading",
                         message = "CHAPTER_IX disease must have severityGrading populated",
                     ),
@@ -195,8 +202,9 @@ object DiseaseFixtureValidator {
             }
             if (disease.requiredExams.none { exam -> exam.category == ExamCategory.IMAGING }) {
                 add(
-                    DiseaseViolation(
-                        diseaseId = disease.id,
+                    FixtureViolation(
+                        entityType = ENTITY_TYPE,
+                        entityId = disease.id,
                         field = "requiredExams",
                         message = "CHAPTER_IX disease must include at least one IMAGING exam",
                     ),
@@ -205,13 +213,14 @@ object DiseaseFixtureValidator {
         }
     }
 
-    private fun chapterFifteenViolations(disease: Disease): List<DiseaseViolation> {
+    private fun chapterFifteenViolations(disease: Disease): List<FixtureViolation> {
         return buildList {
             val epidemiology = disease.epidemiology
             if (epidemiology == null) {
                 add(
-                    DiseaseViolation(
-                        diseaseId = disease.id,
+                    FixtureViolation(
+                        entityType = ENTITY_TYPE,
+                        entityId = disease.id,
                         field = "epidemiology",
                         message = "CHAPTER_XV disease must have epidemiology populated",
                     ),
@@ -220,8 +229,9 @@ object DiseaseFixtureValidator {
             }
             if (epidemiology.onsetAgeRange == null) {
                 add(
-                    DiseaseViolation(
-                        diseaseId = disease.id,
+                    FixtureViolation(
+                        entityType = ENTITY_TYPE,
+                        entityId = disease.id,
                         field = "epidemiology.onsetAgeRange",
                         message = "CHAPTER_XV disease must have onsetAgeRange populated",
                     ),
@@ -229,8 +239,9 @@ object DiseaseFixtureValidator {
             }
             if (epidemiology.sexRatio == null) {
                 add(
-                    DiseaseViolation(
-                        diseaseId = disease.id,
+                    FixtureViolation(
+                        entityType = ENTITY_TYPE,
+                        entityId = disease.id,
                         field = "epidemiology.sexRatio",
                         message = "CHAPTER_XV disease must have sexRatio populated",
                     ),
@@ -243,16 +254,17 @@ object DiseaseFixtureValidator {
     private const val DISEASE_ID_PAD_LENGTH: Int = 4
     private val DISEASE_ID_PATTERN: Regex = Regex(pattern = """^disease_(\d{4})$""")
 
-    private fun checkFieldMinimumCounts(diseases: List<Disease>): List<DiseaseViolation> {
+    private fun checkFieldMinimumCounts(diseases: List<Disease>): List<FixtureViolation> {
         return diseases.flatMap { disease -> fieldMinimumCountViolationsFor(disease = disease) }
     }
 
-    private fun fieldMinimumCountViolationsFor(disease: Disease): List<DiseaseViolation> {
+    private fun fieldMinimumCountViolationsFor(disease: Disease): List<FixtureViolation> {
         return buildList {
             if (disease.symptoms.mainSymptoms.isEmpty()) {
                 add(
-                    DiseaseViolation(
-                        diseaseId = disease.id,
+                    FixtureViolation(
+                        entityType = ENTITY_TYPE,
+                        entityId = disease.id,
                         field = "symptoms.mainSymptoms",
                         message = "mainSymptoms must have at least 1 entry",
                     ),
@@ -260,8 +272,9 @@ object DiseaseFixtureValidator {
             }
             if (disease.requiredExams.isEmpty()) {
                 add(
-                    DiseaseViolation(
-                        diseaseId = disease.id,
+                    FixtureViolation(
+                        entityType = ENTITY_TYPE,
+                        entityId = disease.id,
                         field = "requiredExams",
                         message = "requiredExams must have at least 1 entry",
                     ),
@@ -270,14 +283,15 @@ object DiseaseFixtureValidator {
         }
     }
 
-    private fun checkIdUniqueness(diseases: List<Disease>): List<DiseaseViolation> {
+    private fun checkIdUniqueness(diseases: List<Disease>): List<FixtureViolation> {
         return diseases
             .groupingBy { disease -> disease.id }
             .eachCount()
             .filterValues { count -> count > 1 }
             .map { (duplicatedId, count) ->
-                DiseaseViolation(
-                    diseaseId = duplicatedId,
+                FixtureViolation(
+                    entityType = ENTITY_TYPE,
+                    entityId = duplicatedId,
                     field = "id",
                     message = "id must be unique but appears $count times",
                 )

@@ -5,14 +5,10 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.Do
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RouteOfAdministration
 
-data class Violation(
-    val drugId: String,
-    val field: String,
-    val message: String,
-)
-
 object DrugFixtureValidator {
-    fun validate(drugs: List<Drug>): List<Violation> {
+    private const val ENTITY_TYPE: String = "drug"
+
+    fun validate(drugs: List<Drug>): List<FixtureViolation> {
         val perDrugViolations = drugs.flatMap { drug ->
             fieldMinimumViolations(drug = drug) + conditionalFieldViolations(drug = drug)
         }
@@ -21,19 +17,20 @@ object DrugFixtureValidator {
             idSequentialViolations(drugs = drugs)
     }
 
-    private fun idUniquenessViolations(drugs: List<Drug>): List<Violation> {
+    private fun idUniquenessViolations(drugs: List<Drug>): List<FixtureViolation> {
         return drugs.groupingBy { it.id }.eachCount()
             .filter { (_, count) -> count > 1 }
             .map { (id, count) ->
-                Violation(
-                    drugId = id,
+                FixtureViolation(
+                    entityType = ENTITY_TYPE,
+                    entityId = id,
                     field = "id",
                     message = "duplicate id found: appears $count times",
                 )
             }
     }
 
-    private fun idSequentialViolations(drugs: List<Drug>): List<Violation> {
+    private fun idSequentialViolations(drugs: List<Drug>): List<FixtureViolation> {
         val indices = drugs.mapNotNull { drug -> extractIndex(id = drug.id) }
             .distinct()
             .sorted()
@@ -43,8 +40,9 @@ object DrugFixtureValidator {
         val expected = (indices.first()..indices.last()).toSet()
         val missing = expected - indices.toSet()
         return missing.sorted().map { missingIndex ->
-            Violation(
-                drugId = formatId(index = missingIndex),
+            FixtureViolation(
+                entityType = ENTITY_TYPE,
+                entityId = formatId(index = missingIndex),
                 field = "id",
                 message = "id sequential violation: $missingIndex missing from sequence",
             )
@@ -59,25 +57,28 @@ object DrugFixtureValidator {
     private fun formatId(index: Int): String =
         "drug_${index.toString().padStart(length = ID_PAD_LENGTH, padChar = '0')}"
 
-    private fun fieldMinimumViolations(drug: Drug): List<Violation> {
-        val violations = mutableListOf<Violation>()
+    private fun fieldMinimumViolations(drug: Drug): List<FixtureViolation> {
+        val violations = mutableListOf<FixtureViolation>()
         if (drug.contraindications.isEmpty()) {
-            violations += Violation(
-                drugId = drug.id,
+            violations += FixtureViolation(
+                entityType = ENTITY_TYPE,
+                entityId = drug.id,
                 field = "contraindications",
                 message = "contraindications size >= 1 required",
             )
         }
         if (drug.indications.isEmpty()) {
-            violations += Violation(
-                drugId = drug.id,
+            violations += FixtureViolation(
+                entityType = ENTITY_TYPE,
+                entityId = drug.id,
                 field = "indications",
                 message = "indications size >= 1 required",
             )
         }
         if (drug.packages.isEmpty()) {
-            violations += Violation(
-                drugId = drug.id,
+            violations += FixtureViolation(
+                entityType = ENTITY_TYPE,
+                entityId = drug.id,
                 field = "packages",
                 message = "packages size >= 1 required",
             )
@@ -85,62 +86,70 @@ object DrugFixtureValidator {
         return violations
     }
 
-    private fun conditionalFieldViolations(drug: Drug): List<Violation> {
-        val violations = mutableListOf<Violation>()
+    private fun conditionalFieldViolations(drug: Drug): List<FixtureViolation> {
+        val violations = mutableListOf<FixtureViolation>()
         if (isInjection(drug = drug)) {
             if (drug.pharmacokinetics == null) {
-                violations += Violation(
-                    drugId = drug.id,
+                violations += FixtureViolation(
+                    entityType = ENTITY_TYPE,
+                    entityId = drug.id,
                     field = "pharmacokinetics",
                     message = "injection requires non-null pharmacokinetics",
                 )
             }
             if (drug.administrationPrecautions.isEmpty()) {
-                violations += Violation(
-                    drugId = drug.id,
+                violations += FixtureViolation(
+                    entityType = ENTITY_TYPE,
+                    entityId = drug.id,
                     field = "administrationPrecautions",
                     message = "injection requires administrationPrecautions size >= 1",
                 )
             }
         }
         if (isPoisonOrPotent(drug = drug) && drug.warning.isEmpty()) {
-            violations += Violation(
-                drugId = drug.id,
+            violations += FixtureViolation(
+                entityType = ENTITY_TYPE,
+                entityId = drug.id,
                 field = "warning",
                 message = "poison or potent drug requires warning size >= 1",
             )
         }
         if (isExternalTopical(drug = drug) && drug.administrationPrecautions.isEmpty()) {
-            violations += Violation(
-                drugId = drug.id,
+            violations += FixtureViolation(
+                entityType = ENTITY_TYPE,
+                entityId = drug.id,
                 field = "administrationPrecautions",
                 message = "external topical requires administrationPrecautions size >= 1",
             )
         }
         if (isBiological(drug = drug) && drug.handlingPrecautions.isEmpty()) {
-            violations += Violation(
-                drugId = drug.id,
+            violations += FixtureViolation(
+                entityType = ENTITY_TYPE,
+                entityId = drug.id,
                 field = "handlingPrecautions",
                 message = "biological product requires handlingPrecautions size >= 1",
             )
         }
         if (isBiological(drug = drug) && drug.warning.isEmpty()) {
-            violations += Violation(
-                drugId = drug.id,
+            violations += FixtureViolation(
+                entityType = ENTITY_TYPE,
+                entityId = drug.id,
                 field = "warning",
                 message = "biological product requires warning size >= 1",
             )
         }
         if (isNarcoticOrPsychotropic(drug = drug) && drug.insuranceNotes.isEmpty()) {
-            violations += Violation(
-                drugId = drug.id,
+            violations += FixtureViolation(
+                entityType = ENTITY_TYPE,
+                entityId = drug.id,
                 field = "insuranceNotes",
                 message = "narcotic or psychotropic drug requires insuranceNotes size >= 1",
             )
         }
         if (isChronicPrescription(drug = drug) && drug.dosageRelatedPrecautions.isEmpty()) {
-            violations += Violation(
-                drugId = drug.id,
+            violations += FixtureViolation(
+                entityType = ENTITY_TYPE,
+                entityId = drug.id,
                 field = "dosageRelatedPrecautions",
                 message = "chronic long-term prescription drug requires dosageRelatedPrecautions size >= 1",
             )
