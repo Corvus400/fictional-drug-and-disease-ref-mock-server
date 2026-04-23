@@ -66,7 +66,7 @@ class DrugMetaBuildersTest {
             symptoms = SymptomInfo(mainSymptoms = listOf("テスト症状")),
             diagnosticCriteria = DiagnosticCriteriaInfo(required = listOf("テスト診断基準")),
             treatments = TreatmentInfo(),
-            revisedAt = "2026/01/01",
+            revisedAt = "2026-01-01",
         )
 
     private companion object {

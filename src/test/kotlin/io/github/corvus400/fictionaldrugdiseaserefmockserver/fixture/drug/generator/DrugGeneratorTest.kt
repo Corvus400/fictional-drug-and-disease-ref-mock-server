@@ -59,6 +59,15 @@ class DrugGeneratorTest {
     }
 
     @Test
+    fun `generate returns revisedAt in ISO 8601 YYYY-MM-DD form`() {
+        val drug = generator.generate(blueprint = sampleBlueprint)
+        assertTrue(
+            actual = drug.revisedAt.matches(ISO_8601_DATE_PATTERN),
+            message = "revisedAt must be ISO 8601 YYYY-MM-DD but was '${drug.revisedAt}'",
+        )
+    }
+
+    @Test
     fun `generate is deterministic for the same blueprint given fresh adapter instances`() {
         val first =
             buildFreshGenerator().generate(blueprint = sampleBlueprint)
@@ -311,6 +320,8 @@ class DrugGeneratorTest {
     }
 
     private companion object {
+        val ISO_8601_DATE_PATTERN: Regex = Regex("""^\d{4}-\d{2}-\d{2}$""")
+
         fun buildFreshGenerator(): DrugGenerator {
             val adapter = FixmergeNameAdapter()
             return DrugGenerator(
@@ -348,7 +359,7 @@ class DrugGeneratorTest {
                 symptoms = SymptomInfo(mainSymptoms = listOf("テスト症状")),
                 diagnosticCriteria = DiagnosticCriteriaInfo(required = listOf("テスト診断基準")),
                 treatments = TreatmentInfo(),
-                revisedAt = "2026/01/01",
+                revisedAt = "2026-01-01",
             )
     }
 }
