@@ -31,7 +31,35 @@ class CrossReferenceValidatorTest {
         )
     }
 
+    @Test
+    fun `validate detects drug-to-disease dangling reference`() {
+        val diseases = generateAllDiseases()
+        val drugs = generateAllDrugs(diseases = diseases)
+        val danglingDrug = drugs.first().copy(relatedDiseaseIds = listOf(DANGLING_DISEASE_ID))
+        val drugsWithDangling = listOf(danglingDrug) + drugs.drop(1)
+
+        val violations =
+            CrossReferenceValidator.validate(
+                drugs = drugsWithDangling,
+                diseases = diseases,
+            )
+
+        assertEquals(
+            expected = listOf(
+                CrossRefViolation(
+                    sourceType = "drug",
+                    sourceId = danglingDrug.id,
+                    targetType = "disease",
+                    danglingTargetId = DANGLING_DISEASE_ID,
+                ),
+            ),
+            actual = violations,
+        )
+    }
+
     private companion object {
+        const val DANGLING_DISEASE_ID = "disease_9999"
+
         fun generateAllDiseases(): List<Disease> {
             val adapter = FixmergeNameAdapter()
             val generator =
