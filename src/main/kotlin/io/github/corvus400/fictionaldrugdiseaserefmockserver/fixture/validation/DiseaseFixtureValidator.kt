@@ -24,9 +24,9 @@ object DiseaseFixtureValidator {
         return when (disease.icd10Chapter) {
             Icd10Chapter.CHAPTER_I -> chapterOneViolations(disease = disease)
             Icd10Chapter.CHAPTER_II -> chapterTwoViolations(disease = disease)
+            Icd10Chapter.CHAPTER_V -> chapterFiveViolations(disease = disease)
             Icd10Chapter.CHAPTER_III,
             Icd10Chapter.CHAPTER_IV,
-            Icd10Chapter.CHAPTER_V,
             Icd10Chapter.CHAPTER_VI,
             Icd10Chapter.CHAPTER_VII,
             Icd10Chapter.CHAPTER_VIII,
@@ -94,6 +94,32 @@ object DiseaseFixtureValidator {
             }
         }
     }
+
+    private fun chapterFiveViolations(disease: Disease): List<DiseaseViolation> {
+        return buildList {
+            if (disease.diagnosticCriteria.required.isEmpty()) {
+                add(
+                    DiseaseViolation(
+                        diseaseId = disease.id,
+                        field = "diagnosticCriteria.required",
+                        message = "CHAPTER_V disease must have diagnosticCriteria.required populated",
+                    ),
+                )
+            }
+            if (disease.symptoms.mainSymptoms.size < MIN_CHAPTER_V_MAIN_SYMPTOMS) {
+                add(
+                    DiseaseViolation(
+                        diseaseId = disease.id,
+                        field = "symptoms.mainSymptoms",
+                        message = "CHAPTER_V disease must have at least " +
+                            "$MIN_CHAPTER_V_MAIN_SYMPTOMS mainSymptoms",
+                    ),
+                )
+            }
+        }
+    }
+
+    private const val MIN_CHAPTER_V_MAIN_SYMPTOMS: Int = 3
 
     private fun checkFieldMinimumCounts(diseases: List<Disease>): List<DiseaseViolation> {
         return diseases.flatMap { disease -> fieldMinimumCountViolationsFor(disease = disease) }
