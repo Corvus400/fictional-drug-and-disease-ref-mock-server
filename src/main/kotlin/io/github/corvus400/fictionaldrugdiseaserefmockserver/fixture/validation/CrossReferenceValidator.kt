@@ -41,7 +41,19 @@ object CrossReferenceValidator {
                     )
                 }
         }
-        return drugSide + diseaseToDrugSide
+        val diseaseToDiseaseSide = diseases.flatMap { disease ->
+            disease.relatedDiseaseIds
+                .filter { relatedId -> relatedId !in diseaseIds }
+                .map { danglingId ->
+                    CrossRefViolation(
+                        sourceType = TYPE_DISEASE,
+                        sourceId = disease.id,
+                        targetType = TYPE_DISEASE,
+                        danglingTargetId = danglingId,
+                    )
+                }
+        }
+        return drugSide + diseaseToDrugSide + diseaseToDiseaseSide
     }
 
     private const val TYPE_DRUG = "drug"
