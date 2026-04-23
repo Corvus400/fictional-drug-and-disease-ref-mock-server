@@ -1,6 +1,7 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.blueprint.DiseaseBlueprint
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.placeholder.DiseaseRenderContext
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.BucketNameCoiner
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.FixmergeNameAdapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.country.CountryBucketRepository
@@ -11,6 +12,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disea
 
 class DiseaseGenerator(
     adapter: FixmergeNameAdapter,
+    private val placeholderDictionary: DiseasePlaceholderDictionary,
 ) {
     private val coiner: BucketNameCoiner = BucketNameCoiner(adapter = adapter)
 
@@ -70,6 +72,7 @@ class DiseaseGenerator(
     ): Disease {
         val diseaseId =
             "disease_${blueprint.index.toString().padStart(length = DISEASE_ID_PAD_LENGTH, padChar = '0')}"
+        val context = DiseaseRenderContext(selfName = name.katakana)
         return Disease(
             id = diseaseId,
             name = name.katakana,
@@ -83,20 +86,44 @@ class DiseaseGenerator(
             chronicity = blueprint.chronicity,
             infectious = blueprint.isInfectious,
             synonyms = synonyms.map { it.katakana },
-            summary = DiseaseNestedBuilders.buildSummary(id = diseaseId),
+            summary = DiseaseNestedBuilders.buildSummary(
+                id = diseaseId,
+                dict = placeholderDictionary,
+                context = context,
+            ),
             epidemiology = DiseaseNestedBuilders.buildEpidemiology(id = diseaseId),
-            etiology = DiseaseNestedBuilders.buildEtiology(id = diseaseId),
+            etiology = DiseaseNestedBuilders.buildEtiology(
+                id = diseaseId,
+                dict = placeholderDictionary,
+                context = context,
+            ),
             symptoms = DiseaseNestedBuilders.buildSymptoms(id = diseaseId),
-            diagnosticCriteria = DiseaseNestedBuilders.buildDiagnosticCriteria(id = diseaseId),
+            diagnosticCriteria = DiseaseNestedBuilders.buildDiagnosticCriteria(
+                id = diseaseId,
+                dict = placeholderDictionary,
+                context = context,
+            ),
             requiredExams = DiseaseNestedBuilders.buildRequiredExams(
                 id = diseaseId,
                 chapter = blueprint.icd10Chapter,
             ),
-            severityGrading = DiseaseNestedBuilders.buildSeverityGrading(id = diseaseId),
+            severityGrading = DiseaseNestedBuilders.buildSeverityGrading(
+                id = diseaseId,
+                dict = placeholderDictionary,
+                context = context,
+            ),
             differentialDiagnoses = differentials.map { it.katakana },
             complications = complications.map { it.katakana },
-            treatments = DiseaseNestedBuilders.buildTreatments(id = diseaseId),
-            prognosis = DiseaseNestedBuilders.buildPrognosis(id = diseaseId),
+            treatments = DiseaseNestedBuilders.buildTreatments(
+                id = diseaseId,
+                dict = placeholderDictionary,
+                context = context,
+            ),
+            prognosis = DiseaseNestedBuilders.buildPrognosis(
+                id = diseaseId,
+                dict = placeholderDictionary,
+                context = context,
+            ),
             prevention = DiseaseNestedBuilders.buildPrevention(id = diseaseId),
             relatedDrugIds = DiseaseNestedBuilders.buildRelatedDrugIds(id = diseaseId),
             relatedDiseaseIds = DiseaseNestedBuilders.buildRelatedDiseaseIds(

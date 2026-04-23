@@ -1,6 +1,7 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.common.ValueRangeGenerator
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.placeholder.DiseaseRenderContext
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.stableHash
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.ExamCategory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
@@ -45,17 +46,27 @@ internal object DiseaseNestedBuilders {
         return listOf(primary, secondary).distinct()
     }
 
-    fun buildSummary(id: String): String {
-        return DiseaseParagraphTemplates.pickTemplate(
+    fun buildSummary(
+        id: String,
+        dict: DiseasePlaceholderDictionary,
+        context: DiseaseRenderContext,
+    ): String {
+        return dict.renderField(
             field = DiseaseParagraphField.OVERVIEW_DESCRIPTION,
             seed = stableHash(id = id, slot = DiseaseFieldSlot.SUMMARY.ordinal, index = 0),
+            context = context,
         )
     }
 
-    fun buildEtiology(id: String): String {
-        return DiseaseParagraphTemplates.pickTemplate(
+    fun buildEtiology(
+        id: String,
+        dict: DiseasePlaceholderDictionary,
+        context: DiseaseRenderContext,
+    ): String {
+        return dict.renderField(
             field = DiseaseParagraphField.OVERVIEW_DESCRIPTION,
             seed = stableHash(id = id, slot = DiseaseFieldSlot.ETIOLOGY.ordinal, index = 0),
+            context = context,
         )
     }
 
@@ -99,7 +110,11 @@ internal object DiseaseNestedBuilders {
         )
     }
 
-    fun buildDiagnosticCriteria(id: String): DiagnosticCriteriaInfo {
+    fun buildDiagnosticCriteria(
+        id: String,
+        dict: DiseasePlaceholderDictionary,
+        context: DiseaseRenderContext,
+    ): DiagnosticCriteriaInfo {
         val requiredCountSeed = stableHash(
             id = id,
             slot = DiseaseFieldSlot.DIAGNOSTIC_REQUIRED_COUNT.ordinal,
@@ -110,13 +125,14 @@ internal object DiseaseNestedBuilders {
             range = DIAGNOSTIC_REQUIRED_RANGE,
         )
         val required = (0 until requiredCount).map { offset ->
-            DiseaseParagraphTemplates.pickTemplate(
+            dict.renderField(
                 field = DiseaseParagraphField.DIAGNOSTIC_CRITERIA_DESCRIPTION,
                 seed = stableHash(
                     id = id,
                     slot = DiseaseFieldSlot.DIAGNOSTIC_REQUIRED_COUNT.ordinal,
                     index = offset + 1,
                 ),
+                context = context,
             )
         }
         val supportingCountSeed = stableHash(
@@ -129,18 +145,20 @@ internal object DiseaseNestedBuilders {
             range = DIAGNOSTIC_SUPPORTING_RANGE,
         )
         val supporting = (0 until supportingCount).map { offset ->
-            DiseaseParagraphTemplates.pickTemplate(
+            dict.renderField(
                 field = DiseaseParagraphField.DIAGNOSTIC_CRITERIA_DESCRIPTION,
                 seed = stableHash(
                     id = id,
                     slot = DiseaseFieldSlot.DIAGNOSTIC_SUPPORTING_COUNT.ordinal,
                     index = offset + 1,
                 ),
+                context = context,
             )
         }
-        val notes = DiseaseParagraphTemplates.pickTemplate(
+        val notes = dict.renderField(
             field = DiseaseParagraphField.DIAGNOSTIC_CRITERIA_DESCRIPTION,
             seed = stableHash(id = id, slot = DiseaseFieldSlot.DIAGNOSTIC_NOTES.ordinal, index = 0),
+            context = context,
         )
         return DiagnosticCriteriaInfo(
             required = required,
@@ -180,26 +198,32 @@ internal object DiseaseNestedBuilders {
         return ensureImagingForCardiovascular(chapter = chapter, exams = exams)
     }
 
-    fun buildSeverityGrading(id: String): SeverityInfo {
+    fun buildSeverityGrading(
+        id: String,
+        dict: DiseasePlaceholderDictionary,
+        context: DiseaseRenderContext,
+    ): SeverityInfo {
         val countSeed = stableHash(id = id, slot = DiseaseFieldSlot.SEVERITY_GRADE_COUNT.ordinal, index = 0)
         val count = ValueRangeGenerator.pickCount(seed = countSeed, range = SEVERITY_GRADE_RANGE)
         val grades = (0 until count).map { offset ->
             val label = "Grade ${offset + 1}"
-            val criteria = DiseaseParagraphTemplates.pickTemplate(
+            val criteria = dict.renderField(
                 field = DiseaseParagraphField.SEVERITY_DESCRIPTION,
                 seed = stableHash(
                     id = id,
                     slot = DiseaseFieldSlot.SEVERITY_GRADE_LABEL.ordinal,
                     index = offset,
                 ),
+                context = context,
             )
-            val action = DiseaseParagraphTemplates.pickTemplate(
+            val action = dict.renderField(
                 field = DiseaseParagraphField.SEVERITY_DESCRIPTION,
                 seed = stableHash(
                     id = id,
                     slot = DiseaseFieldSlot.SEVERITY_GRADE_ACTION.ordinal,
                     index = offset,
                 ),
+                context = context,
             )
             Grade(label = label, criteria = criteria, recommendedAction = action)
         }
@@ -209,7 +233,11 @@ internal object DiseaseNestedBuilders {
         )
     }
 
-    fun buildTreatments(id: String): TreatmentInfo {
+    fun buildTreatments(
+        id: String,
+        dict: DiseasePlaceholderDictionary,
+        context: DiseaseRenderContext,
+    ): TreatmentInfo {
         val pharmaCountSeed = stableHash(
             id = id,
             slot = DiseaseFieldSlot.TREATMENT_PHARMA_COUNT.ordinal,
@@ -223,21 +251,23 @@ internal object DiseaseNestedBuilders {
             PharmaTreatment(
                 drugCategory = "架空薬効群 ${offset + 1}",
                 drugIds = emptyList(),
-                indication = DiseaseParagraphTemplates.pickTemplate(
+                indication = dict.renderField(
                     field = DiseaseParagraphField.TREATMENT_DESCRIPTION,
                     seed = stableHash(
                         id = id,
                         slot = DiseaseFieldSlot.TREATMENT_PHARMA_INDICATION.ordinal,
                         index = offset,
                     ),
+                    context = context,
                 ),
-                notes = DiseaseParagraphTemplates.pickTemplate(
+                notes = dict.renderField(
                     field = DiseaseParagraphField.TREATMENT_DESCRIPTION,
                     seed = stableHash(
                         id = id,
                         slot = DiseaseFieldSlot.TREATMENT_PHARMA_NOTES.ordinal,
                         index = offset,
                     ),
+                    context = context,
                 ),
             )
         }
@@ -254,13 +284,14 @@ internal object DiseaseNestedBuilders {
             TreatmentSection(
                 heading = NONPHARMA_HEADINGS[offset % NONPHARMA_HEADINGS.size],
                 items = listOf("項目 1", "項目 2"),
-                description = DiseaseParagraphTemplates.pickTemplate(
+                description = dict.renderField(
                     field = DiseaseParagraphField.TREATMENT_DESCRIPTION,
                     seed = stableHash(
                         id = id,
                         slot = DiseaseFieldSlot.TREATMENT_NONPHARMA_DESC.ordinal,
                         index = offset,
                     ),
+                    context = context,
                 ),
             )
         }
@@ -276,13 +307,14 @@ internal object DiseaseNestedBuilders {
         val acutePhaseProtocol = (0 until acuteCount).map { offset ->
             ProtocolStep(
                 order = offset + 1,
-                action = DiseaseParagraphTemplates.pickTemplate(
+                action = dict.renderField(
                     field = DiseaseParagraphField.TREATMENT_DESCRIPTION,
                     seed = stableHash(
                         id = id,
                         slot = DiseaseFieldSlot.TREATMENT_ACUTE_ACTION.ordinal,
                         index = offset,
                     ),
+                    context = context,
                 ),
                 target = "目標値 ${offset + 1} (架空)",
             )
@@ -294,10 +326,15 @@ internal object DiseaseNestedBuilders {
         )
     }
 
-    fun buildPrognosis(id: String): String {
-        return DiseaseParagraphTemplates.pickTemplate(
+    fun buildPrognosis(
+        id: String,
+        dict: DiseasePlaceholderDictionary,
+        context: DiseaseRenderContext,
+    ): String {
+        return dict.renderField(
             field = DiseaseParagraphField.PROGNOSIS_DESCRIPTION,
             seed = stableHash(id = id, slot = DiseaseFieldSlot.PROGNOSIS.ordinal, index = 0),
+            context = context,
         )
     }
 
