@@ -15,21 +15,35 @@ object CrossReferenceValidator {
         drugs: List<Drug>,
         diseases: List<Disease>,
     ): List<CrossRefViolation> {
+        val drugIds: Set<String> = drugs.map { it.id }.toSet()
         val diseaseIds: Set<String> = diseases.map { it.id }.toSet()
-        return drugs.flatMap { drug ->
+        val drugSide = drugs.flatMap { drug ->
             drug.relatedDiseaseIds
                 .filter { relatedId -> relatedId !in diseaseIds }
                 .map { danglingId ->
                     CrossRefViolation(
-                        sourceType = SOURCE_TYPE_DRUG,
+                        sourceType = TYPE_DRUG,
                         sourceId = drug.id,
-                        targetType = TARGET_TYPE_DISEASE,
+                        targetType = TYPE_DISEASE,
                         danglingTargetId = danglingId,
                     )
                 }
         }
+        val diseaseToDrugSide = diseases.flatMap { disease ->
+            disease.relatedDrugIds
+                .filter { relatedId -> relatedId !in drugIds }
+                .map { danglingId ->
+                    CrossRefViolation(
+                        sourceType = TYPE_DISEASE,
+                        sourceId = disease.id,
+                        targetType = TYPE_DRUG,
+                        danglingTargetId = danglingId,
+                    )
+                }
+        }
+        return drugSide + diseaseToDrugSide
     }
 
-    private const val SOURCE_TYPE_DRUG = "drug"
-    private const val TARGET_TYPE_DISEASE = "disease"
+    private const val TYPE_DRUG = "drug"
+    private const val TYPE_DISEASE = "disease"
 }
