@@ -1,15 +1,18 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.placeholder.DiseasePlaceholderDelimiter
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.placeholder.DiseaseRenderContext
 import kotlin.test.Test
 import kotlin.test.assertFalse
 
 class DiseaseNestedBuildersTest {
     private val diseaseId: String = "disease_0000"
+    private val dict: DiseasePlaceholderDictionary = DiseasePlaceholderDictionary()
+    private val context: DiseaseRenderContext = DiseaseRenderContext(selfName = "架空疾患テスト")
 
     @Test
     fun `buildSummary returns string without raw placeholder delimiters`() {
-        val result = DiseaseNestedBuilders.buildSummary(id = diseaseId)
+        val result = DiseaseNestedBuilders.buildSummary(id = diseaseId, dict = dict, context = context)
         assertFalse(
             DiseasePlaceholderDelimiter.OPEN in result || DiseasePlaceholderDelimiter.CLOSE in result,
             "buildSummary leaks raw placeholder: $result",
@@ -18,7 +21,11 @@ class DiseaseNestedBuildersTest {
 
     @Test
     fun `buildSeverityGrading entries have placeholder-free criteria and recommendedAction`() {
-        val info = DiseaseNestedBuilders.buildSeverityGrading(id = diseaseId)
+        val info = DiseaseNestedBuilders.buildSeverityGrading(
+            id = diseaseId,
+            dict = dict,
+            context = context,
+        )
         for (grade in info.grades) {
             assertFalse(
                 DiseasePlaceholderDelimiter.OPEN in grade.criteria ||
@@ -35,7 +42,7 @@ class DiseaseNestedBuildersTest {
 
     @Test
     fun `buildPrognosis returns string without raw placeholder delimiters`() {
-        val result = DiseaseNestedBuilders.buildPrognosis(id = diseaseId)
+        val result = DiseaseNestedBuilders.buildPrognosis(id = diseaseId, dict = dict, context = context)
         assertFalse(
             DiseasePlaceholderDelimiter.OPEN in result || DiseasePlaceholderDelimiter.CLOSE in result,
             "buildPrognosis leaks raw placeholder: $result",
