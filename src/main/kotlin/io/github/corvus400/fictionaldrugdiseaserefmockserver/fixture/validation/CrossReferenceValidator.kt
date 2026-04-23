@@ -17,44 +17,50 @@ object CrossReferenceValidator {
     ): List<CrossRefViolation> {
         val drugIds: Set<String> = drugs.map { it.id }.toSet()
         val diseaseIds: Set<String> = diseases.map { it.id }.toSet()
-        val drugSide = drugs.flatMap { drug ->
-            drug.relatedDiseaseIds
-                .filter { relatedId -> relatedId !in diseaseIds }
-                .map { danglingId ->
-                    CrossRefViolation(
-                        sourceType = TYPE_DRUG,
-                        sourceId = drug.id,
-                        targetType = TYPE_DISEASE,
-                        danglingTargetId = danglingId,
-                    )
-                }
-        }
-        val diseaseToDrugSide = diseases.flatMap { disease ->
-            disease.relatedDrugIds
-                .filter { relatedId -> relatedId !in drugIds }
-                .map { danglingId ->
-                    CrossRefViolation(
-                        sourceType = TYPE_DISEASE,
-                        sourceId = disease.id,
-                        targetType = TYPE_DRUG,
-                        danglingTargetId = danglingId,
-                    )
-                }
-        }
-        val diseaseToDiseaseSide = diseases.flatMap { disease ->
-            disease.relatedDiseaseIds
-                .filter { relatedId -> relatedId !in diseaseIds }
-                .map { danglingId ->
-                    CrossRefViolation(
-                        sourceType = TYPE_DISEASE,
-                        sourceId = disease.id,
-                        targetType = TYPE_DISEASE,
-                        danglingTargetId = danglingId,
-                    )
-                }
-        }
-        return drugSide + diseaseToDrugSide + diseaseToDiseaseSide
+        return collectDangling(
+            sources = drugs,
+            sourceIdOf = Drug::id,
+            relatedIdsOf = Drug::relatedDiseaseIds,
+            validTargetIds = diseaseIds,
+            sourceType = TYPE_DRUG,
+            targetType = TYPE_DISEASE,
+        ) + collectDangling(
+            sources = diseases,
+            sourceIdOf = Disease::id,
+            relatedIdsOf = Disease::relatedDrugIds,
+            validTargetIds = drugIds,
+            sourceType = TYPE_DISEASE,
+            targetType = TYPE_DRUG,
+        ) + collectDangling(
+            sources = diseases,
+            sourceIdOf = Disease::id,
+            relatedIdsOf = Disease::relatedDiseaseIds,
+            validTargetIds = diseaseIds,
+            sourceType = TYPE_DISEASE,
+            targetType = TYPE_DISEASE,
+        )
     }
+
+    private fun <S> collectDangling(
+        sources: List<S>,
+        sourceIdOf: (S) -> String,
+        relatedIdsOf: (S) -> List<String>,
+        validTargetIds: Set<String>,
+        sourceType: String,
+        targetType: String,
+    ): List<CrossRefViolation> =
+        sources.flatMap { source ->
+            relatedIdsOf(source)
+                .filter { relatedId -> relatedId !in validTargetIds }
+                .map { danglingId ->
+                    CrossRefViolation(
+                        sourceType = sourceType,
+                        sourceId = sourceIdOf(source),
+                        targetType = targetType,
+                        danglingTargetId = danglingId,
+                    )
+                }
+        }
 
     private const val TYPE_DRUG = "drug"
     private const val TYPE_DISEASE = "disease"
