@@ -6,6 +6,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.Drug
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.DrugListResponse
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.DrugSummary
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RouteOfAdministration
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.toSummary
 import kotlinx.serialization.serializer
 import kotlin.math.ceil
@@ -62,7 +63,9 @@ class DrugListFixtures(
      * `atcPrefix` を非 null で渡すと、pagination 前に `Drug.atcCode.startsWith(atcPrefix)` で
      * 絞り込む (Phase 9-7a)。`regulatoryClassSerialName` を非 null で渡すと、
      * `Drug.regulatoryClass` リストが指定された `@SerialName` 値 (例: `処方箋医薬品`) を
-     * 含むものに絞り込む (Phase 9-8a)。両者指定時は AND 結合。
+     * 含むものに絞り込む (Phase 9-8a)。`routeOfAdministrationSerialName` を非 null で渡すと、
+     * `Drug.routeOfAdministration` の `@SerialName` 値が指定値 (例: `内服`) に一致する
+     * ものに絞り込む (Phase 9-9a)。複数指定時は AND 結合。
      * いずれも `null` の場合は従来通り全件を対象とする。
      */
     fun resolve(
@@ -71,12 +74,14 @@ class DrugListFixtures(
         pageSize: Int,
         atcPrefix: String? = null,
         regulatoryClassSerialName: String? = null,
+        routeOfAdministrationSerialName: String? = null,
     ): DrugListResponse {
         val list = summariesByScenario[scenario] ?: summariesByScenario.values.first()
         val filtered = applyFilters(
             summaries = list,
             atcPrefix = atcPrefix,
             regulatoryClassSerialName = regulatoryClassSerialName,
+            routeOfAdministrationSerialName = routeOfAdministrationSerialName,
         )
         val totalCount = filtered.size
         val totalPages = if (totalCount == 0) 0 else ceil(totalCount.toDouble() / pageSize.toDouble()).toInt()
@@ -101,6 +106,7 @@ class DrugListFixtures(
         summaries: List<DrugSummary>,
         atcPrefix: String?,
         regulatoryClassSerialName: String?,
+        routeOfAdministrationSerialName: String?,
     ): List<DrugSummary> {
         var filtered: List<DrugSummary> = summaries
         if (atcPrefix != null) {
@@ -115,6 +121,16 @@ class DrugListFixtures(
             } else {
                 filtered.filter { summary ->
                     allDrugsById[summary.id]?.regulatoryClass?.contains(element = matched) == true
+                }
+            }
+        }
+        if (routeOfAdministrationSerialName != null) {
+            val matched = routeOfAdministrationBySerialName[routeOfAdministrationSerialName]
+            filtered = if (matched == null) {
+                emptyList()
+            } else {
+                filtered.filter { summary ->
+                    allDrugsById[summary.id]?.routeOfAdministration == matched
                 }
             }
         }
@@ -148,6 +164,19 @@ class DrugListFixtures(
         private val regulatoryClassBySerialName: Map<String, RegulatoryClass> = run {
             val descriptor = serializer<RegulatoryClass>().descriptor
             enumValues<RegulatoryClass>().associateBy { value ->
+                descriptor.getElementName(value.ordinal)
+            }
+        }
+
+        /**
+         * `RouteOfAdministration` の `@SerialName` 値 → enum 定数の索引。
+         *
+         * `/drugs?route=内服` のようにクエリで `@SerialName` 値が渡される (Phase 9-9a)。
+         * 解決方法は `regulatoryClassBySerialName` と同様。
+         */
+        private val routeOfAdministrationBySerialName: Map<String, RouteOfAdministration> = run {
+            val descriptor = serializer<RouteOfAdministration>().descriptor
+            enumValues<RouteOfAdministration>().associateBy { value ->
                 descriptor.getElementName(value.ordinal)
             }
         }

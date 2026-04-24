@@ -147,6 +147,11 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
                                     "指定時は `regulatory_class` リストに含まれるものに絞り込み"
                                 required = false
                             }
+                            queryParameter<String>("route") {
+                                description = "投与経路の `@SerialName` 値 (例: `内服`)。" +
+                                    "指定時は `route_of_administration` が一致するものに絞り込み"
+                                required = false
+                            }
                         }
                     },
                 )
@@ -160,6 +165,7 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
                     ).coerceAtMost(maximumValue = DrugListFixtures.MAX_PAGE_SIZE)
                 val atcPrefix = call.request.queryParameters["category_atc"]
                 val regulatoryClass = call.request.queryParameters["regulatory_class"]
+                val route = call.request.queryParameters["route"]
                 val resolved = call.resolveScenarioWithOverride(
                     scenarioManager = scenarioManager,
                     endpointName = drugListMetadata.endpointName,
@@ -171,6 +177,7 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
                             pageSize = pageSize,
                             atcPrefix = atcPrefix,
                             regulatoryClassSerialName = regulatoryClass,
+                            routeOfAdministrationSerialName = route,
                         )
                     },
                 )
