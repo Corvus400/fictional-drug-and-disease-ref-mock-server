@@ -1,5 +1,6 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins
 
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.validation.CrossReferenceValidator
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.Drug
 
@@ -15,7 +16,13 @@ object CrossReferenceInitCheck {
         drugs: List<Drug>,
         diseases: List<Disease>,
     ) {
-        // Red-1: dangling なしで throw しないことのみを固定する。
-        // Red-2 以降のサイクルで CrossReferenceValidator 呼び出しと throw を段階的に追加する。
+        val violations =
+            CrossReferenceValidator.validate(
+                drugs = drugs,
+                diseases = diseases,
+            )
+        if (violations.isNotEmpty()) {
+            error("Cross-reference violations detected during startup: $violations")
+        }
     }
 }
