@@ -5,9 +5,10 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog.EndpointMet
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog.ScenarioMeta
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog.toEntry
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.DrugFixtureProvider
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.DrugListFixtures
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.ApiTag
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.documentIdDetailEndpoint
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.documentListEndpoint
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.scenarioRoute
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.scenario.ScenarioManager
 import io.github.smiley4.ktoropenapi.get
 import io.ktor.http.HttpMethod
@@ -33,18 +34,30 @@ private val drugListMetadata = EndpointMetadata(
     summary = "医薬品一覧を取得する",
 )
 
-private val defaultScenarios: List<ScenarioMeta> = listOf(
+private val drugDetailScenarios: List<ScenarioMeta> = listOf(
     ScenarioMeta(name = "default", title = "デフォルト", description = "全 120 件のフィクスマージ語ベース医薬品"),
 )
 
-val drugCatalogEntries: List<EndpointEntry> = listOf(
-    drugDetailMetadata.toEntry(scenarios = defaultScenarios),
-    drugListMetadata.toEntry(scenarios = defaultScenarios),
+/**
+ * `/drugs` (一覧) のカタログ用シナリオメタデータ。
+ *
+ * `DrugListFixtures` は DI チェーンで生成されるため module 読込時には instance を取得できない。
+ * したがって `scenarioTitles` と同じ内容を手動で宣言する。`DrugListFixtures` 側でタイトルを変更した
+ * 際はここも同期する必要がある (FixtureProviderConsistencyTest がキー一致は検証する)。
+ */
+private val drugListScenarios: List<ScenarioMeta> = listOf(
+    ScenarioMeta(name = "default", title = "デフォルト (120件)", description = "全 120 件のフィクスマージ語ベース医薬品"),
+    ScenarioMeta(name = "empty", title = "空レスポンス", description = "0 件の医薬品一覧"),
 )
 
-@Suppress("UnusedParameter")
+val drugCatalogEntries: List<EndpointEntry> = listOf(
+    drugDetailMetadata.toEntry(scenarios = drugDetailScenarios),
+    drugListMetadata.toEntry(scenarios = drugListScenarios),
+)
+
 fun Application.drugModule(scenarioManager: ScenarioManager) {
     val provider: DrugFixtureProvider by dependencies
+    val drugListFixtures: DrugListFixtures by dependencies
     routing {
         get("/drugs/{id}", {
             documentIdDetailEndpoint(
@@ -62,14 +75,13 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
                 call.respond(drug)
             }
         }
-        get("/drugs", {
-            documentListEndpoint(
-                metadata = drugListMetadata,
-                endpointDescription = "起動時に生成された全医薬品 Fixture を配列で返す。",
-                exampleFixtures = provider.all.take(n = 2),
-            )
-        }) {
-            call.respond(provider.all)
-        }
     }
+    scenarioRoute(
+        metadata = drugListMetadata,
+        defaultScenario = "default",
+        fixtureProvider = drugListFixtures,
+        scenarioManager = scenarioManager,
+        endpointDescription = "起動時に生成された医薬品 Fixture 一覧を envelope 形式で返す。" +
+            "X-Mock-Scenario ヘッダで `default` (120 件) / `empty` (0 件) を切り替え可能。",
+    )
 }
