@@ -138,6 +138,15 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
                                     "${DrugListFixtures.DEFAULT_PAGE_SIZE}, 上限 ${DrugListFixtures.MAX_PAGE_SIZE})"
                                 required = false
                             }
+                            queryParameter<String>("category_atc") {
+                                description = "ATC コードの先頭文字 (例: `A`)。指定時は前方一致で絞り込み"
+                                required = false
+                            }
+                            queryParameter<String>("regulatory_class") {
+                                description = "規制区分の `@SerialName` 値 (例: `処方箋医薬品`)。" +
+                                    "指定時は `regulatory_class` リストに含まれるものに絞り込み"
+                                required = false
+                            }
                         }
                     },
                 )
@@ -150,6 +159,7 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
                         ?: DrugListFixtures.DEFAULT_PAGE_SIZE
                     ).coerceAtMost(maximumValue = DrugListFixtures.MAX_PAGE_SIZE)
                 val atcPrefix = call.request.queryParameters["category_atc"]
+                val regulatoryClass = call.request.queryParameters["regulatory_class"]
                 val resolved = call.resolveScenarioWithOverride(
                     scenarioManager = scenarioManager,
                     endpointName = drugListMetadata.endpointName,
@@ -160,6 +170,7 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
                             page = page,
                             pageSize = pageSize,
                             atcPrefix = atcPrefix,
+                            regulatoryClassSerialName = regulatoryClass,
                         )
                     },
                 )
