@@ -2,15 +2,19 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.drug
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog.EndpointEntry
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog.EndpointMetadata
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog.EndpointRegistry
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog.ScenarioMeta
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog.toEntry
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.DrugFixtureProvider
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.DrugListFixtures
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.ApiTag
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.documentIdDetailEndpoint
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.scenarioRoute
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.documentScenarioEndpoint
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.resolveScenarioWithOverride
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.respondWithScenario
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.scenario.ScenarioManager
 import io.github.smiley4.ktoropenapi.get
+import io.github.smiley4.ktoropenapi.route
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
@@ -76,12 +80,53 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
             }
         }
     }
-    scenarioRoute(
-        metadata = drugListMetadata,
-        defaultScenario = "default",
-        fixtureProvider = drugListFixtures,
-        scenarioManager = scenarioManager,
-        endpointDescription = "起動時に生成された医薬品 Fixture 一覧を envelope 形式で返す。" +
-            "X-Mock-Scenario ヘッダで `default` (120 件) / `empty` (0 件) を切り替え可能。",
+    EndpointRegistry.register(
+        drugListMetadata.toEntry(scenarios = drugListFixtures.scenarioMetas.values.toList()),
     )
+    routing {
+        route(
+            path = drugListMetadata.path,
+            method = drugListMetadata.method,
+            builder = {
+                documentScenarioEndpoint(
+                    summary = drugListMetadata.summary,
+                    endpointDescription = "起動時に生成された医薬品 Fixture 一覧を envelope 形式で返す。" +
+                        "X-Mock-Scenario ヘッダで `default` (120 件) / `empty` (0 件) を切り替え可能。" +
+                        " `page` (1-origin) / `page_size` (既定 ${DrugListFixtures.DEFAULT_PAGE_SIZE}, " +
+                        "上限 ${DrugListFixtures.MAX_PAGE_SIZE}) でページング可能。",
+                    tag = drugListMetadata.tag,
+                    fixtureProvider = drugListFixtures,
+                    additionalRequestDoc = {
+                        request {
+                            queryParameter<Int>("page") {
+                                description = "1-origin のページ番号 (既定 1)"
+                                required = false
+                            }
+                            queryParameter<Int>("page_size") {
+                                description = "1 ページの件数 (既定 " +
+                                    "${DrugListFixtures.DEFAULT_PAGE_SIZE}, 上限 ${DrugListFixtures.MAX_PAGE_SIZE})"
+                                required = false
+                            }
+                        }
+                    },
+                )
+            },
+        ) {
+            handle {
+                val resolved = call.resolveScenarioWithOverride(
+                    scenarioManager = scenarioManager,
+                    endpointName = drugListMetadata.endpointName,
+                    default = "default",
+                    fixtureProvider = { scenario ->
+                        drugListFixtures.resolve(
+                            scenario = scenario,
+                            page = 1,
+                            pageSize = DrugListFixtures.DEFAULT_PAGE_SIZE,
+                        )
+                    },
+                )
+                call.respondWithScenario(resolved = resolved)
+            }
+        }
+    }
 }
