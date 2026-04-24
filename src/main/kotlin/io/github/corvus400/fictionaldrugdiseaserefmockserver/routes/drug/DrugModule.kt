@@ -50,7 +50,12 @@ private val drugDetailScenarios: List<ScenarioMeta> = listOf(
  * 際はここも同期する必要がある (FixtureProviderConsistencyTest がキー一致は検証する)。
  */
 private val drugListScenarios: List<ScenarioMeta> = listOf(
-    ScenarioMeta(name = "default", title = "デフォルト (120件)", description = "全 120 件のフィクスマージ語ベース医薬品"),
+    ScenarioMeta(
+        name = "default",
+        title = "デフォルト (120件)",
+        description = "全 120 件のフィクスマージ語ベース医薬品を page_size=${DrugListFixtures.DEFAULT_PAGE_SIZE} " +
+            "でページング",
+    ),
     ScenarioMeta(name = "empty", title = "空レスポンス", description = "0 件の医薬品一覧"),
 )
 
