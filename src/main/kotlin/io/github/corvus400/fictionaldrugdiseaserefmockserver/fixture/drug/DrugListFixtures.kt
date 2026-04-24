@@ -67,13 +67,7 @@ class DrugListFixtures(
         atcPrefix: String? = null,
     ): DrugListResponse {
         val list = summariesByScenario[scenario] ?: summariesByScenario.values.first()
-        val filtered = if (atcPrefix == null) {
-            list
-        } else {
-            list.filter { summary ->
-                allDrugsById[summary.id]?.atcCode?.startsWith(prefix = atcPrefix) == true
-            }
-        }
+        val filtered = applyFilters(summaries = list, atcPrefix = atcPrefix)
         val totalCount = filtered.size
         val totalPages = if (totalCount == 0) 0 else ceil(totalCount.toDouble() / pageSize.toDouble()).toInt()
         val startIndex = (page - 1) * pageSize
@@ -85,6 +79,24 @@ class DrugListFixtures(
             totalPages = totalPages,
             totalCount = totalCount,
         )
+    }
+
+    /**
+     * `/drugs` 一覧クエリフィルタを pagination 前に適用する。
+     *
+     * Phase 9-7a 時点では `atcPrefix` のみ対応。後続 Phase で `regulatoryClass` / `route` /
+     * `dosageForm` 等のフィルタを追加する際はここにパラメータを足していく。
+     */
+    private fun applyFilters(
+        summaries: List<DrugSummary>,
+        atcPrefix: String?,
+    ): List<DrugSummary> {
+        if (atcPrefix == null) {
+            return summaries
+        }
+        return summaries.filter { summary ->
+            allDrugsById[summary.id]?.atcCode?.startsWith(prefix = atcPrefix) == true
+        }
     }
 
     override val scenarios: Map<String, DrugListResponse> = summariesByScenario.keys.associateWith { scenario ->
