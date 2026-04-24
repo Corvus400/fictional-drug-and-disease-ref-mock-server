@@ -70,6 +70,25 @@ class DrugListFixturesTest {
     }
 
     @Test
+    fun `allDrugsById resolves every drug id back to the originating Drug`() {
+        val drugs = buildFreshGenerator().generate(blueprints = DrugBlueprintFactory.build())
+
+        val fixtures = DrugListFixtures(drugs = drugs)
+
+        assertEquals(
+            expected = drugs.size,
+            actual = fixtures.allDrugsById.size,
+            message = "allDrugsById must index every drug once",
+        )
+        val firstDrug = drugs.first()
+        assertEquals(
+            expected = firstDrug,
+            actual = fixtures.allDrugsById[firstDrug.id],
+            message = "allDrugsById[drug.id] must return the matching Drug",
+        )
+    }
+
+    @Test
     fun `init fails fast when DrugFixtureValidator reports violations`() {
         val drugs = buildFreshGenerator().generate(blueprints = DrugBlueprintFactory.build())
         val corrupted = drugs.first().copy(contraindications = emptyList())
