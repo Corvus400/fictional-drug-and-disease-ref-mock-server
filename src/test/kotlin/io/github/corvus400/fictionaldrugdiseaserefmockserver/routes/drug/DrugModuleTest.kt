@@ -49,21 +49,35 @@ class DrugModuleTest {
     }
 
     @Test
-    fun `GET drugs default scenario returns envelope with 120 items`() = testApplication {
-        application { module() }
+    fun `GET drugs default scenario returns envelope with 120 items each carrying 6 DrugSummary fields`() =
+        testApplication {
+            application { module() }
 
-        val response = client.get("/drugs")
+            val response = client.get("/drugs")
 
-        assertEquals(HttpStatusCode.OK, response.status)
-        val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
-        val items = body["items"]?.jsonArray
-        assertNotNull(items, "response body must have an items array")
-        assertEquals(
-            expected = 120,
-            actual = items.size,
-            message = "default scenario must expose envelope with items.size == 120",
-        )
-    }
+            assertEquals(HttpStatusCode.OK, response.status)
+            val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
+            val items = body["items"]?.jsonArray
+            assertNotNull(items, "response body must have an items array")
+            assertEquals(
+                expected = 120,
+                actual = items.size,
+                message = "default scenario must expose envelope with items.size == 120",
+            )
+            val firstItemKeys = items.first().jsonObject.keys
+            assertEquals(
+                expected = setOf(
+                    "id",
+                    "brand_name",
+                    "generic_name",
+                    "therapeutic_category_name",
+                    "regulatory_class",
+                    "dosage_form",
+                ),
+                actual = firstItemKeys,
+                message = "HTTP response items[0] must expose exactly 6 DrugSummary snake_case fields",
+            )
+        }
 
     @Test
     fun `GET drugs with X-Mock-Scenario empty returns envelope with zero items`() = testApplication {
