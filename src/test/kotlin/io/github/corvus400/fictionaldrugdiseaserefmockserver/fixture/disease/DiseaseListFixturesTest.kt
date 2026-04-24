@@ -4,7 +4,9 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.blu
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.DiseaseGenerator
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.DiseasePlaceholderDictionary
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.FixmergeNameAdapter
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.DiseaseListResponse
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.DiseaseSummary
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.SymptomInfo
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -30,9 +32,9 @@ class DiseaseListFixturesTest {
         val fixtures = DiseaseListFixtures(diseases = diseases)
 
         assertEquals(
-            expected = DiseaseListResponse(items = diseases),
+            expected = DiseaseListResponse(items = diseases.map { it.toSummary() }),
             actual = fixtures.getByScenario(scenario = "default"),
-            message = "default scenario must wrap diseases in DiseaseListResponse items",
+            message = "default scenario must wrap diseases in DiseaseListResponse items as DiseaseSummary",
         )
     }
 
@@ -86,5 +88,13 @@ class DiseaseListFixturesTest {
                 placeholderDictionary = DiseasePlaceholderDictionary(),
             )
         }
+
+        fun Disease.toSummary(): DiseaseSummary = DiseaseSummary(
+            id = id,
+            name = name,
+            icd10Chapter = icd10Chapter,
+            medicalDepartment = medicalDepartment,
+            chronicity = chronicity,
+        )
     }
 }
