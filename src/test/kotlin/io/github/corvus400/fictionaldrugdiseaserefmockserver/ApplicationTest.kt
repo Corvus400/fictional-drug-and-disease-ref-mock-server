@@ -51,6 +51,15 @@ class ApplicationTest {
     }
 
     @Test
+    fun `module boots successfully with current fixtures passing CrossReferenceInitCheck`() =
+        testApplication {
+            application { module() }
+
+            val response = client.get("/drugs")
+            assertEquals(HttpStatusCode.OK, response.status)
+        }
+
+    @Test
     fun `admin reset clears all configs`() = testApplication {
         application { module() }
         // Set config
