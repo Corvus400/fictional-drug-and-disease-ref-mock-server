@@ -69,4 +69,40 @@ class DiseaseModulePaginationTest {
                 message = "page echo must reflect the requested page number",
             )
         }
+
+    @Test
+    fun `GET diseases without any query returns first page with 20 items and total_count 80`() =
+        testApplication {
+            application { module() }
+
+            val response = client.get("/diseases")
+
+            assertEquals(HttpStatusCode.OK, response.status)
+            val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
+            val items = body["items"]?.jsonArray
+            assertNotNull(items, "response body must have an items array")
+            assertEquals(
+                expected = 20,
+                actual = items.size,
+                message = "no-query default must expose items.size == 20 (DEFAULT_PAGE_SIZE)",
+            )
+            val page = body["page"]?.jsonPrimitive?.content?.toIntOrNull()
+            assertEquals(
+                expected = 1,
+                actual = page,
+                message = "page must default to 1 when query is omitted",
+            )
+            val pageSize = body["page_size"]?.jsonPrimitive?.content?.toIntOrNull()
+            assertEquals(
+                expected = 20,
+                actual = pageSize,
+                message = "page_size must default to DEFAULT_PAGE_SIZE (20) when query is omitted",
+            )
+            val totalCount = body["total_count"]?.jsonPrimitive?.content?.toIntOrNull()
+            assertEquals(
+                expected = 80,
+                actual = totalCount,
+                message = "total_count must be 80 regardless of page_size",
+            )
+        }
 }
