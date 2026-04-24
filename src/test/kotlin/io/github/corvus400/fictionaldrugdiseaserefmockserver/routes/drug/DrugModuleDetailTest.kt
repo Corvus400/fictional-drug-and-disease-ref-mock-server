@@ -155,13 +155,15 @@ class DrugModuleDetailTest {
             assertEquals(
                 expected = "NOT_FOUND",
                 actual = body["code"]?.jsonPrimitive?.content,
-                message = "404 body must swap to ErrorResponse(code=NOT_FOUND); Drug body leaking through violates the " +
+                message =
+                "404 body must swap to ErrorResponse(code=NOT_FOUND); Drug body leaking through violates the " +
                     "error contract (#52). got keys=${body.keys}",
             )
             assertEquals(
                 expected = "Drug not found: drug_0001",
                 actual = body["message"]?.jsonPrimitive?.content,
-                message = "404 body.message must embed the requested id so clients can distinguish override-driven 404 " +
+                message =
+                "404 body.message must embed the requested id so clients can distinguish override-driven 404 " +
                     "from hard id-miss 404 at the message level",
             )
         }
