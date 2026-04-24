@@ -120,4 +120,39 @@ class DrugModuleFilterTest {
             )
         }
     }
+
+    @Test
+    fun `GET drugs dosage_form= returns items whose dosageForm serial name equals value`() = testApplication {
+        application { module() }
+
+        val response = client.get("/drugs?dosage_form=錠剤&page_size=100")
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
+        val totalCount = body["total_count"]?.jsonPrimitive?.content?.toInt()
+        assertNotNull(totalCount, "response must include total_count")
+        assertTrue(
+            actual = totalCount in 1 until 120,
+            message = "total_count=$totalCount must be 1..<120 for dosage_form=錠剤",
+        )
+        val items = body["items"]?.jsonArray
+        assertNotNull(items, "response must include items array")
+        assertTrue(
+            actual = items.isNotEmpty(),
+            message = "filtered items must be non-empty for dosage_form=錠剤",
+        )
+        items.forEach { item ->
+            val id = item.jsonObject["id"]?.jsonPrimitive?.content
+            assertNotNull(id, "item must expose id")
+            val detailResponse = client.get("/drugs/$id")
+            assertEquals(HttpStatusCode.OK, detailResponse.status, "detail GET must succeed for id=$id")
+            val detail = json.parseToJsonElement(string = detailResponse.bodyAsText()).jsonObject
+            val dosageFormValue = detail["dosage_form"]?.jsonPrimitive?.content
+            assertEquals(
+                expected = "錠剤",
+                actual = dosageFormValue,
+                message = "item id=$id has dosage_form=$dosageFormValue; must be '錠剤' under dosage_form=錠剤 filter",
+            )
+        }
+    }
 }
