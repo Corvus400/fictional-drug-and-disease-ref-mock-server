@@ -13,3 +13,13 @@ data class DrugSummary(
     val regulatoryClass: List<RegulatoryClass>,
     val dosageForm: DosageForm,
 )
+
+fun Drug.toSummary(): DrugSummary =
+    DrugSummary(
+        id = id,
+        brandName = brandName,
+        genericName = genericName,
+        therapeuticCategoryName = therapeuticCategoryName,
+        regulatoryClass = regulatoryClass,
+        dosageForm = dosageForm,
+    )

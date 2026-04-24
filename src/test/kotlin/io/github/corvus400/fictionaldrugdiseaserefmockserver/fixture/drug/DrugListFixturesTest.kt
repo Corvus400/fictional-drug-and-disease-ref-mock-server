@@ -13,6 +13,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.neste
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.SymptomInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.TreatmentInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.DrugListResponse
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.toSummary
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -31,15 +32,15 @@ class DrugListFixturesTest {
     }
 
     @Test
-    fun `default scenario wraps provided drugs in DrugListResponse envelope`() {
+    fun `default scenario wraps provided drugs in DrugListResponse envelope as summaries`() {
         val drugs = buildFreshGenerator().generate(blueprints = DrugBlueprintFactory.build())
 
         val fixtures = DrugListFixtures(drugs = drugs)
 
         assertEquals(
-            expected = DrugListResponse(items = drugs),
+            expected = DrugListResponse(items = drugs.map { drug -> drug.toSummary() }),
             actual = fixtures.getByScenario(scenario = "default"),
-            message = "default scenario must wrap drugs in DrugListResponse items",
+            message = "default scenario must wrap drugs as summaries in DrugListResponse items",
         )
     }
 

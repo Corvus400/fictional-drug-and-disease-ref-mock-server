@@ -4,6 +4,8 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.FixtureProv
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.validation.DrugFixtureValidator
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.Drug
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.DrugListResponse
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.DrugSummary
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.toSummary
 
 /**
  * `/drugs` 一覧エンドポイント向け FixtureProvider。
@@ -30,8 +32,10 @@ class DrugListFixtures(
         }
     }
 
+    private val summaries: List<DrugSummary> = drugs.map { drug -> drug.toSummary() }
+
     override val scenarios: Map<String, DrugListResponse> = mapOf(
-        "default" to DrugListResponse(items = drugs),
+        "default" to DrugListResponse(items = summaries),
         "empty" to DrugListResponse(items = emptyList()),
     )
 
