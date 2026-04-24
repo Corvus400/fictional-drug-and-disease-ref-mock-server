@@ -96,6 +96,42 @@ class DiseaseModuleDetailTest {
     }
 
     @Test
+    fun `POST admin configs diseaseDetail status_code 404 override swaps body to ErrorResponse NOT_FOUND`() =
+        testApplication {
+            application { module() }
+
+            val configResponse = client.post(urlString = "/__admin/configs/diseaseDetail") {
+                contentType(type = ContentType.Application.Json)
+                setBody(body = """{"state":"default","status_code":404}""")
+            }
+            assertEquals(
+                expected = HttpStatusCode.OK,
+                actual = configResponse.status,
+                message = "POST /__admin/configs/diseaseDetail must return 200 OK for status_code=404 override",
+            )
+
+            val response = client.get(urlString = "/diseases/disease_0001")
+
+            assertEquals(
+                expected = HttpStatusCode.NotFound,
+                actual = response.status,
+                message = "diseaseDetail status_code=404 override must flip GET /diseases/disease_0001 to 404",
+            )
+            val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
+            assertEquals(
+                expected = "NOT_FOUND",
+                actual = body["code"]?.jsonPrimitive?.content,
+                message = "status_code=404 override must replace Disease body with ErrorResponse shape, " +
+                    "got keys=${body.keys}",
+            )
+            assertEquals(
+                expected = "Disease not found: disease_0001",
+                actual = body["message"]?.jsonPrimitive?.content,
+                message = "ErrorResponse message must include the requested id even for override-driven 404",
+            )
+        }
+
+    @Test
     fun `GET diseases unknown id returns 404 with ErrorResponse NOT_FOUND body`() = testApplication {
         application { module() }
 
