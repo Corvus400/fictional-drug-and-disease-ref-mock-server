@@ -71,4 +71,27 @@ class DiseaseModuleDetailTest {
             message = "Expected delay of at least 500ms (diseaseDetail delay_ms override), got ${elapsedMs}ms",
         )
     }
+
+    @Test
+    fun `POST admin configs diseaseDetail status_code 500 makes GET diseases return 500`() = testApplication {
+        application { module() }
+
+        val configResponse = client.post(urlString = "/__admin/configs/diseaseDetail") {
+            contentType(type = ContentType.Application.Json)
+            setBody(body = """{"state":"default","status_code":500}""")
+        }
+        assertEquals(
+            expected = HttpStatusCode.OK,
+            actual = configResponse.status,
+            message = "POST /__admin/configs/diseaseDetail must return 200 OK",
+        )
+
+        val response = client.get(urlString = "/diseases/disease_0001")
+
+        assertEquals(
+            expected = HttpStatusCode.InternalServerError,
+            actual = response.status,
+            message = "GET /diseases/disease_0001 must honor diseaseDetail status_code=500 override",
+        )
+    }
 }
