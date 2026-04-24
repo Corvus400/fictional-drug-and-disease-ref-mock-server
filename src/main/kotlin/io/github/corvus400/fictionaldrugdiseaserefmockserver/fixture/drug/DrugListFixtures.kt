@@ -6,6 +6,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.Drug
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.DrugListResponse
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.DrugSummary
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.toSummary
+import kotlin.math.ceil
 
 /**
  * `/drugs` 一覧エンドポイント向け FixtureProvider。
@@ -42,10 +43,36 @@ class DrugListFixtures(
      */
     val allDrugsById: Map<String, Drug> = drugs.associateBy { drug -> drug.id }
 
-    override val scenarios: Map<String, DrugListResponse> = mapOf(
-        "default" to DrugListResponse(items = summaries),
-        "empty" to DrugListResponse(items = emptyList()),
+    /**
+     * シナリオ別の `DrugSummary` 全件。ページング (`resolve`) の元データ。
+     */
+    val summariesByScenario: Map<String, List<DrugSummary>> = mapOf(
+        "default" to summaries,
+        "empty" to emptyList(),
     )
+
+    /**
+     * 指定シナリオを `page` / `pageSize` でスライスした `DrugListResponse` を返す。
+     * `/drugs` ハンドラ (Phase 9-4a) と OpenAPI 例示 (`scenarios`) で共有される。
+     */
+    fun resolve(scenario: String, page: Int, pageSize: Int): DrugListResponse {
+        val list = summariesByScenario[scenario] ?: summariesByScenario.values.first()
+        val totalCount = list.size
+        val totalPages = if (totalCount == 0) 0 else ceil(totalCount.toDouble() / pageSize.toDouble()).toInt()
+        val startIndex = (page - 1) * pageSize
+        val items = if (startIndex >= totalCount) emptyList() else list.drop(n = startIndex).take(n = pageSize)
+        return DrugListResponse(
+            items = items,
+            page = page,
+            pageSize = pageSize,
+            totalPages = totalPages,
+            totalCount = totalCount,
+        )
+    }
+
+    override val scenarios: Map<String, DrugListResponse> = summariesByScenario.keys.associateWith { scenario ->
+        resolve(scenario = scenario, page = 1, pageSize = DEFAULT_PAGE_SIZE)
+    }
 
     override val scenarioTitles: Map<String, String> = mapOf(
         "default" to "デフォルト (120件)",
@@ -53,5 +80,10 @@ class DrugListFixtures(
     )
 
     override fun describeFixture(fixture: DrugListResponse): String =
-        "items=${fixture.items.size}"
+        "items=${fixture.items.size} of ${fixture.totalCount}"
+
+    companion object {
+        const val DEFAULT_PAGE_SIZE: Int = 20
+        const val MAX_PAGE_SIZE: Int = 100
+    }
 }
