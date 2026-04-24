@@ -71,6 +71,29 @@ class CrossReferenceInitCheckTest {
         }
     }
 
+    @Test
+    fun `run throws IllegalStateException on disease to disease dangling reference`() {
+        val diseases = generateAllDiseases()
+        val drugs = generateAllDrugs(diseases = diseases)
+        val danglingDisease = diseases.first().copy(relatedDiseaseIds = listOf(DANGLING_DISEASE_ID))
+        val diseasesWithDangling = listOf(danglingDisease) + diseases.drop(1)
+
+        val error =
+            assertFailsWith<IllegalStateException> {
+                CrossReferenceInitCheck.run(
+                    drugs = drugs,
+                    diseases = diseasesWithDangling,
+                )
+            }
+        val message = error.message.orEmpty()
+        check(DANGLING_DISEASE_ID in message) {
+            "Expected exception message to contain dangling target id $DANGLING_DISEASE_ID, got: $message"
+        }
+        check(danglingDisease.id in message) {
+            "Expected exception message to contain source id ${danglingDisease.id}, got: $message"
+        }
+    }
+
     private companion object {
         const val DANGLING_DISEASE_ID = "disease_9999"
         const val DANGLING_DRUG_ID = "drug_9999"
