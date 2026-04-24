@@ -5,12 +5,15 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.validation.
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.DiseaseListResponse
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.DiseaseSummary
+import kotlin.math.ceil
 
 /**
  * `/diseases` 一覧エンドポイント向け FixtureProvider。
  *
- * - `default` シナリオは DI 経由で注入された 80 件の Disease を envelope `DiseaseListResponse` に包む。
- * - `empty` シナリオは空配列 envelope を返し、UI の空状態回帰を検証できる。
+ * - `default` シナリオは DI 経由で注入された 80 件の Disease を `DEFAULT_PAGE_SIZE` (=20) で
+ *   ページングした envelope `DiseaseListResponse` を返す。
+ * - `empty` シナリオは `items` が 0 件、`totalCount` / `totalPages` も 0 の envelope を返し、
+ *   UI の空状態回帰を検証できる。
  *
  * 起動時に `DiseaseFixtureValidator` で fixture の整合性を fail-fast 検証する。validator が violation を
  * 検出した場合は起動をブロックし、CI で早期に気付ける。
@@ -41,10 +44,36 @@ class DiseaseListFixtures(
         )
     }
 
-    override val scenarios: Map<String, DiseaseListResponse> = mapOf(
-        "default" to DiseaseListResponse(items = defaultSummaries),
-        "empty" to DiseaseListResponse(items = emptyList()),
+    /**
+     * シナリオ別の `DiseaseSummary` 全件。ページング (`resolve`) の元データ。
+     */
+    val summariesByScenario: Map<String, List<DiseaseSummary>> = mapOf(
+        "default" to defaultSummaries,
+        "empty" to emptyList(),
     )
+
+    /**
+     * 指定シナリオを `page` / `pageSize` でスライスした `DiseaseListResponse` を返す。
+     * `/diseases` ハンドラ (Phase 9-4b) と OpenAPI 例示 (`scenarios`) で共有される。
+     */
+    fun resolve(scenario: String, page: Int, pageSize: Int): DiseaseListResponse {
+        val list = summariesByScenario[scenario] ?: summariesByScenario.values.first()
+        val totalCount = list.size
+        val totalPages = if (totalCount == 0) 0 else ceil(totalCount.toDouble() / pageSize.toDouble()).toInt()
+        val startIndex = (page - 1) * pageSize
+        val items = if (startIndex >= totalCount) emptyList() else list.drop(n = startIndex).take(n = pageSize)
+        return DiseaseListResponse(
+            items = items,
+            page = page,
+            pageSize = pageSize,
+            totalPages = totalPages,
+            totalCount = totalCount,
+        )
+    }
+
+    override val scenarios: Map<String, DiseaseListResponse> = summariesByScenario.keys.associateWith { scenario ->
+        resolve(scenario = scenario, page = 1, pageSize = DEFAULT_PAGE_SIZE)
+    }
 
     override val scenarioTitles: Map<String, String> = mapOf(
         "default" to "デフォルト (80件)",
@@ -52,5 +81,10 @@ class DiseaseListFixtures(
     )
 
     override fun describeFixture(fixture: DiseaseListResponse): String =
-        "items=${fixture.items.size}"
+        "items=${fixture.items.size} of ${fixture.totalCount}"
+
+    companion object {
+        const val DEFAULT_PAGE_SIZE: Int = 20
+        const val MAX_PAGE_SIZE: Int = 100
+    }
 }

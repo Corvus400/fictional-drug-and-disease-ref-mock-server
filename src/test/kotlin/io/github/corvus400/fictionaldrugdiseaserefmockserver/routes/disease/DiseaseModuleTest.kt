@@ -49,7 +49,7 @@ class DiseaseModuleTest {
     }
 
     @Test
-    fun `GET diseases default scenario returns envelope with 80 items each having DiseaseSummary 5 fields`() =
+    fun `GET diseases default scenario first page exposes 5 DiseaseSummary fields and total_count 80`() =
         testApplication {
             application { module() }
 
@@ -59,10 +59,14 @@ class DiseaseModuleTest {
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
             val items = body["items"]?.jsonArray
             assertNotNull(items, "response body must have an items array")
+            assertTrue(
+                items.isNotEmpty(),
+                "default scenario first page must expose non-empty items array",
+            )
             assertEquals(
                 expected = 80,
-                actual = items.size,
-                message = "default scenario must expose envelope with items.size == 80",
+                actual = body["total_count"]?.jsonPrimitive?.content?.toInt(),
+                message = "default scenario envelope must surface total_count == 80 regardless of page size",
             )
             val firstItemKeys = items.first().jsonObject.keys
             assertEquals(
