@@ -7,6 +7,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.blu
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.DiseaseGenerator
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.DiseasePlaceholderDictionary
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.DrugFixtureProvider
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.DrugListFixtures
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.blueprint.DrugBlueprintFactory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.DrugGenerator
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.DrugPlaceholderDictionary
@@ -35,10 +36,12 @@ fun Application.configureDependencies() {
         DrugGenerator(adapter = adapter, placeholderDictionary = placeholderDictionary)
             .generate(blueprints = DrugBlueprintFactory.build())
     val drugProvider = DrugFixtureProvider(all = drugs)
+    val drugListFixtures = DrugListFixtures(drugs = drugs)
     dependencies {
         provide<MockServerConfig> { config }
         provide<ScenarioManager> { ScenarioManager(config.defaultScenario) }
         provide<DrugFixtureProvider> { drugProvider }
+        provide<DrugListFixtures> { drugListFixtures }
         provide<DiseaseFixtureProvider> { diseaseProvider }
     }
 }
