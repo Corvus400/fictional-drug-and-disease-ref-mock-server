@@ -51,6 +51,38 @@ class DiseaseModuleFilterTest {
         )
     }
 
+    @Test
+    fun `GET diseases with icd10_chapter=II returns items all having icd10_chapter==II`() = testApplication {
+        application { module() }
+
+        val response = client.get(urlString = "/diseases?icd10_chapter=II")
+
+        assertEquals(expected = HttpStatusCode.OK, actual = response.status)
+        val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
+        val items = body["items"]?.jsonArray
+        assertNotNull(actual = items, message = "response body must have an items array")
+        assertTrue(
+            actual = items.isNotEmpty(),
+            message = "icd10_chapter=II must return a non-empty items array " +
+                "(fixture distribution for CHAPTER_II is 6)",
+        )
+        val expectedSerialName = Icd10Chapter.CHAPTER_II.declaredSerialName()
+        items.forEachIndexed { index, item ->
+            assertEquals(
+                expected = expectedSerialName,
+                actual = item.jsonObject["icd10_chapter"]?.jsonPrimitive?.content,
+                message = "items[$index].icd10_chapter must equal CHAPTER_II serialName when " +
+                    "query=icd10_chapter=II (item=${item.jsonObject})",
+            )
+        }
+        val totalCount = body["total_count"]?.jsonPrimitive?.content?.toIntOrNull()
+        assertEquals(
+            expected = 6,
+            actual = totalCount,
+            message = "icd10_chapter=II total_count must equal the fixture distribution for CHAPTER_II (= 6)",
+        )
+    }
+
     private fun Icd10Chapter.declaredSerialName(): String =
         Icd10Chapter.serializer().descriptor.getElementName(index = ordinal)
 }
