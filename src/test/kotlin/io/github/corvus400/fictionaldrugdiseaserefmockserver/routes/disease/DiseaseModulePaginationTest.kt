@@ -45,4 +45,28 @@ class DiseaseModulePaginationTest {
                 message = "total_count must be 80 for default disease scenario",
             )
         }
+
+    @Test
+    fun `GET diseases with page 4 page_size 20 returns last page with 20 items and page 4`() =
+        testApplication {
+            application { module() }
+
+            val response = client.get("/diseases?page=4&page_size=20")
+
+            assertEquals(HttpStatusCode.OK, response.status)
+            val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
+            val items = body["items"]?.jsonArray
+            assertNotNull(items, "response body must have an items array")
+            assertEquals(
+                expected = 20,
+                actual = items.size,
+                message = "page=4&page_size=20 must still expose 20 items (last page exactly fills page_size)",
+            )
+            val page = body["page"]?.jsonPrimitive?.content?.toIntOrNull()
+            assertEquals(
+                expected = 4,
+                actual = page,
+                message = "page echo must reflect the requested page number",
+            )
+        }
 }
