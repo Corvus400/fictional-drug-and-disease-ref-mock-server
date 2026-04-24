@@ -81,4 +81,27 @@ class DrugModuleDetailTest {
                 message = "/drugs/{id} must honor Admin API delayMs=500 (observed=${elapsed.inWholeMilliseconds}ms)",
             )
         }
+
+    @Test
+    fun `POST admin configs drugDetail statusCode 500 flips GET drugs drug_0001 to 500 Internal Server Error`() =
+        testApplication {
+            application { module() }
+
+            val configureResponse = client.post("/__admin/configs/drugDetail") {
+                contentType(ContentType.Application.Json)
+                setBody("""{"state":"default","status_code":500}""")
+            }
+            assertEquals(
+                expected = HttpStatusCode.OK,
+                actual = configureResponse.status,
+                message = "Admin API must accept drugDetail statusCode override",
+            )
+
+            val response = client.get("/drugs/drug_0001")
+            assertEquals(
+                expected = HttpStatusCode.InternalServerError,
+                actual = response.status,
+                message = "statusCode=500 override must flip GET /drugs/{id} to 500 Internal Server Error",
+            )
+        }
 }
