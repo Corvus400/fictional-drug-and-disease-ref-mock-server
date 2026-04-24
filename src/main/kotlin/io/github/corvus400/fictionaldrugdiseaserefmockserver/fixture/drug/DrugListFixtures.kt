@@ -34,6 +34,15 @@ class DrugListFixtures(
 
     private val summaries: List<DrugSummary> = drugs.map { drug -> drug.toSummary() }
 
+    /**
+     * `/drugs/{id}` 詳細用の id → Drug 参照テーブル。
+     *
+     * Phase 9-5a / 9-6a で `DrugListFixtures` 経由の詳細解決に切り替える際に利用する
+     * (Issue #54)。Red #2 を見せるための Fake it seam として空 Map で初期化している。
+     * Green #2 で `drugs.associateBy { it.id }` に差し替える。
+     */
+    val allDrugsById: Map<String, Drug> = emptyMap()
+
     override val scenarios: Map<String, DrugListResponse> = mapOf(
         "default" to DrugListResponse(items = summaries),
         "empty" to DrugListResponse(items = emptyList()),
