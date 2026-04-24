@@ -12,4 +12,5 @@ data class DiseaseSummary(
     val icd10Chapter: Icd10Chapter,
     val medicalDepartment: List<MedicalDepartment>,
     val chronicity: Chronicity,
+    val infectious: Boolean,
 )

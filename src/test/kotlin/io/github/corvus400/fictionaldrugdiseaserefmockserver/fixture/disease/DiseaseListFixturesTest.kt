@@ -111,6 +111,7 @@ class DiseaseListFixturesTest {
             icd10Chapter = icd10Chapter,
             medicalDepartment = medicalDepartment,
             chronicity = chronicity,
+            infectious = infectious,
         )
     }
 }
