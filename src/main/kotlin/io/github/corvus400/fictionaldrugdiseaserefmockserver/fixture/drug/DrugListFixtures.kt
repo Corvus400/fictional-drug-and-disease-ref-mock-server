@@ -56,13 +56,28 @@ class DrugListFixtures(
     /**
      * 指定シナリオを `page` / `pageSize` でスライスした `DrugListResponse` を返す。
      * `/drugs` ハンドラ (Phase 9-4a) と OpenAPI 例示 (`scenarios`) で共有される。
+     *
+     * `atcPrefix` を非 null で渡すと、pagination 前に `Drug.atcCode.startsWith(atcPrefix)` で
+     * 絞り込む (Phase 9-7a)。`null` の場合は従来通り全件を対象とする。
      */
-    fun resolve(scenario: String, page: Int, pageSize: Int): DrugListResponse {
+    fun resolve(
+        scenario: String,
+        page: Int,
+        pageSize: Int,
+        atcPrefix: String? = null,
+    ): DrugListResponse {
         val list = summariesByScenario[scenario] ?: summariesByScenario.values.first()
-        val totalCount = list.size
+        val filtered = if (atcPrefix == null) {
+            list
+        } else {
+            list.filter { summary ->
+                allDrugsById[summary.id]?.atcCode?.startsWith(prefix = atcPrefix) == true
+            }
+        }
+        val totalCount = filtered.size
         val totalPages = if (totalCount == 0) 0 else ceil(totalCount.toDouble() / pageSize.toDouble()).toInt()
         val startIndex = (page - 1) * pageSize
-        val items = if (startIndex >= totalCount) emptyList() else list.drop(n = startIndex).take(n = pageSize)
+        val items = if (startIndex >= totalCount) emptyList() else filtered.drop(n = startIndex).take(n = pageSize)
         return DrugListResponse(
             items = items,
             page = page,
