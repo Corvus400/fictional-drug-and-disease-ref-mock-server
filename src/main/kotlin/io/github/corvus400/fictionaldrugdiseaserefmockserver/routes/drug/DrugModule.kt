@@ -114,8 +114,10 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
         ) {
             handle {
                 val page = call.request.queryParameters["page"]?.toIntOrNull() ?: 1
-                val pageSize = call.request.queryParameters["page_size"]?.toIntOrNull()
-                    ?: DrugListFixtures.DEFAULT_PAGE_SIZE
+                val pageSize = (
+                    call.request.queryParameters["page_size"]?.toIntOrNull()
+                        ?: DrugListFixtures.DEFAULT_PAGE_SIZE
+                    ).coerceAtMost(maximumValue = DrugListFixtures.MAX_PAGE_SIZE)
                 val resolved = call.resolveScenarioWithOverride(
                     scenarioManager = scenarioManager,
                     endpointName = drugListMetadata.endpointName,
