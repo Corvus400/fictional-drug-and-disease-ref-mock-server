@@ -101,6 +101,13 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
                 default = "default",
                 fixtureProvider = { _ -> drug },
             )
+            if (resolved.status == HttpStatusCode.NotFound) {
+                call.respond(
+                    status = HttpStatusCode.NotFound,
+                    message = ErrorResponse(code = "NOT_FOUND", message = "Drug not found: $id"),
+                )
+                return@get
+            }
             call.respondWithScenario(resolved = resolved)
         }
     }
