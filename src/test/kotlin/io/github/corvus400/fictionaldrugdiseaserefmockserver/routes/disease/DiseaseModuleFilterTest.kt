@@ -1,5 +1,6 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.disease
 
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Chronicity
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.MedicalDepartment
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.module
@@ -119,6 +120,38 @@ class DiseaseModuleFilterTest {
                 )
             }
         }
+
+    @Test
+    fun `GET diseases with chronicity=ACUTE returns items whose chronicity == value`() = testApplication {
+        application { module() }
+
+        val expectedSerialName = Chronicity.ACUTE.declaredSerialName()
+        val encodedChronicity = expectedSerialName.encodeURLParameter()
+        val response = client.get(
+            urlString = "/diseases?chronicity=$encodedChronicity&page_size=100",
+        )
+
+        assertEquals(expected = HttpStatusCode.OK, actual = response.status)
+        val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
+        val items = body["items"]?.jsonArray
+        assertNotNull(actual = items, message = "response body must have an items array")
+        assertTrue(
+            actual = items.isNotEmpty(),
+            message = "chronicity=$expectedSerialName must return a non-empty items array " +
+                "(ACUTE is the chronicity for CHAPTER_I and several default chapters)",
+        )
+        items.forEachIndexed { index, item ->
+            assertEquals(
+                expected = expectedSerialName,
+                actual = item.jsonObject["chronicity"]?.jsonPrimitive?.content,
+                message = "items[$index].chronicity must equal '$expectedSerialName' when " +
+                    "query=chronicity=$expectedSerialName (item=${item.jsonObject})",
+            )
+        }
+    }
+
+    private fun Chronicity.declaredSerialName(): String =
+        Chronicity.serializer().descriptor.getElementName(index = ordinal)
 
     private fun Icd10Chapter.declaredSerialName(): String =
         Icd10Chapter.serializer().descriptor.getElementName(index = ordinal)
