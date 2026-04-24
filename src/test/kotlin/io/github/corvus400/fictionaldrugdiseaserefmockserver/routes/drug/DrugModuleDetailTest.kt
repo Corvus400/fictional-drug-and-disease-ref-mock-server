@@ -128,4 +128,41 @@ class DrugModuleDetailTest {
             message = "404 body.message must embed the requested id for debuggability",
         )
     }
+
+    @Test
+    fun `POST admin configs drugDetail status_code 404 swaps GET drugs drug_0001 body to ErrorResponse NOT_FOUND`() =
+        testApplication {
+            application { module() }
+
+            val configureResponse = client.post("/__admin/configs/drugDetail") {
+                contentType(ContentType.Application.Json)
+                setBody("""{"state":"default","status_code":404}""")
+            }
+            assertEquals(
+                expected = HttpStatusCode.OK,
+                actual = configureResponse.status,
+                message = "Admin API must accept drugDetail status_code=404 override",
+            )
+
+            val response = client.get("/drugs/drug_0001")
+
+            assertEquals(
+                expected = HttpStatusCode.NotFound,
+                actual = response.status,
+                message = "status_code=404 override must flip GET /drugs/drug_0001 to 404 even for an existing id",
+            )
+            val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
+            assertEquals(
+                expected = "NOT_FOUND",
+                actual = body["code"]?.jsonPrimitive?.content,
+                message = "404 body must swap to ErrorResponse(code=NOT_FOUND); Drug body leaking through violates the " +
+                    "error contract (#52). got keys=${body.keys}",
+            )
+            assertEquals(
+                expected = "Drug not found: drug_0001",
+                actual = body["message"]?.jsonPrimitive?.content,
+                message = "404 body.message must embed the requested id so clients can distinguish override-driven 404 " +
+                    "from hard id-miss 404 at the message level",
+            )
+        }
 }
