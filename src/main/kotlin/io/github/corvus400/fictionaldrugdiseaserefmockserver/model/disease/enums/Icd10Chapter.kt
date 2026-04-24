@@ -70,4 +70,19 @@ enum class Icd10Chapter {
 
     @SerialName("特殊目的用コード")
     CHAPTER_XXII,
+    ;
+
+    /**
+     * `/diseases?icd10_chapter=<key>` クエリフィルタで用いるローマ数字キー (`I`, `II`, ..., `XXII`)。
+     * 列挙子名 (`CHAPTER_XXX`) から接頭辞を落とすだけなので、新しい章を追加したときに同期漏れが起きない。
+     */
+    val chapterKey: String
+        get() = name.removePrefix(prefix = "CHAPTER_")
+
+    companion object {
+        /**
+         * `chapterKey` (ローマ数字) から列挙子を逆引きする。未定義キーは `null`。
+         */
+        fun fromChapterKey(key: String): Icd10Chapter? = entries.firstOrNull { it.chapterKey == key }
+    }
 }
