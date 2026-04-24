@@ -2,15 +2,19 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.disease
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog.EndpointEntry
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog.EndpointMetadata
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog.EndpointRegistry
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog.ScenarioMeta
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog.toEntry
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.DiseaseFixtureProvider
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.DiseaseListFixtures
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.ApiTag
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.documentIdDetailEndpoint
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.scenarioRoute
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.documentScenarioEndpoint
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.resolveScenarioWithOverride
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.respondWithScenario
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.scenario.ScenarioManager
 import io.github.smiley4.ktoropenapi.get
+import io.github.smiley4.ktoropenapi.route
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
@@ -55,6 +59,10 @@ val diseaseCatalogEntries: List<EndpointEntry> = listOf(
     diseaseListMetadata.toEntry(scenarios = diseaseListScenarios),
 )
 
+private const val DISEASE_PAGE_MIN = 1
+private const val DISEASE_PAGE_SIZE_MAX = 100
+private const val DISEASE_LIST_DEFAULT_SCENARIO = "default"
+
 fun Application.diseaseModule(scenarioManager: ScenarioManager) {
     val provider: DiseaseFixtureProvider by dependencies
     val diseaseListFixtures: DiseaseListFixtures by dependencies
@@ -76,12 +84,67 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
             }
         }
     }
-    scenarioRoute(
-        metadata = diseaseListMetadata,
-        defaultScenario = "default",
-        fixtureProvider = diseaseListFixtures,
-        scenarioManager = scenarioManager,
-        endpointDescription = "起動時に生成された疾患 Fixture 一覧を envelope 形式で返す。" +
-            "X-Mock-Scenario ヘッダで `default` (80 件) / `empty` (0 件) を切り替え可能。",
+
+    EndpointRegistry.register(
+        diseaseListMetadata.toEntry(scenarios = diseaseListFixtures.scenarioMetas.values.toList()),
     )
+    routing {
+        route(
+            path = diseaseListMetadata.path,
+            method = diseaseListMetadata.method,
+            builder = {
+                documentScenarioEndpoint(
+                    summary = diseaseListMetadata.summary,
+                    endpointDescription = "起動時に生成された疾患 Fixture 一覧を envelope 形式で返す。" +
+                        "X-Mock-Scenario ヘッダで `default` (80 件) / `empty` (0 件) を切り替え可能。" +
+                        "`page` と `page_size` 両方指定時のみページング結果を返す (page_size は 1..100 にクランプ)。",
+                    tag = diseaseListMetadata.tag,
+                    fixtureProvider = diseaseListFixtures,
+                )
+            },
+        ) {
+            handle {
+                val resolved = call.resolveScenarioWithOverride(
+                    scenarioManager = scenarioManager,
+                    endpointName = diseaseListMetadata.endpointName,
+                    default = DISEASE_LIST_DEFAULT_SCENARIO,
+                    fixtureProvider = diseaseListFixtures::getByScenario,
+                )
+                val pageParam = call.request.queryParameters["page"]?.toIntOrNull()
+                val pageSizeParam = call.request.queryParameters["page_size"]?.toIntOrNull()
+                if (pageParam == null || pageSizeParam == null) {
+                    call.respondWithScenario(resolved)
+                } else {
+                    val envelope = resolved.fixture
+                    val safePage = pageParam.coerceAtLeast(minimumValue = DISEASE_PAGE_MIN)
+                    val safePageSize = pageSizeParam.coerceIn(
+                        minimumValue = DISEASE_PAGE_MIN,
+                        maximumValue = DISEASE_PAGE_SIZE_MAX,
+                    )
+                    val totalCount = envelope.items.size
+                    val totalPages = if (totalCount == 0) {
+                        0
+                    } else {
+                        (totalCount + safePageSize - 1) / safePageSize
+                    }
+                    val startIndex = (safePage - 1) * safePageSize
+                    val endIndex = (startIndex + safePageSize).coerceAtMost(maximumValue = totalCount)
+                    val slicedItems = if (startIndex < totalCount) {
+                        envelope.items.subList(fromIndex = startIndex, toIndex = endIndex)
+                    } else {
+                        emptyList()
+                    }
+                    call.respond(
+                        message = envelope.copy(
+                            items = slicedItems,
+                            page = safePage,
+                            pageSize = safePageSize,
+                            totalPages = totalPages,
+                            totalCount = totalCount,
+                        ),
+                    )
+                }
+            }
+        }
+    }
 }
