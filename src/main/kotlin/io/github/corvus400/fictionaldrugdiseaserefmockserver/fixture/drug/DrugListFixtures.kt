@@ -5,7 +5,9 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.validation.
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.Drug
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.DrugListResponse
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.DrugSummary
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.toSummary
+import kotlinx.serialization.serializer
 import kotlin.math.ceil
 
 /**
@@ -58,16 +60,24 @@ class DrugListFixtures(
      * `/drugs` ハンドラ (Phase 9-4a) と OpenAPI 例示 (`scenarios`) で共有される。
      *
      * `atcPrefix` を非 null で渡すと、pagination 前に `Drug.atcCode.startsWith(atcPrefix)` で
-     * 絞り込む (Phase 9-7a)。`null` の場合は従来通り全件を対象とする。
+     * 絞り込む (Phase 9-7a)。`regulatoryClassSerialName` を非 null で渡すと、
+     * `Drug.regulatoryClass` リストが指定された `@SerialName` 値 (例: `処方箋医薬品`) を
+     * 含むものに絞り込む (Phase 9-8a)。両者指定時は AND 結合。
+     * いずれも `null` の場合は従来通り全件を対象とする。
      */
     fun resolve(
         scenario: String,
         page: Int,
         pageSize: Int,
         atcPrefix: String? = null,
+        regulatoryClassSerialName: String? = null,
     ): DrugListResponse {
         val list = summariesByScenario[scenario] ?: summariesByScenario.values.first()
-        val filtered = applyFilters(summaries = list, atcPrefix = atcPrefix)
+        val filtered = applyFilters(
+            summaries = list,
+            atcPrefix = atcPrefix,
+            regulatoryClassSerialName = regulatoryClassSerialName,
+        )
         val totalCount = filtered.size
         val totalPages = if (totalCount == 0) 0 else ceil(totalCount.toDouble() / pageSize.toDouble()).toInt()
         val startIndex = (page - 1) * pageSize
@@ -84,19 +94,31 @@ class DrugListFixtures(
     /**
      * `/drugs` 一覧クエリフィルタを pagination 前に適用する。
      *
-     * Phase 9-7a 時点では `atcPrefix` のみ対応。後続 Phase で `regulatoryClass` / `route` /
-     * `dosageForm` 等のフィルタを追加する際はここにパラメータを足していく。
+     * 複数フィルタが指定された場合は AND 結合 (filter chain) で順次絞り込む。
+     * 後続 Phase で `route` / `dosageForm` 等のフィルタを追加する際はここにパラメータを足していく。
      */
     private fun applyFilters(
         summaries: List<DrugSummary>,
         atcPrefix: String?,
+        regulatoryClassSerialName: String?,
     ): List<DrugSummary> {
-        if (atcPrefix == null) {
-            return summaries
+        var filtered: List<DrugSummary> = summaries
+        if (atcPrefix != null) {
+            filtered = filtered.filter { summary ->
+                allDrugsById[summary.id]?.atcCode?.startsWith(prefix = atcPrefix) == true
+            }
         }
-        return summaries.filter { summary ->
-            allDrugsById[summary.id]?.atcCode?.startsWith(prefix = atcPrefix) == true
+        if (regulatoryClassSerialName != null) {
+            val matched = regulatoryClassBySerialName[regulatoryClassSerialName]
+            filtered = if (matched == null) {
+                emptyList()
+            } else {
+                filtered.filter { summary ->
+                    allDrugsById[summary.id]?.regulatoryClass?.contains(element = matched) == true
+                }
+            }
         }
+        return filtered
     }
 
     override val scenarios: Map<String, DrugListResponse> = summariesByScenario.keys.associateWith { scenario ->
@@ -114,5 +136,20 @@ class DrugListFixtures(
     companion object {
         const val DEFAULT_PAGE_SIZE: Int = 20
         const val MAX_PAGE_SIZE: Int = 100
+
+        /**
+         * `RegulatoryClass` の `@SerialName` 値 → enum 定数の索引。
+         *
+         * `/drugs?regulatory_class=処方箋医薬品` のようにクエリで `@SerialName` 値が
+         * 渡される (Phase 9-8a)。`enumValues<RegulatoryClass>()` に対し
+         * `serializer().descriptor.getElementName(ordinal)` で `@SerialName` が
+         * 指定されていればその値、なければ enum 定数名を解決する。
+         */
+        private val regulatoryClassBySerialName: Map<String, RegulatoryClass> = run {
+            val descriptor = serializer<RegulatoryClass>().descriptor
+            enumValues<RegulatoryClass>().associateBy { value ->
+                descriptor.getElementName(value.ordinal)
+            }
+        }
     }
 }
