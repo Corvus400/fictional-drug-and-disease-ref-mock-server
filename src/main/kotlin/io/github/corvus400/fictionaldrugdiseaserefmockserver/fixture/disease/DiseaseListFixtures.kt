@@ -41,6 +41,7 @@ class DiseaseListFixtures(
             icd10Chapter = disease.icd10Chapter,
             medicalDepartment = disease.medicalDepartment,
             chronicity = disease.chronicity,
+            infectious = disease.infectious,
         )
     }
 

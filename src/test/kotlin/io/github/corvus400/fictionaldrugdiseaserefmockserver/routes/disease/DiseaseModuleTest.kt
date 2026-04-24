@@ -49,7 +49,7 @@ class DiseaseModuleTest {
     }
 
     @Test
-    fun `GET diseases default scenario first page exposes 5 DiseaseSummary fields and total_count 80`() =
+    fun `GET diseases default scenario first page exposes 6 DiseaseSummary fields and total_count 80`() =
         testApplication {
             application { module() }
 
@@ -70,9 +70,9 @@ class DiseaseModuleTest {
             )
             val firstItemKeys = items.first().jsonObject.keys
             assertEquals(
-                expected = setOf("id", "name", "icd10_chapter", "medical_department", "chronicity"),
+                expected = setOf("id", "name", "icd10_chapter", "medical_department", "chronicity", "infectious"),
                 actual = firstItemKeys,
-                message = "items[0] must expose DiseaseSummary 5 snake_case fields, got $firstItemKeys",
+                message = "items[0] must expose DiseaseSummary 6 snake_case fields, got $firstItemKeys",
             )
         }
 
