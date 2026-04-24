@@ -104,4 +104,28 @@ class DrugModuleDetailTest {
                 message = "statusCode=500 override must flip GET /drugs/{id} to 500 Internal Server Error",
             )
         }
+
+    @Test
+    fun `GET drugs drug_9999 unknown id returns 404 with ErrorResponse code NOT_FOUND`() = testApplication {
+        application { module() }
+
+        val response = client.get("/drugs/drug_9999")
+
+        assertEquals(
+            expected = HttpStatusCode.NotFound,
+            actual = response.status,
+            message = "GET /drugs/drug_9999 must return 404 when the id has no matching fixture",
+        )
+        val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
+        assertEquals(
+            expected = "NOT_FOUND",
+            actual = body["code"]?.jsonPrimitive?.content,
+            message = "404 body must be ErrorResponse with code=NOT_FOUND, got keys=${body.keys}",
+        )
+        assertEquals(
+            expected = "Drug not found: drug_9999",
+            actual = body["message"]?.jsonPrimitive?.content,
+            message = "404 body.message must embed the requested id for debuggability",
+        )
+    }
 }
