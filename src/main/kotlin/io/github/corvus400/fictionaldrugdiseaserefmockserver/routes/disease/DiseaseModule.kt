@@ -12,6 +12,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.ErrorR
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.DiseaseListResponse
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.DiseaseSummary
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.MedicalDepartment
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.ApiTag
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.documentIdDetailEndpoint
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.documentScenarioEndpoint
@@ -159,6 +160,8 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
                     ).coerceAtMost(maximumValue = DiseaseListFixtures.MAX_PAGE_SIZE)
                 val chapterFilter = call.request.queryParameters["icd10_chapter"]
                     ?.let { Icd10Chapter.fromChapterKey(key = it) }
+                val departmentFilter = call.request.queryParameters["department"]
+                    ?.let { MedicalDepartment.fromSerialName(key = it) }
                 val resolved = call.resolveScenarioWithOverride(
                     scenarioManager = scenarioManager,
                     endpointName = diseaseListMetadata.endpointName,
@@ -168,6 +171,7 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
                         val filtered = applyListFilters(
                             summaries = summaries,
                             chapterFilter = chapterFilter,
+                            departmentFilter = departmentFilter,
                         )
                         paginate(
                             summaries = filtered,
@@ -185,17 +189,20 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
 /**
  * `/diseases` のクエリ由来フィルタを `summaries` に適用する。
  *
- * 現状は `icd10_chapter` のみだが、Phase 9-7c 以降で `medical_department` /
- * `chronicity` / `infectious` を同じチェーンに足していく想定。引数の null は「このフィルタを
- * 適用しない」を表す。
+ * 現状は `icd10_chapter` / `department` を受け付け、Phase 9-8c 以降で `chronicity` /
+ * `infectious` を同じチェーンに足していく想定。引数の null は「このフィルタを適用しない」を表す。
  */
 private fun applyListFilters(
     summaries: List<DiseaseSummary>,
     chapterFilter: Icd10Chapter?,
+    departmentFilter: MedicalDepartment?,
 ): List<DiseaseSummary> {
     var result = summaries
     if (chapterFilter != null) {
         result = result.filter { it.icd10Chapter == chapterFilter }
+    }
+    if (departmentFilter != null) {
+        result = result.filter { summary -> summary.medicalDepartment.any { it == departmentFilter } }
     }
     return result
 }
