@@ -105,4 +105,34 @@ class DiseaseModulePaginationTest {
                 message = "total_count must be 80 regardless of page_size",
             )
         }
+
+    @Test
+    fun `GET diseases page_size 1000 is clamped to MAX_PAGE_SIZE 100 and total_pages becomes 1`() =
+        testApplication {
+            application { module() }
+
+            val response = client.get("/diseases?page_size=1000")
+
+            assertEquals(HttpStatusCode.OK, response.status)
+            val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
+            val items = body["items"]?.jsonArray
+            assertNotNull(items, "response body must have an items array")
+            assertEquals(
+                expected = 80,
+                actual = items.size,
+                message = "page_size=1000 is clamped to 100 so items must contain all 80 diseases in one page",
+            )
+            val pageSize = body["page_size"]?.jsonPrimitive?.content?.toIntOrNull()
+            assertEquals(
+                expected = 100,
+                actual = pageSize,
+                message = "page_size in envelope must reflect the clamped value 100 (MAX_PAGE_SIZE)",
+            )
+            val totalPages = body["total_pages"]?.jsonPrimitive?.content?.toIntOrNull()
+            assertEquals(
+                expected = 1,
+                actual = totalPages,
+                message = "total_pages must be 1 after clamping (ceil(80/100))",
+            )
+        }
 }
