@@ -163,6 +163,7 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
                 val departmentFilter = call.request.queryParameters["department"]
                     ?.let { MedicalDepartment.fromSerialName(key = it) }
                 val chronicityFilter = call.request.queryParameters["chronicity"]
+                val infectiousFilter = call.request.queryParameters["infectious"]?.toBooleanStrictOrNull()
                 val resolved = call.resolveScenarioWithOverride(
                     scenarioManager = scenarioManager,
                     endpointName = diseaseListMetadata.endpointName,
@@ -174,6 +175,7 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
                             chapterFilter = chapterFilter,
                             departmentFilter = departmentFilter,
                             chronicitySerialName = chronicityFilter,
+                            infectiousFilter = infectiousFilter,
                         )
                         paginate(
                             summaries = filtered,
@@ -191,16 +193,18 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
 /**
  * `/diseases` のクエリ由来フィルタを `summaries` に適用する。
  *
- * `icd10_chapter` / `department` / `chronicity` を受け付け、Phase 9-9c 以降で `infectious`
- * を同じチェーンに足していく想定。引数の null は「このフィルタを適用しない」を表す。
- * `chronicitySerialName` は `Chronicity.serialName` と生文字列比較するため、未知キーは
- * `null` ではなくヒット 0 件を返す (fromChapterKey / fromSerialName とは非対称)。
+ * `icd10_chapter` / `department` / `chronicity` / `infectious` を AND 合成する。引数の null は
+ * 「このフィルタを適用しない」を表す。`chronicitySerialName` は `Chronicity.serialName` と生文字列
+ * 比較するため、未知キーは `null` ではなくヒット 0 件を返す (fromChapterKey / fromSerialName とは
+ * 非対称)。`infectiousFilter` は `toBooleanStrictOrNull()` で parse するため `"true"`/`"false"` 以外
+ * は `null` に落ちて無視する。
  */
 private fun applyListFilters(
     summaries: List<DiseaseSummary>,
     chapterFilter: Icd10Chapter?,
     departmentFilter: MedicalDepartment?,
     chronicitySerialName: String?,
+    infectiousFilter: Boolean?,
 ): List<DiseaseSummary> {
     var result = summaries
     if (chapterFilter != null) {
@@ -211,6 +215,9 @@ private fun applyListFilters(
     }
     if (chronicitySerialName != null) {
         result = result.filter { it.chronicity.serialName == chronicitySerialName }
+    }
+    if (infectiousFilter != null) {
+        result = result.filter { it.infectious == infectiousFilter }
     }
     return result
 }

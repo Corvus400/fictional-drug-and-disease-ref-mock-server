@@ -13,20 +13,21 @@ import kotlin.test.assertTrue
 
 class DiseaseSummarySerializationTest {
     @Test
-    fun `DiseaseSummary serializes with exactly 5 snake_case fields`() {
+    fun `DiseaseSummary serializes with exactly 6 snake_case fields`() {
         val summary = DiseaseSummary(
             id = "disease_0001",
             name = "テスト疾患",
             icd10Chapter = Icd10Chapter.CHAPTER_IV,
             medicalDepartment = listOf(MedicalDepartment.ENDOCRINOLOGY),
             chronicity = Chronicity.CHRONIC,
+            infectious = false,
         )
 
         val jsonObject = Json.parseToJsonElement(AppJson.encodeToString(summary)).jsonObject
 
-        assertEquals(5, jsonObject.size)
+        assertEquals(6, jsonObject.size)
         assertEquals(
-            setOf("id", "name", "icd10_chapter", "medical_department", "chronicity"),
+            setOf("id", "name", "icd10_chapter", "medical_department", "chronicity", "infectious"),
             jsonObject.keys,
         )
         val keyCasingViolations = jsonObject.keys.filter { key ->
@@ -41,5 +42,6 @@ class DiseaseSummarySerializationTest {
         assertEquals("\"内分泌、栄養および代謝疾患\"", jsonObject["icd10_chapter"]?.toString())
         assertEquals("[\"内分泌代謝科\"]", jsonObject["medical_department"]?.toString())
         assertEquals("\"慢性\"", jsonObject["chronicity"]?.toString())
+        assertEquals("false", jsonObject["infectious"]?.toString())
     }
 }
