@@ -85,4 +85,39 @@ class DrugModuleFilterTest {
                 )
             }
         }
+
+    @Test
+    fun `GET drugs route= returns items whose routeOfAdministration serial name equals value`() = testApplication {
+        application { module() }
+
+        val response = client.get("/drugs?route=内服&page_size=100")
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
+        val totalCount = body["total_count"]?.jsonPrimitive?.content?.toInt()
+        assertNotNull(totalCount, "response must include total_count")
+        assertTrue(
+            actual = totalCount in 1 until 120,
+            message = "total_count=$totalCount must be 1..<120 for route=内服",
+        )
+        val items = body["items"]?.jsonArray
+        assertNotNull(items, "response must include items array")
+        assertTrue(
+            actual = items.isNotEmpty(),
+            message = "filtered items must be non-empty for route=内服",
+        )
+        items.forEach { item ->
+            val id = item.jsonObject["id"]?.jsonPrimitive?.content
+            assertNotNull(id, "item must expose id")
+            val detailResponse = client.get("/drugs/$id")
+            assertEquals(HttpStatusCode.OK, detailResponse.status, "detail GET must succeed for id=$id")
+            val detail = json.parseToJsonElement(string = detailResponse.bodyAsText()).jsonObject
+            val routeValue = detail["route_of_administration"]?.jsonPrimitive?.content
+            assertEquals(
+                expected = "内服",
+                actual = routeValue,
+                message = "item id=$id has route_of_administration=$routeValue; must be '内服' under route=内服 filter",
+            )
+        }
+    }
 }
