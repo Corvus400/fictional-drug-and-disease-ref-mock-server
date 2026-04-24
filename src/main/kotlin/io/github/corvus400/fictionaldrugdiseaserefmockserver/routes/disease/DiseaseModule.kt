@@ -162,6 +162,7 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
                     ?.let { Icd10Chapter.fromChapterKey(key = it) }
                 val departmentFilter = call.request.queryParameters["department"]
                     ?.let { MedicalDepartment.fromSerialName(key = it) }
+                val chronicityFilter = call.request.queryParameters["chronicity"]
                 val resolved = call.resolveScenarioWithOverride(
                     scenarioManager = scenarioManager,
                     endpointName = diseaseListMetadata.endpointName,
@@ -172,6 +173,7 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
                             summaries = summaries,
                             chapterFilter = chapterFilter,
                             departmentFilter = departmentFilter,
+                            chronicitySerialName = chronicityFilter,
                         )
                         paginate(
                             summaries = filtered,
@@ -189,13 +191,16 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
 /**
  * `/diseases` のクエリ由来フィルタを `summaries` に適用する。
  *
- * 現状は `icd10_chapter` / `department` を受け付け、Phase 9-8c 以降で `chronicity` /
- * `infectious` を同じチェーンに足していく想定。引数の null は「このフィルタを適用しない」を表す。
+ * `icd10_chapter` / `department` / `chronicity` を受け付け、Phase 9-9c 以降で `infectious`
+ * を同じチェーンに足していく想定。引数の null は「このフィルタを適用しない」を表す。
+ * `chronicitySerialName` は `Chronicity.serialName` と生文字列比較するため、未知キーは
+ * `null` ではなくヒット 0 件を返す (fromChapterKey / fromSerialName とは非対称)。
  */
 private fun applyListFilters(
     summaries: List<DiseaseSummary>,
     chapterFilter: Icd10Chapter?,
     departmentFilter: MedicalDepartment?,
+    chronicitySerialName: String?,
 ): List<DiseaseSummary> {
     var result = summaries
     if (chapterFilter != null) {
@@ -203,6 +208,9 @@ private fun applyListFilters(
     }
     if (departmentFilter != null) {
         result = result.filter { summary -> summary.medicalDepartment.any { it == departmentFilter } }
+    }
+    if (chronicitySerialName != null) {
+        result = result.filter { it.chronicity.serialName == chronicitySerialName }
     }
     return result
 }
