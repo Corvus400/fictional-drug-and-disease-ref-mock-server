@@ -26,15 +26,24 @@ class DiseaseListFixturesTest {
     }
 
     @Test
-    fun `default scenario wraps provided diseases in DiseaseListResponse envelope`() {
+    fun `default scenario exposes first page DEFAULT_PAGE_SIZE summaries with pagination envelope`() {
         val diseases = buildFreshGenerator().generate(blueprints = DiseaseBlueprintFactory.build())
 
         val fixtures = DiseaseListFixtures(diseases = diseases)
 
+        val expectedPageSize = DiseaseListFixtures.DEFAULT_PAGE_SIZE
+        val expectedItems = diseases.map { it.toSummary() }.take(n = expectedPageSize)
+        val expectedTotalPages = (diseases.size + expectedPageSize - 1) / expectedPageSize
         assertEquals(
-            expected = DiseaseListResponse(items = diseases.map { it.toSummary() }),
+            expected = DiseaseListResponse(
+                items = expectedItems,
+                page = 1,
+                pageSize = expectedPageSize,
+                totalPages = expectedTotalPages,
+                totalCount = diseases.size,
+            ),
             actual = fixtures.getByScenario(scenario = "default"),
-            message = "default scenario must wrap diseases in DiseaseListResponse items as DiseaseSummary",
+            message = "default scenario must expose first page with DEFAULT_PAGE_SIZE summaries",
         )
     }
 
@@ -45,21 +54,28 @@ class DiseaseListFixturesTest {
         val fixtures = DiseaseListFixtures(diseases = diseases)
 
         assertEquals(
-            expected = DiseaseListResponse(items = emptyList()),
+            expected = DiseaseListResponse(
+                items = emptyList(),
+                page = 1,
+                pageSize = DiseaseListFixtures.DEFAULT_PAGE_SIZE,
+                totalPages = 0,
+                totalCount = 0,
+            ),
             actual = fixtures.getByScenario(scenario = "empty"),
             message = "empty scenario must return envelope with 0 items",
         )
     }
 
     @Test
-    fun `describeFixture reports items size for catalog display`() {
+    fun `describeFixture reports items size of total for catalog display`() {
         val diseases = buildFreshGenerator().generate(blueprints = DiseaseBlueprintFactory.build())
         val fixtures = DiseaseListFixtures(diseases = diseases)
 
+        val firstPageSize = DiseaseListFixtures.DEFAULT_PAGE_SIZE.coerceAtMost(diseases.size)
         assertEquals(
-            expected = "items=${diseases.size}",
+            expected = "items=$firstPageSize of ${diseases.size}",
             actual = fixtures.describeFixture(fixture = fixtures.getByScenario(scenario = "default")),
-            message = "describeFixture must report the item count",
+            message = "describeFixture must report the first-page item count out of totalCount",
         )
     }
 
