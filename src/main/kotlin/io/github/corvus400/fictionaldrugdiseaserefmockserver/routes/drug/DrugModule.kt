@@ -8,6 +8,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog.toEntry
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.DrugDetailFixtures
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.DrugFixtureProvider
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.DrugListFixtures
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.ErrorResponse
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.ApiTag
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.documentIdDetailEndpoint
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.documentScenarioEndpoint
@@ -78,10 +79,20 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
                 exampleFixture = provider.all.first(),
             )
         }) {
-            val id = call.parameters["id"].orEmpty()
+            val id = call.parameters["id"]
+            if (id == null) {
+                call.respond(
+                    status = HttpStatusCode.BadRequest,
+                    message = ErrorResponse(code = "BAD_REQUEST", message = "id path parameter is required"),
+                )
+                return@get
+            }
             val drug = drugDetailFixtures.findById(id = id)
             if (drug == null) {
-                call.respond(status = HttpStatusCode.NotFound, message = mapOf("error" to "drug not found: $id"))
+                call.respond(
+                    status = HttpStatusCode.NotFound,
+                    message = ErrorResponse(code = "NOT_FOUND", message = "Drug not found: $id"),
+                )
                 return@get
             }
             val resolved = call.resolveScenarioWithOverride(
