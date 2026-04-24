@@ -49,21 +49,28 @@ class DiseaseModuleTest {
     }
 
     @Test
-    fun `GET diseases default scenario returns envelope with 80 items`() = testApplication {
-        application { module() }
+    fun `GET diseases default scenario returns envelope with 80 items each having DiseaseSummary 5 fields`() =
+        testApplication {
+            application { module() }
 
-        val response = client.get("/diseases")
+            val response = client.get("/diseases")
 
-        assertEquals(HttpStatusCode.OK, response.status)
-        val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
-        val items = body["items"]?.jsonArray
-        assertNotNull(items, "response body must have an items array")
-        assertEquals(
-            expected = 80,
-            actual = items.size,
-            message = "default scenario must expose envelope with items.size == 80",
-        )
-    }
+            assertEquals(HttpStatusCode.OK, response.status)
+            val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
+            val items = body["items"]?.jsonArray
+            assertNotNull(items, "response body must have an items array")
+            assertEquals(
+                expected = 80,
+                actual = items.size,
+                message = "default scenario must expose envelope with items.size == 80",
+            )
+            val firstItemKeys = items.first().jsonObject.keys
+            assertEquals(
+                expected = setOf("id", "name", "icd10_chapter", "medical_department", "chronicity"),
+                actual = firstItemKeys,
+                message = "items[0] must expose DiseaseSummary 5 snake_case fields, got $firstItemKeys",
+            )
+        }
 
     @Test
     fun `GET diseases with X-Mock-Scenario empty returns envelope with zero items`() = testApplication {

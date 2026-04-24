@@ -4,6 +4,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.FixtureProv
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.validation.DiseaseFixtureValidator
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.DiseaseListResponse
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.DiseaseSummary
 
 /**
  * `/diseases` 一覧エンドポイント向け FixtureProvider。
@@ -30,8 +31,18 @@ class DiseaseListFixtures(
         }
     }
 
+    private val defaultSummaries: List<DiseaseSummary> = diseases.map { disease ->
+        DiseaseSummary(
+            id = disease.id,
+            name = disease.name,
+            icd10Chapter = disease.icd10Chapter,
+            medicalDepartment = disease.medicalDepartment,
+            chronicity = disease.chronicity,
+        )
+    }
+
     override val scenarios: Map<String, DiseaseListResponse> = mapOf(
-        "default" to DiseaseListResponse(items = diseases),
+        "default" to DiseaseListResponse(items = defaultSummaries),
         "empty" to DiseaseListResponse(items = emptyList()),
     )
 

@@ -4,5 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class DiseaseListResponse(
-    val items: List<Disease>,
+    val items: List<DiseaseSummary>,
 )
