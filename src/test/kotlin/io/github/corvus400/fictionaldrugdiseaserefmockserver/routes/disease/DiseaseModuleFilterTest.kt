@@ -1,10 +1,12 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.disease
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.MedicalDepartment
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.module
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.encodeURLParameter
 import io.ktor.server.testing.testApplication
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray
@@ -83,6 +85,44 @@ class DiseaseModuleFilterTest {
         )
     }
 
+    @Test
+    fun `GET diseases with department=PSYCHIATRY returns items whose medicalDepartment contains PSYCHIATRY`() =
+        testApplication {
+            application { module() }
+
+            val expectedSerialName = MedicalDepartment.PSYCHIATRY.declaredSerialName()
+            val encodedDepartment = expectedSerialName.encodeURLParameter()
+            val response = client.get(
+                urlString = "/diseases?department=$encodedDepartment&page_size=100",
+            )
+
+            assertEquals(expected = HttpStatusCode.OK, actual = response.status)
+            val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
+            val items = body["items"]?.jsonArray
+            assertNotNull(actual = items, message = "response body must have an items array")
+            assertTrue(
+                actual = items.isNotEmpty(),
+                message = "department=$expectedSerialName must return a non-empty items array " +
+                    "(PSYCHIATRY is the primary department for CHAPTER_V)",
+            )
+            items.forEachIndexed { index, item ->
+                val departments = item.jsonObject["medical_department"]?.jsonArray
+                assertNotNull(
+                    actual = departments,
+                    message = "items[$index].medical_department must exist (item=${item.jsonObject})",
+                )
+                val serialNames = departments.map { it.jsonPrimitive.content }
+                assertTrue(
+                    actual = serialNames.contains(element = expectedSerialName),
+                    message = "items[$index].medical_department must contain '$expectedSerialName' when " +
+                        "query=department=$expectedSerialName (item=${item.jsonObject})",
+                )
+            }
+        }
+
     private fun Icd10Chapter.declaredSerialName(): String =
         Icd10Chapter.serializer().descriptor.getElementName(index = ordinal)
+
+    private fun MedicalDepartment.declaredSerialName(): String =
+        MedicalDepartment.serializer().descriptor.getElementName(index = ordinal)
 }
