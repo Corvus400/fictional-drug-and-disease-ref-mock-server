@@ -164,27 +164,40 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
                     endpointName = diseaseListMetadata.endpointName,
                     default = "default",
                     fixtureProvider = { scenario ->
-                        if (chapterFilter == null) {
-                            diseaseListFixtures.resolve(
-                                scenario = scenario,
-                                page = page,
-                                pageSize = pageSize,
-                            )
-                        } else {
-                            val summaries = diseaseListFixtures.summariesByScenario[scenario].orEmpty()
-                            val filtered = summaries.filter { it.icd10Chapter == chapterFilter }
-                            paginate(
-                                summaries = filtered,
-                                page = page,
-                                pageSize = pageSize,
-                            )
-                        }
+                        val summaries = diseaseListFixtures.summariesByScenario[scenario].orEmpty()
+                        val filtered = applyListFilters(
+                            summaries = summaries,
+                            chapterFilter = chapterFilter,
+                        )
+                        paginate(
+                            summaries = filtered,
+                            page = page,
+                            pageSize = pageSize,
+                        )
                     },
                 )
                 call.respondWithScenario(resolved = resolved)
             }
         }
     }
+}
+
+/**
+ * `/diseases` のクエリ由来フィルタを `summaries` に適用する。
+ *
+ * 現状は `icd10_chapter` のみだが、Phase 9-7c 以降で `medical_department` /
+ * `chronicity` / `infectious` を同じチェーンに足していく想定。引数の null は「このフィルタを
+ * 適用しない」を表す。
+ */
+private fun applyListFilters(
+    summaries: List<DiseaseSummary>,
+    chapterFilter: Icd10Chapter?,
+): List<DiseaseSummary> {
+    var result = summaries
+    if (chapterFilter != null) {
+        result = result.filter { it.icd10Chapter == chapterFilter }
+    }
+    return result
 }
 
 private fun paginate(
