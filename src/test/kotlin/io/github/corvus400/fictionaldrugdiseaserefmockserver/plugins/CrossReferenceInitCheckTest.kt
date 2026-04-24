@@ -11,6 +11,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.Fixm
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.Drug
 import kotlin.test.Test
+import kotlin.test.assertFailsWith
 
 class CrossReferenceInitCheckTest {
     @Test
@@ -24,7 +25,32 @@ class CrossReferenceInitCheckTest {
         )
     }
 
+    @Test
+    fun `run throws IllegalStateException on drug to disease dangling reference`() {
+        val diseases = generateAllDiseases()
+        val drugs = generateAllDrugs(diseases = diseases)
+        val danglingDrug = drugs.first().copy(relatedDiseaseIds = listOf(DANGLING_DISEASE_ID))
+        val drugsWithDangling = listOf(danglingDrug) + drugs.drop(1)
+
+        val error =
+            assertFailsWith<IllegalStateException> {
+                CrossReferenceInitCheck.run(
+                    drugs = drugsWithDangling,
+                    diseases = diseases,
+                )
+            }
+        val message = error.message.orEmpty()
+        check(DANGLING_DISEASE_ID in message) {
+            "Expected exception message to contain dangling target id $DANGLING_DISEASE_ID, got: $message"
+        }
+        check(danglingDrug.id in message) {
+            "Expected exception message to contain source id ${danglingDrug.id}, got: $message"
+        }
+    }
+
     private companion object {
+        const val DANGLING_DISEASE_ID = "disease_9999"
+
         fun generateAllDiseases(): List<Disease> {
             val adapter = FixmergeNameAdapter()
             val generator =
