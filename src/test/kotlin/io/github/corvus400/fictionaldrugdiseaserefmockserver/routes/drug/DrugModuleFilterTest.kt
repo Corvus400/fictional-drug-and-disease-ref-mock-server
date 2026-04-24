@@ -155,4 +155,51 @@ class DrugModuleFilterTest {
             )
         }
     }
+
+    @Test
+    fun `GET drugs category_atc=A and dosage_form=錠剤 returns intersection AND filter`() = testApplication {
+        application { module() }
+
+        val atcOnly = client.get("/drugs?category_atc=A&page_size=100")
+        val formOnly = client.get("/drugs?dosage_form=錠剤&page_size=100")
+        val intersection = client.get("/drugs?category_atc=A&dosage_form=錠剤&page_size=100")
+
+        assertEquals(HttpStatusCode.OK, intersection.status)
+        val atcBody = json.parseToJsonElement(string = atcOnly.bodyAsText()).jsonObject
+        val formBody = json.parseToJsonElement(string = formOnly.bodyAsText()).jsonObject
+        val intersectionBody = json.parseToJsonElement(string = intersection.bodyAsText()).jsonObject
+
+        val atcTotal = atcBody["total_count"]?.jsonPrimitive?.content?.toInt()
+        val formTotal = formBody["total_count"]?.jsonPrimitive?.content?.toInt()
+        val intersectionTotal = intersectionBody["total_count"]?.jsonPrimitive?.content?.toInt()
+        assertNotNull(atcTotal, "atc-only response must include total_count")
+        assertNotNull(formTotal, "form-only response must include total_count")
+        assertNotNull(intersectionTotal, "intersection response must include total_count")
+        assertTrue(
+            actual = intersectionTotal <= atcTotal && intersectionTotal <= formTotal,
+            message = "intersection total=$intersectionTotal must be <= min(atc=$atcTotal, form=$formTotal)",
+        )
+
+        val items = intersectionBody["items"]?.jsonArray
+        assertNotNull(items, "intersection response must include items array")
+        items.forEach { item ->
+            val id = item.jsonObject["id"]?.jsonPrimitive?.content
+            assertNotNull(id, "item must expose id")
+            val detailResponse = client.get("/drugs/$id")
+            assertEquals(HttpStatusCode.OK, detailResponse.status, "detail GET must succeed for id=$id")
+            val detail = json.parseToJsonElement(string = detailResponse.bodyAsText()).jsonObject
+            val atcCode = detail["atc_code"]?.jsonPrimitive?.content
+            val dosageFormValue = detail["dosage_form"]?.jsonPrimitive?.content
+            assertNotNull(atcCode, "item id=$id must expose atc_code")
+            assertEquals(
+                expected = "錠剤",
+                actual = dosageFormValue,
+                message = "item id=$id has dosage_form=$dosageFormValue; must be '錠剤' under AND filter",
+            )
+            assertTrue(
+                actual = atcCode.startsWith(prefix = "A"),
+                message = "item id=$id has atc_code=$atcCode; must start with 'A' under AND filter",
+            )
+        }
+    }
 }
