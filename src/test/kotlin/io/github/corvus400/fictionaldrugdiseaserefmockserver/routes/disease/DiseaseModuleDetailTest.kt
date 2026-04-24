@@ -94,4 +94,28 @@ class DiseaseModuleDetailTest {
             message = "GET /diseases/disease_0001 must honor diseaseDetail status_code=500 override",
         )
     }
+
+    @Test
+    fun `GET diseases unknown id returns 404 with ErrorResponse NOT_FOUND body`() = testApplication {
+        application { module() }
+
+        val response = client.get(urlString = "/diseases/disease_9999")
+
+        assertEquals(
+            expected = HttpStatusCode.NotFound,
+            actual = response.status,
+            message = "GET /diseases/disease_9999 must return 404 Not Found for an unregistered id",
+        )
+        val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
+        assertEquals(
+            expected = "NOT_FOUND",
+            actual = body["code"]?.jsonPrimitive?.content,
+            message = "404 body must be ErrorResponse with code=NOT_FOUND, got keys=${body.keys}",
+        )
+        assertEquals(
+            expected = "Disease not found: disease_9999",
+            actual = body["message"]?.jsonPrimitive?.content,
+            message = "404 body must embed the missing id in the ErrorResponse message",
+        )
+    }
 }
