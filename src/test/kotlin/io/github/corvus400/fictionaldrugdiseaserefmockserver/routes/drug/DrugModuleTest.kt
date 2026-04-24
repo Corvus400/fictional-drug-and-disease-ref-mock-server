@@ -2,6 +2,7 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.drug
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.module
 import io.ktor.client.request.get
+import io.ktor.client.request.headers
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
@@ -61,6 +62,27 @@ class DrugModuleTest {
             expected = 120,
             actual = items.size,
             message = "default scenario must expose envelope with items.size == 120",
+        )
+    }
+
+    @Test
+    fun `GET drugs with X-Mock-Scenario empty returns envelope with zero items`() = testApplication {
+        application { module() }
+
+        val response = client.get("/drugs") {
+            headers {
+                append(name = "X-Mock-Scenario", value = "empty")
+            }
+        }
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
+        val items = body["items"]?.jsonArray
+        assertNotNull(items, "empty scenario must still expose an items array")
+        assertEquals(
+            expected = 0,
+            actual = items.size,
+            message = "empty scenario must expose envelope with items.size == 0",
         )
     }
 }
