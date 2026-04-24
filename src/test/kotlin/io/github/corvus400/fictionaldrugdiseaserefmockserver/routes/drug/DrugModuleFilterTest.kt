@@ -51,4 +51,38 @@ class DrugModuleFilterTest {
             )
         }
     }
+
+    @Test
+    fun `GET drugs regulatory_class= returns items all having regulatory_class containing the value`() =
+        testApplication {
+            application { module() }
+
+            val response = client.get("/drugs?regulatory_class=処方箋医薬品&page_size=100")
+
+            assertEquals(HttpStatusCode.OK, response.status)
+            val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
+            val totalCount = body["total_count"]?.jsonPrimitive?.content?.toInt()
+            assertNotNull(totalCount, "response must include total_count")
+            assertTrue(
+                actual = totalCount in 1 until 120,
+                message = "total_count=$totalCount must be 1..<120 for regulatory_class=処方箋医薬品",
+            )
+            val items = body["items"]?.jsonArray
+            assertNotNull(items, "response must include items array")
+            assertTrue(
+                actual = items.isNotEmpty(),
+                message = "filtered items must be non-empty for regulatory_class=処方箋医薬品",
+            )
+            items.forEach { item ->
+                val id = item.jsonObject["id"]?.jsonPrimitive?.content
+                assertNotNull(id, "item must expose id")
+                val regClasses = item.jsonObject["regulatory_class"]?.jsonArray
+                assertNotNull(regClasses, "item id=$id must expose regulatory_class list")
+                val values = regClasses.map { element -> element.jsonPrimitive.content }
+                assertTrue(
+                    actual = values.contains(element = "処方箋医薬品"),
+                    message = "item id=$id has regulatory_class=$values; must contain '処方箋医薬品' under filter",
+                )
+            }
+        }
 }
