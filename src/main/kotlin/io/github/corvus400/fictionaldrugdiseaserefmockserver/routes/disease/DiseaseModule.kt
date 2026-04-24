@@ -157,13 +157,14 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
                     call.request.queryParameters["page_size"]?.toIntOrNull()
                         ?: DiseaseListFixtures.DEFAULT_PAGE_SIZE
                     ).coerceAtMost(maximumValue = DiseaseListFixtures.MAX_PAGE_SIZE)
-                val icd10Chapter = call.request.queryParameters["icd10_chapter"]
+                val chapterFilter = call.request.queryParameters["icd10_chapter"]
+                    ?.let { Icd10Chapter.fromChapterKey(key = it) }
                 val resolved = call.resolveScenarioWithOverride(
                     scenarioManager = scenarioManager,
                     endpointName = diseaseListMetadata.endpointName,
                     default = "default",
                     fixtureProvider = { scenario ->
-                        if (icd10Chapter == null) {
+                        if (chapterFilter == null) {
                             diseaseListFixtures.resolve(
                                 scenario = scenario,
                                 page = page,
@@ -171,9 +172,7 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
                             )
                         } else {
                             val summaries = diseaseListFixtures.summariesByScenario[scenario].orEmpty()
-                            val filtered = summaries.filter { summary ->
-                                summary.icd10Chapter == Icd10Chapter.CHAPTER_I
-                            }
+                            val filtered = summaries.filter { it.icd10Chapter == chapterFilter }
                             paginate(
                                 summaries = filtered,
                                 page = page,
