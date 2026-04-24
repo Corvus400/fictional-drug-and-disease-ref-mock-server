@@ -11,8 +11,10 @@ import kotlin.math.ceil
 /**
  * `/drugs` 一覧エンドポイント向け FixtureProvider。
  *
- * - `default` シナリオは DI 経由で注入された 120 件の Drug を envelope `DrugListResponse` に包む。
- * - `empty` シナリオは空配列 envelope を返し、UI の空状態回帰を検証できる。
+ * - `default` シナリオは DI 経由で注入された 120 件の Drug を `DEFAULT_PAGE_SIZE` (=20) で
+ *   ページングした envelope `DrugListResponse` を返す。
+ * - `empty` シナリオは `items` が 0 件、`totalCount` / `totalPages` も 0 の envelope を返し、
+ *   UI の空状態回帰を検証できる。
  *
  * 起動時に `DrugFixtureValidator` で fixture の整合性を fail-fast 検証する。validator が violation を
  * 検出した場合は起動をブロックし、CI で早期に気付ける。
