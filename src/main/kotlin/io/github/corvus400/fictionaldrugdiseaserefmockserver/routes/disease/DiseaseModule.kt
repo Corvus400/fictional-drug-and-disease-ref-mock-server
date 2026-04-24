@@ -50,7 +50,12 @@ private val diseaseDetailScenarios: List<ScenarioMeta> = listOf(
  * 際はここも同期する必要がある (FixtureProviderConsistencyTest がキー一致は検証する)。
  */
 private val diseaseListScenarios: List<ScenarioMeta> = listOf(
-    ScenarioMeta(name = "default", title = "デフォルト (80件)", description = "全 80 件のフィクスマージ語ベース疾患"),
+    ScenarioMeta(
+        name = "default",
+        title = "デフォルト (80件)",
+        description = "全 80 件のフィクスマージ語ベース疾患を page_size=${DiseaseListFixtures.DEFAULT_PAGE_SIZE} " +
+            "でページング",
+    ),
     ScenarioMeta(name = "empty", title = "空レスポンス", description = "0 件の疾患一覧"),
 )
 
@@ -58,10 +63,6 @@ val diseaseCatalogEntries: List<EndpointEntry> = listOf(
     diseaseDetailMetadata.toEntry(scenarios = diseaseDetailScenarios),
     diseaseListMetadata.toEntry(scenarios = diseaseListScenarios),
 )
-
-private const val DISEASE_PAGE_MIN = 1
-private const val DISEASE_PAGE_SIZE_MAX = 100
-private const val DISEASE_LIST_DEFAULT_SCENARIO = "default"
 
 fun Application.diseaseModule(scenarioManager: ScenarioManager) {
     val provider: DiseaseFixtureProvider by dependencies
@@ -97,53 +98,45 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
                     summary = diseaseListMetadata.summary,
                     endpointDescription = "起動時に生成された疾患 Fixture 一覧を envelope 形式で返す。" +
                         "X-Mock-Scenario ヘッダで `default` (80 件) / `empty` (0 件) を切り替え可能。" +
-                        "`page` と `page_size` 両方指定時のみページング結果を返す (page_size は 1..100 にクランプ)。",
+                        " `page` (1-origin) / `page_size` (既定 ${DiseaseListFixtures.DEFAULT_PAGE_SIZE}, " +
+                        "上限 ${DiseaseListFixtures.MAX_PAGE_SIZE}) でページング可能。",
                     tag = diseaseListMetadata.tag,
                     fixtureProvider = diseaseListFixtures,
+                    additionalRequestDoc = {
+                        request {
+                            queryParameter<Int>("page") {
+                                description = "1-origin のページ番号 (既定 1)"
+                                required = false
+                            }
+                            queryParameter<Int>("page_size") {
+                                description = "1 ページの件数 (既定 " +
+                                    "${DiseaseListFixtures.DEFAULT_PAGE_SIZE}, 上限 ${DiseaseListFixtures.MAX_PAGE_SIZE})"
+                                required = false
+                            }
+                        }
+                    },
                 )
             },
         ) {
             handle {
+                val page = call.request.queryParameters["page"]?.toIntOrNull() ?: 1
+                val pageSize = (
+                    call.request.queryParameters["page_size"]?.toIntOrNull()
+                        ?: DiseaseListFixtures.DEFAULT_PAGE_SIZE
+                    ).coerceAtMost(maximumValue = DiseaseListFixtures.MAX_PAGE_SIZE)
                 val resolved = call.resolveScenarioWithOverride(
                     scenarioManager = scenarioManager,
                     endpointName = diseaseListMetadata.endpointName,
-                    default = DISEASE_LIST_DEFAULT_SCENARIO,
-                    fixtureProvider = diseaseListFixtures::getByScenario,
+                    default = "default",
+                    fixtureProvider = { scenario ->
+                        diseaseListFixtures.resolve(
+                            scenario = scenario,
+                            page = page,
+                            pageSize = pageSize,
+                        )
+                    },
                 )
-                val pageParam = call.request.queryParameters["page"]?.toIntOrNull()
-                val pageSizeParam = call.request.queryParameters["page_size"]?.toIntOrNull()
-                if (pageParam == null || pageSizeParam == null) {
-                    call.respondWithScenario(resolved)
-                } else {
-                    val envelope = resolved.fixture
-                    val safePage = pageParam.coerceAtLeast(minimumValue = DISEASE_PAGE_MIN)
-                    val safePageSize = pageSizeParam.coerceIn(
-                        minimumValue = DISEASE_PAGE_MIN,
-                        maximumValue = DISEASE_PAGE_SIZE_MAX,
-                    )
-                    val totalCount = envelope.items.size
-                    val totalPages = if (totalCount == 0) {
-                        0
-                    } else {
-                        (totalCount + safePageSize - 1) / safePageSize
-                    }
-                    val startIndex = (safePage - 1) * safePageSize
-                    val endIndex = (startIndex + safePageSize).coerceAtMost(maximumValue = totalCount)
-                    val slicedItems = if (startIndex < totalCount) {
-                        envelope.items.subList(fromIndex = startIndex, toIndex = endIndex)
-                    } else {
-                        emptyList()
-                    }
-                    call.respond(
-                        message = envelope.copy(
-                            items = slicedItems,
-                            page = safePage,
-                            pageSize = safePageSize,
-                            totalPages = totalPages,
-                            totalCount = totalCount,
-                        ),
-                    )
-                }
+                call.respondWithScenario(resolved = resolved)
             }
         }
     }
