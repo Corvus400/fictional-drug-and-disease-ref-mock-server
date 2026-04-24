@@ -38,4 +38,27 @@ class DrugModulePaginationTest {
             message = "total_count must be 120 (全 fixture 件数)",
         )
     }
+
+    @Test
+    fun `GET drugs page=2 page_size=50 returns items_size=50 page=2 total_pages=3`() = testApplication {
+        application { module() }
+
+        val response = client.get("/drugs?page=2&page_size=50")
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
+        val items = body["items"]?.jsonArray
+        assertNotNull(items, "response must include items array")
+        assertEquals(expected = 50, actual = items.size, message = "items.size must be 50 for page_size=50")
+        assertEquals(
+            expected = 2,
+            actual = body["page"]?.jsonPrimitive?.content?.toInt(),
+            message = "page must echo 2 from query parameter",
+        )
+        assertEquals(
+            expected = 3,
+            actual = body["total_pages"]?.jsonPrimitive?.content?.toInt(),
+            message = "total_pages must be 3 (ceil(120/50))",
+        )
+    }
 }

@@ -113,6 +113,9 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
             },
         ) {
             handle {
+                val page = call.request.queryParameters["page"]?.toIntOrNull() ?: 1
+                val pageSize = call.request.queryParameters["page_size"]?.toIntOrNull()
+                    ?: DrugListFixtures.DEFAULT_PAGE_SIZE
                 val resolved = call.resolveScenarioWithOverride(
                     scenarioManager = scenarioManager,
                     endpointName = drugListMetadata.endpointName,
@@ -120,8 +123,8 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
                     fixtureProvider = { scenario ->
                         drugListFixtures.resolve(
                             scenario = scenario,
-                            page = 1,
-                            pageSize = DrugListFixtures.DEFAULT_PAGE_SIZE,
+                            page = page,
+                            pageSize = pageSize,
                         )
                     },
                 )
