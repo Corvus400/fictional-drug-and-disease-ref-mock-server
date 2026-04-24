@@ -7,6 +7,8 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -43,5 +45,22 @@ class DiseaseModuleTest {
 
         assertEquals(HttpStatusCode.OK, response.status)
         assertTrue(response.bodyAsText().contains("disease_0001"))
+    }
+
+    @Test
+    fun `GET diseases default scenario returns envelope with 80 items`() = testApplication {
+        application { module() }
+
+        val response = client.get("/diseases")
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
+        val items = body["items"]?.jsonArray
+        assertNotNull(items, "response body must have an items array")
+        assertEquals(
+            expected = 80,
+            actual = items.size,
+            message = "default scenario must expose envelope with items.size == 80",
+        )
     }
 }
