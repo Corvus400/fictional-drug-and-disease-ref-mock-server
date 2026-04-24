@@ -5,6 +5,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog.EndpointMet
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog.EndpointRegistry
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog.ScenarioMeta
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog.toEntry
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.DrugDetailFixtures
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.DrugFixtureProvider
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.DrugListFixtures
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.ApiTag
@@ -67,6 +68,7 @@ val drugCatalogEntries: List<EndpointEntry> = listOf(
 fun Application.drugModule(scenarioManager: ScenarioManager) {
     val provider: DrugFixtureProvider by dependencies
     val drugListFixtures: DrugListFixtures by dependencies
+    val drugDetailFixtures: DrugDetailFixtures by dependencies
     routing {
         get("/drugs/{id}", {
             documentIdDetailEndpoint(
@@ -77,12 +79,18 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
             )
         }) {
             val id = call.parameters["id"].orEmpty()
-            val drug = provider.getById(id = id)
+            val drug = drugDetailFixtures.findById(id = id)
             if (drug == null) {
                 call.respond(status = HttpStatusCode.NotFound, message = mapOf("error" to "drug not found: $id"))
-            } else {
-                call.respond(drug)
+                return@get
             }
+            val resolved = call.resolveScenarioWithOverride(
+                scenarioManager = scenarioManager,
+                endpointName = drugDetailMetadata.endpointName,
+                default = "default",
+                fixtureProvider = { _ -> drug },
+            )
+            call.respondWithScenario(resolved = resolved)
         }
     }
     EndpointRegistry.register(
