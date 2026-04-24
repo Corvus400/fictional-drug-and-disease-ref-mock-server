@@ -9,6 +9,9 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.Dis
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.DiseaseFixtureProvider
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.DiseaseListFixtures
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.ErrorResponse
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.DiseaseListResponse
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.DiseaseSummary
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.ApiTag
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.documentIdDetailEndpoint
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.documentScenarioEndpoint
@@ -23,6 +26,7 @@ import io.ktor.server.application.Application
 import io.ktor.server.plugins.di.dependencies
 import io.ktor.server.response.respond
 import io.ktor.server.routing.routing
+import kotlin.math.ceil
 
 private val diseaseDetailMetadata = EndpointMetadata(
     path = "/diseases/{id}",
@@ -117,6 +121,7 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
     EndpointRegistry.register(
         diseaseListMetadata.toEntry(scenarios = diseaseListFixtures.scenarioMetas.values.toList()),
     )
+
     routing {
         route(
             path = diseaseListMetadata.path,
@@ -152,20 +157,55 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
                     call.request.queryParameters["page_size"]?.toIntOrNull()
                         ?: DiseaseListFixtures.DEFAULT_PAGE_SIZE
                     ).coerceAtMost(maximumValue = DiseaseListFixtures.MAX_PAGE_SIZE)
+                val icd10Chapter = call.request.queryParameters["icd10_chapter"]
                 val resolved = call.resolveScenarioWithOverride(
                     scenarioManager = scenarioManager,
                     endpointName = diseaseListMetadata.endpointName,
                     default = "default",
                     fixtureProvider = { scenario ->
-                        diseaseListFixtures.resolve(
-                            scenario = scenario,
-                            page = page,
-                            pageSize = pageSize,
-                        )
+                        if (icd10Chapter == null) {
+                            diseaseListFixtures.resolve(
+                                scenario = scenario,
+                                page = page,
+                                pageSize = pageSize,
+                            )
+                        } else {
+                            val summaries = diseaseListFixtures.summariesByScenario[scenario].orEmpty()
+                            val filtered = summaries.filter { summary ->
+                                summary.icd10Chapter == Icd10Chapter.CHAPTER_I
+                            }
+                            paginate(
+                                summaries = filtered,
+                                page = page,
+                                pageSize = pageSize,
+                            )
+                        }
                     },
                 )
                 call.respondWithScenario(resolved = resolved)
             }
         }
     }
+}
+
+private fun paginate(
+    summaries: List<DiseaseSummary>,
+    page: Int,
+    pageSize: Int,
+): DiseaseListResponse {
+    val totalCount = summaries.size
+    val totalPages = if (totalCount == 0) 0 else ceil(totalCount.toDouble() / pageSize.toDouble()).toInt()
+    val startIndex = (page - 1) * pageSize
+    val items = if (startIndex >= totalCount) {
+        emptyList()
+    } else {
+        summaries.drop(n = startIndex).take(n = pageSize)
+    }
+    return DiseaseListResponse(
+        items = items,
+        page = page,
+        pageSize = pageSize,
+        totalPages = totalPages,
+        totalCount = totalCount,
+    )
 }
