@@ -150,6 +150,71 @@ class DiseaseModuleFilterTest {
         }
     }
 
+    @Test
+    fun `GET diseases with infectious=true returns items whose infectious == true`() = testApplication {
+        application { module() }
+
+        val response = client.get(urlString = "/diseases?infectious=true&page_size=100")
+
+        assertEquals(expected = HttpStatusCode.OK, actual = response.status)
+        val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
+        val items = body["items"]?.jsonArray
+        assertNotNull(actual = items, message = "response body must have an items array")
+        assertTrue(
+            actual = items.isNotEmpty(),
+            message = "infectious=true must return a non-empty items array " +
+                "(CHAPTER_I blueprints populate infectious=true for 6 fixtures)",
+        )
+        items.forEachIndexed { index, item ->
+            assertEquals(
+                expected = true,
+                actual = item.jsonObject["infectious"]?.jsonPrimitive?.content?.toBooleanStrictOrNull(),
+                message = "items[$index].infectious must equal true when " +
+                    "query=infectious=true (item=${item.jsonObject})",
+            )
+        }
+    }
+
+    @Test
+    fun `GET diseases with icd10_chapter=I and infectious=true returns intersection (AND filter)`() = testApplication {
+        application { module() }
+
+        val response = client.get(urlString = "/diseases?icd10_chapter=I&infectious=true&page_size=100")
+
+        assertEquals(expected = HttpStatusCode.OK, actual = response.status)
+        val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
+        val items = body["items"]?.jsonArray
+        assertNotNull(actual = items, message = "response body must have an items array")
+        val expectedChapter = Icd10Chapter.CHAPTER_I.declaredSerialName()
+        assertTrue(
+            actual = items.isNotEmpty(),
+            message = "icd10_chapter=I & infectious=true must return a non-empty items array " +
+                "(CHAPTER_I fixtures all have infectious=true by blueprint contract)",
+        )
+        items.forEachIndexed { index, item ->
+            val obj = item.jsonObject
+            assertEquals(
+                expected = expectedChapter,
+                actual = obj["icd10_chapter"]?.jsonPrimitive?.content,
+                message = "items[$index].icd10_chapter must equal '$expectedChapter' when " +
+                    "query=icd10_chapter=I&infectious=true (item=$obj)",
+            )
+            assertEquals(
+                expected = true,
+                actual = obj["infectious"]?.jsonPrimitive?.content?.toBooleanStrictOrNull(),
+                message = "items[$index].infectious must equal true when " +
+                    "query=icd10_chapter=I&infectious=true (item=$obj)",
+            )
+        }
+        val totalCount = body["total_count"]?.jsonPrimitive?.content?.toIntOrNull()
+        assertEquals(
+            expected = 6,
+            actual = totalCount,
+            message = "intersection total_count must equal CHAPTER_I distribution (= 6) since " +
+                "all CHAPTER_I fixtures are infectious=true",
+        )
+    }
+
     private fun Chronicity.declaredSerialName(): String =
         Chronicity.serializer().descriptor.getElementName(index = ordinal)
 
