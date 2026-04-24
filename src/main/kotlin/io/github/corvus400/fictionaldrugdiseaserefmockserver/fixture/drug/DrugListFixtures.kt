@@ -5,6 +5,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.validation.
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.Drug
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.DrugListResponse
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.DrugSummary
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DosageForm
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RouteOfAdministration
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.toSummary
@@ -65,7 +66,9 @@ class DrugListFixtures(
      * `Drug.regulatoryClass` リストが指定された `@SerialName` 値 (例: `処方箋医薬品`) を
      * 含むものに絞り込む (Phase 9-8a)。`routeOfAdministrationSerialName` を非 null で渡すと、
      * `Drug.routeOfAdministration` の `@SerialName` 値が指定値 (例: `内服`) に一致する
-     * ものに絞り込む (Phase 9-9a)。複数指定時は AND 結合。
+     * ものに絞り込む (Phase 9-9a)。`dosageFormSerialName` を非 null で渡すと、
+     * `Drug.dosageForm` の `@SerialName` 値が指定値 (例: `錠剤`) に一致するものに絞り込む
+     * (Phase 9-10a)。複数指定時は AND 結合。
      * いずれも `null` の場合は従来通り全件を対象とする。
      */
     fun resolve(
@@ -75,6 +78,7 @@ class DrugListFixtures(
         atcPrefix: String? = null,
         regulatoryClassSerialName: String? = null,
         routeOfAdministrationSerialName: String? = null,
+        dosageFormSerialName: String? = null,
     ): DrugListResponse {
         val list = summariesByScenario[scenario] ?: summariesByScenario.values.first()
         val filtered = applyFilters(
@@ -82,6 +86,7 @@ class DrugListFixtures(
             atcPrefix = atcPrefix,
             regulatoryClassSerialName = regulatoryClassSerialName,
             routeOfAdministrationSerialName = routeOfAdministrationSerialName,
+            dosageFormSerialName = dosageFormSerialName,
         )
         val totalCount = filtered.size
         val totalPages = if (totalCount == 0) 0 else ceil(totalCount.toDouble() / pageSize.toDouble()).toInt()
@@ -100,13 +105,14 @@ class DrugListFixtures(
      * `/drugs` 一覧クエリフィルタを pagination 前に適用する。
      *
      * 複数フィルタが指定された場合は AND 結合 (filter chain) で順次絞り込む。
-     * 後続 Phase で `route` / `dosageForm` 等のフィルタを追加する際はここにパラメータを足していく。
+     * 後続 Phase で更にフィルタを追加する際はここにパラメータを足していく。
      */
     private fun applyFilters(
         summaries: List<DrugSummary>,
         atcPrefix: String?,
         regulatoryClassSerialName: String?,
         routeOfAdministrationSerialName: String?,
+        dosageFormSerialName: String?,
     ): List<DrugSummary> {
         var filtered: List<DrugSummary> = summaries
         if (atcPrefix != null) {
@@ -131,6 +137,16 @@ class DrugListFixtures(
             } else {
                 filtered.filter { summary ->
                     allDrugsById[summary.id]?.routeOfAdministration == matched
+                }
+            }
+        }
+        if (dosageFormSerialName != null) {
+            val matched = dosageFormBySerialName[dosageFormSerialName]
+            filtered = if (matched == null) {
+                emptyList()
+            } else {
+                filtered.filter { summary ->
+                    allDrugsById[summary.id]?.dosageForm == matched
                 }
             }
         }
@@ -177,6 +193,19 @@ class DrugListFixtures(
         private val routeOfAdministrationBySerialName: Map<String, RouteOfAdministration> = run {
             val descriptor = serializer<RouteOfAdministration>().descriptor
             enumValues<RouteOfAdministration>().associateBy { value ->
+                descriptor.getElementName(value.ordinal)
+            }
+        }
+
+        /**
+         * `DosageForm` の `@SerialName` 値 → enum 定数の索引。
+         *
+         * `/drugs?dosage_form=錠剤` のようにクエリで `@SerialName` 値が渡される (Phase 9-10a)。
+         * 解決方法は `regulatoryClassBySerialName` と同様。
+         */
+        private val dosageFormBySerialName: Map<String, DosageForm> = run {
+            val descriptor = serializer<DosageForm>().descriptor
+            enumValues<DosageForm>().associateBy { value ->
                 descriptor.getElementName(value.ordinal)
             }
         }

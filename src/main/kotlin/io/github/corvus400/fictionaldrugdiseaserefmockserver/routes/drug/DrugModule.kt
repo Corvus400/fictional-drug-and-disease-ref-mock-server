@@ -152,6 +152,11 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
                                     "指定時は `route_of_administration` が一致するものに絞り込み"
                                 required = false
                             }
+                            queryParameter<String>("dosage_form") {
+                                description = "剤形の `@SerialName` 値 (例: `錠剤`)。" +
+                                    "指定時は `dosage_form` が一致するものに絞り込み"
+                                required = false
+                            }
                         }
                     },
                 )
@@ -166,6 +171,7 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
                 val atcPrefix = call.request.queryParameters["category_atc"]
                 val regulatoryClass = call.request.queryParameters["regulatory_class"]
                 val route = call.request.queryParameters["route"]
+                val dosageForm = call.request.queryParameters["dosage_form"]
                 val resolved = call.resolveScenarioWithOverride(
                     scenarioManager = scenarioManager,
                     endpointName = drugListMetadata.endpointName,
@@ -178,6 +184,7 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
                             atcPrefix = atcPrefix,
                             regulatoryClassSerialName = regulatoryClass,
                             routeOfAdministrationSerialName = route,
+                            dosageFormSerialName = dosageForm,
                         )
                     },
                 )
