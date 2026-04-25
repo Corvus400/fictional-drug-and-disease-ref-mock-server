@@ -14,6 +14,7 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class CategoriesModuleTest {
@@ -41,6 +42,52 @@ class CategoriesModuleTest {
             message = "GET /categories must expose exactly 7 top-level snake_case keys " +
                 "(atc, therapeutic_categories, route_of_administration, dosage_form, " +
                 "regulatory_class, icd10_chapters, medical_departments)",
+        )
+    }
+
+    @Test
+    fun `GET categories atc 0 has keys code, label (not a bare string)`() = categoriesEndpointTest { response ->
+        val body = json.decodeFromString<JsonObject>(response.bodyAsText())
+        val atcArray = body["atc"]?.jsonArray
+        assertNotNull(atcArray, "GET /categories must expose .atc as a JSON array")
+        val first = atcArray[0].jsonObject
+        val code = first["code"]?.jsonPrimitive
+        assertNotNull(
+            actual = code,
+            message = "GET /categories .atc[0] must contain a string `code` property " +
+                "(must not be a bare string element)",
+        )
+        assertTrue(
+            actual = code.isString,
+            message = "GET /categories .atc[0].code must be a JSON string, not a number/bool",
+        )
+        val label = first["label"]?.jsonPrimitive
+        assertNotNull(
+            actual = label,
+            message = "GET /categories .atc[0] must contain a string `label` property",
+        )
+        assertTrue(
+            actual = label.isString,
+            message = "GET /categories .atc[0].label must be a JSON string, not a number/bool",
+        )
+    }
+
+    @Test
+    fun `GET categories atc has 14 entries covering A to V`() = categoriesEndpointTest { response ->
+        val body = json.decodeFromString<JsonObject>(response.bodyAsText())
+        val atcArray = body["atc"]?.jsonArray
+        assertNotNull(atcArray, "GET /categories must expose .atc as a JSON array")
+        val codes = atcArray.map { element -> element.jsonObject.getValue(key = "code").jsonPrimitive.content }
+        assertEquals(
+            expected = setOf("A", "B", "C", "D", "G", "H", "J", "L", "M", "N", "P", "R", "S", "V"),
+            actual = codes.toSet(),
+            message = "GET /categories .atc must cover all 14 ATC first-letter anatomical groups " +
+                "(A,B,C,D,G,H,J,L,M,N,P,R,S,V)",
+        )
+        assertEquals(
+            expected = 14,
+            actual = codes.size,
+            message = "GET /categories .atc must contain exactly 14 entries (no duplicates, no extras)",
         )
     }
 
