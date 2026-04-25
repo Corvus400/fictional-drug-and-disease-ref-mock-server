@@ -85,6 +85,51 @@ class CategoriesModuleTest {
         )
     }
 
+    @Test
+    fun `GET categories icd10_chapters first entry has keys roman, code, label`() =
+        categoriesEndpointTest { response ->
+            val body = json.decodeFromString<JsonObject>(response.bodyAsText())
+            val chapters = body.getValue(key = "icd10_chapters").jsonArray
+            val firstEntry = chapters.first().jsonObject
+            assertEquals(
+                expected = setOf("roman", "code", "label"),
+                actual = firstEntry.keys,
+                message = "icd10_chapters[0] must expose exactly the keys roman, code, label " +
+                    "(structure pin for ICD-10 chapter entry)",
+            )
+        }
+
+    @Test
+    fun `GET categories icd10_chapters has exactly 22 entries`() =
+        categoriesEndpointTest { response ->
+            val body = json.decodeFromString<JsonObject>(response.bodyAsText())
+            val chapters = body.getValue(key = "icd10_chapters").jsonArray
+            assertEquals(
+                expected = 22,
+                actual = chapters.size,
+                message = "icd10_chapters must contain exactly 22 entries (ICD-10 全 22 章)",
+            )
+        }
+
+    @Test
+    fun `GET categories icd10_chapters roman values cover I to XXII`() =
+        categoriesEndpointTest { response ->
+            val body = json.decodeFromString<JsonObject>(response.bodyAsText())
+            val chapters = body.getValue(key = "icd10_chapters").jsonArray
+            val romanValues = chapters.map { entry ->
+                entry.jsonObject.getValue(key = "roman").jsonPrimitive.content
+            }.toSet()
+            assertEquals(
+                expected = setOf(
+                    "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI",
+                    "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX", "XXI", "XXII",
+                ),
+                actual = romanValues,
+                message = "icd10_chapters roman values must cover the full I..XXII range " +
+                    "(WHO ICD-10 22 章を網羅)",
+            )
+        }
+
     /**
      * `module()` 起動 → `GET /categories` 1 回呼出までを共通化するヘルパー。
      *
