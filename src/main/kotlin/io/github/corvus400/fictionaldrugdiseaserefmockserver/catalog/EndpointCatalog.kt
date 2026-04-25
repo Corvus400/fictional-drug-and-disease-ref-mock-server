@@ -49,18 +49,39 @@ data class EndpointEntry(
 )
 
 /**
- * モジュール登録エントリ
+ * モジュール登録エントリの型階層。
  *
- * 全モジュールはこのデータクラスをRouting.ktのallModulesリストに登録する必要がある。
- * catalogEntriesが必須パラメータのため、カタログ登録なしでのモジュール追加はコンパイルエラーになる。
+ * 全モジュールは sealed interface 実装のいずれかを Routing.kt の allModules リストに登録する。
+ * catalogEntries が必須プロパティのため、カタログ登録なしでのモジュール追加はコンパイルエラーになる。
  *
- * @param catalogEntries このモジュールが提供するEndpointEntryのリスト
- * @param configure モジュールのルート設定関数
+ * シナリオ切替の有無を **型レベルで分離する** ことで:
+ * - シナリオ切替を必要としないモジュールが ScenarioManager を `_` で捨てる無意味な引数を持たずに済む
+ * - Routing.kt の dispatch 側で `when` の網羅性チェックが効き、新種モジュール追加時の漏れを防ぐ
+ * - モジュール作成者は意図 (シナリオ持つ / 持たない) を選択することを強制される
+ *
+ * 実装: [ScenarioModuleRegistration] / [StatelessModuleRegistration]
  */
-data class ModuleRegistration(
-    val catalogEntries: List<EndpointEntry>,
+sealed interface ModuleRegistration {
+    val catalogEntries: List<EndpointEntry>
+}
+
+/**
+ * X-Mock-Scenario ヘッダ / Admin API オーバーライドに対応するモジュール用の登録エントリ。
+ * sample / drug / disease 等の scenarioRoute ベースのモジュールはこちらを使う。
+ */
+data class ScenarioModuleRegistration(
+    override val catalogEntries: List<EndpointEntry>,
     val configure: Application.(ScenarioManager) -> Unit,
-)
+) : ModuleRegistration
+
+/**
+ * シナリオ切替を持たない単一レスポンス系モジュール用の登録エントリ。
+ * categories のような静的メタデータ API はこちらを使い、ScenarioManager を受け取らない。
+ */
+data class StatelessModuleRegistration(
+    override val catalogEntries: List<EndpointEntry>,
+    val configure: Application.() -> Unit,
+) : ModuleRegistration
 
 object EndpointRegistry {
     private val entries = mutableListOf<EndpointEntry>()
