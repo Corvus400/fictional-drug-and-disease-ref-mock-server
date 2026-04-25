@@ -61,7 +61,15 @@ detekt {
 
 // Ktor公式の.editorconfigに準拠した設定
 spotless {
-    ratchetFrom("origin/main")
+    val ratchetBase = "origin/main"
+    val ratchetEnabled = providers.environmentVariable("CI").orNull == "true" ||
+        providers.gradleProperty("spotless.ratchet").orNull == "true"
+    if (ratchetEnabled) {
+        ratchetFrom(ratchetBase)
+        logger.lifecycle("[spotless] ratchetFrom enabled: $ratchetBase")
+    } else {
+        logger.lifecycle("[spotless] ratchetFrom disabled (local mode) — running full-tree check")
+    }
     kotlin {
         target("src/**/*.kt")
         targetExclude("build/**/*.kt")
