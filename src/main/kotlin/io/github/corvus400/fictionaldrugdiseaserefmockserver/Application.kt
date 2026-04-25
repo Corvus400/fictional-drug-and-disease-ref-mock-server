@@ -39,7 +39,7 @@ fun Application.module() {
         diseases = diseaseProvider.all,
     )
 
-    // Plugins
+    // Plugins (Phase 9-C run 2: source change to defeat UP-TO-DATE)
     configureSerialization()
     configureLogging()
     configureStatusPages()
