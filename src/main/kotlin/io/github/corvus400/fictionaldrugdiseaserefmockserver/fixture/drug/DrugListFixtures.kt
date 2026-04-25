@@ -68,7 +68,9 @@ class DrugListFixtures(
      * `Drug.routeOfAdministration` の `@SerialName` 値が指定値 (例: `内服`) に一致する
      * ものに絞り込む (Phase 9-9a)。`dosageFormSerialName` を非 null で渡すと、
      * `Drug.dosageForm` の `@SerialName` 値が指定値 (例: `錠剤`) に一致するものに絞り込む
-     * (Phase 9-10a)。複数指定時は AND 結合。
+     * (Phase 9-10a)。`categoryName` を非 null で渡すと、`DrugSummary.therapeuticCategoryName` が
+     * 指定値 (例: `消化器系および代謝`) に完全一致するものに絞り込む (Phase 10-1b)。
+     * 複数指定時は AND 結合。
      * いずれも `null` の場合は従来通り全件を対象とする。
      */
     fun resolve(
@@ -79,6 +81,7 @@ class DrugListFixtures(
         regulatoryClassSerialName: String? = null,
         routeOfAdministrationSerialName: String? = null,
         dosageFormSerialName: String? = null,
+        categoryName: String? = null,
     ): DrugListResponse {
         val list = summariesByScenario[scenario] ?: summariesByScenario.values.first()
         val filtered = applyFilters(
@@ -87,6 +90,7 @@ class DrugListFixtures(
             regulatoryClassSerialName = regulatoryClassSerialName,
             routeOfAdministrationSerialName = routeOfAdministrationSerialName,
             dosageFormSerialName = dosageFormSerialName,
+            categoryName = categoryName,
         )
         val totalCount = filtered.size
         val totalPages = if (totalCount == 0) 0 else ceil(totalCount.toDouble() / pageSize.toDouble()).toInt()
@@ -113,6 +117,7 @@ class DrugListFixtures(
         regulatoryClassSerialName: String?,
         routeOfAdministrationSerialName: String?,
         dosageFormSerialName: String?,
+        categoryName: String?,
     ): List<DrugSummary> {
         var filtered: List<DrugSummary> = summaries
         if (atcPrefix != null) {
@@ -148,6 +153,11 @@ class DrugListFixtures(
                 filtered.filter { summary ->
                     allDrugsById[summary.id]?.dosageForm == matched
                 }
+            }
+        }
+        if (categoryName != null) {
+            filtered = filtered.filter { summary ->
+                summary.therapeuticCategoryName == categoryName
             }
         }
         return filtered
