@@ -44,6 +44,7 @@ fun Application.configureRouting(
     scenarioManager: ScenarioManager,
     config: MockServerConfig,
 ) {
+    // Phase 9-B run 6: source change to defeat UP-TO-DATE
     // Admin Routes（ADMIN/SYSTEMタグで起動時検証から除外）
     adminRoutes(
         scenarioManager = scenarioManager,
