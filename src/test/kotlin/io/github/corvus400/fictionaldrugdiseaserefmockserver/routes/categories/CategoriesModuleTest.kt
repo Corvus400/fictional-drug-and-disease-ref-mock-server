@@ -3,9 +3,13 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.categories
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.module
 import io.ktor.client.request.get
 import io.ktor.client.request.header
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
+import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.contentType
 import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
 import kotlinx.serialization.json.Json
@@ -231,6 +235,36 @@ class CategoriesModuleTest {
             actual = emptyBody,
             message = "/categories must return a body bit-identical to the default response when " +
                 "the X-Mock-Scenario header is set to 'empty' (scenario-independent metadata endpoint)",
+        )
+    }
+
+    /**
+     * §基本方針 9 (シナリオ非依存原則) の Admin API 経路 pin。`POST /__admin/configs/drugList`
+     * で drug 一覧の scenario を `empty` に切替えても、`/categories` のレスポンスは default 時と
+     * 完全一致しなければならない (フィルタ選択肢メタデータは drug 在庫数に依存しない)。
+     *
+     * `endpointName` は `DrugModule.kt` の `drugListMetadata.endpointName = "drugList"` に揃える
+     * (Issue 本文の擬似 URL `configs/drugs` は意図表記; 実際の登録名と一致させる)。
+     */
+    @Test
+    fun `POST __admin configs drugList empty then GET categories still returns full 7 lists`() = testApplication {
+        application { module() }
+        val before = client.get(urlString = "/categories").bodyAsText()
+        val adminResponse = client.post(urlString = "/__admin/configs/drugList") {
+            contentType(type = ContentType.Application.Json)
+            setBody(body = """{"state":"empty"}""")
+        }
+        assertEquals(
+            expected = HttpStatusCode.OK,
+            actual = adminResponse.status,
+            message = "sanity: Admin override POST itself must succeed before evaluating /categories invariance",
+        )
+        val after = client.get(urlString = "/categories").bodyAsText()
+        assertEquals(
+            expected = before,
+            actual = after,
+            message = "/categories must return a body bit-identical to the pre-override response after " +
+                "POST /__admin/configs/drugList {state:empty}; /categories must not depend on drug list scenario",
         )
     }
 
