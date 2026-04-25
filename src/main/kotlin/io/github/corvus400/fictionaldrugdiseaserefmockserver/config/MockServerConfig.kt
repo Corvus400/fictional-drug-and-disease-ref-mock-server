@@ -35,6 +35,7 @@ data class MockServerConfig(
  *
  */
 fun Application.loadMockServerConfig(): MockServerConfig {
+    // Phase 9-B run 3: source change to defeat UP-TO-DATE
     val config = environment.config
     return MockServerConfig(
         defaultScenario = System.getenv("DEFAULT_SCENARIO")
