@@ -14,6 +14,7 @@ import kotlinx.serialization.json.JsonElement
 class ScenarioManager(
     val defaultScenario: String = "default",
 ) {
+    // Phase 9-A measurement run 6: source change to defeat UP-TO-DATE
     private val mutex = Mutex()
 
     /** Admin API からのオーバーライド設定 */
