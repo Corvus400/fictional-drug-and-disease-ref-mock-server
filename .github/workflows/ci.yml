@@ -20,8 +20,6 @@ jobs:
           distribution: 'temurin'
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
-        with:
-          cache-write-only: true
       - name: Check code style
         run: ./gradlew spotlessCheck
       - name: Static analysis (detekt)
@@ -39,7 +37,5 @@ jobs:
           distribution: 'temurin'
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
-        with:
-          cache-read-only: true
       - name: Test and assemble
         run: ./gradlew test assemble
