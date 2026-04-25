@@ -73,3 +73,7 @@ spotless {
         ktlint(libs.versions.ktlint.get())
     }
 }
+
+tasks.test {
+    maxParallelForks = (Runtime.getRuntime().availableProcessors() / 2).coerceAtLeast(1)
+}
