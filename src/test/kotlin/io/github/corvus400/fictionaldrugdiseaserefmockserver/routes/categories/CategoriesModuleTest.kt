@@ -2,6 +2,7 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.categories
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.module
 import io.ktor.client.request.get
+import io.ktor.client.request.header
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
@@ -209,6 +210,29 @@ class CategoriesModuleTest {
                     "the following keys still return 0 entries: $zeroKeys (counts=$countsByKey)",
             )
         }
+
+    /**
+     * §基本方針 9 (シナリオ非依存原則) の中核 pin。`X-Mock-Scenario: empty` ヘッダは
+     * `/drugs` などシナリオ切替対応エンドポイントでは応答を変化させるが、`/categories` は
+     * フィルタ選択肢メタデータであり、ヘッダの有無/値に関わらず default と完全一致した
+     * レスポンス本文を返さなければならない。bit-identical (`bodyAsText()` 文字列比較) で
+     * pin することで、将来 `respondWithScenario` / `scenarioRoute` 等の混入をリグレッション
+     * 検出できる。
+     */
+    @Test
+    fun `GET categories under X-Mock-Scenario empty returns IDENTICAL response`() = testApplication {
+        application { module() }
+        val defaultBody = client.get(urlString = "/categories").bodyAsText()
+        val emptyBody = client.get(urlString = "/categories") {
+            header(key = "X-Mock-Scenario", value = "empty")
+        }.bodyAsText()
+        assertEquals(
+            expected = defaultBody,
+            actual = emptyBody,
+            message = "/categories must return a body bit-identical to the default response when " +
+                "the X-Mock-Scenario header is set to 'empty' (scenario-independent metadata endpoint)",
+        )
+    }
 
     /**
      * `module()` 起動 → `GET /categories` 1 回呼出までを共通化するヘルパー。
