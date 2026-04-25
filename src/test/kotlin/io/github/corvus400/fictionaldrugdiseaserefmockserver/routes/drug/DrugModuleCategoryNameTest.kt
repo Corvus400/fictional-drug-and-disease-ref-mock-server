@@ -74,4 +74,38 @@ class DrugModuleCategoryNameTest {
             message = "total_count must be 120 (全件) when no category_name filter is applied",
         )
     }
+
+    @Test
+    fun `GET drugs category_atc=A and category_name= returns intersection (items satisfy both)`() = testApplication {
+        application { module() }
+
+        val targetCategoryName = "消化器系および代謝"
+        val response = client.get("/drugs?category_atc=A&category_name=$targetCategoryName&page_size=100")
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
+        val totalCount = body["total_count"]?.jsonPrimitive?.content?.toInt()
+        assertNotNull(totalCount, "response must include total_count")
+        assertTrue(
+            actual = totalCount in 1 until 120,
+            message = "total_count=$totalCount must be 1..<120 for category_atc=A & category_name=$targetCategoryName",
+        )
+        val items = body["items"]?.jsonArray
+        assertNotNull(items, "response must include items array")
+        assertEquals(
+            expected = totalCount,
+            actual = items.size,
+            message = "page_size=100 must contain all filtered items (intersection)",
+        )
+        items.forEach { item ->
+            val id = item.jsonObject["id"]?.jsonPrimitive?.content
+            assertNotNull(id, "item must expose id")
+            val categoryNameValue = item.jsonObject["therapeutic_category_name"]?.jsonPrimitive?.content
+            assertEquals(
+                expected = targetCategoryName,
+                actual = categoryNameValue,
+                message = "item id=$id must satisfy category_name=$targetCategoryName under AND filter",
+            )
+        }
+    }
 }
