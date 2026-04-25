@@ -3,9 +3,14 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.categories
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.AtcEntry
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.CategoriesResponse
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.Icd10ChapterEntry
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.LabeledEntry
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.TherapeuticCategoryEntry
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.MedicalDepartment
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.Drug
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DosageForm
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RouteOfAdministration
 import kotlinx.serialization.serializer
 
 class CategoriesFixture(
@@ -21,11 +26,11 @@ class CategoriesFixture(
                 label = drug.therapeuticCategoryName,
             )
         }.distinctBy { entry -> entry.id },
-        routeOfAdministration = emptyList(),
-        dosageForm = emptyList(),
-        regulatoryClass = emptyList(),
+        routeOfAdministration = enumLabeledEntries<RouteOfAdministration>(),
+        dosageForm = enumLabeledEntries<DosageForm>(),
+        regulatoryClass = enumLabeledEntries<RegulatoryClass>(),
         icd10Chapters = buildIcd10Chapters(),
-        medicalDepartments = emptyList(),
+        medicalDepartments = enumLabeledEntries<MedicalDepartment>(),
     )
 
     private fun buildIcd10Chapters(): List<Icd10ChapterEntry> {
@@ -40,6 +45,23 @@ class CategoriesFixture(
     }
 
     companion object {
+        /**
+         * 列挙型 [T] の宣言順に `@SerialName` 値を取り出し、`value` / `label` 双方に詰めた
+         * `LabeledEntry` リストを返す。
+         *
+         * `value` は `/drugs?route=<value>` 等のフィルタクエリで API クライアントが指定する
+         * `@SerialName` 値 (日本語キー) と一致させる。`label` は同じ値を表示用に再利用する。
+         * これにより一覧 API のフィルタ仕様 (例: `regulatory_class`, `route`, `dosage_form`)
+         * と `/categories` の選択肢メタデータが同一語彙で結合される。
+         */
+        private inline fun <reified T : Enum<T>> enumLabeledEntries(): List<LabeledEntry> {
+            val descriptor = serializer<T>().descriptor
+            return enumValues<T>().map { entry ->
+                val serialName = descriptor.getElementName(index = entry.ordinal)
+                LabeledEntry(value = serialName, label = serialName)
+            }
+        }
+
         /**
          * ATC 第 1 階層 (解剖学的グループ) の単一情報源。
          * 14 グループ (A,B,C,D,G,H,J,L,M,N,P,R,S,V) ごとに以下を集約する:
