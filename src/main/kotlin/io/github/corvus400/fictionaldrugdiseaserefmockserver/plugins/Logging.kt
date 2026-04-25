@@ -6,6 +6,7 @@ import io.ktor.server.plugins.calllogging.CallLogging
 import org.slf4j.event.Level
 
 fun Application.configureLogging() {
+    // Phase 9-B run 5: source change to defeat UP-TO-DATE
     install(CallLogging) {
         level = Level.INFO
     }
