@@ -108,4 +108,27 @@ class DrugModuleCategoryNameTest {
             )
         }
     }
+
+    @Test
+    fun `GET drugs category_atc=A and category_name=神経系 returns empty items (total_count=0)`() = testApplication {
+        application { module() }
+
+        val conflictingCategoryName = "神経系"
+        val response = client.get("/drugs?category_atc=A&category_name=$conflictingCategoryName&page_size=100")
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
+        assertEquals(
+            expected = 0,
+            actual = body["total_count"]?.jsonPrimitive?.content?.toInt(),
+            message = "total_count must be 0 when category_atc=A and category_name=$conflictingCategoryName conflict",
+        )
+        val items = body["items"]?.jsonArray
+        assertNotNull(items, "response must include items array")
+        assertEquals(
+            expected = 0,
+            actual = items.size,
+            message = "items must be empty when category_atc=A and category_name=$conflictingCategoryName conflict",
+        )
+    }
 }
