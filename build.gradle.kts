@@ -52,6 +52,7 @@ ktor {
 // detekt 静的解析
 detekt {
     buildUponDefaultConfig = true
+    parallel = true
     config.setFrom("$projectDir/config/detekt/detekt.yml")
     source.setFrom(
         "src/main/kotlin",
