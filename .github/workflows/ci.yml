@@ -22,8 +22,17 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
       - name: Check code style
         run: ./gradlew spotlessCheck
-      - name: Static analysis (detekt)
-        run: ./gradlew detektMain
+      - name: Static analysis (detekt) with profile and debug
+        run: ./gradlew detektMain --profile --debug 2>&1 | tee detekt-debug.log
+      - name: Upload detekt diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: detekt-diagnostics
+          path: |
+            build/reports/profile/
+            detekt-debug.log
+          retention-days: 7
 
   build-and-test:
     runs-on: ubuntu-latest
