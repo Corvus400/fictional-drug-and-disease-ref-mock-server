@@ -18,6 +18,8 @@ jobs:
           distribution: 'temurin'
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-write-only: true
       - name: Check code style
         run: ./gradlew spotlessCheck
       - name: Static analysis (detekt)
@@ -25,7 +27,6 @@ jobs:
 
   build-and-test:
     runs-on: ubuntu-latest
-    needs: lint
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -34,6 +35,8 @@ jobs:
           distribution: 'temurin'
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: true
       - name: Build
         run: ./gradlew build
       - name: Test
