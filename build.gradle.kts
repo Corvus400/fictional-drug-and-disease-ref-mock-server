@@ -61,6 +61,7 @@ detekt {
 
 // Ktor公式の.editorconfigに準拠した設定
 spotless {
+    ratchetFrom("origin/main")
     kotlin {
         target("src/**/*.kt")
         targetExclude("build/**/*.kt")
