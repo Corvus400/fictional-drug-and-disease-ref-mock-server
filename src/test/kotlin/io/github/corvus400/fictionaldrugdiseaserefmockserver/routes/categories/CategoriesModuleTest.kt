@@ -9,8 +9,12 @@ import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class CategoriesModuleTest {
     private val json = Json { ignoreUnknownKeys = true }
@@ -37,6 +41,47 @@ class CategoriesModuleTest {
             message = "GET /categories must expose exactly 7 top-level snake_case keys " +
                 "(atc, therapeutic_categories, route_of_administration, dosage_form, " +
                 "regulatory_class, icd10_chapters, medical_departments)",
+        )
+    }
+
+    @Test
+    fun `GET categories therapeutic_categories first element has keys id and label`() =
+        categoriesEndpointTest { response ->
+            val body = json.decodeFromString<JsonObject>(response.bodyAsText())
+            val therapeuticCategories = body.getValue(key = "therapeutic_categories").jsonArray
+            val firstEntry = therapeuticCategories.first().jsonObject
+            assertEquals(
+                expected = setOf("id", "label"),
+                actual = firstEntry.keys,
+                message = "therapeutic_categories[0] must expose exactly the snake_case keys " +
+                    "{id, label} so clients can render slug-stable category options",
+            )
+        }
+
+    @Test
+    fun `GET categories therapeutic_categories ids are all unique (no duplicates)`() =
+        categoriesEndpointTest { response ->
+            val body = json.decodeFromString<JsonObject>(response.bodyAsText())
+            val therapeuticCategories = body.getValue(key = "therapeutic_categories").jsonArray
+            val ids = therapeuticCategories.map { entry ->
+                entry.jsonObject.getValue(key = "id").jsonPrimitive.content
+            }
+            assertEquals(
+                expected = ids.size,
+                actual = ids.toSet().size,
+                message = "therapeutic_categories ids must be distinct after slug-id derivation; " +
+                    "duplicates indicate a slug collision or distinctBy regression. ids=$ids",
+            )
+        }
+
+    @Test
+    fun `GET categories therapeutic_categories is non-empty`() = categoriesEndpointTest { response ->
+        val body = json.decodeFromString<JsonObject>(response.bodyAsText())
+        val therapeuticCategories = body.getValue(key = "therapeutic_categories").jsonArray
+        assertTrue(
+            actual = therapeuticCategories.isNotEmpty(),
+            message = "therapeutic_categories must be derived from the 120 fixed drugs and never " +
+                "regress to an empty list (per-scenario empty fixture is forbidden)",
         )
     }
 
