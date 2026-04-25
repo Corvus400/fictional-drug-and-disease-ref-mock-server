@@ -4,6 +4,8 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog.EndpointReg
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog.ModuleRegistration
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.config.MockServerConfig
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.adminRoutes
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.categories.categoriesCatalogEntries
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.categories.categoriesModule
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.common.placeholderImageModule
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.disease.diseaseCatalogEntries
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.disease.diseaseModule
@@ -37,6 +39,10 @@ private val allModules: List<ModuleRegistration> = listOf(
     ModuleRegistration(
         catalogEntries = diseaseCatalogEntries,
         configure = { sm -> diseaseModule(sm) },
+    ),
+    ModuleRegistration(
+        catalogEntries = categoriesCatalogEntries,
+        configure = { _ -> categoriesModule() },
     ),
 )
 

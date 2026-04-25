@@ -13,6 +13,8 @@ object ScreenMapping {
         "drugList" to listOf(ScreenTag.DRUG),
         "diseaseDetail" to listOf(ScreenTag.DISEASE),
         "diseaseList" to listOf(ScreenTag.DISEASE),
+        // /categories は Drug/Disease 検索画面のフィルタカテゴリ取得用に共通参照される
+        "categories" to listOf(ScreenTag.DRUG, ScreenTag.DISEASE),
     )
 
     /** エンドポイント名から所属画面のリストを取得する */
