@@ -8,6 +8,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
@@ -16,6 +17,16 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
+
+private val SEVEN_TOP_LEVEL_KEYS: List<String> = listOf(
+    "atc",
+    "therapeutic_categories",
+    "route_of_administration",
+    "dosage_form",
+    "regulatory_class",
+    "icd10_chapters",
+    "medical_departments",
+)
 
 class CategoriesModuleTest {
     private val json = Json { ignoreUnknownKeys = true }
@@ -174,6 +185,28 @@ class CategoriesModuleTest {
                 actual = romanValues,
                 message = "icd10_chapters roman values must cover the full I..XXII range " +
                     "(WHO ICD-10 22 章を網羅)",
+            )
+        }
+
+    /**
+     * §基本方針 9 (シナリオ非依存原則) の事前条件として、`/categories` が返す全 7 lists は
+     * 起動時固定 fixture から導出された **空でない** メタデータでなければならない。
+     * 空であれば「全シナリオで同じ」を満たしてもメタデータとして無価値なため、
+     * シナリオ非依存性検証 (Red 2 / Red 3) の意味そのものが消える。
+     */
+    @Test
+    fun `GET categories under default scenario returns 7 top-level keys with non-zero counts`() =
+        categoriesEndpointTest { response ->
+            val body = json.decodeFromString<JsonObject>(response.bodyAsText())
+            val countsByKey: Map<String, Int> = SEVEN_TOP_LEVEL_KEYS.associateWith { key ->
+                (body[key] as? JsonArray)?.size
+                    ?: error("`/categories` key '$key' must be a JSON array but was ${body[key]}")
+            }
+            val zeroKeys: List<String> = countsByKey.filterValues { count -> count == 0 }.keys.toList()
+            assertTrue(
+                actual = zeroKeys.isEmpty(),
+                message = "GET /categories must return non-zero counts for ALL 7 keys; " +
+                    "the following keys still return 0 entries: $zeroKeys (counts=$countsByKey)",
             )
         }
 
