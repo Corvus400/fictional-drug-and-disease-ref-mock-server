@@ -2,6 +2,8 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog.EndpointRegistry
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog.ModuleRegistration
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog.ScenarioModuleRegistration
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog.StatelessModuleRegistration
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.config.MockServerConfig
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.adminRoutes
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.categories.categoriesCatalogEntries
@@ -28,21 +30,21 @@ import io.ktor.server.application.Application
  * allModulesに追加せずにモジュール関数を直接呼び出してもサーバーが起動しない。
  */
 private val allModules: List<ModuleRegistration> = listOf(
-    ModuleRegistration(
+    ScenarioModuleRegistration(
         catalogEntries = sampleCatalogEntries,
         configure = { sm -> sampleModule(sm) },
     ),
-    ModuleRegistration(
+    ScenarioModuleRegistration(
         catalogEntries = drugCatalogEntries,
         configure = { sm -> drugModule(sm) },
     ),
-    ModuleRegistration(
+    ScenarioModuleRegistration(
         catalogEntries = diseaseCatalogEntries,
         configure = { sm -> diseaseModule(sm) },
     ),
-    ModuleRegistration(
+    StatelessModuleRegistration(
         catalogEntries = categoriesCatalogEntries,
-        configure = { _ -> categoriesModule() },
+        configure = { categoriesModule() },
     ),
 )
 
@@ -58,7 +60,10 @@ fun Application.configureRouting(
 
     allModules.forEach { module ->
         module.catalogEntries.forEach { EndpointRegistry.register(it) }
-        module.configure(this, scenarioManager)
+        when (module) {
+            is ScenarioModuleRegistration -> module.configure(this, scenarioManager)
+            is StatelessModuleRegistration -> module.configure(this)
+        }
     }
 
     // Common Modules（カタログ登録不要のインフラモジュール）
