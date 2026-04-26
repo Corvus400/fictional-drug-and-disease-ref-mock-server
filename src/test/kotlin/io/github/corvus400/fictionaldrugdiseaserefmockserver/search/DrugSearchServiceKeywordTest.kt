@@ -46,6 +46,22 @@ class DrugSearchServiceKeywordTest {
         assertEquals(listOf("drug_0001"), result.map { it.id })
     }
 
+    @Test
+    fun `applyKeyword with target BRAND matches brandName OR brandNameKana`() {
+        val items = listOf(
+            stubDrug(id = "drug_0001", brandName = "スーパーX錠", brandNameKana = "スーパーエックスジョウ"),
+            stubDrug(id = "drug_0002", brandName = "別製品", brandNameKana = "ベツセイヒン"),
+            stubDrug(id = "drug_0003", brandName = "異名", brandNameKana = "スーパー"),
+        )
+        val result = DrugSearchService.applyKeyword(
+            items = items,
+            keyword = "スーパー",
+            match = KeywordMatch.PARTIAL,
+            target = DrugKeywordTarget.BRAND,
+        )
+        assertEquals(listOf("drug_0001", "drug_0003"), result.map { it.id })
+    }
+
     private fun sampleDrugs(n: Int): List<Drug> = (1..n).map { index ->
         stubDrug(id = "drug_%04d".format(index))
     }
@@ -53,12 +69,14 @@ class DrugSearchServiceKeywordTest {
     private fun stubDrug(
         id: String,
         genericName: String = "テスト一般名",
+        brandName: String = "テスト販売名",
+        brandNameKana: String = "テストハンバイメイ",
     ): Drug =
         Drug(
             id = id,
             genericName = genericName,
-            brandName = "テスト販売名",
-            brandNameKana = "テストハンバイメイ",
+            brandName = brandName,
+            brandNameKana = brandNameKana,
             atcCode = "N02BE01",
             therapeuticCategoryName = "経口鎮痛薬",
             regulatoryClass = listOf(RegulatoryClass.PRESCRIPTION_REQUIRED),

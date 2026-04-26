@@ -33,10 +33,25 @@ object DrugSearchService {
         target: DrugKeywordTarget,
     ): List<Drug> = items.filter { drug ->
         when (target) {
-            DrugKeywordTarget.GENERIC -> matches(field = drug.genericName, keyword = keyword, match = match)
-            DrugKeywordTarget.BRAND -> true
+            DrugKeywordTarget.GENERIC, DrugKeywordTarget.BRAND ->
+                fieldsFor(target = target, drug = drug).any { field ->
+                    matches(field = field, keyword = keyword, match = match)
+                }
             DrugKeywordTarget.BOTH -> true
         }
+    }
+
+    /**
+     * 検索対象 (`target`) に応じて、`drug` のうちキーワード照合に用いるフィールド集合を返す。
+     * いずれか 1 フィールドが一致すれば該当扱い (OR 結合)。`BOTH` は後続フェーズで filter 側に統合する伏線。
+     */
+    private fun fieldsFor(
+        target: DrugKeywordTarget,
+        drug: Drug,
+    ): List<String> = when (target) {
+        DrugKeywordTarget.GENERIC -> listOf(drug.genericName)
+        DrugKeywordTarget.BRAND -> listOf(drug.brandName, drug.brandNameKana)
+        DrugKeywordTarget.BOTH -> listOf(drug.genericName, drug.brandName, drug.brandNameKana)
     }
 
     /**
