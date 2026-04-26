@@ -75,6 +75,41 @@ class DiseaseSearchServiceTest {
     }
 
     @Test
+    fun `applyKeyword with two tokens requires each matched by at least one target field (disease)`() {
+        val items =
+            listOf(
+                disease(id = "disease_0001", name = "高血圧症", nameKana = "コウケツアツショウ"),
+                disease(id = "disease_0002", name = "糖尿病", nameKana = "トウニョウビョウ"),
+            )
+        // 両トークンとも disease_0001 の name/nameKana のいずれかにヒットすべき
+        val result =
+            DiseaseSearchService.applyKeyword(
+                items = items,
+                keyword = "高血圧 コウケツ",
+                match = KeywordMatch.PARTIAL,
+                target = DiseaseKeywordTarget.NAME,
+            )
+        assertEquals(listOf("disease_0001"), result.map { it.id })
+    }
+
+    @Test
+    fun `applyKeyword with two tokens does NOT require same-field AND (disease synonyms)`() {
+        val items =
+            listOf(
+                disease(id = "disease_0001", synonyms = listOf("HTN", "高血圧")),
+                // 別 synonym 要素でも OK: token 'HTN' は synonyms[0]、token '高血圧' は synonyms[1] にヒット → 1 アイテム上で OK
+            )
+        val result =
+            DiseaseSearchService.applyKeyword(
+                items = items,
+                keyword = "HTN 高血圧",
+                match = KeywordMatch.PARTIAL,
+                target = DiseaseKeywordTarget.SYNONYMS,
+            )
+        assertEquals(listOf("disease_0001"), result.map { it.id })
+    }
+
+    @Test
     fun `applyKeyword with match PREFIX filters by startsWith, not contains (disease)`() {
         val items =
             listOf(
