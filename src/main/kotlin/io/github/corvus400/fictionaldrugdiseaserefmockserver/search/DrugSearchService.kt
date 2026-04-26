@@ -31,9 +31,15 @@ object DrugSearchService {
         keyword: String,
         match: KeywordMatch,
         target: DrugKeywordTarget,
-    ): List<Drug> = items.filter { drug ->
-        fieldsFor(target = target, drug = drug).any { field ->
-            matches(field = field, keyword = keyword, match = match)
+    ): List<Drug> {
+        val tokens = keyword.split(Regex("\\s+")).filter { it.isNotBlank() }
+        return items.filter { drug ->
+            val fields = fieldsFor(target = target, drug = drug)
+            tokens.all { token ->
+                fields.any { field ->
+                    matches(field = field, keyword = token, match = match)
+                }
+            }
         }
     }
 

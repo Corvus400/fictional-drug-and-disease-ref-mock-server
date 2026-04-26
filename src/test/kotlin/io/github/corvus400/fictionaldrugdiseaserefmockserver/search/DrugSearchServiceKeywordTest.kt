@@ -93,6 +93,37 @@ class DrugSearchServiceKeywordTest {
         assertEquals(setOf("drug_0001", "drug_0002"), result.map { it.id }.toSet())
     }
 
+    @Test
+    fun `applyKeyword with two space-separated tokens requires each token matched by at least one target field`() {
+        val items = listOf(
+            stubDrug(id = "drug_0001", genericName = "サンプルチン", brandName = "スーパー錠", brandNameKana = "スーパージョウ"),
+            stubDrug(id = "drug_0002", genericName = "サンプルチン", brandName = "別", brandNameKana = "別"),
+            stubDrug(id = "drug_0003", genericName = "別", brandName = "スーパー錠", brandNameKana = "スーパー"),
+        )
+        val result = DrugSearchService.applyKeyword(
+            items = items,
+            keyword = "サンプル スーパー",
+            match = KeywordMatch.PARTIAL,
+            target = DrugKeywordTarget.BOTH,
+        )
+        assertEquals(listOf("drug_0001"), result.map { it.id })
+    }
+
+    @Test
+    fun `applyKeyword with two tokens does NOT require both tokens to match the same field (cross-field AND ok)`() {
+        val items = listOf(
+            stubDrug(id = "drug_0001", genericName = "サンプルチン", brandName = "スーパー錠", brandNameKana = "別"),
+        )
+        // トークンA は generic のみにヒット、トークンB は brand のみにヒット → 同一フィールドに両方要求されない
+        val result = DrugSearchService.applyKeyword(
+            items = items,
+            keyword = "サンプル スーパー",
+            match = KeywordMatch.PARTIAL,
+            target = DrugKeywordTarget.BOTH,
+        )
+        assertEquals(listOf("drug_0001"), result.map { it.id })
+    }
+
     private fun sampleDrugs(n: Int): List<Drug> = (1..n).map { index ->
         stubDrug(id = "drug_%04d".format(index))
     }
