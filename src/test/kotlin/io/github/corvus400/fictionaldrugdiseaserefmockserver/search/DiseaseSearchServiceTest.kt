@@ -74,6 +74,24 @@ class DiseaseSearchServiceTest {
         assertEquals(listOf("disease_0001"), result.map { it.id })
     }
 
+    @Test
+    fun `applyKeyword with match PREFIX filters by startsWith, not contains (disease)`() {
+        val items =
+            listOf(
+                disease(id = "disease_0001", name = "高血圧症", nameKana = "コウケツアツショウ"),
+                // name に keyword を contains するが startsWith ではない / nameKana は keyword を含まない
+                disease(id = "disease_0002", name = "本態性高血圧", nameKana = "ホンタイセイコウケツアツ"),
+            )
+        val result =
+            DiseaseSearchService.applyKeyword(
+                items = items,
+                keyword = "高血圧",
+                match = KeywordMatch.PREFIX,
+                target = DiseaseKeywordTarget.NAME,
+            )
+        assertEquals(listOf("disease_0001"), result.map { it.id })
+    }
+
     private fun disease(
         id: String,
         name: String,
