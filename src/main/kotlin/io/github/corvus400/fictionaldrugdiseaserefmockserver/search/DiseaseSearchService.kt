@@ -19,27 +19,20 @@ object DiseaseSearchService {
         target: DiseaseKeywordTarget,
     ): List<Disease> {
         if (keyword.isNullOrBlank()) return items
-        return when (target) {
-            DiseaseKeywordTarget.NAME, DiseaseKeywordTarget.NAME_ENGLISH ->
-                when (match) {
-                    KeywordMatch.PARTIAL ->
-                        items.filter { disease ->
-                            fieldsFor(target = target, disease = disease).any { field ->
-                                field.contains(keyword)
-                            }
-                        }
-                    KeywordMatch.PREFIX -> items
+        return when (match) {
+            KeywordMatch.PARTIAL ->
+                items.filter { disease ->
+                    fieldsFor(target = target, disease = disease).any { field ->
+                        field.contains(keyword)
+                    }
                 }
-            DiseaseKeywordTarget.SYNONYMS ->
-                when (match) {
-                    KeywordMatch.PREFIX, KeywordMatch.PARTIAL -> items
-                }
+            KeywordMatch.PREFIX -> items
         }
     }
 
     /**
      * `target` に対応する検索対象フィールドの集合を返す。
-     * 後続フェーズで NAME_ENGLISH / SYNONYMS の検索を駆動する際に再利用するための伏線。
+     * `match=PARTIAL` のフィルタ評価および後続フェーズの `PREFIX` 評価で共有される。
      */
     private fun fieldsFor(
         target: DiseaseKeywordTarget,
