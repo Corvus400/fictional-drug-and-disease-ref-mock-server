@@ -62,6 +62,22 @@ class DrugSearchServiceKeywordTest {
         assertEquals(listOf("drug_0001", "drug_0003"), result.map { it.id })
     }
 
+    @Test
+    fun `applyKeyword with target BOTH matches generic OR brand fields`() {
+        val items = listOf(
+            stubDrug(id = "drug_0001", genericName = "アルファ", brandName = "別製品", brandNameKana = "別"),
+            stubDrug(id = "drug_0002", genericName = "別一般名", brandName = "アルファX", brandNameKana = "別"),
+            stubDrug(id = "drug_0003", genericName = "何も", brandName = "何も", brandNameKana = "何も"),
+        )
+        val result = DrugSearchService.applyKeyword(
+            items = items,
+            keyword = "アルファ",
+            match = KeywordMatch.PARTIAL,
+            target = DrugKeywordTarget.BOTH,
+        )
+        assertEquals(setOf("drug_0001", "drug_0002"), result.map { it.id }.toSet())
+    }
+
     private fun sampleDrugs(n: Int): List<Drug> = (1..n).map { index ->
         stubDrug(id = "drug_%04d".format(index))
     }
