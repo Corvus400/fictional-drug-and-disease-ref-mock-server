@@ -63,6 +63,21 @@ class DrugSearchServiceKeywordTest {
     }
 
     @Test
+    fun `applyKeyword with match PREFIX filters by startsWith, not contains`() {
+        val items = listOf(
+            stubDrug(id = "drug_0001", genericName = "アルファチン"),
+            stubDrug(id = "drug_0002", genericName = "プレアルファ"),
+        )
+        val result = DrugSearchService.applyKeyword(
+            items = items,
+            keyword = "アルファ",
+            match = KeywordMatch.PREFIX,
+            target = DrugKeywordTarget.GENERIC,
+        )
+        assertEquals(listOf("drug_0001"), result.map { it.id })
+    }
+
+    @Test
     fun `applyKeyword with target BOTH matches generic OR brand fields`() {
         val items = listOf(
             stubDrug(id = "drug_0001", genericName = "アルファ", brandName = "別製品", brandNameKana = "別"),
