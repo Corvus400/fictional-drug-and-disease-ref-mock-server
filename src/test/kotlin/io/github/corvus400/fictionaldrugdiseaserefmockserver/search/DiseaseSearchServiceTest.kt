@@ -39,9 +39,31 @@ class DiseaseSearchServiceTest {
         assertEquals(setOf("disease_0001", "disease_0003"), result.map { it.id }.toSet())
     }
 
+    @Test
+    fun `applyKeyword with target NAME_ENGLISH matches nameEnglish contains`() {
+        val items =
+            listOf(
+                disease(id = "disease_0001", nameEnglish = "Hypertension"),
+                disease(id = "disease_0002", nameEnglish = "Diabetes mellitus"),
+            )
+        val result =
+            DiseaseSearchService.applyKeyword(
+                items = items,
+                keyword = "Hyper",
+                match = KeywordMatch.PARTIAL,
+                target = DiseaseKeywordTarget.NAME_ENGLISH,
+            )
+        assertEquals(listOf("disease_0001"), result.map { it.id })
+    }
+
     private fun disease(
         id: String,
         name: String,
         nameKana: String,
     ): Disease = sampleDisease(id = id).copy(name = name, nameKana = nameKana)
+
+    private fun disease(
+        id: String,
+        nameEnglish: String,
+    ): Disease = sampleDisease(id = id).copy(nameEnglish = nameEnglish)
 }
