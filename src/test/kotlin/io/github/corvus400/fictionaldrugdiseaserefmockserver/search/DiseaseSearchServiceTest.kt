@@ -56,6 +56,24 @@ class DiseaseSearchServiceTest {
         assertEquals(listOf("disease_0001"), result.map { it.id })
     }
 
+    @Test
+    fun `applyKeyword with target SYNONYMS matches any element of synonyms list`() {
+        val items =
+            listOf(
+                disease(id = "disease_0001", synonyms = listOf("HTN", "高血圧")),
+                disease(id = "disease_0002", synonyms = listOf("DM", "糖尿病")),
+                disease(id = "disease_0003", synonyms = emptyList()),
+            )
+        val result =
+            DiseaseSearchService.applyKeyword(
+                items = items,
+                keyword = "HTN",
+                match = KeywordMatch.PARTIAL,
+                target = DiseaseKeywordTarget.SYNONYMS,
+            )
+        assertEquals(listOf("disease_0001"), result.map { it.id })
+    }
+
     private fun disease(
         id: String,
         name: String,
@@ -66,4 +84,9 @@ class DiseaseSearchServiceTest {
         id: String,
         nameEnglish: String,
     ): Disease = sampleDisease(id = id).copy(nameEnglish = nameEnglish)
+
+    private fun disease(
+        id: String,
+        synonyms: List<String>,
+    ): Disease = sampleDisease(id = id).copy(synonyms = synonyms)
 }
