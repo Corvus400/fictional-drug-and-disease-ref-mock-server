@@ -19,12 +19,31 @@ object DiseaseSearchService {
         target: DiseaseKeywordTarget,
     ): List<Disease> {
         if (keyword.isNullOrBlank()) return items
+        val tokens = keyword.split(Regex("\\s+")).filter { it.isNotBlank() }
+        if (tokens.isEmpty()) return items
         return items.filter { disease ->
-            fieldsFor(target = target, disease = disease).any { field ->
-                matches(field = field, keyword = keyword, match = match)
-            }
+            matchesAllTokens(
+                fields = fieldsFor(target = target, disease = disease),
+                tokens = tokens,
+                match = match,
+            )
         }
     }
+
+    /**
+     * 複数トークンを `fields` に対して評価する: per-token は OR across fields、トークン間は AND。
+     * `target=SYNONYMS` のような list 系フィールドでも、要素跨ぎでトークンが満たされれば true。
+     */
+    private fun matchesAllTokens(
+        fields: List<String>,
+        tokens: List<String>,
+        match: KeywordMatch,
+    ): Boolean =
+        tokens.all { token ->
+            fields.any { field ->
+                matches(field = field, keyword = token, match = match)
+            }
+        }
 
     /**
      * `target` に対応する検索対象フィールドの集合を返す。
