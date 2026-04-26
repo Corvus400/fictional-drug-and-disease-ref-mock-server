@@ -31,14 +31,32 @@ class DrugSearchServiceKeywordTest {
         assertEquals(items, result)
     }
 
+    @Test
+    fun `applyKeyword with target GENERIC and partial match filters by genericName contains`() {
+        val items = listOf(
+            stubDrug(id = "drug_0001", genericName = "サンプルチン"),
+            stubDrug(id = "drug_0002", genericName = "別名称"),
+        )
+        val result = DrugSearchService.applyKeyword(
+            items = items,
+            keyword = "ルチ",
+            match = KeywordMatch.PARTIAL,
+            target = DrugKeywordTarget.GENERIC,
+        )
+        assertEquals(listOf("drug_0001"), result.map { it.id })
+    }
+
     private fun sampleDrugs(n: Int): List<Drug> = (1..n).map { index ->
         stubDrug(id = "drug_%04d".format(index))
     }
 
-    private fun stubDrug(id: String): Drug =
+    private fun stubDrug(
+        id: String,
+        genericName: String = "テスト一般名",
+    ): Drug =
         Drug(
             id = id,
-            genericName = "テスト一般名",
+            genericName = genericName,
             brandName = "テスト販売名",
             brandNameKana = "テストハンバイメイ",
             atcCode = "N02BE01",

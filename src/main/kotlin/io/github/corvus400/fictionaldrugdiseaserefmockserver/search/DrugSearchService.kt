@@ -31,7 +31,24 @@ object DrugSearchService {
         keyword: String,
         match: KeywordMatch,
         target: DrugKeywordTarget,
-    ): List<Drug> = TODO(
-        "Phase 11-3b 以降で triangulation する: keyword=$keyword, match=$match, target=$target, items=${items.size}",
-    )
+    ): List<Drug> = items.filter { drug ->
+        when (target) {
+            DrugKeywordTarget.GENERIC -> matches(field = drug.genericName, keyword = keyword, match = match)
+            DrugKeywordTarget.BRAND -> true
+            DrugKeywordTarget.BOTH -> true
+        }
+    }
+
+    /**
+     * 単一フィールドに対するキーワード一致判定。`match` の差し替えで PREFIX 対応を後続 triangulation で
+     * 段階導入できるよう抽出している。
+     */
+    private fun matches(
+        field: String,
+        keyword: String,
+        match: KeywordMatch,
+    ): Boolean = when (match) {
+        KeywordMatch.PARTIAL -> field.contains(keyword)
+        KeywordMatch.PREFIX -> field.startsWith(keyword)
+    }
 }
