@@ -303,6 +303,7 @@ class EnumSerialNamePinTest {
         assertEquals("\"subacute\"", AppJson.encodeToString(OnsetPattern.SUBACUTE))
         assertEquals("\"chronic\"", AppJson.encodeToString(OnsetPattern.CHRONIC))
         assertEquals("\"intermittent\"", AppJson.encodeToString(OnsetPattern.INTERMITTENT))
+        assertEquals("\"relapsing\"", AppJson.encodeToString(OnsetPattern.RELAPSING))
     }
 
     @Test
@@ -322,6 +323,10 @@ class EnumSerialNamePinTest {
         assertEquals(
             OnsetPattern.INTERMITTENT,
             AppJson.decodeFromString<OnsetPattern>("\"intermittent\""),
+        )
+        assertEquals(
+            OnsetPattern.RELAPSING,
+            AppJson.decodeFromString<OnsetPattern>("\"relapsing\""),
         )
     }
 }
