@@ -335,6 +335,7 @@ class EnumSerialNamePinTest {
     fun `PrevalenceUnit encodes to literal english snake_case`() {
         assertEquals("\"per_population\"", AppJson.encodeToString(PrevalenceUnit.PER_POPULATION))
         assertEquals("\"per_patient\"", AppJson.encodeToString(PrevalenceUnit.PER_PATIENT))
+        assertEquals("\"per_birth\"", AppJson.encodeToString(PrevalenceUnit.PER_BIRTH))
     }
 
     @Test
@@ -346,6 +347,10 @@ class EnumSerialNamePinTest {
         assertEquals(
             PrevalenceUnit.PER_PATIENT,
             AppJson.decodeFromString<PrevalenceUnit>("\"per_patient\""),
+        )
+        assertEquals(
+            PrevalenceUnit.PER_BIRTH,
+            AppJson.decodeFromString<PrevalenceUnit>("\"per_birth\""),
         )
     }
 }
