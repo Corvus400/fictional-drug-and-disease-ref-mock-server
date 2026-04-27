@@ -1,6 +1,7 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.serialization
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DosageForm
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DoseUnit
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RouteOfAdministration
 import kotlinx.serialization.json.Json
@@ -155,6 +156,24 @@ class EnumSerialNamePinTest {
             DosageForm.NASAL_SPRAY,
             Json.decodeFromString(DosageForm.serializer(), "\"nasal_spray\""),
             "DosageForm.NASAL_SPRAY",
+        )
+    }
+
+    @Test
+    fun `DoseUnit encodes to literal english snake_case`() {
+        assertEquals(
+            "\"mg\"",
+            Json.encodeToString(DoseUnit.serializer(), DoseUnit.MG),
+            "DoseUnit.MG",
+        )
+    }
+
+    @Test
+    fun `DoseUnit decodes from literal english snake_case`() {
+        assertEquals(
+            DoseUnit.MG,
+            Json.decodeFromString(DoseUnit.serializer(), "\"mg\""),
+            "DoseUnit.MG",
         )
     }
 

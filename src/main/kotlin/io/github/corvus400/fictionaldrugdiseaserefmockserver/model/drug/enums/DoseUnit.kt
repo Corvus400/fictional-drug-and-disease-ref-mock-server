@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 enum class DoseUnit {
+    /** ミリグラム */
     @SerialName("mg")
     MG,
 
