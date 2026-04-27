@@ -113,7 +113,7 @@ class DiseaseNestedSerializationTest {
             ),
         )
         assertEquals(
-            """{"prevalence":{"rate":12.5,"denominator":100000,"unit":"人口対",""" +
+            """{"prevalence":{"rate":12.5,"denominator":100000,"unit":"per_population",""" +
                 """"label":"人口10万対 12.5"},""" +
                 """"onset_age_range":{"min_age_years":40,"max_age_years":60,"label":"40-60 代"},""" +
                 """"sex_ratio":{"male_ratio":2,"female_ratio":1,"note":"男性優位"},""" +
