@@ -29,7 +29,7 @@ class DiseaseSerializationTest {
         val json = AppJson.encodeToString(minimalDisease())
         assertTrue(json.contains(""""icd10_chapter":"内分泌、栄養および代謝疾患""""))
         assertTrue(json.contains(""""medical_department":["endocrinology"]"""))
-        assertTrue(json.contains(""""chronicity":"慢性""""))
+        assertTrue(json.contains(""""chronicity":"chronic""""))
     }
 
     @Test

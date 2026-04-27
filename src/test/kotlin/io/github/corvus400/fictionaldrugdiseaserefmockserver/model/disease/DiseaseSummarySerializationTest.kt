@@ -41,7 +41,7 @@ class DiseaseSummarySerializationTest {
         assertEquals("テスト疾患", jsonObject["name"]?.toString()?.trim('"'))
         assertEquals("\"内分泌、栄養および代謝疾患\"", jsonObject["icd10_chapter"]?.toString())
         assertEquals("[\"endocrinology\"]", jsonObject["medical_department"]?.toString())
-        assertEquals("\"慢性\"", jsonObject["chronicity"]?.toString())
+        assertEquals("\"chronic\"", jsonObject["chronicity"]?.toString())
         assertEquals("false", jsonObject["infectious"]?.toString())
     }
 }
