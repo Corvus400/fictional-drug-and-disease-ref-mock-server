@@ -30,7 +30,8 @@ enum class MedicalDepartment {
     @SerialName("psychiatry")
     PSYCHIATRY,
 
-    @SerialName("外科")
+    /** 外科 */
+    @SerialName("surgery")
     SURGERY,
 
     @SerialName("整形外科")
