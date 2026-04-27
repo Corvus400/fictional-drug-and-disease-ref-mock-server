@@ -5,6 +5,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.module
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
+import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
@@ -15,6 +16,7 @@ import kotlinx.serialization.json.jsonPrimitive
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class OpenApiDocTest {
@@ -112,5 +114,36 @@ class OpenApiDocTest {
                 "info.descriptionにAPIカテゴリ '${apiTag.tagName}' が含まれていない",
             )
         }
+    }
+
+    @Test
+    fun `drug regulatory_class description contains english SerialName via interpolation`() = testApplication {
+        application { module() }
+        val description = fetchParameterDescription(path = "/drugs", parameterName = "regulatory_class")
+        assertTrue(
+            description.contains("prescription_required"),
+            "regulatory_class description に英語 SerialName 'prescription_required' が含まれていない: $description",
+        )
+    }
+
+    private suspend fun ApplicationTestBuilder.fetchParameterDescription(
+        path: String,
+        parameterName: String,
+    ): String {
+        val response = client.get(urlString = "/openapi.json")
+        val spec = json.decodeFromString<JsonObject>(string = response.bodyAsText())
+        val parameters = spec["paths"]?.jsonObject
+            ?.get(key = path)?.jsonObject
+            ?.get(key = "get")?.jsonObject
+            ?.get(key = "parameters")?.jsonArray
+            ?: JsonArray(content = emptyList())
+        val parameter = parameters.firstOrNull { element ->
+            element.jsonObject["name"]?.jsonPrimitive?.content == parameterName
+        }
+        assertNotNull(
+            actual = parameter,
+            message = "$path の OpenAPI parameters に '$parameterName' が見つからない",
+        )
+        return parameter.jsonObject["description"]?.jsonPrimitive?.content.orEmpty()
     }
 }
