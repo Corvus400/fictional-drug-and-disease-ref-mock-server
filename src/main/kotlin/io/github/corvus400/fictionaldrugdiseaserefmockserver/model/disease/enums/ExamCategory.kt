@@ -5,7 +5,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 enum class ExamCategory {
-    @SerialName("血液検査")
+    /** 血液検査 */
+    @SerialName("blood_test")
     BLOOD_TEST,
 
     @SerialName("画像検査")
