@@ -6,7 +6,8 @@ import kotlinx.serialization.serializer
 
 @Serializable
 enum class Chronicity {
-    @SerialName("急性")
+    /** 急性 */
+    @SerialName("acute")
     ACUTE,
 
     @SerialName("亜急性")
