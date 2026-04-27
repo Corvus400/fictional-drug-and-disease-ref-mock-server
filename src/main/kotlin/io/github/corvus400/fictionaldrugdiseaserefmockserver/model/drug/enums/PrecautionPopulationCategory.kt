@@ -13,7 +13,8 @@ enum class PrecautionPopulationCategory {
     @SerialName("renal_impairment")
     RENAL_IMPAIRMENT,
 
-    @SerialName("肝機能障害")
+    /** 肝機能障害 */
+    @SerialName("hepatic_impairment")
     HEPATIC_IMPAIRMENT,
 
     @SerialName("生殖能有する患者")
