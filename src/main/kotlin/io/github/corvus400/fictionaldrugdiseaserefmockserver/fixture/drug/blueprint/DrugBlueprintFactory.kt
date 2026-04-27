@@ -62,6 +62,12 @@ object DrugBlueprintFactory {
                         genericKatakana = "トレデキム",
                         genericLatin = "tredecim",
                     ),
+                    textOverride =
+                    FixedDrugTextOverride(
+                        appearance = "無色澄明の液体を充填した透明ガラスバイアル " +
+                            "(ラベルに「13」表記、銀色アルミシール)",
+                        originalSubstanceDescription = "無色澄明の液体である。",
+                    ),
                 )
             },
             89 to {
@@ -75,6 +81,12 @@ object DrugBlueprintFactory {
                         brandKatakana = coinedNames.first.katakana,
                         genericKatakana = coinedNames.second.katakana,
                         genericLatin = coinedNames.second.latin,
+                    ),
+                    textOverride =
+                    FixedDrugTextOverride(
+                        appearance = "無色澄明の液体を充填した透明ガラスバイアル " +
+                            "(白色ラベル、銀色アルミシール)",
+                        originalSubstanceDescription = "無色澄明の液体で、わずかに特異な芳香がある。",
                     ),
                 )
             },
