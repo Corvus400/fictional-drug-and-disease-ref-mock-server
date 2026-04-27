@@ -5,7 +5,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 enum class OnsetPattern {
-    @SerialName("急性発症")
+    /** 急性発症 */
+    @SerialName("acute")
     ACUTE,
 
     @SerialName("亜急性発症")
