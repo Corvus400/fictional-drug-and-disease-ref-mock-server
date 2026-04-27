@@ -22,7 +22,8 @@ enum class MedicalDepartment {
     @SerialName("endocrinology")
     ENDOCRINOLOGY,
 
-    @SerialName("神経内科")
+    /** 神経内科 */
+    @SerialName("neurology")
     NEUROLOGY,
 
     @SerialName("精神科")
