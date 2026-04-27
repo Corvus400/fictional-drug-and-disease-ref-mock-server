@@ -24,7 +24,7 @@ import kotlin.test.assertTrue
  *
  * Phase 11-10a で実装済みの `DrugListFixtures.resolve` + `DrugSearchService.applyKeyword`
  * 統合が、`default` シナリオ (120 件) に対して Fixture 由来のキーワードで絞り込みを掛け、
- * 0 件超かつ全件未満を返すことを保証する (タウトロジー回避)。
+ * 0 件超かつ全件未満を返すことを保証する (トートロジー回避)。
  *
  * Issue #100 本文の Red テンプレートは
  * - endpoint 名が `drugs` (実装は `drugList`)
@@ -41,7 +41,7 @@ import kotlin.test.assertTrue
  * (`filtered<total` が満たされる) ため採用しない。
  *
  * 下限を `filtered >= 2` に強化することで「drug_0001 自身が自分の brand_name にマッチする」
- * という定義上のトートロジー (Issue #100 コメント「タウトロジー回避」が指す性質) を回避し、
+ * という定義上のトートロジー (Issue #100 コメントが回避を求める性質) を回避し、
  * `default` シナリオに drug_0001 以外にも該当 drug が少なくとも 1 件存在することを要求する。
  * 全文ではなく接頭辞を使うのは、brand_name 全体だと drug_0001 のみマッチして filtered=1 に
  * 落ち込みやすいため。katakana 接頭辞 2 文字は、120 件全てを被覆するほど一般的でも、
