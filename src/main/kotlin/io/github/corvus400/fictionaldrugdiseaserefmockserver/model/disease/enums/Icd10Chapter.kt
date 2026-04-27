@@ -65,7 +65,8 @@ enum class Icd10Chapter {
     @SerialName("chapter_xv")
     CHAPTER_XV,
 
-    @SerialName("周産期に発生した病態")
+    /** 周産期に発生した病態 */
+    @SerialName("chapter_xvi")
     CHAPTER_XVI,
 
     @SerialName("先天奇形、変形および染色体異常")
