@@ -160,6 +160,16 @@ class OpenApiDocTest {
         )
     }
 
+    @Test
+    fun `disease department parameter has description`() = testApplication {
+        application { module() }
+        val description = fetchParameterDescription(path = "/diseases", parameterName = "department")
+        assertTrue(
+            description.contains("internal_medicine"),
+            "department description に英語 SerialName 'internal_medicine' が含まれていない: $description",
+        )
+    }
+
     private suspend fun ApplicationTestBuilder.fetchParameterDescription(
         path: String,
         parameterName: String,
