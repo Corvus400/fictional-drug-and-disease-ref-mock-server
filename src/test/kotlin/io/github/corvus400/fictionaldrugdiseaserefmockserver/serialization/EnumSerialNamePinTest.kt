@@ -5,6 +5,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.Do
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.FrequencyBand
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.HepaticSeverity
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RenalSeverity
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RouteOfAdministration
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
@@ -470,6 +471,24 @@ class EnumSerialNamePinTest {
             RegulatoryClass.PRESCRIPTION_REQUIRED,
             Json.decodeFromString(RegulatoryClass.serializer(), "\"prescription_required\""),
             "RegulatoryClass.PRESCRIPTION_REQUIRED",
+        )
+    }
+
+    @Test
+    fun `RenalSeverity encodes to literal english snake_case`() {
+        assertEquals(
+            "\"normal\"",
+            Json.encodeToString(RenalSeverity.serializer(), RenalSeverity.NORMAL),
+            "RenalSeverity.NORMAL",
+        )
+    }
+
+    @Test
+    fun `RenalSeverity decodes from literal english snake_case`() {
+        assertEquals(
+            RenalSeverity.NORMAL,
+            Json.decodeFromString(RenalSeverity.serializer(), "\"normal\""),
+            "RenalSeverity.NORMAL",
         )
     }
 
