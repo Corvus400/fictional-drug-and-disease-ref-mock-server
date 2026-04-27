@@ -4,6 +4,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.Do
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DoseUnit
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.FrequencyBand
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.HepaticSeverity
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.PrecautionPopulationCategory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RenalSeverity
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RouteOfAdministration
@@ -354,6 +355,27 @@ class EnumSerialNamePinTest {
             HepaticSeverity.SEVERE,
             Json.decodeFromString(HepaticSeverity.serializer(), "\"severe\""),
             "HepaticSeverity.SEVERE",
+        )
+    }
+
+    @Test
+    fun `PrecautionPopulationCategory encodes to literal english snake_case`() {
+        assertEquals(
+            "\"comorbidity\"",
+            Json.encodeToString(
+                PrecautionPopulationCategory.serializer(),
+                PrecautionPopulationCategory.COMORBIDITY,
+            ),
+            "PrecautionPopulationCategory.COMORBIDITY",
+        )
+    }
+
+    @Test
+    fun `PrecautionPopulationCategory decodes from literal english snake_case`() {
+        assertEquals(
+            PrecautionPopulationCategory.COMORBIDITY,
+            Json.decodeFromString(PrecautionPopulationCategory.serializer(), "\"comorbidity\""),
+            "PrecautionPopulationCategory.COMORBIDITY",
         )
     }
 
