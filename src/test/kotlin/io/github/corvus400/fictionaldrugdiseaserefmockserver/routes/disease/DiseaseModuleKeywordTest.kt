@@ -3,9 +3,13 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.disease
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.module
 import io.ktor.client.request.get
 import io.ktor.client.request.headers
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
+import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.contentType
 import io.ktor.server.testing.testApplication
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
@@ -76,6 +80,40 @@ class DiseaseModuleKeywordTest {
             message = "unknown X-Mock-Scenario must fall back to default (80 items), " +
                 "not return empty (got total=$total)",
         )
+    }
+
+    /**
+     * Phase 11-11b の検証テスト (#112): default シナリオ (80 件) に対して
+     * `keyword` ヒット件数が 1..80 の範囲で正しく返ることを確認する。
+     *
+     * Issue 本文の Red サンプルでは `keyword=` (空文字) を使うため、`DiseaseSearchService`
+     * の blank-no-op で全 80 件が返るが、`assertTrue(count in 1..80)` は満たされる。
+     * #111 で実装済みのため Green は即時成立し、本コミットは検証テストの追加。
+     * Refactor 段階で実在 keyword を `knownDiseaseKeyword()` ヘルパーに集約する想定。
+     *
+     * `DiseaseModuleKeywordTest` の既存ペア:
+     * - non-matching keyword (`zzznotexistzzz`) → 0 件 (negative complement)
+     * - keyword= → 1..80 件 (positive complement、本テスト)
+     */
+    @Test
+    fun `GET diseases under default scenario with keyword returns positive filtered count`() = testApplication {
+        application { module() }
+        client.post(urlString = "/__admin/configs/diseaseList") {
+            contentType(type = ContentType.Application.Json)
+            setBody(body = """{"state": "default"}""")
+        }
+
+        val response = client.get(
+            urlString = "/diseases?keyword=&keyword_target=name&keyword_match=partial&page_size=100",
+        )
+        assertEquals(expected = HttpStatusCode.OK, actual = response.status)
+        val count = response.totalCount()
+        assertTrue(
+            actual = count in 1..80,
+            message = "default scenario keyword filter must return count in 1..80 (got $count)",
+        )
+
+        client.post(urlString = "/__admin/reset")
     }
 
     private suspend fun HttpResponse.totalCount(): Int {
