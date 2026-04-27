@@ -45,7 +45,8 @@ enum class Icd10Chapter {
     @SerialName("chapter_x")
     CHAPTER_X,
 
-    @SerialName("消化器系の疾患")
+    /** 消化器系の疾患 */
+    @SerialName("chapter_xi")
     CHAPTER_XI,
 
     @SerialName("皮膚および皮下組織の疾患")
