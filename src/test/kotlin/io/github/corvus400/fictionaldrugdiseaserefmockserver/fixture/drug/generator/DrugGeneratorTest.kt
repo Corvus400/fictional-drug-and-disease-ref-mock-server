@@ -378,6 +378,33 @@ class DrugGeneratorTest {
     }
 
     @Test
+    fun `generate maps LIQUID_SP_TREDECIM idOverride and nameOverride to Drug id and brand name and english`() {
+        val blueprints = DrugBlueprintFactory.build()
+        val drugs = generator.generate(blueprints = blueprints)
+        val tredecim =
+            assertNotNull(
+                actual = drugs.firstOrNull { it.id == "LIQUID_SP_TREDECIM" },
+                message = "LIQUID_SP_TREDECIM must be present in the generated drug list",
+            )
+        assertEquals(
+            expected = "トレデキム",
+            actual = tredecim.brandName,
+            message = "LIQUID_SP_TREDECIM brand_name must equal 'トレデキム'",
+        )
+        assertEquals(
+            expected = "トレデキム",
+            actual = tredecim.brandNameKana,
+            message = "LIQUID_SP_TREDECIM brand_name_kana must equal 'トレデキム'",
+        )
+        val physicochemical = assertNotNull(tredecim.physicochemicalProperties)
+        assertEquals(
+            expected = "tredecim",
+            actual = physicochemical.genericNameEnglish,
+            message = "LIQUID_SP_TREDECIM generic_name_english must equal 'tredecim'",
+        )
+    }
+
+    @Test
     fun `relatedDiseaseIds reference only existing disease IDs for all blueprints`() {
         val existingDiseaseIds: Set<String> =
             (0..79).map { "disease_${it.toString().padStart(length = 4, padChar = '0')}" }.toSet()

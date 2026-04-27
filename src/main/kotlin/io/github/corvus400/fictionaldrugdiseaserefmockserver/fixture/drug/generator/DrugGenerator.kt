@@ -26,20 +26,22 @@ class DrugGenerator(
     fun generate(blueprint: DrugBlueprint): Drug {
         val country = DrugCountryMapping.of(atcFirstLetter = blueprint.atcFirstLetter)
         val bucket = CountryBucketRepository.of(country = country)
-        val brand =
-            coiner.coin(
-                bucket = bucket.cuisine,
-                blueprintIndex = blueprint.index,
-                slot = NameSlot.DRUG_BRAND,
-                offset = 0,
-            )
-        val generic =
-            coiner.coin(
-                bucket = bucket.cuisine,
-                blueprintIndex = blueprint.index,
-                slot = NameSlot.DRUG_GENERIC,
-                offset = 0,
-            )
+        val brand: CoinedName =
+            blueprint.nameOverride?.toBrandCoinedName()
+                ?: coiner.coin(
+                    bucket = bucket.cuisine,
+                    blueprintIndex = blueprint.index,
+                    slot = NameSlot.DRUG_BRAND,
+                    offset = 0,
+                )
+        val generic: CoinedName =
+            blueprint.nameOverride?.toGenericCoinedName()
+                ?: coiner.coin(
+                    bucket = bucket.cuisine,
+                    blueprintIndex = blueprint.index,
+                    slot = NameSlot.DRUG_GENERIC,
+                    offset = 0,
+                )
         val inactives = (0 until INACTIVE_INGREDIENT_COUNT).map { offset ->
             coiner.coin(
                 bucket = bucket.beverage,
@@ -75,8 +77,9 @@ class DrugGenerator(
         inactives: List<CoinedName>,
         manufacturer: CoinedName,
     ): Drug {
-        val drugId =
-            "drug_${blueprint.index.toString().padStart(length = DRUG_ID_PAD_LENGTH, padChar = '0')}"
+        val drugId: String =
+            blueprint.idOverride
+                ?: "drug_${blueprint.index.toString().padStart(length = DRUG_ID_PAD_LENGTH, padChar = '0')}"
         return Drug(
             id = drugId,
             genericName = generic.katakana,

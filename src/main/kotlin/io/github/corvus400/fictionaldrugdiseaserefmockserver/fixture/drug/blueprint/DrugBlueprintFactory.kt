@@ -37,6 +37,18 @@ object DrugBlueprintFactory {
         }
     }
 
+    /**
+     * `FIXED_OVERRIDES` で再 ID 化された blueprint の `index → idOverride` を公開する。
+     *
+     * disease 側 fixture の `relatedDrugIds` 生成箇所で
+     * `drug_NNNN` を override id に置換するために参照する。
+     */
+    val FIXED_OVERRIDE_IDS_BY_INDEX: Map<Int, String> =
+        mapOf(
+            80 to "LIQUID_SP_TREDECIM",
+            89 to "LIQUID_SP_SLEEP_AID",
+        )
+
     private val FIXED_OVERRIDES: Map<Int, DrugBlueprint.() -> DrugBlueprint> =
         mapOf(
             80 to {
@@ -44,6 +56,12 @@ object DrugBlueprintFactory {
                     idOverride = "LIQUID_SP_TREDECIM",
                     dosageForm = DosageForm.LIQUID,
                     regulatoryClasses = setOf(RegulatoryClass.POISON),
+                    nameOverride =
+                    NameOverride(
+                        brandKatakana = "トレデキム",
+                        genericKatakana = "トレデキム",
+                        genericLatin = "tredecim",
+                    ),
                 )
             },
             89 to {

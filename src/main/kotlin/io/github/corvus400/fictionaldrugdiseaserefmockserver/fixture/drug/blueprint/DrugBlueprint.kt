@@ -1,5 +1,7 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.blueprint
 
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixmerge.coinage.CoinedName
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixmerge.nameslot.NameSlot
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DosageForm
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass
 
@@ -44,7 +46,23 @@ data class NameOverride(
     val brandKatakana: String,
     val genericKatakana: String,
     val genericLatin: String,
-)
+) {
+    fun toBrandCoinedName(): CoinedName =
+        CoinedName(
+            latin = "",
+            katakana = brandKatakana,
+            mixedSurface = brandKatakana,
+            pattern = NameSlot.DRUG_BRAND.defaultPattern,
+        )
+
+    fun toGenericCoinedName(): CoinedName =
+        CoinedName(
+            latin = genericLatin,
+            katakana = genericKatakana,
+            mixedSurface = genericKatakana,
+            pattern = NameSlot.DRUG_GENERIC.defaultPattern,
+        )
+}
 
 /**
  * `DrugBlueprint` の `composition.appearance` と `physicochemical_properties.description` を
