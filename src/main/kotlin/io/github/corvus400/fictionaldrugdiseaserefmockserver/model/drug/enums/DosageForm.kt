@@ -25,7 +25,8 @@ enum class DosageForm {
     @SerialName("liquid")
     LIQUID,
 
-    @SerialName("注射剤")
+    /** 注射剤 */
+    @SerialName("injection_form")
     INJECTION_FORM,
 
     @SerialName("軟膏")
