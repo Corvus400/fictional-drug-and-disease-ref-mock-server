@@ -9,7 +9,8 @@ enum class DosageForm {
     @SerialName("tablet")
     TABLET,
 
-    @SerialName("カプセル")
+    /** カプセル */
+    @SerialName("capsule")
     CAPSULE,
 
     @SerialName("散剤")
