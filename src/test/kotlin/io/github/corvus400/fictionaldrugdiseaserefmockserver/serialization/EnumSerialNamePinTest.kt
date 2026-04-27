@@ -35,6 +35,7 @@ class EnumSerialNamePinTest {
         assertEquals("\"neurology\"", AppJson.encodeToString(MedicalDepartment.NEUROLOGY))
         assertEquals("\"psychiatry\"", AppJson.encodeToString(MedicalDepartment.PSYCHIATRY))
         assertEquals("\"surgery\"", AppJson.encodeToString(MedicalDepartment.SURGERY))
+        assertEquals("\"orthopedics\"", AppJson.encodeToString(MedicalDepartment.ORTHOPEDICS))
     }
 
     @Test
@@ -66,6 +67,10 @@ class EnumSerialNamePinTest {
         assertEquals(
             MedicalDepartment.SURGERY,
             AppJson.decodeFromString<MedicalDepartment>("\"surgery\""),
+        )
+        assertEquals(
+            MedicalDepartment.ORTHOPEDICS,
+            AppJson.decodeFromString<MedicalDepartment>("\"orthopedics\""),
         )
     }
 }
