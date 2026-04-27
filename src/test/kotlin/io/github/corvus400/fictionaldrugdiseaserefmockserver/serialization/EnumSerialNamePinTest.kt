@@ -384,6 +384,14 @@ class EnumSerialNamePinTest {
             ),
             "PrecautionPopulationCategory.HEPATIC_IMPAIRMENT",
         )
+        assertEquals(
+            "\"reproductive_potential\"",
+            Json.encodeToString(
+                PrecautionPopulationCategory.serializer(),
+                PrecautionPopulationCategory.REPRODUCTIVE_POTENTIAL,
+            ),
+            "PrecautionPopulationCategory.REPRODUCTIVE_POTENTIAL",
+        )
     }
 
     @Test
@@ -402,6 +410,11 @@ class EnumSerialNamePinTest {
             PrecautionPopulationCategory.HEPATIC_IMPAIRMENT,
             Json.decodeFromString(PrecautionPopulationCategory.serializer(), "\"hepatic_impairment\""),
             "PrecautionPopulationCategory.HEPATIC_IMPAIRMENT",
+        )
+        assertEquals(
+            PrecautionPopulationCategory.REPRODUCTIVE_POTENTIAL,
+            Json.decodeFromString(PrecautionPopulationCategory.serializer(), "\"reproductive_potential\""),
+            "PrecautionPopulationCategory.REPRODUCTIVE_POTENTIAL",
         )
     }
 
