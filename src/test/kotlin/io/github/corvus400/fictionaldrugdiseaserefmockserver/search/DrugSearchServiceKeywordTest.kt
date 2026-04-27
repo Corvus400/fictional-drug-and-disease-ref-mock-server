@@ -124,6 +124,21 @@ class DrugSearchServiceKeywordTest {
         assertEquals(listOf("drug_0001"), result.map { it.id })
     }
 
+    @Test
+    fun `applyKeyword with unicode kana and kanji keyword matches correctly`() {
+        val items = listOf(
+            stubDrug(id = "drug_0001", genericName = "鎮痛剤アルファ", brandName = "ペイン", brandNameKana = "ペイン"),
+            stubDrug(id = "drug_0002", genericName = "別の薬", brandName = "別", brandNameKana = "ベツ"),
+        )
+        val result = DrugSearchService.applyKeyword(
+            items = items,
+            keyword = "鎮痛",
+            match = KeywordMatch.PARTIAL,
+            target = DrugKeywordTarget.GENERIC,
+        )
+        assertEquals(listOf("drug_0001"), result.map { it.id })
+    }
+
     private fun sampleDrugs(n: Int): List<Drug> = (1..n).map { index ->
         stubDrug(id = "drug_%04d".format(index))
     }
