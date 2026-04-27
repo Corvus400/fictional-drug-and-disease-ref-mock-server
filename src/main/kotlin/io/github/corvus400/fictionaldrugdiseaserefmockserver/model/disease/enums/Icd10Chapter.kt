@@ -53,7 +53,8 @@ enum class Icd10Chapter {
     @SerialName("chapter_xii")
     CHAPTER_XII,
 
-    @SerialName("筋骨格系および結合組織の疾患")
+    /** 筋骨格系および結合組織の疾患 */
+    @SerialName("chapter_xiii")
     CHAPTER_XIII,
 
     @SerialName("腎尿路生殖器系の疾患")
