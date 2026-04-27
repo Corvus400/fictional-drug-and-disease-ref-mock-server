@@ -9,7 +9,8 @@ enum class Icd10Chapter {
     @SerialName("chapter_i")
     CHAPTER_I,
 
-    @SerialName("新生物")
+    /** 新生物 */
+    @SerialName("chapter_ii")
     CHAPTER_II,
 
     @SerialName("血液および造血器の疾患ならびに免疫機構の障害")
