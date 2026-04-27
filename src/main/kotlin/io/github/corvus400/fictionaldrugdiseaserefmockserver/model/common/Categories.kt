@@ -22,18 +22,12 @@ data class Icd10ChapterEntry(
 )
 
 @Serializable
-data class LabeledEntry(
-    val value: String,
-    val label: String,
-)
-
-@Serializable
 data class CategoriesResponse(
     val atc: List<AtcEntry>,
     val therapeuticCategories: List<TherapeuticCategoryEntry>,
-    val routeOfAdministration: List<LabeledEntry>,
-    val dosageForm: List<LabeledEntry>,
-    val regulatoryClass: List<LabeledEntry>,
+    val routeOfAdministration: List<String>,
+    val dosageForm: List<String>,
+    val regulatoryClass: List<String>,
     val icd10Chapters: List<Icd10ChapterEntry>,
-    val medicalDepartments: List<LabeledEntry>,
+    val medicalDepartments: List<String>,
 )
