@@ -9,7 +9,8 @@ enum class PrevalenceUnit {
     @SerialName("per_population")
     PER_POPULATION,
 
-    @SerialName("患者対")
+    /** 患者対 */
+    @SerialName("per_patient")
     PER_PATIENT,
 
     @SerialName("出生対")
