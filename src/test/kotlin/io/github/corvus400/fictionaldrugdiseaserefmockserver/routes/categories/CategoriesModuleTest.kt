@@ -34,6 +34,36 @@ private val SEVEN_TOP_LEVEL_KEYS: List<String> = listOf(
     "medical_departments",
 )
 
+/**
+ * ICD-10 全 22 章の roman → 日本語ラベル対応表。`Icd10Chapter` enum 各 entry の KDoc が
+ * SSOT で、`/categories.icd10_chapters[].label` はこの日本語ラベルを返さなければならない。
+ * (英語 SerialName キー `chapter_i` 等は UI 表示として不適切。)
+ */
+private val EXPECTED_ICD10_LABELS_JA: Map<String, String> = mapOf(
+    "I" to "感染症および寄生虫症",
+    "II" to "新生物",
+    "III" to "血液および造血器の疾患ならびに免疫機構の障害",
+    "IV" to "内分泌、栄養および代謝疾患",
+    "V" to "精神および行動の障害",
+    "VI" to "神経系の疾患",
+    "VII" to "眼および付属器の疾患",
+    "VIII" to "耳および乳様突起の疾患",
+    "IX" to "循環器系の疾患",
+    "X" to "呼吸器系の疾患",
+    "XI" to "消化器系の疾患",
+    "XII" to "皮膚および皮下組織の疾患",
+    "XIII" to "筋骨格系および結合組織の疾患",
+    "XIV" to "腎尿路生殖器系の疾患",
+    "XV" to "妊娠、分娩および産褥",
+    "XVI" to "周産期に発生した病態",
+    "XVII" to "先天奇形、変形および染色体異常",
+    "XVIII" to "症状、徴候および異常臨床所見・異常検査所見で他に分類されないもの",
+    "XIX" to "損傷、中毒およびその他の外因の影響",
+    "XX" to "傷病および死亡の外因",
+    "XXI" to "健康状態に影響を及ぼす要因および保健サービスの利用",
+    "XXII" to "特殊目的用コード",
+)
+
 class CategoriesModuleTest {
     private val json = Json { ignoreUnknownKeys = true }
 
@@ -223,6 +253,31 @@ class CategoriesModuleTest {
                 actual = romanValues,
                 message = "icd10_chapters roman values must cover the full I..XXII range " +
                     "(WHO ICD-10 22 章を網羅)",
+            )
+        }
+
+    /**
+     * Phase 3.2 (TDD-S3.2) の中核 pin。`/categories.icd10_chapters[].label` は独立した日本語マスタ
+     * `ICD10_CHAPTER_LABELS_JA` から供給され、`atc[].label` / `therapeutic_categories[].label` と
+     * 意味 (UI 表示用の人間可読名) を揃えなければならない。Phase 1.12 完了後の現状実装は
+     * `descriptor.getElementName(ordinal)` 経由で英語 SerialName キー (`chapter_i` 等) を返すため
+     * 失敗する。本 pin が緑になることで「label のみ独立日本語マスタ」方針が固定される。
+     */
+    @Test
+    fun `GET categories icd10_chapters labels are japanese, not english SerialName keys`() =
+        categoriesEndpointTest { response ->
+            val body = json.decodeFromString<JsonObject>(response.bodyAsText())
+            val icd10FieldName: String = SEVEN_TOP_LEVEL_KEYS.single { name -> name.startsWith(prefix = "icd10") }
+            assertEquals(
+                expected = EXPECTED_ICD10_LABELS_JA,
+                actual = body.getValue(key = icd10FieldName).jsonArray.associate { entry ->
+                    val obj = entry.jsonObject
+                    obj.getValue(key = "roman").jsonPrimitive.content to
+                        obj.getValue(key = "label").jsonPrimitive.content
+                },
+                message = "icd10_chapters[].label は WHO ICD-10 章別の日本語名 " +
+                    "(`atc[].label` / `therapeutic_categories[].label` と意味を揃える) で供給すること。" +
+                    "`chapter_i` のような英語 SerialName キーは UI 表示として不適切。",
             )
         }
 
