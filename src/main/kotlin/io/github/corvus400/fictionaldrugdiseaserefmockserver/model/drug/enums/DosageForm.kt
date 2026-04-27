@@ -37,7 +37,8 @@ enum class DosageForm {
     @SerialName("cream")
     CREAM,
 
-    @SerialName("貼付剤")
+    /** 貼付剤 */
+    @SerialName("patch")
     PATCH,
 
     @SerialName("点眼液")
