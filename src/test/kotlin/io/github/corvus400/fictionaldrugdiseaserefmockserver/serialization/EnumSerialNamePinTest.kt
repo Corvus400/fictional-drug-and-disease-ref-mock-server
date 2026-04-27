@@ -59,6 +59,7 @@ class EnumSerialNamePinTest {
     @Test
     fun `Icd10Chapter encodes to literal english snake_case`() {
         assertEquals("\"chapter_i\"", AppJson.encodeToString(Icd10Chapter.CHAPTER_I))
+        assertEquals("\"chapter_ii\"", AppJson.encodeToString(Icd10Chapter.CHAPTER_II))
     }
 
     @Test
@@ -66,6 +67,10 @@ class EnumSerialNamePinTest {
         assertEquals(
             Icd10Chapter.CHAPTER_I,
             AppJson.decodeFromString<Icd10Chapter>("\"chapter_i\""),
+        )
+        assertEquals(
+            Icd10Chapter.CHAPTER_II,
+            AppJson.decodeFromString<Icd10Chapter>("\"chapter_ii\""),
         )
     }
 
