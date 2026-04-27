@@ -1,5 +1,6 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.serialization
 
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Chronicity
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.MedicalDepartment
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.AppJson
 import kotlinx.serialization.decodeFromString
@@ -25,6 +26,19 @@ class EnumSerialNamePinTest {
     // 追加順は alphabetical: Chronicity → ExamCategory → Icd10Chapter →
     //                       MedicalDepartment → OnsetPattern → PrevalenceUnit。
     // 各 enum で encode 関数 → decode 関数 の順。
+
+    @Test
+    fun `Chronicity encodes to literal english snake_case`() {
+        assertEquals("\"acute\"", AppJson.encodeToString(Chronicity.ACUTE))
+    }
+
+    @Test
+    fun `Chronicity decodes from literal english snake_case`() {
+        assertEquals(
+            Chronicity.ACUTE,
+            AppJson.decodeFromString<Chronicity>("\"acute\""),
+        )
+    }
 
     @Test
     fun `MedicalDepartment encodes to literal english snake_case`() {
