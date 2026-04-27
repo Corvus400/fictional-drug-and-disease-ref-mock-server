@@ -5,7 +5,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 enum class Icd10Chapter {
-    @SerialName("感染症および寄生虫症")
+    /** 感染症および寄生虫症 */
+    @SerialName("chapter_i")
     CHAPTER_I,
 
     @SerialName("新生物")
