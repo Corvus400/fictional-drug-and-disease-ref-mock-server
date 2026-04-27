@@ -142,6 +142,46 @@ class DiseaseModuleKeywordTest {
     }
 
     /**
+     * Phase 11-12b の検証テスト (#113): `configs/diseaseList` で `empty` シナリオに切替えた
+     * 状態で keyword クエリ付き `/diseases` を呼んでも 200 OK + items 0 件 + total_count=0 が
+     * 返ることを保証する。
+     *
+     * `DiseaseSearchService.applyKeyword(emptyList(), ...)` が空 list を素通しで返す挙動と、
+     * Route ハンドラがシナリオ解決後に keyword フィルタを直列適用する経路の合成を retrograde
+     * guard する (search/ メタテスト #102 で `DiseaseSearchService` に scenarioManager 参照が
+     * ないことと併せて scenario × keyword の直交性を担保)。Drug 側 #101 と対をなす。
+     */
+    @Test
+    fun `GET diseases under empty scenario with keyword returns items size zero and 200`() = testApplication {
+        application { module() }
+        client.post(urlString = "/__admin/configs/diseaseList") {
+            contentType(type = ContentType.Application.Json)
+            setBody(body = """{"state": "empty"}""")
+        }
+
+        val response = client.get(
+            urlString = "/diseases?keyword=whatever&keyword_target=name&keyword_match=partial",
+        )
+        assertEquals(expected = HttpStatusCode.OK, actual = response.status)
+        val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
+        val totalCount = body["total_count"]?.jsonPrimitive?.content?.toIntOrNull()
+        assertNotNull(actual = totalCount, message = "response body must have a numeric total_count")
+        assertEquals(
+            expected = 0,
+            actual = totalCount,
+            message = "empty scenario × keyword must yield total_count=0 (got $totalCount)",
+        )
+        val items = body["items"]?.jsonArray
+        assertNotNull(actual = items, message = "response body must have items array")
+        assertTrue(
+            actual = items.isEmpty(),
+            message = "empty scenario × keyword must yield empty items array (got size=${items.size})",
+        )
+
+        client.post(urlString = "/__admin/reset")
+    }
+
+    /**
      * default シナリオで少なくとも 1 件にヒットする keyword を返す SSOT ヘルパー。
      *
      * `/diseases?page_size=1` で先頭エントリの `name` を取得し先頭 [KEYWORD_PREFIX_LENGTH]
