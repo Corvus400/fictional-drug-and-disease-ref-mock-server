@@ -19,7 +19,7 @@ class DiseaseNestedSerializationTest {
             ),
         )
         assertEquals(
-            """{"main_symptoms":["発熱","咳"],"associated_symptoms":["倦怠感"],"onset_pattern":"急性発症"}""",
+            """{"main_symptoms":["発熱","咳"],"associated_symptoms":["倦怠感"],"onset_pattern":"acute"}""",
             json,
         )
     }

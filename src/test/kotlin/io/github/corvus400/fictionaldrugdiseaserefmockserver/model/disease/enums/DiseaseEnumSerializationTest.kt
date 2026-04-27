@@ -31,9 +31,9 @@ class DiseaseEnumSerializationTest {
     }
 
     @Test
-    fun `OnsetPattern ACUTE serializes to JSON string 急性発症`() {
+    fun `OnsetPattern ACUTE serializes to JSON string acute`() {
         val json = AppJson.encodeToString(OnsetPattern.ACUTE)
-        assertEquals("\"急性発症\"", json)
+        assertEquals("\"acute\"", json)
     }
 
     @Test

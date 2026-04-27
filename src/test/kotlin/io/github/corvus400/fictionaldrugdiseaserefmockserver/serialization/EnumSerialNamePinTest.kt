@@ -4,6 +4,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.ExamCategory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.MedicalDepartment
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.OnsetPattern
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.AppJson
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -293,6 +294,19 @@ class EnumSerialNamePinTest {
         assertEquals(
             MedicalDepartment.INFECTIOUS_DISEASE,
             AppJson.decodeFromString<MedicalDepartment>("\"infectious_disease\""),
+        )
+    }
+
+    @Test
+    fun `OnsetPattern encodes to literal english snake_case`() {
+        assertEquals("\"acute\"", AppJson.encodeToString(OnsetPattern.ACUTE))
+    }
+
+    @Test
+    fun `OnsetPattern decodes from literal english snake_case`() {
+        assertEquals(
+            OnsetPattern.ACUTE,
+            AppJson.decodeFromString<OnsetPattern>("\"acute\""),
         )
     }
 }
