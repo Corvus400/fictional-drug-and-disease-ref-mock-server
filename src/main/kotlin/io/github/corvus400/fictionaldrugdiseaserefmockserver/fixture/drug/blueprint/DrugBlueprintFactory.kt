@@ -1,5 +1,6 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.blueprint
 
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DosageForm
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass
 
 /**
@@ -76,6 +77,11 @@ object DrugBlueprintFactory {
     private const val NEURAL_CYCLE: Int = 4
     private const val ANTINEOPLASTIC_CYCLE: Int = 2
     private const val BIOLOGICAL_PERIOD: Int = 4
+
+    internal val DOSAGE_FORMS_BY_ATC: Map<Char, List<DosageForm>> =
+        mapOf(
+            'A' to listOf(DosageForm.TABLET),
+        )
 
     private val ATC_DISTRIBUTION: Map<Char, Int> =
         linkedMapOf(
