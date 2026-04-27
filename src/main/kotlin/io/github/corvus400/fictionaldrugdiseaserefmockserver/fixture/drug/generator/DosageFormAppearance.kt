@@ -4,6 +4,27 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixm
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.stableHash
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DosageForm
 
+/**
+ * SSOT for `composition.appearance` (製剤の見た目) and `physicochemical_properties.description` (原薬の性状) variants.
+ *
+ * variants は DosageForm と整合させる方針。判定ルール:
+ * - **固形 (TABLET / CAPSULE / POWDER / GRANULE)**: 原薬は粉末・結晶記述で OK (錠剤等は原薬粉末を成形した製品)
+ * - **液体 (LIQUID / EYE_DROPS / NASAL_SPRAY)**: 粉末・結晶記述は不可 (液体製品の原薬性状も液体表現に揃える)
+ * - **半固形 (OINTMENT / CREAM / PATCH / SUPPOSITORY)**: 粉末記述は不可。半固形・ろう様・エマルション等の表現
+ * - **INJECTION_FORM (注射剤)**: 液体注射液と「凍結乾燥粉末 (用時溶解型)」の両形態を包含する。
+ *   実在する用時溶解型は使用前にバイアル内で注射用水や生食に溶解する製品。
+ *   例: アムビゾーム点滴静注用 (リポソーム化アムホテリシンB)、注射用バンコマイシン、注射用ソル・コーテフ。
+ *   参考: [Freeze-drying (Wikipedia)](https://en.wikipedia.org/wiki/Freeze-drying#Pharmaceutical_industry),
+ *   [凍結乾燥 (Wikipedia 日本語版)](https://ja.wikipedia.org/wiki/%E5%87%8D%E7%B5%90%E4%B9%BE%E7%87%A5)
+ * - **INHALER (吸入剤)**: 加圧定量噴霧式 (HFA エアゾール液体) と ドライパウダー吸入剤 (DPI) の両形態を包含する。
+ *   DPI は微細結晶性粉末を吸入するため variants に粉末記述を残す。
+ *   例: アドエアディスカス (DPI)、パルミコートタービュヘイラー (DPI)、キュバール (HFA)。
+ *   参考: [Dry-powder inhaler (Wikipedia)](https://en.wikipedia.org/wiki/Dry-powder_inhaler),
+ *   [Metered-dose inhaler (Wikipedia)](https://en.wikipedia.org/wiki/Metered-dose_inhaler)
+ *
+ * pickAppearance / pickOriginalSubstanceDescription は (form, drugId) をキーに stableHash で 1 件選ぶため、
+ * 同一 drug について再生成しても結果は固定。
+ */
 object DosageFormAppearance {
     private val appearanceVariants: Map<DosageForm, List<String>> =
         mapOf(
@@ -97,13 +118,13 @@ object DosageFormAppearance {
                 ),
             DosageForm.CAPSULE to
                 listOf(
-                    "白色の結晶性粉末である。",
+                    "ほぼ白色の結晶性粉末で、わずかに苦味を有する。",
                     "微黄色の結晶又は結晶性粉末である。",
                     "白色の粉末で、においはなく、わずかに苦味がある。",
                 ),
             DosageForm.POWDER to
                 listOf(
-                    "白色の粉末で、においはない。",
+                    "白色の流動性のある微細粉末で、わずかに吸湿性を示す。",
                     "白色〜微黄色の細かな結晶性粉末である。",
                     "白色の吸湿性粉末である。",
                 ),
@@ -117,7 +138,7 @@ object DosageFormAppearance {
                 listOf(
                     "茶褐色澄明の液体である。",
                     "無色澄明の液体で、特異な芳香がある。",
-                    "白色の結晶性粉末で、水に易溶である。",
+                    "微黄色澄明の粘稠性液体である。",
                 ),
             DosageForm.INJECTION_FORM to
                 listOf(
@@ -127,33 +148,33 @@ object DosageFormAppearance {
                 ),
             DosageForm.OINTMENT to
                 listOf(
-                    "白色の結晶性粉末である。",
+                    "白色の均質な半固形軟膏で、塗布性に富む。",
                     "微黄色〜淡黄色の油状物質である。",
                     "白色のろう様物質である。",
                 ),
             DosageForm.CREAM to
                 listOf(
-                    "白色の結晶性粉末である。",
-                    "微黄色の結晶性粉末で、わずかに特異臭がある。",
-                    "白色の粉末で、水に難溶である。",
+                    "白色の均質なエマルションで、なめらかな塗布性を示す。",
+                    "微黄色の親水クリーム状半固形物で、わずかに特異臭がある。",
+                    "白色の水中油型エマルションで、軽い塗布感がある。",
                 ),
             DosageForm.PATCH to
                 listOf(
-                    "白色〜微黄色の結晶性粉末である。",
-                    "無色透明の結晶である。",
+                    "淡黄色の経皮吸収型半固形物で、均質な粘着性を示す。",
+                    "白色〜微黄色のマトリックス層で、可塑性に富む。",
                     "白色のろう様固体である。",
                 ),
             DosageForm.EYE_DROPS to
                 listOf(
-                    "白色の結晶性粉末で、水に溶けやすい。",
-                    "無色澄明の液体である。",
-                    "白色〜微黄色の結晶性粉末である。",
+                    "無色澄明の点眼用水溶液で、生理的 pH に調整されている。",
+                    "無色澄明の等張水溶液である。",
+                    "微黄色澄明の点眼用無菌水溶液である。",
                 ),
             DosageForm.SUPPOSITORY to
                 listOf(
-                    "白色の結晶性粉末である。",
+                    "白色の砲弾形の固体で、体温で溶融する。",
                     "淡黄色のろう様物質である。",
-                    "白色〜微黄色の結晶又は結晶性粉末である。",
+                    "白色〜微黄色の油脂性半固形物である。",
                 ),
             DosageForm.INHALER to
                 listOf(
@@ -163,9 +184,9 @@ object DosageFormAppearance {
                 ),
             DosageForm.NASAL_SPRAY to
                 listOf(
-                    "白色の結晶性粉末で、水に易溶である。",
-                    "無色澄明の液体である。",
-                    "白色〜微黄色の結晶である。",
+                    "無色澄明の鼻腔投与用噴霧液で、わずかに芳香がある。",
+                    "無色澄明の鼻腔投与用水溶液である。",
+                    "微黄色澄明の点鼻スプレー用懸濁液である。",
                 ),
         )
 

@@ -93,7 +93,11 @@ class DrugGenerator(
                 activeIngredient = generic.katakana,
                 activeIngredientAmount = Dose(amount = STANDARD_DOSE_AMOUNT, unit = DoseUnit.MG),
                 inactiveIngredients = inactives.map { it.katakana },
-                appearance = APPEARANCE_DESCRIPTION,
+                appearance =
+                DosageFormAppearance.pickAppearance(
+                    form = blueprint.dosageForm,
+                    drugId = drugId,
+                ),
             ),
             warning = DrugClinicalBuilders.buildWarning(id = drugId, dict = placeholderDictionary),
             contraindications =
@@ -138,7 +142,11 @@ class DrugGenerator(
             PhysicochemicalInfo(
                 genericNameEnglish = generic.latin,
                 molecularFormula = DEFAULT_MOLECULAR_FORMULA,
-                description = MOLECULAR_DESCRIPTION,
+                description =
+                DosageFormAppearance.pickOriginalSubstanceDescription(
+                    form = blueprint.dosageForm,
+                    drugId = drugId,
+                ),
             ),
             handlingPrecautions =
             DrugMetaBuilders.buildHandlingPrecautions(id = drugId, dict = placeholderDictionary),
@@ -203,9 +211,7 @@ class DrugGenerator(
         private const val ATC_CODE_SUFFIX_MOD: Int = 100
         private const val STANDARD_DOSE_AMOUNT: Double = 10.0
         private const val MANUFACTURER_SUFFIX: String = "製薬"
-        private const val APPEARANCE_DESCRIPTION: String = "白色の錠剤"
         private const val DEFAULT_MOLECULAR_FORMULA: String = "C20H25N3O"
-        private const val MOLECULAR_DESCRIPTION: String = "白色の結晶性粉末である。"
         private val DEFAULT_REVISED_AT: String =
             IsoDateFormatter.formatDate(date = LocalDate.of(2026, 4, 23))
     }

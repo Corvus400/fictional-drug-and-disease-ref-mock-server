@@ -316,6 +316,68 @@ class DrugGeneratorTest {
     }
 
     @Test
+    fun `composition appearance has at least 30 unique values across the 120 drug inventory`() {
+        val drugs = generator.generate(blueprints = DrugBlueprintFactory.build())
+        val uniqueAppearances: Set<String> = drugs.map { it.composition.appearance }.toSet()
+        assertTrue(
+            actual = uniqueAppearances.size >= APPEARANCE_UNIQUE_FLOOR,
+            message = "expected at least $APPEARANCE_UNIQUE_FLOOR unique appearance values " +
+                "across 120 drugs, got ${uniqueAppearances.size}",
+        )
+    }
+
+    @Test
+    fun `physicochemical description has at least 30 unique values across the 120 drug inventory`() {
+        val drugs = generator.generate(blueprints = DrugBlueprintFactory.build())
+        val uniqueDescriptions: Set<String> =
+            drugs
+                .map { drug ->
+                    val info = assertNotNull(drug.physicochemicalProperties)
+                    info.description
+                }
+                .toSet()
+        assertTrue(
+            actual = uniqueDescriptions.size >= DESCRIPTION_UNIQUE_FLOOR,
+            message = "expected at least $DESCRIPTION_UNIQUE_FLOOR unique description values " +
+                "across 120 drugs, got ${uniqueDescriptions.size}",
+        )
+    }
+
+    @Test
+    fun `composition appearance for each drug belongs to its dosageForm variants`() {
+        val drugs = generator.generate(blueprints = DrugBlueprintFactory.build())
+        drugs.forEach { drug ->
+            val expected: String =
+                DosageFormAppearance.pickAppearance(form = drug.dosageForm, drugId = drug.id)
+            assertEquals(
+                expected = expected,
+                actual = drug.composition.appearance,
+                message = "drug ${drug.id} (${drug.dosageForm}) appearance mismatch: " +
+                    "expected '$expected', got '${drug.composition.appearance}'",
+            )
+        }
+    }
+
+    @Test
+    fun `physicochemical description for each drug belongs to its dosageForm variants`() {
+        val drugs = generator.generate(blueprints = DrugBlueprintFactory.build())
+        drugs.forEach { drug ->
+            val expected: String =
+                DosageFormAppearance.pickOriginalSubstanceDescription(
+                    form = drug.dosageForm,
+                    drugId = drug.id,
+                )
+            val info = assertNotNull(drug.physicochemicalProperties)
+            assertEquals(
+                expected = expected,
+                actual = info.description,
+                message = "drug ${drug.id} (${drug.dosageForm}) description mismatch: " +
+                    "expected '$expected', got '${info.description}'",
+            )
+        }
+    }
+
+    @Test
     fun `relatedDiseaseIds reference only existing disease IDs for all blueprints`() {
         val existingDiseaseIds: Set<String> =
             (0..79).map { "disease_${it.toString().padStart(length = 4, padChar = '0')}" }.toSet()
@@ -333,6 +395,9 @@ class DrugGeneratorTest {
     }
 
     private companion object {
+        const val APPEARANCE_UNIQUE_FLOOR: Int = 30
+        const val DESCRIPTION_UNIQUE_FLOOR: Int = 30
+
         val ISO_8601_DATE_PATTERN: Regex = Regex("""^\d{4}-\d{2}-\d{2}$""")
 
         fun buildFreshGenerator(): DrugGenerator {
