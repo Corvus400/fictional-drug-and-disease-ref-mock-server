@@ -164,6 +164,11 @@ class EnumSerialNamePinTest {
             Json.encodeToString(RouteOfAdministration.serializer(), RouteOfAdministration.RECTAL),
             "RouteOfAdministration.RECTAL",
         )
+        assertEquals(
+            "\"ophthalmic\"",
+            Json.encodeToString(RouteOfAdministration.serializer(), RouteOfAdministration.OPHTHALMIC),
+            "RouteOfAdministration.OPHTHALMIC",
+        )
     }
 
     @Test
@@ -192,6 +197,11 @@ class EnumSerialNamePinTest {
             RouteOfAdministration.RECTAL,
             Json.decodeFromString(RouteOfAdministration.serializer(), "\"rectal\""),
             "RouteOfAdministration.RECTAL",
+        )
+        assertEquals(
+            RouteOfAdministration.OPHTHALMIC,
+            Json.decodeFromString(RouteOfAdministration.serializer(), "\"ophthalmic\""),
+            "RouteOfAdministration.OPHTHALMIC",
         )
     }
 
