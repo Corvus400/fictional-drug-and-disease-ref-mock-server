@@ -55,7 +55,8 @@ object DrugBlueprintFactory {
                 copy(
                     idOverride = "LIQUID_SP_TREDECIM",
                     dosageForm = DosageForm.LIQUID,
-                    regulatoryClasses = setOf(RegulatoryClass.POISON),
+                    regulatoryClasses =
+                    setOf(RegulatoryClass.POISON, RegulatoryClass.PRESCRIPTION_REQUIRED),
                     nameOverride =
                     NameOverride(
                         brandKatakana = "トレデキム",
@@ -75,7 +76,8 @@ object DrugBlueprintFactory {
                 copy(
                     idOverride = "LIQUID_SP_SLEEP_AID",
                     dosageForm = DosageForm.LIQUID,
-                    regulatoryClasses = setOf(RegulatoryClass.PSYCHOTROPIC_1),
+                    regulatoryClasses =
+                    setOf(RegulatoryClass.PSYCHOTROPIC_1, RegulatoryClass.PRESCRIPTION_REQUIRED),
                     nameOverride =
                     NameOverride(
                         brandKatakana = coinedNames.first.katakana,
