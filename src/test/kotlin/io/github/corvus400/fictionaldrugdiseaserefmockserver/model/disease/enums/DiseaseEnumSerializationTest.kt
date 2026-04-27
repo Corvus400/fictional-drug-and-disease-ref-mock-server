@@ -25,9 +25,9 @@ class DiseaseEnumSerializationTest {
     }
 
     @Test
-    fun `ExamCategory BLOOD_TEST serializes to JSON string 血液検査`() {
+    fun `ExamCategory BLOOD_TEST serializes to JSON string blood_test`() {
         val json = AppJson.encodeToString(ExamCategory.BLOOD_TEST)
-        assertEquals("\"血液検査\"", json)
+        assertEquals("\"blood_test\"", json)
     }
 
     @Test
