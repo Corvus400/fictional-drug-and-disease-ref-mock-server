@@ -49,4 +49,22 @@ class DrugBlueprintFactoryDistributionTest {
             message = "deriveDosageForm must rotate through the ATC list (R 群: INHALER → NASAL_SPRAY)",
         )
     }
+
+    @Test
+    fun `build assigns dosageForm via deriveDosageForm for every blueprint`() {
+        val blueprints = DrugBlueprintFactory.build()
+        blueprints.forEach { blueprint ->
+            val expected: DosageForm =
+                DrugBlueprintFactory.deriveDosageForm(
+                    atcLetter = blueprint.atcFirstLetter,
+                    index = blueprint.index,
+                )
+            assertEquals(
+                expected = expected,
+                actual = blueprint.dosageForm,
+                message = "blueprint.dosageForm at index=${blueprint.index} " +
+                    "(atc=${blueprint.atcFirstLetter}) must equal deriveDosageForm result",
+            )
+        }
+    }
 }
