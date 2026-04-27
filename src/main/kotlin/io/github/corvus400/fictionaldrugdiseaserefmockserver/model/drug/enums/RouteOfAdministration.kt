@@ -29,7 +29,8 @@ enum class RouteOfAdministration {
     @SerialName("ophthalmic")
     OPHTHALMIC,
 
-    @SerialName("点鼻")
+    /** 点鼻 */
+    @SerialName("nasal")
     NASAL,
 
     @SerialName("貼付")
