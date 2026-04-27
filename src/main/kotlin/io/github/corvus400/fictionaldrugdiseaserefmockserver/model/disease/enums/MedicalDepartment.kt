@@ -38,7 +38,8 @@ enum class MedicalDepartment {
     @SerialName("orthopedics")
     ORTHOPEDICS,
 
-    @SerialName("皮膚科")
+    /** 皮膚科 */
+    @SerialName("dermatology")
     DERMATOLOGY,
 
     @SerialName("眼科")
