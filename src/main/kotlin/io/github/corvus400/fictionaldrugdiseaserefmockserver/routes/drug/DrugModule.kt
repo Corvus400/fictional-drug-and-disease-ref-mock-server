@@ -10,6 +10,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.DrugFi
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.DrugListFixtures
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.DrugListQuery
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.ErrorResponse
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DosageForm
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RouteOfAdministration
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.ApiTag
@@ -160,7 +161,8 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
                                 required = false
                             }
                             queryParameter<String>("dosage_form") {
-                                description = "剤形の `@SerialName` 値 (例: `錠剤`)。" +
+                                description = "剤形の `@SerialName` 値 " +
+                                    "(例: `${DosageForm.TABLET.serialName}`)。" +
                                     "指定時は `dosage_form` が一致するものに絞り込み"
                                 required = false
                             }
