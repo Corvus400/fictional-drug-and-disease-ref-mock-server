@@ -13,7 +13,8 @@ enum class OnsetPattern {
     @SerialName("subacute")
     SUBACUTE,
 
-    @SerialName("慢性経過")
+    /** 慢性経過 */
+    @SerialName("chronic")
     CHRONIC,
 
     @SerialName("間欠性")
