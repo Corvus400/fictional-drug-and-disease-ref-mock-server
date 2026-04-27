@@ -128,6 +128,20 @@ class DrugGeneratorTest {
     }
 
     @Test
+    fun `generate makes drug dosageForm equal to blueprint dosageForm for the full inventory`() {
+        val blueprints = DrugBlueprintFactory.build()
+        val drugs = generator.generate(blueprints = blueprints)
+        drugs.zip(blueprints).forEach { (drug, blueprint) ->
+            assertEquals(
+                expected = blueprint.dosageForm,
+                actual = drug.dosageForm,
+                message = "drug.dosageForm at index=${blueprint.index} " +
+                    "(atc=${blueprint.atcFirstLetter}) must equal blueprint.dosageForm",
+            )
+        }
+    }
+
+    @Test
     fun `generate bulk handles the full 120-drug factory inventory deterministically given fresh adapter instances`() {
         val blueprints = DrugBlueprintFactory.build()
         val first = buildFreshGenerator().generate(blueprints = blueprints)
@@ -197,7 +211,7 @@ class DrugGeneratorTest {
     @Test
     fun `generate for injection blueprint populates pharmacokinetics and administrationPrecautions`() {
         val injectionBlueprint =
-            DrugBlueprintFactory.build().first { it.dosageFormGroup == DosageFormGroup.INJECTION }
+            DrugBlueprintFactory.build().first { it.dosageForm == DosageForm.INJECTION_FORM }
         val drug = generator.generate(blueprint = injectionBlueprint)
 
         assertEquals(RouteOfAdministration.INJECTION_ROUTE, drug.routeOfAdministration)
