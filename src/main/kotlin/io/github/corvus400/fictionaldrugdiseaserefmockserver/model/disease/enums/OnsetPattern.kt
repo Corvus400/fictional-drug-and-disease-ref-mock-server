@@ -9,7 +9,8 @@ enum class OnsetPattern {
     @SerialName("acute")
     ACUTE,
 
-    @SerialName("亜急性発症")
+    /** 亜急性発症 */
+    @SerialName("subacute")
     SUBACUTE,
 
     @SerialName("慢性経過")
