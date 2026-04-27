@@ -45,7 +45,7 @@ class DrugEnumSerializationTest {
     @Test
     fun `FrequencyBand OVER_5_PERCENT serializes to JSON string five-percent-or-more`() {
         val json = AppJson.encodeToString(FrequencyBand.OVER_5_PERCENT)
-        assertEquals("\"5%以上\"", json)
+        assertEquals("\"over_5_percent\"", json)
     }
 
     @Test
