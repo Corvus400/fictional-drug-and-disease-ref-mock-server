@@ -21,7 +21,8 @@ enum class PrecautionPopulationCategory {
     @SerialName("reproductive_potential")
     REPRODUCTIVE_POTENTIAL,
 
-    @SerialName("妊婦")
+    /** 妊婦 */
+    @SerialName("pregnant")
     PREGNANT,
 
     @SerialName("授乳婦")
