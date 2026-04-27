@@ -73,7 +73,8 @@ enum class Icd10Chapter {
     @SerialName("chapter_xvii")
     CHAPTER_XVII,
 
-    @SerialName("症状、徴候および異常臨床所見・異常検査所見で他に分類されないもの")
+    /** 症状、徴候および異常臨床所見・異常検査所見で他に分類されないもの */
+    @SerialName("chapter_xviii")
     CHAPTER_XVIII,
 
     @SerialName("損傷、中毒およびその他の外因の影響")
