@@ -37,9 +37,9 @@ class DrugEnumSerializationTest {
     }
 
     @Test
-    fun `RenalSeverity END_STAGE serializes to JSON string 末期`() {
+    fun `RenalSeverity END_STAGE serializes to JSON string end_stage`() {
         val json = AppJson.encodeToString(RenalSeverity.END_STAGE)
-        assertEquals("\"末期\"", json)
+        assertEquals("\"end_stage\"", json)
     }
 
     @Test
