@@ -2,39 +2,59 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 @Serializable
 enum class RegulatoryClass {
-    @SerialName("毒薬")
+    /** 毒薬 */
+    @SerialName("poison")
     POISON,
 
-    @SerialName("劇薬")
+    /** 劇薬 */
+    @SerialName("potent")
     POTENT,
 
-    @SerialName("普通薬")
+    /** 普通薬 */
+    @SerialName("ordinary")
     ORDINARY,
 
-    @SerialName("向精神薬第1種")
+    /** 向精神薬第1種 */
+    @SerialName("psychotropic_1")
     PSYCHOTROPIC_1,
 
-    @SerialName("向精神薬第2種")
+    /** 向精神薬第2種 */
+    @SerialName("psychotropic_2")
     PSYCHOTROPIC_2,
 
-    @SerialName("向精神薬第3種")
+    /** 向精神薬第3種 */
+    @SerialName("psychotropic_3")
     PSYCHOTROPIC_3,
 
-    @SerialName("麻薬")
+    /** 麻薬 */
+    @SerialName("narcotic")
     NARCOTIC,
 
-    @SerialName("覚醒剤原料")
+    /** 覚醒剤原料 */
+    @SerialName("stimulant_precursor")
     STIMULANT_PRECURSOR,
 
-    @SerialName("生物由来製品")
+    /** 生物由来製品 */
+    @SerialName("biological")
     BIOLOGICAL,
 
-    @SerialName("特定生物由来製品")
+    /** 特定生物由来製品 */
+    @SerialName("specified_biological")
     SPECIFIED_BIOLOGICAL,
 
-    @SerialName("処方箋医薬品")
+    /** 処方箋医薬品 */
+    @SerialName("prescription_required")
     PRESCRIPTION_REQUIRED,
+    ;
+
+    /**
+     * `/drugs?regulatory_class=<value>` クエリフィルタで用いる英語 snake_case 表記 (`@SerialName` 値)。
+     * 列挙子の宣言順序が [descriptor] の要素順と一致するため、新しい規制区分を追加しても同期漏れが起きない。
+     */
+    val serialName: String
+        get() = serializer().descriptor.getElementName(index = ordinal)
 }

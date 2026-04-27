@@ -40,9 +40,9 @@ class DrugSerializationTest {
     @Test
     fun `Drug serializes classification enums with Japanese SerialName values`() {
         val json = AppJson.encodeToString(minimalDrug())
-        assertTrue(json.contains(""""regulatory_class":["処方箋医薬品"]"""))
-        assertTrue(json.contains(""""dosage_form":"錠剤""""))
-        assertTrue(json.contains(""""route_of_administration":"内服""""))
+        assertTrue(json.contains(""""regulatory_class":["prescription_required"]"""))
+        assertTrue(json.contains(""""dosage_form":"tablet""""))
+        assertTrue(json.contains(""""route_of_administration":"oral""""))
     }
 
     @Test

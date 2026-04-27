@@ -2,30 +2,47 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 @Serializable
 enum class PrecautionPopulationCategory {
-    @SerialName("合併症")
+    /** 合併症 */
+    @SerialName("comorbidity")
     COMORBIDITY,
 
-    @SerialName("腎機能障害")
+    /** 腎機能障害 */
+    @SerialName("renal_impairment")
     RENAL_IMPAIRMENT,
 
-    @SerialName("肝機能障害")
+    /** 肝機能障害 */
+    @SerialName("hepatic_impairment")
     HEPATIC_IMPAIRMENT,
 
-    @SerialName("生殖能有する患者")
+    /** 生殖能有する患者 */
+    @SerialName("reproductive_potential")
     REPRODUCTIVE_POTENTIAL,
 
-    @SerialName("妊婦")
+    /** 妊婦 */
+    @SerialName("pregnant")
     PREGNANT,
 
-    @SerialName("授乳婦")
+    /** 授乳婦 */
+    @SerialName("lactating")
     LACTATING,
 
-    @SerialName("小児等")
+    /** 小児等 */
+    @SerialName("pediatric")
     PEDIATRIC,
 
-    @SerialName("高齢者")
+    /** 高齢者 */
+    @SerialName("geriatric")
     GERIATRIC,
+    ;
+
+    /**
+     * 「特定の背景を有する患者に関する注意」カテゴリの英語 snake_case 表記 (`@SerialName` 値)。
+     * 列挙子の宣言順序が [descriptor] の要素順と一致するため、新しいカテゴリを追加しても同期漏れが起きない。
+     */
+    val serialName: String
+        get() = serializer().descriptor.getElementName(index = ordinal)
 }
