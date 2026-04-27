@@ -13,7 +13,8 @@ enum class ExamCategory {
     @SerialName("imaging")
     IMAGING,
 
-    @SerialName("生理検査")
+    /** 生理検査 */
+    @SerialName("physiological")
     PHYSIOLOGICAL,
 
     @SerialName("病理検査")

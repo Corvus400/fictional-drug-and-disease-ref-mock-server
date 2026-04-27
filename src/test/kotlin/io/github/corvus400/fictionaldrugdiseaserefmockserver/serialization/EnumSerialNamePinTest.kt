@@ -61,6 +61,7 @@ class EnumSerialNamePinTest {
     fun `ExamCategory encodes to literal english snake_case`() {
         assertEquals("\"blood_test\"", AppJson.encodeToString(ExamCategory.BLOOD_TEST))
         assertEquals("\"imaging\"", AppJson.encodeToString(ExamCategory.IMAGING))
+        assertEquals("\"physiological\"", AppJson.encodeToString(ExamCategory.PHYSIOLOGICAL))
     }
 
     @Test
@@ -72,6 +73,10 @@ class EnumSerialNamePinTest {
         assertEquals(
             ExamCategory.IMAGING,
             AppJson.decodeFromString<ExamCategory>("\"imaging\""),
+        )
+        assertEquals(
+            ExamCategory.PHYSIOLOGICAL,
+            AppJson.decodeFromString<ExamCategory>("\"physiological\""),
         )
     }
 
