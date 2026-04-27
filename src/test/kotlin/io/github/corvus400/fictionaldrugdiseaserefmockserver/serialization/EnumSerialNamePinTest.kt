@@ -30,6 +30,7 @@ class EnumSerialNamePinTest {
     fun `MedicalDepartment encodes to literal english snake_case`() {
         assertEquals("\"internal_medicine\"", AppJson.encodeToString(MedicalDepartment.INTERNAL_MEDICINE))
         assertEquals("\"cardiology\"", AppJson.encodeToString(MedicalDepartment.CARDIOLOGY))
+        assertEquals("\"gastroenterology\"", AppJson.encodeToString(MedicalDepartment.GASTROENTEROLOGY))
     }
 
     @Test
@@ -41,6 +42,10 @@ class EnumSerialNamePinTest {
         assertEquals(
             MedicalDepartment.CARDIOLOGY,
             AppJson.decodeFromString<MedicalDepartment>("\"cardiology\""),
+        )
+        assertEquals(
+            MedicalDepartment.GASTROENTEROLOGY,
+            AppJson.decodeFromString<MedicalDepartment>("\"gastroenterology\""),
         )
     }
 }
