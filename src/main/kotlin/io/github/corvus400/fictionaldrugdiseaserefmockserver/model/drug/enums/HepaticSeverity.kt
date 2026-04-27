@@ -9,7 +9,8 @@ enum class HepaticSeverity {
     @SerialName("mild")
     MILD,
 
-    @SerialName("中等度")
+    /** 中等度 */
+    @SerialName("moderate")
     MODERATE,
 
     @SerialName("重度")

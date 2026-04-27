@@ -31,9 +31,9 @@ class DrugEnumSerializationTest {
     }
 
     @Test
-    fun `HepaticSeverity MODERATE serializes to JSON string 中等度`() {
+    fun `HepaticSeverity MODERATE serializes to JSON string moderate`() {
         val json = AppJson.encodeToString(HepaticSeverity.MODERATE)
-        assertEquals("\"中等度\"", json)
+        assertEquals("\"moderate\"", json)
     }
 
     @Test
