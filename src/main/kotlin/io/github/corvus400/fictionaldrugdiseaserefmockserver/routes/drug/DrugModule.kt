@@ -10,6 +10,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.DrugFi
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.DrugListFixtures
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.DrugListQuery
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.ErrorResponse
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.ApiTag
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.documentIdDetailEndpoint
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.documentScenarioEndpoint
@@ -146,7 +147,8 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
                                 required = false
                             }
                             queryParameter<String>("regulatory_class") {
-                                description = "規制区分の `@SerialName` 値 (例: `処方箋医薬品`)。" +
+                                description = "規制区分の `@SerialName` 値 " +
+                                    "(例: `${RegulatoryClass.PRESCRIPTION_REQUIRED.serialName}`)。" +
                                     "指定時は `regulatory_class` リストに含まれるものに絞り込み"
                                 required = false
                             }
