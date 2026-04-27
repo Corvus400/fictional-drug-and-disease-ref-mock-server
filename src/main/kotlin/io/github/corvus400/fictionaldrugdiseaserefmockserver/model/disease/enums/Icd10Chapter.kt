@@ -21,7 +21,8 @@ enum class Icd10Chapter {
     @SerialName("chapter_iv")
     CHAPTER_IV,
 
-    @SerialName("精神および行動の障害")
+    /** 精神および行動の障害 */
+    @SerialName("chapter_v")
     CHAPTER_V,
 
     @SerialName("神経系の疾患")
