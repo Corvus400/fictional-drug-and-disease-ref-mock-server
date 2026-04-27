@@ -29,7 +29,8 @@ enum class DoseUnit {
     @SerialName("iu")
     IU,
 
-    @SerialName("mEq")
+    /** ミリ当量 */
+    @SerialName("meq")
     MEQ,
 
     @SerialName("mol")

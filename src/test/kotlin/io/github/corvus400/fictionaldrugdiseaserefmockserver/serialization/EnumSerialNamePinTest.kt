@@ -191,6 +191,11 @@ class EnumSerialNamePinTest {
             Json.encodeToString(DoseUnit.serializer(), DoseUnit.IU),
             "DoseUnit.IU",
         )
+        assertEquals(
+            "\"meq\"",
+            Json.encodeToString(DoseUnit.serializer(), DoseUnit.MEQ),
+            "DoseUnit.MEQ",
+        )
     }
 
     @Test
@@ -224,6 +229,11 @@ class EnumSerialNamePinTest {
             DoseUnit.IU,
             Json.decodeFromString(DoseUnit.serializer(), "\"iu\""),
             "DoseUnit.IU",
+        )
+        assertEquals(
+            DoseUnit.MEQ,
+            Json.decodeFromString(DoseUnit.serializer(), "\"meq\""),
+            "DoseUnit.MEQ",
         )
     }
 
