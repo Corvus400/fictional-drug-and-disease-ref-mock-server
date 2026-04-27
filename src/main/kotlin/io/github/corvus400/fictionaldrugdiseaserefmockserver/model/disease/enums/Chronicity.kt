@@ -10,7 +10,8 @@ enum class Chronicity {
     @SerialName("acute")
     ACUTE,
 
-    @SerialName("亜急性")
+    /** 亜急性 */
+    @SerialName("subacute")
     SUBACUTE,
 
     @SerialName("慢性")
