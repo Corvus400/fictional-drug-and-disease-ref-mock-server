@@ -17,7 +17,8 @@ enum class OnsetPattern {
     @SerialName("chronic")
     CHRONIC,
 
-    @SerialName("間欠性")
+    /** 間欠性 */
+    @SerialName("intermittent")
     INTERMITTENT,
 
     @SerialName("再発性")
