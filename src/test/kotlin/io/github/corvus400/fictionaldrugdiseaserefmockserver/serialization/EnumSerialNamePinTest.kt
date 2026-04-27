@@ -57,6 +57,11 @@ class EnumSerialNamePinTest {
             Json.encodeToString(DosageForm.serializer(), DosageForm.OINTMENT),
             "DosageForm.OINTMENT",
         )
+        assertEquals(
+            "\"cream\"",
+            Json.encodeToString(DosageForm.serializer(), DosageForm.CREAM),
+            "DosageForm.CREAM",
+        )
     }
 
     @Test
@@ -95,6 +100,11 @@ class EnumSerialNamePinTest {
             DosageForm.OINTMENT,
             Json.decodeFromString(DosageForm.serializer(), "\"ointment\""),
             "DosageForm.OINTMENT",
+        )
+        assertEquals(
+            DosageForm.CREAM,
+            Json.decodeFromString(DosageForm.serializer(), "\"cream\""),
+            "DosageForm.CREAM",
         )
     }
 
