@@ -6,7 +6,8 @@ import kotlinx.serialization.serializer
 
 @Serializable
 enum class MedicalDepartment {
-    @SerialName("内科")
+    /** 内科 */
+    @SerialName("internal_medicine")
     INTERNAL_MEDICINE,
 
     @SerialName("循環器内科")
