@@ -3,6 +3,7 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.bluep
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DosageForm
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 class DrugBlueprintFactoryDistributionTest {
@@ -35,6 +36,17 @@ class DrugBlueprintFactoryDistributionTest {
             expected = firstCall,
             actual = secondCall,
             message = "deriveDosageForm must be deterministic for the same (atcLetter, index)",
+        )
+    }
+
+    @Test
+    fun `deriveDosageForm rotates through the ATC list as index advances`() {
+        val firstForm: DosageForm = DrugBlueprintFactory.deriveDosageForm(atcLetter = 'R', index = 0)
+        val secondForm: DosageForm = DrugBlueprintFactory.deriveDosageForm(atcLetter = 'R', index = 1)
+        assertNotEquals(
+            illegal = firstForm,
+            actual = secondForm,
+            message = "deriveDosageForm must rotate through the ATC list (R 群: INHALER → NASAL_SPRAY)",
         )
     }
 }
