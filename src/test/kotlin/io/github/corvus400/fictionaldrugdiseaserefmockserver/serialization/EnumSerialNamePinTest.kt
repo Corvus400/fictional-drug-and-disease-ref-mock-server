@@ -70,6 +70,7 @@ class EnumSerialNamePinTest {
         assertEquals("\"chapter_x\"", AppJson.encodeToString(Icd10Chapter.CHAPTER_X))
         assertEquals("\"chapter_xi\"", AppJson.encodeToString(Icd10Chapter.CHAPTER_XI))
         assertEquals("\"chapter_xii\"", AppJson.encodeToString(Icd10Chapter.CHAPTER_XII))
+        assertEquals("\"chapter_xiii\"", AppJson.encodeToString(Icd10Chapter.CHAPTER_XIII))
     }
 
     @Test
@@ -121,6 +122,10 @@ class EnumSerialNamePinTest {
         assertEquals(
             Icd10Chapter.CHAPTER_XII,
             AppJson.decodeFromString<Icd10Chapter>("\"chapter_xii\""),
+        )
+        assertEquals(
+            Icd10Chapter.CHAPTER_XIII,
+            AppJson.decodeFromString<Icd10Chapter>("\"chapter_xiii\""),
         )
     }
 
