@@ -2,6 +2,7 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.serialization
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DosageForm
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DoseUnit
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.FrequencyBand
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RouteOfAdministration
 import kotlinx.serialization.json.Json
@@ -264,6 +265,24 @@ class EnumSerialNamePinTest {
             DoseUnit.PERCENT,
             Json.decodeFromString(DoseUnit.serializer(), "\"percent\""),
             "DoseUnit.PERCENT",
+        )
+    }
+
+    @Test
+    fun `FrequencyBand encodes to literal english snake_case`() {
+        assertEquals(
+            "\"over_5_percent\"",
+            Json.encodeToString(FrequencyBand.serializer(), FrequencyBand.OVER_5_PERCENT),
+            "FrequencyBand.OVER_5_PERCENT",
+        )
+    }
+
+    @Test
+    fun `FrequencyBand decodes from literal english snake_case`() {
+        assertEquals(
+            FrequencyBand.OVER_5_PERCENT,
+            Json.decodeFromString(FrequencyBand.serializer(), "\"over_5_percent\""),
+            "FrequencyBand.OVER_5_PERCENT",
         )
     }
 

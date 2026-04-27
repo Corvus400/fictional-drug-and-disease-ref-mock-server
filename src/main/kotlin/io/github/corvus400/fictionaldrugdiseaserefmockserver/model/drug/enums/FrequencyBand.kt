@@ -5,7 +5,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 enum class FrequencyBand {
-    @SerialName("5%以上")
+    /** 5% 以上 */
+    @SerialName("over_5_percent")
     OVER_5_PERCENT,
 
     @SerialName("1-5%")
