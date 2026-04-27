@@ -9,7 +9,8 @@ enum class ExamCategory {
     @SerialName("blood_test")
     BLOOD_TEST,
 
-    @SerialName("画像検査")
+    /** 画像検査 */
+    @SerialName("imaging")
     IMAGING,
 
     @SerialName("生理検査")
