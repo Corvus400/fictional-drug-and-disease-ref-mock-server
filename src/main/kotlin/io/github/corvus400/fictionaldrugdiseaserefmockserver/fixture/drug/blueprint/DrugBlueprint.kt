@@ -17,6 +17,9 @@ data class DrugBlueprint(
     val isBiological: Boolean,
     val isChronicPrescription: Boolean,
     val dosageForm: DosageForm,
+    val idOverride: String? = null,
+    val nameOverride: NameOverride? = null,
+    val textOverride: FixedDrugTextOverride? = null,
 ) {
     init {
         require(index >= 0) { "index must be non-negative, got $index" }
@@ -30,3 +33,24 @@ data class DrugBlueprint(
             setOf('A', 'B', 'C', 'D', 'G', 'H', 'J', 'L', 'M', 'N', 'P', 'R', 'S', 'V')
     }
 }
+
+/**
+ * `DrugBlueprint` の名前を固定値で上書きするためのオーバーライド情報。
+ *
+ * `LIQUID_SP_TREDECIM` / `LIQUID_SP_SLEEP_AID` のように Generator が通常の Fixmerge 生成を
+ * バイパスして固定の和名・英名を埋め込む必要があるケースで利用する。
+ */
+data class NameOverride(
+    val brandKatakana: String,
+    val genericKatakana: String,
+    val genericLatin: String,
+)
+
+/**
+ * `DrugBlueprint` の `composition.appearance` と `physicochemical_properties.description` を
+ * 固定値で上書きするためのオーバーライド情報。`DosageFormAppearance` の variants 派生をバイパスする。
+ */
+data class FixedDrugTextOverride(
+    val appearance: String,
+    val originalSubstanceDescription: String,
+)
