@@ -9,7 +9,8 @@ enum class PrecautionPopulationCategory {
     @SerialName("comorbidity")
     COMORBIDITY,
 
-    @SerialName("腎機能障害")
+    /** 腎機能障害 */
+    @SerialName("renal_impairment")
     RENAL_IMPAIRMENT,
 
     @SerialName("肝機能障害")

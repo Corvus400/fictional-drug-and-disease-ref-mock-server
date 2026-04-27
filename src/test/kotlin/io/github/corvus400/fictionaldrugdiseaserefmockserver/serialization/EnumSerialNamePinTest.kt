@@ -368,6 +368,14 @@ class EnumSerialNamePinTest {
             ),
             "PrecautionPopulationCategory.COMORBIDITY",
         )
+        assertEquals(
+            "\"renal_impairment\"",
+            Json.encodeToString(
+                PrecautionPopulationCategory.serializer(),
+                PrecautionPopulationCategory.RENAL_IMPAIRMENT,
+            ),
+            "PrecautionPopulationCategory.RENAL_IMPAIRMENT",
+        )
     }
 
     @Test
@@ -376,6 +384,11 @@ class EnumSerialNamePinTest {
             PrecautionPopulationCategory.COMORBIDITY,
             Json.decodeFromString(PrecautionPopulationCategory.serializer(), "\"comorbidity\""),
             "PrecautionPopulationCategory.COMORBIDITY",
+        )
+        assertEquals(
+            PrecautionPopulationCategory.RENAL_IMPAIRMENT,
+            Json.decodeFromString(PrecautionPopulationCategory.serializer(), "\"renal_impairment\""),
+            "PrecautionPopulationCategory.RENAL_IMPAIRMENT",
         )
     }
 
