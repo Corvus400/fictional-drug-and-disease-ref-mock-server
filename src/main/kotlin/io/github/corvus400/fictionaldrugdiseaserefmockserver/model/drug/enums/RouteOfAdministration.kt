@@ -5,7 +5,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 enum class RouteOfAdministration {
-    @SerialName("内服")
+    /** 内服 */
+    @SerialName("oral")
     ORAL,
 
     @SerialName("外用")

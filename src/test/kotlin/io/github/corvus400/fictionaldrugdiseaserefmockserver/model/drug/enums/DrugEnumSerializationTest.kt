@@ -19,9 +19,9 @@ class DrugEnumSerializationTest {
     }
 
     @Test
-    fun `RouteOfAdministration ORAL serializes to JSON string 内服`() {
+    fun `RouteOfAdministration ORAL serializes to JSON string oral`() {
         val json = AppJson.encodeToString(RouteOfAdministration.ORAL)
-        assertEquals("\"内服\"", json)
+        assertEquals("\"oral\"", json)
     }
 
     @Test
