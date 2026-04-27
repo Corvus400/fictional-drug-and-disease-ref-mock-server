@@ -37,8 +37,8 @@ class DiseaseEnumSerializationTest {
     }
 
     @Test
-    fun `PrevalenceUnit PER_POPULATION serializes to JSON string 人口対`() {
+    fun `PrevalenceUnit PER_POPULATION serializes to JSON string per_population`() {
         val json = AppJson.encodeToString(PrevalenceUnit.PER_POPULATION)
-        assertEquals("\"人口対\"", json)
+        assertEquals("\"per_population\"", json)
     }
 }
