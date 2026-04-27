@@ -26,4 +26,15 @@ class DrugBlueprintFactoryDistributionTest {
                 (DosageForm.entries.toSet() - coveredForms),
         )
     }
+
+    @Test
+    fun `deriveDosageForm returns the same DosageForm for the same atcLetter and index`() {
+        val firstCall: DosageForm = DrugBlueprintFactory.deriveDosageForm(atcLetter = 'A', index = 0)
+        val secondCall: DosageForm = DrugBlueprintFactory.deriveDosageForm(atcLetter = 'A', index = 0)
+        assertEquals(
+            expected = firstCall,
+            actual = secondCall,
+            message = "deriveDosageForm must be deterministic for the same (atcLetter, index)",
+        )
+    }
 }
