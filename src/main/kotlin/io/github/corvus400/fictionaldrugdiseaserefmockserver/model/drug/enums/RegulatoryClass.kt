@@ -9,7 +9,8 @@ enum class RegulatoryClass {
     @SerialName("poison")
     POISON,
 
-    @SerialName("劇薬")
+    /** 劇薬 */
+    @SerialName("potent")
     POTENT,
 
     @SerialName("普通薬")
