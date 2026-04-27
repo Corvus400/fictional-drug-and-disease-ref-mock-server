@@ -9,16 +9,21 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.Dis
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.DiseaseFixtureProvider
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.DiseaseListFixtures
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.ErrorResponse
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.DiseaseListResponse
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.DiseaseSummary
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.MedicalDepartment
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.toSummary
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.ApiTag
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.documentIdDetailEndpoint
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.documentScenarioEndpoint
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.resolveScenarioWithOverride
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.respondWithScenario
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.scenario.ScenarioManager
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.search.DiseaseKeywordTarget
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.search.DiseaseSearchService
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.search.KeywordMatch
 import io.github.smiley4.ktoropenapi.get
 import io.github.smiley4.ktoropenapi.route
 import io.ktor.http.HttpMethod
@@ -147,6 +152,22 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
                                     "${DiseaseListFixtures.DEFAULT_PAGE_SIZE}, 上限 ${DiseaseListFixtures.MAX_PAGE_SIZE})"
                                 required = false
                             }
+                            queryParameter<String>("keyword") {
+                                description = "検索キーワード。空白区切りで複数語を渡すと AND 結合 " +
+                                    "(各語が `keyword_target` の対象フィールドのいずれかにヒットすればよい)。" +
+                                    "未指定 / 空文字 / 空白のみは絞り込みなし。"
+                                required = false
+                            }
+                            queryParameter<String>("keyword_match") {
+                                description = "一致モード `partial` / `prefix` (case-insensitive)。" +
+                                    "未指定 / 不一致は既定値 `partial`。"
+                                required = false
+                            }
+                            queryParameter<String>("keyword_target") {
+                                description = "検索対象 `name` (`name` + `name_kana`) / `name_english` / " +
+                                    "`synonyms` (case-insensitive)。未指定 / 不一致は既定値 `name`。"
+                                required = false
+                            }
                         }
                     },
                 )
@@ -164,21 +185,32 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
                     ?.let { MedicalDepartment.fromSerialName(key = it) }
                 val chronicityFilter = call.request.queryParameters["chronicity"]
                 val infectiousFilter = call.request.queryParameters["infectious"]?.toBooleanStrictOrNull()
+                val keyword = call.request.queryParameters["keyword"]
+                val keywordMatch = KeywordMatch.fromQuery(value = call.request.queryParameters["keyword_match"])
+                val keywordTarget = DiseaseKeywordTarget.fromQuery(
+                    value = call.request.queryParameters["keyword_target"]
+                )
                 val resolved = call.resolveScenarioWithOverride(
                     scenarioManager = scenarioManager,
                     endpointName = diseaseListMetadata.endpointName,
                     default = "default",
                     fixtureProvider = { scenario ->
-                        val summaries = diseaseListFixtures.summariesByScenario[scenario].orEmpty()
-                        val filtered = applyListFilters(
-                            summaries = summaries,
+                        val scenarioDiseases = diseaseListFixtures.diseasesByScenario[scenario].orEmpty()
+                        val filtered = applyDiseaseListFilters(
+                            diseases = scenarioDiseases,
                             chapterFilter = chapterFilter,
                             departmentFilter = departmentFilter,
                             chronicitySerialName = chronicityFilter,
                             infectiousFilter = infectiousFilter,
                         )
+                        val keywordFiltered = DiseaseSearchService.applyKeyword(
+                            items = filtered,
+                            keyword = keyword,
+                            match = keywordMatch,
+                            target = keywordTarget,
+                        )
                         paginate(
-                            summaries = filtered,
+                            summaries = keywordFiltered.map { it.toSummary() },
                             page = page,
                             pageSize = pageSize,
                         )
@@ -191,27 +223,29 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
 }
 
 /**
- * `/diseases` のクエリ由来フィルタを `summaries` に適用する。
+ * `/diseases` のクエリ由来フィルタを `Disease` 全体に適用する (Phase 11-10b で
+ * `DiseaseSummary` 版から差し替え)。
  *
  * `icd10_chapter` / `department` / `chronicity` / `infectious` を AND 合成する。引数の null は
  * 「このフィルタを適用しない」を表す。`chronicitySerialName` は `Chronicity.serialName` と生文字列
  * 比較するため、未知キーは `null` ではなくヒット 0 件を返す (fromChapterKey / fromSerialName とは
  * 非対称)。`infectiousFilter` は `toBooleanStrictOrNull()` で parse するため `"true"`/`"false"` 以外
- * は `null` に落ちて無視する。
+ * は `null` に落ちて無視する。Disease 全体を返すのは、後段で `DiseaseSearchService.applyKeyword`
+ * が `nameKana` / `nameEnglish` / `synonyms` を参照するため。
  */
-private fun applyListFilters(
-    summaries: List<DiseaseSummary>,
+private fun applyDiseaseListFilters(
+    diseases: List<Disease>,
     chapterFilter: Icd10Chapter?,
     departmentFilter: MedicalDepartment?,
     chronicitySerialName: String?,
     infectiousFilter: Boolean?,
-): List<DiseaseSummary> {
-    var result = summaries
+): List<Disease> {
+    var result = diseases
     if (chapterFilter != null) {
         result = result.filter { it.icd10Chapter == chapterFilter }
     }
     if (departmentFilter != null) {
-        result = result.filter { summary -> summary.medicalDepartment.any { it == departmentFilter } }
+        result = result.filter { disease -> disease.medicalDepartment.any { it == departmentFilter } }
     }
     if (chronicitySerialName != null) {
         result = result.filter { it.chronicity.serialName == chronicitySerialName }
