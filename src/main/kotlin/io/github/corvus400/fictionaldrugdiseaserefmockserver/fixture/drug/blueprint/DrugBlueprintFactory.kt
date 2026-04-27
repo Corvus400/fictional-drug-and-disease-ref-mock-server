@@ -27,6 +27,7 @@ object DrugBlueprintFactory {
                 ),
                 isBiological = isBiological(atcLetter = atcLetter, index = index),
                 isChronicPrescription = isChronicPrescription(atcLetter = atcLetter),
+                dosageForm = deriveDosageForm(atcLetter = atcLetter, index = index),
             )
         }
     }
