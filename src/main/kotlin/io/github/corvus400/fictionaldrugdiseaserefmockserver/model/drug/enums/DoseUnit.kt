@@ -21,7 +21,8 @@ enum class DoseUnit {
     @SerialName("ml")
     ML,
 
-    @SerialName("L")
+    /** リットル */
+    @SerialName("l")
     L,
 
     @SerialName("IU")
