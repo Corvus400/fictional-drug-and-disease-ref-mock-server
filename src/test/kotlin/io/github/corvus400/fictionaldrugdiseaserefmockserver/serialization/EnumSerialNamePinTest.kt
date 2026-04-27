@@ -486,6 +486,11 @@ class EnumSerialNamePinTest {
             Json.encodeToString(RenalSeverity.serializer(), RenalSeverity.MILD),
             "RenalSeverity.MILD",
         )
+        assertEquals(
+            "\"moderate\"",
+            Json.encodeToString(RenalSeverity.serializer(), RenalSeverity.MODERATE),
+            "RenalSeverity.MODERATE",
+        )
     }
 
     @Test
@@ -499,6 +504,11 @@ class EnumSerialNamePinTest {
             RenalSeverity.MILD,
             Json.decodeFromString(RenalSeverity.serializer(), "\"mild\""),
             "RenalSeverity.MILD",
+        )
+        assertEquals(
+            RenalSeverity.MODERATE,
+            Json.decodeFromString(RenalSeverity.serializer(), "\"moderate\""),
+            "RenalSeverity.MODERATE",
         )
     }
 

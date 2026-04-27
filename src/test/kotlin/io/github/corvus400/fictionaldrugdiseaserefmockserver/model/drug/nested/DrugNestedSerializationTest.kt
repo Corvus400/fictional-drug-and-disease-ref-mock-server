@@ -88,7 +88,7 @@ class DrugNestedSerializationTest {
                 """{"min_age_months":72,"max_age_months":144,"label":"6 歳以上 12 歳未満"},""" +
                 """"dose":"通常用量の 1/2"}],""" +
                 """"renal_adjustment":[{"range":""" +
-                """{"min_ml_per_min":30,"max_ml_per_min":59,"severity":"中等度低下","label":"30-59 mL/min"},""" +
+                """{"min_ml_per_min":30,"max_ml_per_min":59,"severity":"moderate","label":"30-59 mL/min"},""" +
                 """"dose":"通常用量の 1/2 に減量"}],""" +
                 """"hepatic_adjustment":[{"severity":"severe","dose":"投与回避"}]}""",
             json,
