@@ -633,6 +633,11 @@ class EnumSerialNamePinTest {
             Json.encodeToString(StorageTemperature.serializer(), StorageTemperature.COLD),
             "StorageTemperature.COLD",
         )
+        assertEquals(
+            "\"frozen\"",
+            Json.encodeToString(StorageTemperature.serializer(), StorageTemperature.FROZEN),
+            "StorageTemperature.FROZEN",
+        )
     }
 
     @Test
@@ -646,6 +651,11 @@ class EnumSerialNamePinTest {
             StorageTemperature.COLD,
             Json.decodeFromString(StorageTemperature.serializer(), "\"cold\""),
             "StorageTemperature.COLD",
+        )
+        assertEquals(
+            StorageTemperature.FROZEN,
+            Json.decodeFromString(StorageTemperature.serializer(), "\"frozen\""),
+            "StorageTemperature.FROZEN",
         )
     }
 
