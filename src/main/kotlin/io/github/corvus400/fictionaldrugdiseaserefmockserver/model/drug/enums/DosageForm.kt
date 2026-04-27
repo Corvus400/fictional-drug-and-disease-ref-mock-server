@@ -17,7 +17,8 @@ enum class DosageForm {
     @SerialName("powder")
     POWDER,
 
-    @SerialName("顆粒")
+    /** 顆粒 */
+    @SerialName("granule")
     GRANULE,
 
     @SerialName("液剤")
