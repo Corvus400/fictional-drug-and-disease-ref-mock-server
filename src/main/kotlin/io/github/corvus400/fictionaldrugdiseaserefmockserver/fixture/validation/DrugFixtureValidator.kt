@@ -31,15 +31,18 @@ object DrugFixtureValidator {
     }
 
     private fun idSequentialViolations(drugs: List<Drug>): List<FixtureViolation> {
-        val indices = drugs.mapNotNull { drug -> extractIndex(id = drug.id) }
+        val sequentialIndices: List<Int> = drugs.mapNotNull { drug -> extractIndex(id = drug.id) }
             .distinct()
             .sorted()
-        if (indices.isEmpty()) {
+        if (sequentialIndices.isEmpty()) {
             return emptyList()
         }
-        val expected = (indices.first()..indices.last()).toSet()
-        val missing = expected - indices.toSet()
-        return missing.sorted().map { missingIndex ->
+        val overrideIdCount: Int = drugs.size - sequentialIndices.size
+        val rangeStart: Int = sequentialIndices.first()
+        val rangeEnd: Int = rangeStart + drugs.size - 1
+        val expected: Set<Int> = (rangeStart..rangeEnd).toSet()
+        val missing: List<Int> = (expected - sequentialIndices.toSet()).sorted()
+        return missing.dropLast(n = overrideIdCount).map { missingIndex ->
             FixtureViolation(
                 entityType = ENTITY_TYPE,
                 entityId = formatId(index = missingIndex),
