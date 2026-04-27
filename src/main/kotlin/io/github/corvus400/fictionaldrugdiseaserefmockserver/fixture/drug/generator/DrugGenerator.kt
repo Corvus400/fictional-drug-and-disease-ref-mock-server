@@ -87,8 +87,8 @@ class DrugGenerator(
             yjCode = DrugMetaBuilders.buildYjCode(id = drugId),
             therapeuticCategoryName = therapeuticCategoryNameOf(atcFirstLetter = blueprint.atcFirstLetter),
             regulatoryClass = blueprint.regulatoryClasses.toList(),
-            dosageForm = dosageFormOf(group = blueprint.dosageFormGroup),
-            routeOfAdministration = routeOf(group = blueprint.dosageFormGroup),
+            dosageForm = blueprint.dosageForm,
+            routeOfAdministration = routeOf(form = blueprint.dosageForm),
             composition =
             CompositionInfo(
                 activeIngredient = generic.katakana,
@@ -176,6 +176,25 @@ class DrugGenerator(
             DosageFormGroup.INJECTION -> RouteOfAdministration.INJECTION_ROUTE
             DosageFormGroup.INHALATION -> RouteOfAdministration.INHALATION
             DosageFormGroup.OPHTHALMIC -> RouteOfAdministration.OPHTHALMIC
+        }
+
+    private fun routeOf(form: DosageForm): RouteOfAdministration =
+        when (form) {
+            DosageForm.TABLET,
+            DosageForm.CAPSULE,
+            DosageForm.POWDER,
+            DosageForm.GRANULE,
+            DosageForm.LIQUID,
+            -> RouteOfAdministration.ORAL
+            DosageForm.INJECTION_FORM -> RouteOfAdministration.INJECTION_ROUTE
+            DosageForm.OINTMENT,
+            DosageForm.CREAM,
+            -> RouteOfAdministration.TOPICAL
+            DosageForm.PATCH -> RouteOfAdministration.TRANSDERMAL
+            DosageForm.EYE_DROPS -> RouteOfAdministration.OPHTHALMIC
+            DosageForm.SUPPOSITORY -> RouteOfAdministration.RECTAL
+            DosageForm.INHALER -> RouteOfAdministration.INHALATION
+            DosageForm.NASAL_SPRAY -> RouteOfAdministration.NASAL
         }
 
     private fun therapeuticCategoryNameOf(atcFirstLetter: Char): String =
