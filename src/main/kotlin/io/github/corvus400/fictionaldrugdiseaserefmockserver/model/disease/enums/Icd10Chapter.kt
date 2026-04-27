@@ -69,7 +69,8 @@ enum class Icd10Chapter {
     @SerialName("chapter_xvi")
     CHAPTER_XVI,
 
-    @SerialName("先天奇形、変形および染色体異常")
+    /** 先天奇形、変形および染色体異常 */
+    @SerialName("chapter_xvii")
     CHAPTER_XVII,
 
     @SerialName("症状、徴候および異常臨床所見・異常検査所見で他に分類されないもの")
