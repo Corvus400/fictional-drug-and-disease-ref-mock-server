@@ -33,7 +33,8 @@ enum class RegulatoryClass {
     @SerialName("narcotic")
     NARCOTIC,
 
-    @SerialName("覚醒剤原料")
+    /** 覚醒剤原料 */
+    @SerialName("stimulant_precursor")
     STIMULANT_PRECURSOR,
 
     @SerialName("生物由来製品")
