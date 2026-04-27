@@ -1,5 +1,9 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.blueprint
 
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.FixmergeNameAdapter
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixmerge.coinage.CoinedName
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixmerge.nameslot.NameSlot
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.stableHash
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DosageForm
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass
 
@@ -42,7 +46,42 @@ object DrugBlueprintFactory {
                     regulatoryClasses = setOf(RegulatoryClass.POISON),
                 )
             },
+            89 to {
+                val coinedNames: Pair<CoinedName, CoinedName> = coinSleepAidNames()
+                copy(
+                    idOverride = "LIQUID_SP_SLEEP_AID",
+                    dosageForm = DosageForm.LIQUID,
+                    regulatoryClasses = setOf(RegulatoryClass.PSYCHOTROPIC_1),
+                    nameOverride =
+                    NameOverride(
+                        brandKatakana = coinedNames.first.katakana,
+                        genericKatakana = coinedNames.second.katakana,
+                        genericLatin = coinedNames.second.latin,
+                    ),
+                )
+            },
         )
+
+    private fun coinSleepAidNames(): Pair<CoinedName, CoinedName> {
+        val adapter = FixmergeNameAdapter()
+        val brandSeed: Long =
+            stableHash(
+                id = SLEEP_AID_NAME_SEED_TOKEN,
+                slot = NameSlot.DRUG_BRAND.ordinal,
+                index = 0,
+            )
+        val genericSeed: Long =
+            stableHash(
+                id = SLEEP_AID_NAME_SEED_TOKEN,
+                slot = NameSlot.DRUG_GENERIC.ordinal,
+                index = 0,
+            )
+        val brand: CoinedName = adapter.coin(slot = NameSlot.DRUG_BRAND, seed = brandSeed)
+        val generic: CoinedName = adapter.coin(slot = NameSlot.DRUG_GENERIC, seed = genericSeed)
+        return brand to generic
+    }
+
+    private const val SLEEP_AID_NAME_SEED_TOKEN: String = "アリサの睡眠薬"
 
     internal fun deriveDosageForm(atcLetter: Char, index: Int): DosageForm {
         val forms: List<DosageForm> = DOSAGE_FORMS_BY_ATC.getValue(atcLetter)
