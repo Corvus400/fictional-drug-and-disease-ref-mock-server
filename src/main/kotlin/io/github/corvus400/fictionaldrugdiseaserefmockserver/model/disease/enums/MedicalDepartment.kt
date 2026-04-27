@@ -58,7 +58,8 @@ enum class MedicalDepartment {
     @SerialName("gynecology")
     GYNECOLOGY,
 
-    @SerialName("小児科")
+    /** 小児科 */
+    @SerialName("pediatrics")
     PEDIATRICS,
 
     @SerialName("救急科")
