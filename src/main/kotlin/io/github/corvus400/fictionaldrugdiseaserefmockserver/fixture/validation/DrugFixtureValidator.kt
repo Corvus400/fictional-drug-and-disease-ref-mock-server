@@ -195,6 +195,7 @@ object DrugFixtureValidator {
             DosageForm.PATCH,
             DosageForm.EYE_DROPS,
             DosageForm.NASAL_SPRAY,
+            DosageForm.SUPPOSITORY,
         )
 
     private const val ID_PAD_LENGTH: Int = 4
