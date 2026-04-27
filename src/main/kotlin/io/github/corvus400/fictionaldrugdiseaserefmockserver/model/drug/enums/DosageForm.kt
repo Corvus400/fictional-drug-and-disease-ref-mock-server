@@ -2,45 +2,67 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 @Serializable
 enum class DosageForm {
-    @SerialName("錠剤")
+    /** 錠剤 */
+    @SerialName("tablet")
     TABLET,
 
-    @SerialName("カプセル")
+    /** カプセル */
+    @SerialName("capsule")
     CAPSULE,
 
-    @SerialName("散剤")
+    /** 散剤 */
+    @SerialName("powder")
     POWDER,
 
-    @SerialName("顆粒")
+    /** 顆粒 */
+    @SerialName("granule")
     GRANULE,
 
-    @SerialName("液剤")
+    /** 液剤 */
+    @SerialName("liquid")
     LIQUID,
 
-    @SerialName("注射剤")
+    /** 注射剤 */
+    @SerialName("injection_form")
     INJECTION_FORM,
 
-    @SerialName("軟膏")
+    /** 軟膏 */
+    @SerialName("ointment")
     OINTMENT,
 
-    @SerialName("クリーム")
+    /** クリーム */
+    @SerialName("cream")
     CREAM,
 
-    @SerialName("貼付剤")
+    /** 貼付剤 */
+    @SerialName("patch")
     PATCH,
 
-    @SerialName("点眼液")
+    /** 点眼液 */
+    @SerialName("eye_drops")
     EYE_DROPS,
 
-    @SerialName("坐剤")
+    /** 坐剤 */
+    @SerialName("suppository")
     SUPPOSITORY,
 
-    @SerialName("吸入剤")
+    /** 吸入剤 */
+    @SerialName("inhaler")
     INHALER,
 
-    @SerialName("点鼻液")
+    /** 点鼻液 */
+    @SerialName("nasal_spray")
     NASAL_SPRAY,
+    ;
+
+    /**
+     * `/drugs?dosage_form=<value>` クエリフィルタで用いる英語 snake_case 表記 (`@SerialName` 値)。
+     * 列挙子の宣言順序が [descriptor] の要素順と一致するため、新しい剤形を追加しても同期漏れが起きない。
+     */
+    val serialName: String
+        get() = serializer().descriptor.getElementName(index = ordinal)
 }

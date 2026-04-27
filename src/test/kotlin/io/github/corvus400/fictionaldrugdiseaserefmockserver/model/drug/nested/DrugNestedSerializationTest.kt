@@ -88,9 +88,9 @@ class DrugNestedSerializationTest {
                 """{"min_age_months":72,"max_age_months":144,"label":"6 歳以上 12 歳未満"},""" +
                 """"dose":"通常用量の 1/2"}],""" +
                 """"renal_adjustment":[{"range":""" +
-                """{"min_ml_per_min":30,"max_ml_per_min":59,"severity":"中等度低下","label":"30-59 mL/min"},""" +
+                """{"min_ml_per_min":30,"max_ml_per_min":59,"severity":"moderate","label":"30-59 mL/min"},""" +
                 """"dose":"通常用量の 1/2 に減量"}],""" +
-                """"hepatic_adjustment":[{"severity":"重度","dose":"投与回避"}]}""",
+                """"hepatic_adjustment":[{"severity":"severe","dose":"投与回避"}]}""",
             json,
         )
     }
@@ -104,7 +104,7 @@ class DrugNestedSerializationTest {
             ),
         )
         assertEquals(
-            """{"category":"妊婦","note":"妊婦には投与しないこと。"}""",
+            """{"category":"pregnant","note":"妊婦には投与しないこと。"}""",
             json,
         )
     }
@@ -155,7 +155,7 @@ class DrugNestedSerializationTest {
             ),
         )
         assertEquals(
-            """{"serious":[{"name":"肝機能障害","frequency":"1%未満","symptom":"AST、ALT 著明上昇",""" +
+            """{"serious":[{"name":"肝機能障害","frequency":"under_1_percent","symptom":"AST、ALT 著明上昇",""" +
                 """"initial_signs":"倦怠感","countermeasure":"投与中止"}],""" +
                 """"other":{"over5_percent":["悪心"],"between1_and5_percent":["発疹"],""" +
                 """"under1_percent":[],"frequency_unknown":["眠気"]}}""",
@@ -255,7 +255,7 @@ class DrugNestedSerializationTest {
         )
         assertEquals(
             """{"size":"100 錠 (10 錠 × 10 PTP)",""" +
-                """"storage_condition":{"temperature":"室温","light_protection":true,""" +
+                """"storage_condition":{"temperature":"room_temperature","light_protection":true,""" +
                 """"moisture_protection":false,"additional_note":"凍結を避ける"},""" +
                 """"expiration_months":36}""",
             json,
