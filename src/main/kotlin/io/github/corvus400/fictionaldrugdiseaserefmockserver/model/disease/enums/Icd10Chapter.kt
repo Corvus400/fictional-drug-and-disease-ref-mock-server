@@ -2,6 +2,7 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enum
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 @Serializable
 enum class Icd10Chapter {
@@ -89,9 +90,17 @@ enum class Icd10Chapter {
     @SerialName("chapter_xxi")
     CHAPTER_XXI,
 
-    @SerialName("特殊目的用コード")
+    /** 特殊目的用コード */
+    @SerialName("chapter_xxii")
     CHAPTER_XXII,
     ;
+
+    /**
+     * `/diseases?icd10_chapter=<value>` クエリフィルタで用いる英語 snake_case (`@SerialName` 値)。
+     * 列挙子の宣言順序が [descriptor] の要素順と一致するため、新しい章を追加しても同期漏れが起きない。
+     */
+    val serialName: String
+        get() = serializer().descriptor.getElementName(index = ordinal)
 
     /**
      * `/diseases?icd10_chapter=<key>` クエリフィルタで用いるローマ数字キー (`I`, `II`, ..., `XXII`)。
