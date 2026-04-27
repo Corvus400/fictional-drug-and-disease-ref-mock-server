@@ -9,6 +9,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.Do
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RouteOfAdministration
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.toSummary
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.search.DrugSearchService
 import kotlinx.serialization.serializer
 import kotlin.math.ceil
 
@@ -68,30 +69,21 @@ class DrugListFixtures(
      * `Drug.routeOfAdministration` の `@SerialName` 値が指定値 (例: `内服`) に一致する
      * ものに絞り込む (Phase 9-9a)。`dosageFormSerialName` を非 null で渡すと、
      * `Drug.dosageForm` の `@SerialName` 値が指定値 (例: `錠剤`) に一致するものに絞り込む
-     * (Phase 9-10a)。`categoryName` を非 null で渡すと、`DrugSummary.therapeuticCategoryName` が
-     * 指定値 (例: `消化器系および代謝`) に完全一致するものに絞り込む (Phase 10-1b)。
-     * 複数指定時は AND 結合。
+     * (Phase 9-10a)。`DrugListQuery.categoryName` を非 null で渡すと、
+     * `DrugSummary.therapeuticCategoryName` が指定値 (例: `消化器系および代謝`) に完全一致する
+     * ものに絞り込む (Phase 10-1b)。`DrugListQuery.keyword` を非 null かつ非空白で渡すと、
+     * `keywordMatch` (PARTIAL/PREFIX) と `keywordTarget` (GENERIC/BRAND/BOTH) に従って
+     * `DrugSearchService.applyKeyword` で絞り込む (Phase 11-10a)。複数指定時は AND 結合。
      * いずれも `null` の場合は従来通り全件を対象とする。
      */
     fun resolve(
         scenario: String,
         page: Int,
         pageSize: Int,
-        atcPrefix: String? = null,
-        regulatoryClassSerialName: String? = null,
-        routeOfAdministrationSerialName: String? = null,
-        dosageFormSerialName: String? = null,
-        categoryName: String? = null,
+        query: DrugListQuery = DrugListQuery(),
     ): DrugListResponse {
         val list = summariesByScenario[scenario] ?: summariesByScenario.values.first()
-        val filtered = applyFilters(
-            summaries = list,
-            atcPrefix = atcPrefix,
-            regulatoryClassSerialName = regulatoryClassSerialName,
-            routeOfAdministrationSerialName = routeOfAdministrationSerialName,
-            dosageFormSerialName = dosageFormSerialName,
-            categoryName = categoryName,
-        )
+        val filtered = applyFilters(summaries = list, query = query)
         val totalCount = filtered.size
         val totalPages = if (totalCount == 0) 0 else ceil(totalCount.toDouble() / pageSize.toDouble()).toInt()
         val startIndex = (page - 1) * pageSize
@@ -113,18 +105,16 @@ class DrugListFixtures(
      */
     private fun applyFilters(
         summaries: List<DrugSummary>,
-        atcPrefix: String?,
-        regulatoryClassSerialName: String?,
-        routeOfAdministrationSerialName: String?,
-        dosageFormSerialName: String?,
-        categoryName: String?,
+        query: DrugListQuery,
     ): List<DrugSummary> {
         var filtered: List<DrugSummary> = summaries
+        val atcPrefix = query.atcPrefix
         if (atcPrefix != null) {
             filtered = filtered.filter { summary ->
                 allDrugsById[summary.id]?.atcCode?.startsWith(prefix = atcPrefix) == true
             }
         }
+        val regulatoryClassSerialName = query.regulatoryClassSerialName
         if (regulatoryClassSerialName != null) {
             val matched = regulatoryClassBySerialName[regulatoryClassSerialName]
             filtered = if (matched == null) {
@@ -135,6 +125,7 @@ class DrugListFixtures(
                 }
             }
         }
+        val routeOfAdministrationSerialName = query.routeOfAdministrationSerialName
         if (routeOfAdministrationSerialName != null) {
             val matched = routeOfAdministrationBySerialName[routeOfAdministrationSerialName]
             filtered = if (matched == null) {
@@ -145,6 +136,7 @@ class DrugListFixtures(
                 }
             }
         }
+        val dosageFormSerialName = query.dosageFormSerialName
         if (dosageFormSerialName != null) {
             val matched = dosageFormBySerialName[dosageFormSerialName]
             filtered = if (matched == null) {
@@ -155,10 +147,23 @@ class DrugListFixtures(
                 }
             }
         }
+        val categoryName = query.categoryName
         if (categoryName != null) {
             filtered = filtered.filter { summary ->
                 summary.therapeuticCategoryName == categoryName
             }
+        }
+        val keyword = query.keyword
+        if (!keyword.isNullOrBlank()) {
+            val candidateDrugs = filtered.mapNotNull { summary -> allDrugsById[summary.id] }
+            val matchedDrugs = DrugSearchService.applyKeyword(
+                items = candidateDrugs,
+                keyword = keyword,
+                match = query.keywordMatch,
+                target = query.keywordTarget,
+            )
+            val matchedIds = matchedDrugs.map { drug -> drug.id }.toSet()
+            filtered = filtered.filter { summary -> summary.id in matchedIds }
         }
         return filtered
     }
