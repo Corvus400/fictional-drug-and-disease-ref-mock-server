@@ -64,11 +64,14 @@ class DrugListFixtures(
      *
      * `atcPrefix` を非 null で渡すと、pagination 前に `Drug.atcCode.startsWith(atcPrefix)` で
      * 絞り込む (Phase 9-7a)。`regulatoryClassSerialName` を非 null で渡すと、
-     * `Drug.regulatoryClass` リストが指定された `@SerialName` 値 (例: `処方箋医薬品`) を
+     * `Drug.regulatoryClass` リストが指定された `@SerialName` 値
+     * (例: `RegulatoryClass.PRESCRIPTION_REQUIRED.serialName` = `prescription_required`) を
      * 含むものに絞り込む (Phase 9-8a)。`routeOfAdministrationSerialName` を非 null で渡すと、
-     * `Drug.routeOfAdministration` の `@SerialName` 値が指定値 (例: `内服`) に一致する
-     * ものに絞り込む (Phase 9-9a)。`dosageFormSerialName` を非 null で渡すと、
-     * `Drug.dosageForm` の `@SerialName` 値が指定値 (例: `錠剤`) に一致するものに絞り込む
+     * `Drug.routeOfAdministration` の `@SerialName` 値が指定値
+     * (例: `RouteOfAdministration.ORAL.serialName` = `oral`) に一致するものに絞り込む
+     * (Phase 9-9a)。`dosageFormSerialName` を非 null で渡すと、
+     * `Drug.dosageForm` の `@SerialName` 値が指定値
+     * (例: `DosageForm.TABLET.serialName` = `tablet`) に一致するものに絞り込む
      * (Phase 9-10a)。`DrugListQuery.categoryName` を非 null で渡すと、
      * `DrugSummary.therapeuticCategoryName` が指定値 (例: `消化器系および代謝`) に完全一致する
      * ものに絞り込む (Phase 10-1b)。`DrugListQuery.keyword` を非 null かつ非空白で渡すと、
@@ -187,7 +190,8 @@ class DrugListFixtures(
         /**
          * `RegulatoryClass` の `@SerialName` 値 → enum 定数の索引。
          *
-         * `/drugs?regulatory_class=処方箋医薬品` のようにクエリで `@SerialName` 値が
+         * `/drugs?regulatory_class=<RegulatoryClass.PRESCRIPTION_REQUIRED.serialName>`
+         * (= `prescription_required`) のようにクエリで `@SerialName` 値が
          * 渡される (Phase 9-8a)。`enumValues<RegulatoryClass>()` に対し
          * `serializer().descriptor.getElementName(ordinal)` で `@SerialName` が
          * 指定されていればその値、なければ enum 定数名を解決する。
@@ -202,7 +206,8 @@ class DrugListFixtures(
         /**
          * `RouteOfAdministration` の `@SerialName` 値 → enum 定数の索引。
          *
-         * `/drugs?route=内服` のようにクエリで `@SerialName` 値が渡される (Phase 9-9a)。
+         * `/drugs?route=<RouteOfAdministration.ORAL.serialName>` (= `oral`) のように
+         * クエリで `@SerialName` 値が渡される (Phase 9-9a)。
          * 解決方法は `regulatoryClassBySerialName` と同様。
          */
         private val routeOfAdministrationBySerialName: Map<String, RouteOfAdministration> = run {
@@ -215,7 +220,8 @@ class DrugListFixtures(
         /**
          * `DosageForm` の `@SerialName` 値 → enum 定数の索引。
          *
-         * `/drugs?dosage_form=錠剤` のようにクエリで `@SerialName` 値が渡される (Phase 9-10a)。
+         * `/drugs?dosage_form=<DosageForm.TABLET.serialName>` (= `tablet`) のように
+         * クエリで `@SerialName` 値が渡される (Phase 9-10a)。
          * 解決方法は `regulatoryClassBySerialName` と同様。
          */
         private val dosageFormBySerialName: Map<String, DosageForm> = run {
