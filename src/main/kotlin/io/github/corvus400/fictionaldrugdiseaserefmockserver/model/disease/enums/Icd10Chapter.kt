@@ -13,7 +13,8 @@ enum class Icd10Chapter {
     @SerialName("chapter_ii")
     CHAPTER_II,
 
-    @SerialName("血液および造血器の疾患ならびに免疫機構の障害")
+    /** 血液および造血器の疾患ならびに免疫機構の障害 */
+    @SerialName("chapter_iii")
     CHAPTER_III,
 
     @SerialName("内分泌、栄養および代謝疾患")
