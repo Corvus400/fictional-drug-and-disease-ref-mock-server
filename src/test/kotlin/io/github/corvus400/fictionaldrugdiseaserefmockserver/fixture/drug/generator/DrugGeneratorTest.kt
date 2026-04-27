@@ -344,37 +344,41 @@ class DrugGeneratorTest {
     }
 
     @Test
-    fun `composition appearance for each drug belongs to its dosageForm variants`() {
+    fun `composition appearance for each non-overridden drug belongs to its dosageForm variants`() {
         val drugs = generator.generate(blueprints = DrugBlueprintFactory.build())
-        drugs.forEach { drug ->
-            val expected: String =
-                DosageFormAppearance.pickAppearance(form = drug.dosageForm, drugId = drug.id)
-            assertEquals(
-                expected = expected,
-                actual = drug.composition.appearance,
-                message = "drug ${drug.id} (${drug.dosageForm}) appearance mismatch: " +
-                    "expected '$expected', got '${drug.composition.appearance}'",
-            )
-        }
+        drugs
+            .filter { drug -> drug.id.matches(SEQUENTIAL_DRUG_ID_PATTERN) }
+            .forEach { drug ->
+                val expected: String =
+                    DosageFormAppearance.pickAppearance(form = drug.dosageForm, drugId = drug.id)
+                assertEquals(
+                    expected = expected,
+                    actual = drug.composition.appearance,
+                    message = "drug ${drug.id} (${drug.dosageForm}) appearance mismatch: " +
+                        "expected '$expected', got '${drug.composition.appearance}'",
+                )
+            }
     }
 
     @Test
-    fun `physicochemical description for each drug belongs to its dosageForm variants`() {
+    fun `physicochemical description for each non-overridden drug belongs to its dosageForm variants`() {
         val drugs = generator.generate(blueprints = DrugBlueprintFactory.build())
-        drugs.forEach { drug ->
-            val expected: String =
-                DosageFormAppearance.pickOriginalSubstanceDescription(
-                    form = drug.dosageForm,
-                    drugId = drug.id,
+        drugs
+            .filter { drug -> drug.id.matches(SEQUENTIAL_DRUG_ID_PATTERN) }
+            .forEach { drug ->
+                val expected: String =
+                    DosageFormAppearance.pickOriginalSubstanceDescription(
+                        form = drug.dosageForm,
+                        drugId = drug.id,
+                    )
+                val info = assertNotNull(drug.physicochemicalProperties)
+                assertEquals(
+                    expected = expected,
+                    actual = info.description,
+                    message = "drug ${drug.id} (${drug.dosageForm}) description mismatch: " +
+                        "expected '$expected', got '${info.description}'",
                 )
-            val info = assertNotNull(drug.physicochemicalProperties)
-            assertEquals(
-                expected = expected,
-                actual = info.description,
-                message = "drug ${drug.id} (${drug.dosageForm}) description mismatch: " +
-                    "expected '$expected', got '${info.description}'",
-            )
-        }
+            }
     }
 
     @Test
@@ -405,6 +409,28 @@ class DrugGeneratorTest {
     }
 
     @Test
+    fun `generate maps LIQUID_SP_TREDECIM textOverride to appearance and description`() {
+        val blueprints = DrugBlueprintFactory.build()
+        val drugs = generator.generate(blueprints = blueprints)
+        val tredecim =
+            assertNotNull(
+                actual = drugs.firstOrNull { it.id == "LIQUID_SP_TREDECIM" },
+                message = "LIQUID_SP_TREDECIM must be present in the generated drug list",
+            )
+        assertTrue(
+            actual = tredecim.composition.appearance.contains(other = "「13」"),
+            message = "LIQUID_SP_TREDECIM appearance must contain '「13」', got " +
+                "'${tredecim.composition.appearance}'",
+        )
+        val physicochemical = assertNotNull(tredecim.physicochemicalProperties)
+        assertEquals(
+            expected = "無色澄明の液体である。",
+            actual = physicochemical.description,
+            message = "LIQUID_SP_TREDECIM description must equal '無色澄明の液体である。'",
+        )
+    }
+
+    @Test
     fun `relatedDiseaseIds reference only existing disease IDs for all blueprints`() {
         val existingDiseaseIds: Set<String> =
             (0..79).map { "disease_${it.toString().padStart(length = 4, padChar = '0')}" }.toSet()
@@ -426,6 +452,8 @@ class DrugGeneratorTest {
         const val DESCRIPTION_UNIQUE_FLOOR: Int = 30
 
         val ISO_8601_DATE_PATTERN: Regex = Regex("""^\d{4}-\d{2}-\d{2}$""")
+
+        val SEQUENTIAL_DRUG_ID_PATTERN: Regex = Regex("""^drug_\d{4}$""")
 
         fun buildFreshGenerator(): DrugGenerator {
             val adapter = FixmergeNameAdapter()
