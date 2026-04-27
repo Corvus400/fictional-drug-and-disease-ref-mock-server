@@ -5,7 +5,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 enum class RenalSeverity {
-    @SerialName("正常")
+    /** 正常 */
+    @SerialName("normal")
     NORMAL,
 
     @SerialName("軽度低下")
