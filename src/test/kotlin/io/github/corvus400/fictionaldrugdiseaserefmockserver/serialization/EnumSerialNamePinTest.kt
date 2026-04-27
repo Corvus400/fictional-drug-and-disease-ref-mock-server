@@ -392,6 +392,14 @@ class EnumSerialNamePinTest {
             ),
             "PrecautionPopulationCategory.REPRODUCTIVE_POTENTIAL",
         )
+        assertEquals(
+            "\"pregnant\"",
+            Json.encodeToString(
+                PrecautionPopulationCategory.serializer(),
+                PrecautionPopulationCategory.PREGNANT,
+            ),
+            "PrecautionPopulationCategory.PREGNANT",
+        )
     }
 
     @Test
@@ -415,6 +423,11 @@ class EnumSerialNamePinTest {
             PrecautionPopulationCategory.REPRODUCTIVE_POTENTIAL,
             Json.decodeFromString(PrecautionPopulationCategory.serializer(), "\"reproductive_potential\""),
             "PrecautionPopulationCategory.REPRODUCTIVE_POTENTIAL",
+        )
+        assertEquals(
+            PrecautionPopulationCategory.PREGNANT,
+            Json.decodeFromString(PrecautionPopulationCategory.serializer(), "\"pregnant\""),
+            "PrecautionPopulationCategory.PREGNANT",
         )
     }
 

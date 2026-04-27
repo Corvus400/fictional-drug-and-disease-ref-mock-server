@@ -25,9 +25,9 @@ class DrugEnumSerializationTest {
     }
 
     @Test
-    fun `PrecautionPopulationCategory PREGNANT serializes to JSON string 妊婦`() {
+    fun `PrecautionPopulationCategory PREGNANT serializes to JSON string pregnant`() {
         val json = AppJson.encodeToString(PrecautionPopulationCategory.PREGNANT)
-        assertEquals("\"妊婦\"", json)
+        assertEquals("\"pregnant\"", json)
     }
 
     @Test

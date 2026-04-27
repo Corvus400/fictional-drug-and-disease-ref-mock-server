@@ -104,7 +104,7 @@ class DrugNestedSerializationTest {
             ),
         )
         assertEquals(
-            """{"category":"妊婦","note":"妊婦には投与しないこと。"}""",
+            """{"category":"pregnant","note":"妊婦には投与しないこと。"}""",
             json,
         )
     }
