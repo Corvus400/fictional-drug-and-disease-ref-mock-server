@@ -1,6 +1,7 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.serialization
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Chronicity
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.MedicalDepartment
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.AppJson
 import kotlinx.serialization.decodeFromString
@@ -52,6 +53,19 @@ class EnumSerialNamePinTest {
         assertEquals(
             Chronicity.RELAPSING,
             AppJson.decodeFromString<Chronicity>("\"relapsing\""),
+        )
+    }
+
+    @Test
+    fun `Icd10Chapter encodes to literal english snake_case`() {
+        assertEquals("\"chapter_i\"", AppJson.encodeToString(Icd10Chapter.CHAPTER_I))
+    }
+
+    @Test
+    fun `Icd10Chapter decodes from literal english snake_case`() {
+        assertEquals(
+            Icd10Chapter.CHAPTER_I,
+            AppJson.decodeFromString<Icd10Chapter>("\"chapter_i\""),
         )
     }
 
