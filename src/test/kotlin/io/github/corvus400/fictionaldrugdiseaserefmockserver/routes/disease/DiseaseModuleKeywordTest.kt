@@ -2,6 +2,7 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.disease
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.module
 import io.ktor.client.request.get
+import io.ktor.client.request.headers
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
@@ -47,6 +48,33 @@ class DiseaseModuleKeywordTest {
             expected = 0,
             actual = filtered,
             message = "non-matching keyword must filter total to 0 (filtered=$filtered total=$total)",
+        )
+    }
+
+    /**
+     * Phase 11-10b の refactor commit (f76b8f2) で `summariesByScenario[scenario] ?:
+     * summariesByScenario.values.first()` パターン (旧 `applyListFilters` 経路 / Drug 側
+     * `DrugListFixtures.resolve` とも同等) を `diseasesByScenario[scenario].orEmpty()` で
+     * 上書きしてしまった regression を防止する。X-Mock-Scenario ヘッダに未登録キーを渡した
+     * とき、`.orEmpty()` 版だと 0 件で返るが、本来は default シナリオ (80 件) にフォールバック
+     * すべき。
+     */
+    @Test
+    fun `GET diseases with unknown X-Mock-Scenario falls back to default and returns full set`() = testApplication {
+        application { module() }
+
+        val response = client.get(urlString = "/diseases?page_size=100") {
+            headers {
+                append(name = "X-Mock-Scenario", value = "nonexistent-scenario-key")
+            }
+        }
+
+        val total = response.totalCount()
+        assertEquals(
+            expected = 80,
+            actual = total,
+            message = "unknown X-Mock-Scenario must fall back to default (80 items), " +
+                "not return empty (got total=$total)",
         )
     }
 
