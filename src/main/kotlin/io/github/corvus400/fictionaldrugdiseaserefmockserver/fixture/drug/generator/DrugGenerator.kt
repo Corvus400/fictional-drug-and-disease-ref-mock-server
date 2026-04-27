@@ -97,10 +97,11 @@ class DrugGenerator(
                 activeIngredientAmount = Dose(amount = STANDARD_DOSE_AMOUNT, unit = DoseUnit.MG),
                 inactiveIngredients = inactives.map { it.katakana },
                 appearance =
-                DosageFormAppearance.pickAppearance(
-                    form = blueprint.dosageForm,
-                    drugId = drugId,
-                ),
+                blueprint.textOverride?.appearance
+                    ?: DosageFormAppearance.pickAppearance(
+                        form = blueprint.dosageForm,
+                        drugId = drugId,
+                    ),
             ),
             warning = DrugClinicalBuilders.buildWarning(id = drugId, dict = placeholderDictionary),
             contraindications =
@@ -146,10 +147,11 @@ class DrugGenerator(
                 genericNameEnglish = generic.latin,
                 molecularFormula = DEFAULT_MOLECULAR_FORMULA,
                 description =
-                DosageFormAppearance.pickOriginalSubstanceDescription(
-                    form = blueprint.dosageForm,
-                    drugId = drugId,
-                ),
+                blueprint.textOverride?.originalSubstanceDescription
+                    ?: DosageFormAppearance.pickOriginalSubstanceDescription(
+                        form = blueprint.dosageForm,
+                        drugId = drugId,
+                    ),
             ),
             handlingPrecautions =
             DrugMetaBuilders.buildHandlingPrecautions(id = drugId, dict = placeholderDictionary),
