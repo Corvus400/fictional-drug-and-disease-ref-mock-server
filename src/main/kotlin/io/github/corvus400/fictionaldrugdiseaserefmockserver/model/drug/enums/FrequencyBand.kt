@@ -9,7 +9,8 @@ enum class FrequencyBand {
     @SerialName("over_5_percent")
     OVER_5_PERCENT,
 
-    @SerialName("1-5%")
+    /** 1〜5% */
+    @SerialName("between_1_and_5_percent")
     BETWEEN_1_AND_5_PERCENT,
 
     @SerialName("1%未満")
