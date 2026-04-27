@@ -1,5 +1,6 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.serialization
 
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DosageForm
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RouteOfAdministration
 import kotlinx.serialization.json.Json
@@ -18,6 +19,24 @@ class EnumSerialNamePinTest {
     //                       PrecautionPopulationCategory → RegulatoryClass → RenalSeverity →
     //                       RouteOfAdministration → StorageTemperature。
     // 各 enum で encode 関数 → decode 関数 の順。
+
+    @Test
+    fun `DosageForm encodes to literal english snake_case`() {
+        assertEquals(
+            "\"tablet\"",
+            Json.encodeToString(DosageForm.serializer(), DosageForm.TABLET),
+            "DosageForm.TABLET",
+        )
+    }
+
+    @Test
+    fun `DosageForm decodes from literal english snake_case`() {
+        assertEquals(
+            DosageForm.TABLET,
+            Json.decodeFromString(DosageForm.serializer(), "\"tablet\""),
+            "DosageForm.TABLET",
+        )
+    }
 
     @Test
     fun `RegulatoryClass encodes to literal english snake_case`() {

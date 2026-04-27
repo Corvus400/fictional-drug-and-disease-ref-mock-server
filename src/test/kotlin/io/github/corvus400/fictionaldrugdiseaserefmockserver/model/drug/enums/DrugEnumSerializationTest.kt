@@ -13,9 +13,9 @@ class DrugEnumSerializationTest {
     }
 
     @Test
-    fun `DosageForm TABLET serializes to JSON string 錠剤`() {
+    fun `DosageForm TABLET serializes to JSON string tablet`() {
         val json = AppJson.encodeToString(DosageForm.TABLET)
-        assertEquals("\"錠剤\"", json)
+        assertEquals("\"tablet\"", json)
     }
 
     @Test
