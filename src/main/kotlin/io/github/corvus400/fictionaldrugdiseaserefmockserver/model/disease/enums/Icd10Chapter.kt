@@ -29,7 +29,8 @@ enum class Icd10Chapter {
     @SerialName("chapter_vi")
     CHAPTER_VI,
 
-    @SerialName("眼および付属器の疾患")
+    /** 眼および付属器の疾患 */
+    @SerialName("chapter_vii")
     CHAPTER_VII,
 
     @SerialName("耳および乳様突起の疾患")
