@@ -6,57 +6,73 @@ import kotlinx.serialization.serializer
 
 @Serializable
 enum class MedicalDepartment {
-    @SerialName("内科")
+    /** 内科 */
+    @SerialName("internal_medicine")
     INTERNAL_MEDICINE,
 
-    @SerialName("循環器内科")
+    /** 循環器内科 */
+    @SerialName("cardiology")
     CARDIOLOGY,
 
-    @SerialName("消化器内科")
+    /** 消化器内科 */
+    @SerialName("gastroenterology")
     GASTROENTEROLOGY,
 
-    @SerialName("内分泌代謝科")
+    /** 内分泌代謝科 */
+    @SerialName("endocrinology")
     ENDOCRINOLOGY,
 
-    @SerialName("神経内科")
+    /** 神経内科 */
+    @SerialName("neurology")
     NEUROLOGY,
 
-    @SerialName("精神科")
+    /** 精神科 */
+    @SerialName("psychiatry")
     PSYCHIATRY,
 
-    @SerialName("外科")
+    /** 外科 */
+    @SerialName("surgery")
     SURGERY,
 
-    @SerialName("整形外科")
+    /** 整形外科 */
+    @SerialName("orthopedics")
     ORTHOPEDICS,
 
-    @SerialName("皮膚科")
+    /** 皮膚科 */
+    @SerialName("dermatology")
     DERMATOLOGY,
 
-    @SerialName("眼科")
+    /** 眼科 */
+    @SerialName("ophthalmology")
     OPHTHALMOLOGY,
 
-    @SerialName("耳鼻咽喉科")
+    /** 耳鼻咽喉科 */
+    @SerialName("otolaryngology")
     OTOLARYNGOLOGY,
 
-    @SerialName("泌尿器科")
+    /** 泌尿器科 */
+    @SerialName("urology")
     UROLOGY,
 
-    @SerialName("婦人科")
+    /** 婦人科 */
+    @SerialName("gynecology")
     GYNECOLOGY,
 
-    @SerialName("小児科")
+    /** 小児科 */
+    @SerialName("pediatrics")
     PEDIATRICS,
 
-    @SerialName("救急科")
+    /** 救急科 */
+    @SerialName("emergency")
     EMERGENCY,
 
-    @SerialName("感染症科")
+    /** 感染症科 */
+    @SerialName("infectious_disease")
     INFECTIOUS_DISEASE,
     ;
 
     /**
-     * `/diseases?department=<value>` クエリフィルタで用いる日本語表記 (`@SerialName` 値)。
+     * `/diseases?department=<value>` クエリフィルタで用いる英語 snake_case (`@SerialName` 値)。
      * 列挙子の宣言順序が [descriptor] の要素順と一致するため、新しい診療科を追加しても同期漏れが起きない。
      */
     val serialName: String
@@ -64,7 +80,7 @@ enum class MedicalDepartment {
 
     companion object {
         /**
-         * 日本語表記 (`@SerialName` 値) から列挙子を逆引きする。未定義キーは `null`。
+         * 英語 snake_case (`@SerialName` 値) から列挙子を逆引きする。未定義キーは `null`。
          */
         fun fromSerialName(key: String): MedicalDepartment? = entries.firstOrNull { it.serialName == key }
     }

@@ -2,21 +2,35 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enum
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 @Serializable
 enum class OnsetPattern {
-    @SerialName("急性発症")
+    /** 急性発症 */
+    @SerialName("acute")
     ACUTE,
 
-    @SerialName("亜急性発症")
+    /** 亜急性発症 */
+    @SerialName("subacute")
     SUBACUTE,
 
-    @SerialName("慢性経過")
+    /** 慢性経過 */
+    @SerialName("chronic")
     CHRONIC,
 
-    @SerialName("間欠性")
+    /** 間欠性 */
+    @SerialName("intermittent")
     INTERMITTENT,
 
-    @SerialName("再発性")
+    /** 再発性 */
+    @SerialName("relapsing")
     RELAPSING,
+    ;
+
+    /**
+     * JSON encoding 時に用いる英語 snake_case (`@SerialName` 値)。
+     * 列挙子の宣言順序が [descriptor] の要素順と一致するため、新しい発症パターンを追加しても同期漏れが起きない。
+     */
+    val serialName: String
+        get() = serializer().descriptor.getElementName(index = ordinal)
 }

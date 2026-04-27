@@ -2,75 +2,105 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enum
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 @Serializable
 enum class Icd10Chapter {
-    @SerialName("感染症および寄生虫症")
+    /** 感染症および寄生虫症 */
+    @SerialName("chapter_i")
     CHAPTER_I,
 
-    @SerialName("新生物")
+    /** 新生物 */
+    @SerialName("chapter_ii")
     CHAPTER_II,
 
-    @SerialName("血液および造血器の疾患ならびに免疫機構の障害")
+    /** 血液および造血器の疾患ならびに免疫機構の障害 */
+    @SerialName("chapter_iii")
     CHAPTER_III,
 
-    @SerialName("内分泌、栄養および代謝疾患")
+    /** 内分泌、栄養および代謝疾患 */
+    @SerialName("chapter_iv")
     CHAPTER_IV,
 
-    @SerialName("精神および行動の障害")
+    /** 精神および行動の障害 */
+    @SerialName("chapter_v")
     CHAPTER_V,
 
-    @SerialName("神経系の疾患")
+    /** 神経系の疾患 */
+    @SerialName("chapter_vi")
     CHAPTER_VI,
 
-    @SerialName("眼および付属器の疾患")
+    /** 眼および付属器の疾患 */
+    @SerialName("chapter_vii")
     CHAPTER_VII,
 
-    @SerialName("耳および乳様突起の疾患")
+    /** 耳および乳様突起の疾患 */
+    @SerialName("chapter_viii")
     CHAPTER_VIII,
 
-    @SerialName("循環器系の疾患")
+    /** 循環器系の疾患 */
+    @SerialName("chapter_ix")
     CHAPTER_IX,
 
-    @SerialName("呼吸器系の疾患")
+    /** 呼吸器系の疾患 */
+    @SerialName("chapter_x")
     CHAPTER_X,
 
-    @SerialName("消化器系の疾患")
+    /** 消化器系の疾患 */
+    @SerialName("chapter_xi")
     CHAPTER_XI,
 
-    @SerialName("皮膚および皮下組織の疾患")
+    /** 皮膚および皮下組織の疾患 */
+    @SerialName("chapter_xii")
     CHAPTER_XII,
 
-    @SerialName("筋骨格系および結合組織の疾患")
+    /** 筋骨格系および結合組織の疾患 */
+    @SerialName("chapter_xiii")
     CHAPTER_XIII,
 
-    @SerialName("腎尿路生殖器系の疾患")
+    /** 腎尿路生殖器系の疾患 */
+    @SerialName("chapter_xiv")
     CHAPTER_XIV,
 
-    @SerialName("妊娠、分娩および産褥")
+    /** 妊娠、分娩および産褥 */
+    @SerialName("chapter_xv")
     CHAPTER_XV,
 
-    @SerialName("周産期に発生した病態")
+    /** 周産期に発生した病態 */
+    @SerialName("chapter_xvi")
     CHAPTER_XVI,
 
-    @SerialName("先天奇形、変形および染色体異常")
+    /** 先天奇形、変形および染色体異常 */
+    @SerialName("chapter_xvii")
     CHAPTER_XVII,
 
-    @SerialName("症状、徴候および異常臨床所見・異常検査所見で他に分類されないもの")
+    /** 症状、徴候および異常臨床所見・異常検査所見で他に分類されないもの */
+    @SerialName("chapter_xviii")
     CHAPTER_XVIII,
 
-    @SerialName("損傷、中毒およびその他の外因の影響")
+    /** 損傷、中毒およびその他の外因の影響 */
+    @SerialName("chapter_xix")
     CHAPTER_XIX,
 
-    @SerialName("傷病および死亡の外因")
+    /** 傷病および死亡の外因 */
+    @SerialName("chapter_xx")
     CHAPTER_XX,
 
-    @SerialName("健康状態に影響を及ぼす要因および保健サービスの利用")
+    /** 健康状態に影響を及ぼす要因および保健サービスの利用 */
+    @SerialName("chapter_xxi")
     CHAPTER_XXI,
 
-    @SerialName("特殊目的用コード")
+    /** 特殊目的用コード */
+    @SerialName("chapter_xxii")
     CHAPTER_XXII,
     ;
+
+    /**
+     * `/diseases?icd10_chapter=<value>` クエリフィルタで用いる英語 snake_case (`@SerialName` 値)。
+     * 列挙子の宣言順序が [descriptor] の要素順と一致するため、新しい章を追加しても同期漏れが起きない。
+     */
+    val serialName: String
+        get() = serializer().descriptor.getElementName(index = ordinal)
 
     /**
      * `/diseases?icd10_chapter=<key>` クエリフィルタで用いるローマ数字キー (`I`, `II`, ..., `XXII`)。

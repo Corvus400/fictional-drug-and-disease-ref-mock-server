@@ -7,38 +7,38 @@ import kotlin.test.assertEquals
 
 class DiseaseEnumSerializationTest {
     @Test
-    fun `Icd10Chapter CHAPTER_I serializes to JSON string 感染症および寄生虫症`() {
+    fun `Icd10Chapter CHAPTER_I serializes to JSON string chapter_i`() {
         val json = AppJson.encodeToString(Icd10Chapter.CHAPTER_I)
-        assertEquals("\"感染症および寄生虫症\"", json)
+        assertEquals("\"chapter_i\"", json)
     }
 
     @Test
-    fun `MedicalDepartment INTERNAL_MEDICINE serializes to JSON string 内科`() {
+    fun `MedicalDepartment INTERNAL_MEDICINE serializes to JSON string internal_medicine`() {
         val json = AppJson.encodeToString(MedicalDepartment.INTERNAL_MEDICINE)
-        assertEquals("\"内科\"", json)
+        assertEquals("\"internal_medicine\"", json)
     }
 
     @Test
-    fun `Chronicity ACUTE serializes to JSON string 急性`() {
+    fun `Chronicity ACUTE serializes to JSON string acute`() {
         val json = AppJson.encodeToString(Chronicity.ACUTE)
-        assertEquals("\"急性\"", json)
+        assertEquals("\"acute\"", json)
     }
 
     @Test
-    fun `ExamCategory BLOOD_TEST serializes to JSON string 血液検査`() {
+    fun `ExamCategory BLOOD_TEST serializes to JSON string blood_test`() {
         val json = AppJson.encodeToString(ExamCategory.BLOOD_TEST)
-        assertEquals("\"血液検査\"", json)
+        assertEquals("\"blood_test\"", json)
     }
 
     @Test
-    fun `OnsetPattern ACUTE serializes to JSON string 急性発症`() {
+    fun `OnsetPattern ACUTE serializes to JSON string acute`() {
         val json = AppJson.encodeToString(OnsetPattern.ACUTE)
-        assertEquals("\"急性発症\"", json)
+        assertEquals("\"acute\"", json)
     }
 
     @Test
-    fun `PrevalenceUnit PER_POPULATION serializes to JSON string 人口対`() {
+    fun `PrevalenceUnit PER_POPULATION serializes to JSON string per_population`() {
         val json = AppJson.encodeToString(PrevalenceUnit.PER_POPULATION)
-        assertEquals("\"人口対\"", json)
+        assertEquals("\"per_population\"", json)
     }
 }

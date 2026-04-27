@@ -19,7 +19,7 @@ class DiseaseNestedSerializationTest {
             ),
         )
         assertEquals(
-            """{"main_symptoms":["発熱","咳"],"associated_symptoms":["倦怠感"],"onset_pattern":"急性発症"}""",
+            """{"main_symptoms":["発熱","咳"],"associated_symptoms":["倦怠感"],"onset_pattern":"acute"}""",
             json,
         )
     }
@@ -35,7 +35,7 @@ class DiseaseNestedSerializationTest {
             ),
         )
         assertEquals(
-            """{"name":"HbA1c 相当値","category":"血液検査",""" +
+            """{"name":"HbA1c 相当値","category":"blood_test",""" +
                 """"typical_finding":"6.5% 以上で高値","reference_range":"4.6-6.2%"}""",
             json,
         )
@@ -113,7 +113,7 @@ class DiseaseNestedSerializationTest {
             ),
         )
         assertEquals(
-            """{"prevalence":{"rate":12.5,"denominator":100000,"unit":"人口対",""" +
+            """{"prevalence":{"rate":12.5,"denominator":100000,"unit":"per_population",""" +
                 """"label":"人口10万対 12.5"},""" +
                 """"onset_age_range":{"min_age_years":40,"max_age_years":60,"label":"40-60 代"},""" +
                 """"sex_ratio":{"male_ratio":2,"female_ratio":1,"note":"男性優位"},""" +
