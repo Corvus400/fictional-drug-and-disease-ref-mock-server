@@ -25,7 +25,8 @@ enum class RegulatoryClass {
     @SerialName("psychotropic_2")
     PSYCHOTROPIC_2,
 
-    @SerialName("向精神薬第3種")
+    /** 向精神薬第3種 */
+    @SerialName("psychotropic_3")
     PSYCHOTROPIC_3,
 
     @SerialName("麻薬")
