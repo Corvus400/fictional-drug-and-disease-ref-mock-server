@@ -408,6 +408,14 @@ class EnumSerialNamePinTest {
             ),
             "PrecautionPopulationCategory.LACTATING",
         )
+        assertEquals(
+            "\"pediatric\"",
+            Json.encodeToString(
+                PrecautionPopulationCategory.serializer(),
+                PrecautionPopulationCategory.PEDIATRIC,
+            ),
+            "PrecautionPopulationCategory.PEDIATRIC",
+        )
     }
 
     @Test
@@ -441,6 +449,11 @@ class EnumSerialNamePinTest {
             PrecautionPopulationCategory.LACTATING,
             Json.decodeFromString(PrecautionPopulationCategory.serializer(), "\"lactating\""),
             "PrecautionPopulationCategory.LACTATING",
+        )
+        assertEquals(
+            PrecautionPopulationCategory.PEDIATRIC,
+            Json.decodeFromString(PrecautionPopulationCategory.serializer(), "\"pediatric\""),
+            "PrecautionPopulationCategory.PEDIATRIC",
         )
     }
 

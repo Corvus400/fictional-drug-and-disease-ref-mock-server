@@ -29,7 +29,8 @@ enum class PrecautionPopulationCategory {
     @SerialName("lactating")
     LACTATING,
 
-    @SerialName("小児等")
+    /** 小児等 */
+    @SerialName("pediatric")
     PEDIATRIC,
 
     @SerialName("高齢者")
