@@ -61,7 +61,8 @@ enum class Icd10Chapter {
     @SerialName("chapter_xiv")
     CHAPTER_XIV,
 
-    @SerialName("妊娠、分娩および産褥")
+    /** 妊娠、分娩および産褥 */
+    @SerialName("chapter_xv")
     CHAPTER_XV,
 
     @SerialName("周産期に発生した病態")
