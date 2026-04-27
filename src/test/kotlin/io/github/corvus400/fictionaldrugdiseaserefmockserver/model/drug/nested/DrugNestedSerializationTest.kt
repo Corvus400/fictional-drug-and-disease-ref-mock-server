@@ -155,7 +155,7 @@ class DrugNestedSerializationTest {
             ),
         )
         assertEquals(
-            """{"serious":[{"name":"肝機能障害","frequency":"1%未満","symptom":"AST、ALT 著明上昇",""" +
+            """{"serious":[{"name":"肝機能障害","frequency":"under_1_percent","symptom":"AST、ALT 著明上昇",""" +
                 """"initial_signs":"倦怠感","countermeasure":"投与中止"}],""" +
                 """"other":{"over5_percent":["悪心"],"between1_and5_percent":["発疹"],""" +
                 """"under1_percent":[],"frequency_unknown":["眠気"]}}""",
