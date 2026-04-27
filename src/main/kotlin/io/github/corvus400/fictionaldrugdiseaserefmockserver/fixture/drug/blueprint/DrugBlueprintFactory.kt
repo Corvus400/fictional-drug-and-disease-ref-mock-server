@@ -16,20 +16,33 @@ object DrugBlueprintFactory {
         val atcLetters: List<Char> =
             ATC_DISTRIBUTION.flatMap { (letter, count) -> List(count) { letter } }
         return atcLetters.mapIndexed { index, atcLetter ->
-            DrugBlueprint(
-                index = index,
-                atcFirstLetter = atcLetter,
-                regulatoryClasses =
-                deriveRegulatoryClasses(
-                    atcLetter = atcLetter,
+            val baseBlueprint =
+                DrugBlueprint(
                     index = index,
-                ),
-                isBiological = isBiological(atcLetter = atcLetter, index = index),
-                isChronicPrescription = isChronicPrescription(atcLetter = atcLetter),
-                dosageForm = deriveDosageForm(atcLetter = atcLetter, index = index),
-            )
+                    atcFirstLetter = atcLetter,
+                    regulatoryClasses =
+                    deriveRegulatoryClasses(
+                        atcLetter = atcLetter,
+                        index = index,
+                    ),
+                    isBiological = isBiological(atcLetter = atcLetter, index = index),
+                    isChronicPrescription = isChronicPrescription(atcLetter = atcLetter),
+                    dosageForm = deriveDosageForm(atcLetter = atcLetter, index = index),
+                )
+            FIXED_OVERRIDES[index]?.invoke(baseBlueprint) ?: baseBlueprint
         }
     }
+
+    private val FIXED_OVERRIDES: Map<Int, DrugBlueprint.() -> DrugBlueprint> =
+        mapOf(
+            80 to {
+                copy(
+                    idOverride = "LIQUID_SP_TREDECIM",
+                    dosageForm = DosageForm.LIQUID,
+                    regulatoryClasses = setOf(RegulatoryClass.POISON),
+                )
+            },
+        )
 
     internal fun deriveDosageForm(atcLetter: Char, index: Int): DosageForm {
         val forms: List<DosageForm> = DOSAGE_FORMS_BY_ATC.getValue(atcLetter)

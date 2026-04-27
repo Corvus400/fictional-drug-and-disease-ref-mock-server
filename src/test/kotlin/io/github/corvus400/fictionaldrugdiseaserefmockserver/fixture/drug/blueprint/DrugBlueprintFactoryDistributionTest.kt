@@ -51,21 +51,23 @@ class DrugBlueprintFactoryDistributionTest {
     }
 
     @Test
-    fun `build assigns dosageForm via deriveDosageForm for every blueprint`() {
+    fun `build assigns dosageForm via deriveDosageForm for every non-overridden blueprint`() {
         val blueprints = DrugBlueprintFactory.build()
-        blueprints.forEach { blueprint ->
-            val expected: DosageForm =
-                DrugBlueprintFactory.deriveDosageForm(
-                    atcLetter = blueprint.atcFirstLetter,
-                    index = blueprint.index,
+        blueprints
+            .filter { it.idOverride == null }
+            .forEach { blueprint ->
+                val expected: DosageForm =
+                    DrugBlueprintFactory.deriveDosageForm(
+                        atcLetter = blueprint.atcFirstLetter,
+                        index = blueprint.index,
+                    )
+                assertEquals(
+                    expected = expected,
+                    actual = blueprint.dosageForm,
+                    message = "blueprint.dosageForm at index=${blueprint.index} " +
+                        "(atc=${blueprint.atcFirstLetter}) must equal deriveDosageForm result",
                 )
-            assertEquals(
-                expected = expected,
-                actual = blueprint.dosageForm,
-                message = "blueprint.dosageForm at index=${blueprint.index} " +
-                    "(atc=${blueprint.atcFirstLetter}) must equal deriveDosageForm result",
-            )
-        }
+            }
     }
 
     @Test
