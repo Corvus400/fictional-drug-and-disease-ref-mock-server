@@ -66,12 +66,13 @@ enum class MedicalDepartment {
     @SerialName("emergency")
     EMERGENCY,
 
-    @SerialName("感染症科")
+    /** 感染症科 */
+    @SerialName("infectious_disease")
     INFECTIOUS_DISEASE,
     ;
 
     /**
-     * `/diseases?department=<value>` クエリフィルタで用いる日本語表記 (`@SerialName` 値)。
+     * `/diseases?department=<value>` クエリフィルタで用いる英語 snake_case (`@SerialName` 値)。
      * 列挙子の宣言順序が [descriptor] の要素順と一致するため、新しい診療科を追加しても同期漏れが起きない。
      */
     val serialName: String
@@ -79,7 +80,7 @@ enum class MedicalDepartment {
 
     companion object {
         /**
-         * 日本語表記 (`@SerialName` 値) から列挙子を逆引きする。未定義キーは `null`。
+         * 英語 snake_case (`@SerialName` 値) から列挙子を逆引きする。未定義キーは `null`。
          */
         fun fromSerialName(key: String): MedicalDepartment? = entries.firstOrNull { it.serialName == key }
     }
