@@ -146,6 +146,20 @@ class OpenApiDocTest {
         )
     }
 
+    @Test
+    fun `disease icd10_chapter parameter has description`() = testApplication {
+        application { module() }
+        val description = fetchParameterDescription(path = "/diseases", parameterName = "icd10_chapter")
+        assertTrue(
+            description.isNotEmpty(),
+            "icd10_chapter description が空文字列",
+        )
+        assertTrue(
+            description.contains("chapter_i"),
+            "icd10_chapter description に英語 SerialName 'chapter_i' が含まれていない: $description",
+        )
+    }
+
     private suspend fun ApplicationTestBuilder.fetchParameterDescription(
         path: String,
         parameterName: String,
