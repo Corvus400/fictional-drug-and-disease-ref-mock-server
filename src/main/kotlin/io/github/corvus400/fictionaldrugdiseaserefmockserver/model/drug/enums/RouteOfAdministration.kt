@@ -9,7 +9,8 @@ enum class RouteOfAdministration {
     @SerialName("oral")
     ORAL,
 
-    @SerialName("外用")
+    /** 外用 */
+    @SerialName("topical")
     TOPICAL,
 
     @SerialName("注射")
