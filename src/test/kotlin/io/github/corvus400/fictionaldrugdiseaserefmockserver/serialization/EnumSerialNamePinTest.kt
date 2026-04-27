@@ -30,6 +30,11 @@ class EnumSerialNamePinTest {
             Json.encodeToString(RegulatoryClass.serializer(), RegulatoryClass.POTENT),
             "RegulatoryClass.POTENT",
         )
+        assertEquals(
+            "\"ordinary\"",
+            Json.encodeToString(RegulatoryClass.serializer(), RegulatoryClass.ORDINARY),
+            "RegulatoryClass.ORDINARY",
+        )
     }
 
     @Test
@@ -43,6 +48,11 @@ class EnumSerialNamePinTest {
             RegulatoryClass.POTENT,
             Json.decodeFromString(RegulatoryClass.serializer(), "\"potent\""),
             "RegulatoryClass.POTENT",
+        )
+        assertEquals(
+            RegulatoryClass.ORDINARY,
+            Json.decodeFromString(RegulatoryClass.serializer(), "\"ordinary\""),
+            "RegulatoryClass.ORDINARY",
         )
     }
 
