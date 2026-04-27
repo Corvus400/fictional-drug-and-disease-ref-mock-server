@@ -32,6 +32,7 @@ class EnumSerialNamePinTest {
         assertEquals("\"acute\"", AppJson.encodeToString(Chronicity.ACUTE))
         assertEquals("\"subacute\"", AppJson.encodeToString(Chronicity.SUBACUTE))
         assertEquals("\"chronic\"", AppJson.encodeToString(Chronicity.CHRONIC))
+        assertEquals("\"relapsing\"", AppJson.encodeToString(Chronicity.RELAPSING))
     }
 
     @Test
@@ -47,6 +48,10 @@ class EnumSerialNamePinTest {
         assertEquals(
             Chronicity.CHRONIC,
             AppJson.decodeFromString<Chronicity>("\"chronic\""),
+        )
+        assertEquals(
+            Chronicity.RELAPSING,
+            AppJson.decodeFromString<Chronicity>("\"relapsing\""),
         )
     }
 
