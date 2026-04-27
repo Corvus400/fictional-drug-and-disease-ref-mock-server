@@ -8,6 +8,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog.toEntry
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.DrugDetailFixtures
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.DrugFixtureProvider
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.DrugListFixtures
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.DrugListQuery
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.ErrorResponse
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.ApiTag
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.documentIdDetailEndpoint
@@ -15,6 +16,8 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.documentSce
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.resolveScenarioWithOverride
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.respondWithScenario
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.scenario.ScenarioManager
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.search.DrugKeywordTarget
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.search.KeywordMatch
 import io.github.smiley4.ktoropenapi.get
 import io.github.smiley4.ktoropenapi.route
 import io.ktor.http.HttpMethod
@@ -162,6 +165,22 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
                                     "指定時は `therapeutic_category_name` が完全一致するものに絞り込み"
                                 required = false
                             }
+                            queryParameter<String>("keyword") {
+                                description = "検索キーワード。半角空白区切りで複数指定すると AND 結合 " +
+                                    "(各トークンが対象フィールド集合のいずれかに OR で一致する必要)。" +
+                                    "空または未指定時は絞り込みを行わない。"
+                                required = false
+                            }
+                            queryParameter<String>("keyword_match") {
+                                description = "キーワード一致モード。`partial` (既定) で部分一致、" +
+                                    "`prefix` で前方一致。"
+                                required = false
+                            }
+                            queryParameter<String>("keyword_target") {
+                                description = "キーワード検索対象。`generic` (一般名) / `brand` (販売名 + " +
+                                    "販売名カナ) / `both` (既定。両方)。"
+                                required = false
+                            }
                         }
                     },
                 )
@@ -178,6 +197,13 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
                 val route = call.request.queryParameters["route"]
                 val dosageForm = call.request.queryParameters["dosage_form"]
                 val categoryName = call.request.queryParameters["category_name"]
+                val keyword = call.request.queryParameters["keyword"]
+                val keywordMatch = KeywordMatch.fromQuery(
+                    value = call.request.queryParameters["keyword_match"],
+                )
+                val keywordTarget = DrugKeywordTarget.fromQuery(
+                    value = call.request.queryParameters["keyword_target"],
+                )
                 val resolved = call.resolveScenarioWithOverride(
                     scenarioManager = scenarioManager,
                     endpointName = drugListMetadata.endpointName,
@@ -187,11 +213,16 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
                             scenario = scenario,
                             page = page,
                             pageSize = pageSize,
-                            atcPrefix = atcPrefix,
-                            regulatoryClassSerialName = regulatoryClass,
-                            routeOfAdministrationSerialName = route,
-                            dosageFormSerialName = dosageForm,
-                            categoryName = categoryName,
+                            query = DrugListQuery(
+                                atcPrefix = atcPrefix,
+                                regulatoryClassSerialName = regulatoryClass,
+                                routeOfAdministrationSerialName = route,
+                                dosageFormSerialName = dosageForm,
+                                categoryName = categoryName,
+                                keyword = keyword,
+                                keywordMatch = keywordMatch,
+                                keywordTarget = keywordTarget,
+                            ),
                         )
                     },
                 )
