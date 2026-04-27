@@ -25,7 +25,8 @@ enum class Icd10Chapter {
     @SerialName("chapter_v")
     CHAPTER_V,
 
-    @SerialName("神経系の疾患")
+    /** 神経系の疾患 */
+    @SerialName("chapter_vi")
     CHAPTER_VI,
 
     @SerialName("眼および付属器の疾患")
