@@ -2,6 +2,7 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 @Serializable
 enum class PrecautionPopulationCategory {
@@ -33,6 +34,15 @@ enum class PrecautionPopulationCategory {
     @SerialName("pediatric")
     PEDIATRIC,
 
-    @SerialName("高齢者")
+    /** 高齢者 */
+    @SerialName("geriatric")
     GERIATRIC,
+    ;
+
+    /**
+     * 「特定の背景を有する患者に関する注意」カテゴリの英語 snake_case 表記 (`@SerialName` 値)。
+     * 列挙子の宣言順序が [descriptor] の要素順と一致するため、新しいカテゴリを追加しても同期漏れが起きない。
+     */
+    val serialName: String
+        get() = serializer().descriptor.getElementName(index = ordinal)
 }
