@@ -37,7 +37,8 @@ enum class Icd10Chapter {
     @SerialName("chapter_viii")
     CHAPTER_VIII,
 
-    @SerialName("循環器系の疾患")
+    /** 循環器系の疾患 */
+    @SerialName("chapter_ix")
     CHAPTER_IX,
 
     @SerialName("呼吸器系の疾患")
