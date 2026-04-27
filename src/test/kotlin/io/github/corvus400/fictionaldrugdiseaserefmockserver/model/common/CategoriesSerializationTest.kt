@@ -31,13 +31,6 @@ class CategoriesSerializationTest {
     }
 
     @Test
-    fun `LabeledEntry serializes with keys value, label`() {
-        val entry = LabeledEntry(value = "oral", label = "経口")
-        val json = AppJson.encodeToString(entry)
-        assertEquals("""{"value":"oral","label":"経口"}""", json)
-    }
-
-    @Test
     fun `CategoriesResponse serializes to JSON with 7 top-level snake_case keys`() {
         val response = CategoriesResponse(
             atc = emptyList(),

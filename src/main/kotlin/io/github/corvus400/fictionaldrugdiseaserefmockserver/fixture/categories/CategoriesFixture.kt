@@ -3,7 +3,6 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.categories
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.AtcEntry
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.CategoriesResponse
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.Icd10ChapterEntry
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.LabeledEntry
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.TherapeuticCategoryEntry
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.MedicalDepartment
@@ -26,11 +25,11 @@ class CategoriesFixture(
                 label = drug.therapeuticCategoryName,
             )
         }.distinctBy { entry -> entry.id },
-        routeOfAdministration = enumLabeledEntries<RouteOfAdministration>(),
-        dosageForm = enumLabeledEntries<DosageForm>(),
-        regulatoryClass = enumLabeledEntries<RegulatoryClass>(),
+        routeOfAdministration = enumSerialNames<RouteOfAdministration>(),
+        dosageForm = enumSerialNames<DosageForm>(),
+        regulatoryClass = enumSerialNames<RegulatoryClass>(),
         icd10Chapters = buildIcd10Chapters(),
-        medicalDepartments = enumLabeledEntries<MedicalDepartment>(),
+        medicalDepartments = enumSerialNames<MedicalDepartment>(),
     )
 
     private fun buildIcd10Chapters(): List<Icd10ChapterEntry> {
@@ -46,19 +45,20 @@ class CategoriesFixture(
 
     companion object {
         /**
-         * 列挙型 [T] の宣言順に `@SerialName` 値を取り出し、`value` / `label` 双方に詰めた
-         * `LabeledEntry` リストを返す。
+         * 列挙型 [T] の宣言順に `@SerialName` 値を取り出して `List<String>` を返す。
          *
-         * `value` は `/drugs?route=<value>` 等のフィルタクエリで API クライアントが指定する
-         * `@SerialName` 値 (日本語キー) と一致させる。`label` は同じ値を表示用に再利用する。
-         * これにより一覧 API のフィルタ仕様 (例: `regulatory_class`, `route`, `dosage_form`)
-         * と `/categories` の選択肢メタデータが同一語彙で結合される。
+         * 返却値は `/drugs?route=<value>` 等のフィルタクエリで API クライアントが指定する
+         * `@SerialName` 値 (英語 snake_case キー) と一致する。一覧 API のフィルタ仕様
+         * (例: `regulatory_class`, `route`, `dosage_form`) と `/categories` の選択肢
+         * メタデータが同一語彙で結合される。
+         *
+         * i18n を持たない本モック環境では `value` / `label` の二重化は冗長 (両者が同一の
+         * 英語キーになる) ため、`List<String>` 形式の単一語彙集合のみを公開する。
          */
-        private inline fun <reified T : Enum<T>> enumLabeledEntries(): List<LabeledEntry> {
+        private inline fun <reified T : Enum<T>> enumSerialNames(): List<String> {
             val descriptor = serializer<T>().descriptor
             return enumValues<T>().map { entry ->
-                val serialName = descriptor.getElementName(index = entry.ordinal)
-                LabeledEntry(value = serialName, label = serialName)
+                descriptor.getElementName(index = entry.ordinal)
             }
         }
 
