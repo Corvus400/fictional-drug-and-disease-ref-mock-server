@@ -55,8 +55,8 @@ class DrugEnumSerializationTest {
     }
 
     @Test
-    fun `StorageTemperature COLD serializes to JSON string 冷所`() {
+    fun `StorageTemperature COLD serializes to JSON string cold`() {
         val json = AppJson.encodeToString(StorageTemperature.COLD)
-        assertEquals("\"冷所\"", json)
+        assertEquals("\"cold\"", json)
     }
 }
