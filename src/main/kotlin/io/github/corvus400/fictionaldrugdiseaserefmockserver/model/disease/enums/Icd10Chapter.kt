@@ -57,7 +57,8 @@ enum class Icd10Chapter {
     @SerialName("chapter_xiii")
     CHAPTER_XIII,
 
-    @SerialName("腎尿路生殖器系の疾患")
+    /** 腎尿路生殖器系の疾患 */
+    @SerialName("chapter_xiv")
     CHAPTER_XIV,
 
     @SerialName("妊娠、分娩および産褥")
