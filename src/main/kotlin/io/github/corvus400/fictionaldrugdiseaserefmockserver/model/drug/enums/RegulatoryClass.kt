@@ -41,7 +41,8 @@ enum class RegulatoryClass {
     @SerialName("biological")
     BIOLOGICAL,
 
-    @SerialName("特定生物由来製品")
+    /** 特定生物由来製品 */
+    @SerialName("specified_biological")
     SPECIFIED_BIOLOGICAL,
 
     @SerialName("処方箋医薬品")
