@@ -34,10 +34,18 @@ import kotlin.test.assertTrue
  * という typo を含むため、Phase 11-10b の `DiseaseModuleKeywordTest` (commit 80f183d) と同じ
  * 判断で実体に整合させて書き換える。
  *
- * keyword 候補は `drug_0001` の `brand_name` を実行時に取り出して URL-encode する: 既存 fixture 由来文字列を
- * SSOT で参照することで、name generator (`DrugGenerator`) の出力変更にも耐える。既存の
- * `DrugModuleKeywordTest` が hard-code する「スーパー」は実際には default シナリオの brand に
- * 含まれず filtered=0 で通っていた (filtered<total が満たされる) ため、本テストでは採用しない。
+ * keyword 候補は `drug_0001` の `brand_name` 冒頭 `KEYWORD_PREFIX_LENGTH` 文字を実行時に取り出し
+ * URL-encode する: 既存 fixture 由来文字列を SSOT で参照することで、name generator
+ * (`DrugGenerator`) の出力変更にも耐える。既存の `DrugModuleKeywordTest` が hard-code する
+ * 「スーパー」は実際には default シナリオの brand に含まれず filtered=0 で通っていた
+ * (`filtered<total` が満たされる) ため採用しない。
+ *
+ * 下限を `filtered >= 2` に強化することで「drug_0001 自身が自分の brand_name にマッチする」
+ * という定義上のトートロジー (Issue #100 コメント「タウトロジー回避」が指す性質) を回避し、
+ * `default` シナリオに drug_0001 以外にも該当 drug が少なくとも 1 件存在することを要求する。
+ * 全文ではなく接頭辞を使うのは、brand_name 全体だと drug_0001 のみマッチして filtered=1 に
+ * 落ち込みやすいため。katakana 接頭辞 2 文字は、120 件全てを被覆するほど一般的でも、
+ * drug_0001 だけが孤立するほど特殊でもない狙い。
  */
 class DrugModuleDefaultKeywordFilteredTest {
     private val json = Json { ignoreUnknownKeys = true }
@@ -56,8 +64,14 @@ class DrugModuleDefaultKeywordFilteredTest {
             message = "Admin API must accept drugList default scenario override",
         )
 
-        val knownKeyword = client.get(urlString = "/drugs/drug_0001").extractBrandName()
-        val encodedKeyword = knownKeyword.encodeURLParameter()
+        val sampleBrandName = client.get(urlString = "/drugs/drug_0001").extractBrandName()
+        assertTrue(
+            actual = sampleBrandName.length >= KEYWORD_PREFIX_LENGTH,
+            message = "drug_0001 brand_name must be at least $KEYWORD_PREFIX_LENGTH chars to take prefix " +
+                "(got=\"$sampleBrandName\")",
+        )
+        val keywordPrefix = sampleBrandName.take(n = KEYWORD_PREFIX_LENGTH)
+        val encodedKeyword = keywordPrefix.encodeURLParameter()
 
         val total = client.get(urlString = "/drugs?page_size=100").totalCount()
         val filtered = client.get(
@@ -71,12 +85,27 @@ class DrugModuleDefaultKeywordFilteredTest {
             message = "default scenario must populate 120 drugs (total=$total)",
         )
         assertTrue(
-            actual = filtered in 1 until total,
-            message = "fixture-derived keyword must filter to a strict subset of default 120 " +
-                "(filtered=$filtered total=$total knownKeyword=$knownKeyword)",
+            actual = filtered in MIN_FILTERED_COUNT until total,
+            message = "fixture-derived keyword prefix must filter default 120 to a non-trivial " +
+                "subset that contains drug_0001 plus at least one other drug " +
+                "(filtered=$filtered total=$total keywordPrefix=\"$keywordPrefix\")",
         )
 
         client.post(urlString = "/__admin/reset")
+    }
+
+    private companion object {
+        /**
+         * `brand_name` から取り出すキーワード接頭辞長。katakana 2 文字は default 120 件全てを
+         * 被覆するほど一般的でも、drug_0001 だけが孤立するほど特殊でもない経験則。
+         */
+        const val KEYWORD_PREFIX_LENGTH: Int = 2
+
+        /**
+         * filtered の下限。`drug_0001` 自身がマッチする 1 件 (定義上トートロジー) に加え、
+         * 少なくとももう 1 件マッチすることを要求し、フィルタが実質機能していることを検証する。
+         */
+        const val MIN_FILTERED_COUNT: Int = 2
     }
 
     private suspend fun HttpResponse.totalCount(): Int {
