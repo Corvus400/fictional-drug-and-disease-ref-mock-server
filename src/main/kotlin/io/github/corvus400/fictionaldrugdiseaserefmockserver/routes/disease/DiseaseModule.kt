@@ -159,13 +159,14 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
                                 required = false
                             }
                             queryParameter<String>("keyword_match") {
-                                description = "一致モード `partial` / `prefix` (case-insensitive)。" +
-                                    "未指定 / 不一致は既定値 `partial`。"
+                                description = "一致モード `partial` (既定) / `prefix` (lower-case 厳密)。" +
+                                    "未指定 / 空文字 / 不正値は既定値 `partial` にフォールバック。"
                                 required = false
                             }
                             queryParameter<String>("keyword_target") {
-                                description = "検索対象 `name` (`name` + `name_kana`) / `name_english` / " +
-                                    "`synonyms` (case-insensitive)。未指定 / 不一致は既定値 `name`。"
+                                description = "検索対象 `name` (既定、`name` + `name_kana`) / `name_english` / " +
+                                    "`synonyms` (lower-case 厳密)。未指定 / 空文字 / 不正値は既定値 `name` " +
+                                    "にフォールバック。"
                                 required = false
                             }
                         }
@@ -195,7 +196,9 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
                     endpointName = diseaseListMetadata.endpointName,
                     default = "default",
                     fixtureProvider = { scenario ->
-                        val scenarioDiseases = diseaseListFixtures.diseasesByScenario[scenario].orEmpty()
+                        val diseasesByScenario = diseaseListFixtures.diseasesByScenario
+                        val scenarioDiseases = diseasesByScenario[scenario]
+                            ?: diseasesByScenario.values.first()
                         val filtered = applyDiseaseListFilters(
                             diseases = scenarioDiseases,
                             chapterFilter = chapterFilter,
