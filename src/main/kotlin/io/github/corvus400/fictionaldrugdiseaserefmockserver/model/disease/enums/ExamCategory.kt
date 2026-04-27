@@ -2,21 +2,35 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enum
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 @Serializable
 enum class ExamCategory {
-    @SerialName("血液検査")
+    /** 血液検査 */
+    @SerialName("blood_test")
     BLOOD_TEST,
 
-    @SerialName("画像検査")
+    /** 画像検査 */
+    @SerialName("imaging")
     IMAGING,
 
-    @SerialName("生理検査")
+    /** 生理検査 */
+    @SerialName("physiological")
     PHYSIOLOGICAL,
 
-    @SerialName("病理検査")
+    /** 病理検査 */
+    @SerialName("pathology")
     PATHOLOGY,
 
-    @SerialName("問診")
+    /** 問診 */
+    @SerialName("interview")
     INTERVIEW,
+    ;
+
+    /**
+     * JSON encoding 時に用いる英語 snake_case (`@SerialName` 値)。
+     * 列挙子の宣言順序が [descriptor] の要素順と一致するため、新しい検査カテゴリを追加しても同期漏れが起きない。
+     */
+    val serialName: String
+        get() = serializer().descriptor.getElementName(index = ordinal)
 }
