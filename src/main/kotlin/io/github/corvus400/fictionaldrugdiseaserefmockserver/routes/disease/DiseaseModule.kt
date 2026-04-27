@@ -12,6 +12,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.ErrorR
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.DiseaseListResponse
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.DiseaseSummary
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Chronicity
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.MedicalDepartment
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.toSummary
@@ -162,6 +163,12 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
                                 description = "診療科の `@SerialName` 値 " +
                                     "(例: `${MedicalDepartment.INTERNAL_MEDICINE.serialName}`)。" +
                                     "指定時は `medical_department` リストに含まれるものに絞り込み"
+                                required = false
+                            }
+                            queryParameter<String>("chronicity") {
+                                description = "慢性度の `@SerialName` 値 " +
+                                    "(例: `${Chronicity.CHRONIC.serialName}`)。" +
+                                    "指定時は `chronicity` が一致するものに絞り込み"
                                 required = false
                             }
                             queryParameter<String>("keyword") {
