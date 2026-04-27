@@ -37,7 +37,8 @@ enum class RegulatoryClass {
     @SerialName("stimulant_precursor")
     STIMULANT_PRECURSOR,
 
-    @SerialName("生物由来製品")
+    /** 生物由来製品 */
+    @SerialName("biological")
     BIOLOGICAL,
 
     @SerialName("特定生物由来製品")
