@@ -158,6 +158,12 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
                                     "指定時は `icd10_chapter` が一致するものに絞り込み"
                                 required = false
                             }
+                            queryParameter<String>("department") {
+                                description = "診療科の `@SerialName` 値 " +
+                                    "(例: `${MedicalDepartment.INTERNAL_MEDICINE.serialName}`)。" +
+                                    "指定時は `medical_department` リストに含まれるものに絞り込み"
+                                required = false
+                            }
                             queryParameter<String>("keyword") {
                                 description = "検索キーワード。空白区切りで複数語を渡すと AND 結合 " +
                                     "(各語が `keyword_target` の対象フィールドのいずれかにヒットすればよい)。" +
