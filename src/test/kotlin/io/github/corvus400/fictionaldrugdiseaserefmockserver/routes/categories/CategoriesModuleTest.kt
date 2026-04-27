@@ -15,6 +15,7 @@ import io.ktor.server.testing.testApplication
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
@@ -147,6 +148,38 @@ class CategoriesModuleTest {
                 "regress to an empty list (per-scenario empty fixture is forbidden)",
         )
     }
+
+    /**
+     * Phase 3.1 (TDD-S3.1) の中核 pin。`/categories` の 4 フィールド
+     * (route_of_administration / dosage_form / regulatory_class / medical_departments) は
+     * Phase 3.1 で `List<LabeledEntry>` から `List<String>` に刷新されるため、最初の要素が
+     * `{"value":"...","label":"..."}` の JsonObject ではなく単なる JSON 文字列であることを pin する。
+     */
+    @Test
+    fun `GET categories enum-derived 4 lists return JSON strings, not labeled-entry objects`() =
+        categoriesEndpointTest { response ->
+            val body = json.decodeFromString<JsonObject>(response.bodyAsText())
+            val enumDerivedKeys = listOf(
+                "route_of_administration",
+                "dosage_form",
+                "regulatory_class",
+                "medical_departments",
+            )
+            for (key in enumDerivedKeys) {
+                val firstElement = body.getValue(key = key).jsonArray.first()
+                val asString = firstElement.jsonPrimitive.contentOrNull
+                assertNotNull(
+                    actual = asString,
+                    message = "GET /categories .$key[0] must be a JSON string (e.g. \"oral\"), " +
+                        "not a labeled-entry object {value,label}; was: $firstElement",
+                )
+                assertTrue(
+                    actual = firstElement.jsonPrimitive.isString,
+                    message = "GET /categories .$key[0] must be a JSON string primitive, " +
+                        "not a number/bool/object; was: $firstElement",
+                )
+            }
+        }
 
     @Test
     fun `GET categories icd10_chapters first entry has keys roman, code, label`() =
