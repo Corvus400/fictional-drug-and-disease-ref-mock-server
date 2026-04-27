@@ -46,7 +46,8 @@ enum class MedicalDepartment {
     @SerialName("ophthalmology")
     OPHTHALMOLOGY,
 
-    @SerialName("耳鼻咽喉科")
+    /** 耳鼻咽喉科 */
+    @SerialName("otolaryngology")
     OTOLARYNGOLOGY,
 
     @SerialName("泌尿器科")
