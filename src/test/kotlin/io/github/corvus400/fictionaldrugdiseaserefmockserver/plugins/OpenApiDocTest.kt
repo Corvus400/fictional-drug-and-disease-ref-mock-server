@@ -180,6 +180,20 @@ class OpenApiDocTest {
         )
     }
 
+    @Test
+    fun `disease infectious parameter has description`() = testApplication {
+        application { module() }
+        val description = fetchParameterDescription(path = "/diseases", parameterName = "infectious")
+        assertTrue(
+            description.isNotEmpty(),
+            "infectious description が空文字列",
+        )
+        assertTrue(
+            description.contains("true") && description.contains("false"),
+            "infectious description に Boolean literal 'true' / 'false' が含まれていない: $description",
+        )
+    }
+
     private suspend fun ApplicationTestBuilder.fetchParameterDescription(
         path: String,
         parameterName: String,
