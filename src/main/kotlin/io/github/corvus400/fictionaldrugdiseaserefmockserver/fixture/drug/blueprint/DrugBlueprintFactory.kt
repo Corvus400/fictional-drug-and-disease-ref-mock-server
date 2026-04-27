@@ -80,7 +80,82 @@ object DrugBlueprintFactory {
 
     internal val DOSAGE_FORMS_BY_ATC: Map<Char, List<DosageForm>> =
         mapOf(
-            'A' to listOf(DosageForm.TABLET),
+            'A' to listOf(
+                DosageForm.TABLET,
+                DosageForm.CAPSULE,
+                DosageForm.GRANULE,
+                DosageForm.POWDER,
+                DosageForm.LIQUID,
+            ),
+            'B' to listOf(
+                DosageForm.TABLET,
+                DosageForm.CAPSULE,
+                DosageForm.INJECTION_FORM,
+            ),
+            'C' to listOf(
+                DosageForm.TABLET,
+                DosageForm.CAPSULE,
+                DosageForm.GRANULE,
+                DosageForm.PATCH,
+            ),
+            'D' to listOf(
+                DosageForm.OINTMENT,
+                DosageForm.CREAM,
+                DosageForm.PATCH,
+                DosageForm.LIQUID,
+            ),
+            'G' to listOf(
+                DosageForm.TABLET,
+                DosageForm.SUPPOSITORY,
+                DosageForm.OINTMENT,
+            ),
+            'H' to listOf(
+                DosageForm.TABLET,
+                DosageForm.INJECTION_FORM,
+            ),
+            'J' to listOf(
+                DosageForm.INJECTION_FORM,
+                DosageForm.TABLET,
+                DosageForm.CAPSULE,
+                DosageForm.GRANULE,
+            ),
+            'L' to listOf(
+                DosageForm.INJECTION_FORM,
+                DosageForm.TABLET,
+                DosageForm.CAPSULE,
+            ),
+            'M' to listOf(
+                DosageForm.TABLET,
+                DosageForm.CAPSULE,
+                DosageForm.OINTMENT,
+                DosageForm.PATCH,
+            ),
+            'N' to listOf(
+                DosageForm.TABLET,
+                DosageForm.CAPSULE,
+                DosageForm.GRANULE,
+                DosageForm.LIQUID,
+                DosageForm.PATCH,
+            ),
+            'P' to listOf(
+                DosageForm.TABLET,
+                DosageForm.INJECTION_FORM,
+            ),
+            'R' to listOf(
+                DosageForm.INHALER,
+                DosageForm.NASAL_SPRAY,
+                DosageForm.TABLET,
+                DosageForm.CAPSULE,
+                DosageForm.LIQUID,
+            ),
+            'S' to listOf(
+                DosageForm.EYE_DROPS,
+                DosageForm.OINTMENT,
+            ),
+            'V' to listOf(
+                DosageForm.INJECTION_FORM,
+                DosageForm.TABLET,
+            ),
         )
 
     private val ATC_DISTRIBUTION: Map<Char, Int> =
