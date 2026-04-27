@@ -67,4 +67,16 @@ class DrugBlueprintFactoryDistributionTest {
             )
         }
     }
+
+    @Test
+    fun `build produces blueprints carrying all 13 DosageForm values across the 120 inventory`() {
+        val carriedForms: Set<DosageForm> =
+            DrugBlueprintFactory.build().map { it.dosageForm }.toSet()
+        assertEquals(
+            expected = DosageForm.entries.toSet(),
+            actual = carriedForms,
+            message = "build() must carry all 13 DosageForm values, missing: " +
+                (DosageForm.entries.toSet() - carriedForms),
+        )
+    }
 }
