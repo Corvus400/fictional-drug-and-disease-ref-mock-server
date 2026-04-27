@@ -3,6 +3,7 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.serialization
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DosageForm
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DoseUnit
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.FrequencyBand
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.HepaticSeverity
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RouteOfAdministration
 import kotlinx.serialization.json.Json
@@ -313,6 +314,24 @@ class EnumSerialNamePinTest {
             FrequencyBand.UNKNOWN,
             Json.decodeFromString(FrequencyBand.serializer(), "\"unknown\""),
             "FrequencyBand.UNKNOWN",
+        )
+    }
+
+    @Test
+    fun `HepaticSeverity encodes to literal english snake_case`() {
+        assertEquals(
+            "\"mild\"",
+            Json.encodeToString(HepaticSeverity.serializer(), HepaticSeverity.MILD),
+            "HepaticSeverity.MILD",
+        )
+    }
+
+    @Test
+    fun `HepaticSeverity decodes from literal english snake_case`() {
+        assertEquals(
+            HepaticSeverity.MILD,
+            Json.decodeFromString(HepaticSeverity.serializer(), "\"mild\""),
+            "HepaticSeverity.MILD",
         )
     }
 
