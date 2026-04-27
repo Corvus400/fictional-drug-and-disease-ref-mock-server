@@ -41,7 +41,8 @@ enum class DosageForm {
     @SerialName("patch")
     PATCH,
 
-    @SerialName("点眼液")
+    /** 点眼液 */
+    @SerialName("eye_drops")
     EYE_DROPS,
 
     @SerialName("坐剤")
