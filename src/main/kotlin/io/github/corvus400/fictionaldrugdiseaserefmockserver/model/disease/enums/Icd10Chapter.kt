@@ -85,7 +85,8 @@ enum class Icd10Chapter {
     @SerialName("chapter_xx")
     CHAPTER_XX,
 
-    @SerialName("健康状態に影響を及ぼす要因および保健サービスの利用")
+    /** 健康状態に影響を及ぼす要因および保健サービスの利用 */
+    @SerialName("chapter_xxi")
     CHAPTER_XXI,
 
     @SerialName("特殊目的用コード")
