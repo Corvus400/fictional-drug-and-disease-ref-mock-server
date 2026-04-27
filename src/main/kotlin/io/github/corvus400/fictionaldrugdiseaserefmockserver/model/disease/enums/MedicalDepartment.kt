@@ -10,7 +10,8 @@ enum class MedicalDepartment {
     @SerialName("internal_medicine")
     INTERNAL_MEDICINE,
 
-    @SerialName("循環器内科")
+    /** 循環器内科 */
+    @SerialName("cardiology")
     CARDIOLOGY,
 
     @SerialName("消化器内科")
