@@ -5,7 +5,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 enum class DosageForm {
-    @SerialName("錠剤")
+    /** 錠剤 */
+    @SerialName("tablet")
     TABLET,
 
     @SerialName("カプセル")

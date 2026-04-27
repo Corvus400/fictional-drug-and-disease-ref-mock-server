@@ -127,7 +127,7 @@ class DrugModuleFilterTest {
     fun `GET drugs dosage_form= returns items whose dosageForm serial name equals value`() = testApplication {
         application { module() }
 
-        val response = client.get("/drugs?dosage_form=錠剤&page_size=100")
+        val response = client.get("/drugs?dosage_form=tablet&page_size=100")
 
         assertEquals(HttpStatusCode.OK, response.status)
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
@@ -135,13 +135,13 @@ class DrugModuleFilterTest {
         assertNotNull(totalCount, "response must include total_count")
         assertTrue(
             actual = totalCount in 1 until 120,
-            message = "total_count=$totalCount must be 1..<120 for dosage_form=錠剤",
+            message = "total_count=$totalCount must be 1..<120 for dosage_form=tablet",
         )
         val items = body["items"]?.jsonArray
         assertNotNull(items, "response must include items array")
         assertTrue(
             actual = items.isNotEmpty(),
-            message = "filtered items must be non-empty for dosage_form=錠剤",
+            message = "filtered items must be non-empty for dosage_form=tablet",
         )
         items.forEach { item ->
             val id = item.jsonObject["id"]?.jsonPrimitive?.content
@@ -151,20 +151,22 @@ class DrugModuleFilterTest {
             val detail = json.parseToJsonElement(string = detailResponse.bodyAsText()).jsonObject
             val dosageFormValue = detail["dosage_form"]?.jsonPrimitive?.content
             assertEquals(
-                expected = "錠剤",
+                expected = "tablet",
                 actual = dosageFormValue,
-                message = "item id=$id has dosage_form=$dosageFormValue; must be '錠剤' under dosage_form=錠剤 filter",
+                message =
+                "item id=$id has dosage_form=$dosageFormValue; must be " +
+                    "'tablet' under dosage_form=tablet filter",
             )
         }
     }
 
     @Test
-    fun `GET drugs category_atc=A and dosage_form=錠剤 returns intersection AND filter`() = testApplication {
+    fun `GET drugs category_atc=A and dosage_form=tablet returns intersection AND filter`() = testApplication {
         application { module() }
 
         val atcOnly = client.get("/drugs?category_atc=A&page_size=100")
-        val formOnly = client.get("/drugs?dosage_form=錠剤&page_size=100")
-        val intersection = client.get("/drugs?category_atc=A&dosage_form=錠剤&page_size=100")
+        val formOnly = client.get("/drugs?dosage_form=tablet&page_size=100")
+        val intersection = client.get("/drugs?category_atc=A&dosage_form=tablet&page_size=100")
 
         assertEquals(HttpStatusCode.OK, intersection.status)
         val atcBody = json.parseToJsonElement(string = atcOnly.bodyAsText()).jsonObject
@@ -194,9 +196,9 @@ class DrugModuleFilterTest {
             val dosageFormValue = detail["dosage_form"]?.jsonPrimitive?.content
             assertNotNull(atcCode, "item id=$id must expose atc_code")
             assertEquals(
-                expected = "錠剤",
+                expected = "tablet",
                 actual = dosageFormValue,
-                message = "item id=$id has dosage_form=$dosageFormValue; must be '錠剤' under AND filter",
+                message = "item id=$id has dosage_form=$dosageFormValue; must be 'tablet' under AND filter",
             )
             assertTrue(
                 actual = atcCode.startsWith(prefix = "A"),
