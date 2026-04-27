@@ -25,7 +25,8 @@ enum class DoseUnit {
     @SerialName("l")
     L,
 
-    @SerialName("IU")
+    /** 国際単位 */
+    @SerialName("iu")
     IU,
 
     @SerialName("mEq")
