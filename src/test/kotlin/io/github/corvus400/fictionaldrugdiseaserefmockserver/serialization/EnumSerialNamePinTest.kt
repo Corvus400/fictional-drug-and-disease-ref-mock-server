@@ -1,5 +1,7 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.serialization
 
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass
+import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -15,6 +17,24 @@ class EnumSerialNamePinTest {
     //                       PrecautionPopulationCategory → RegulatoryClass → RenalSeverity →
     //                       RouteOfAdministration → StorageTemperature。
     // 各 enum で encode 関数 → decode 関数 の順。
+
+    @Test
+    fun `RegulatoryClass encodes to literal english snake_case`() {
+        assertEquals(
+            "\"poison\"",
+            Json.encodeToString(RegulatoryClass.serializer(), RegulatoryClass.POISON),
+            "RegulatoryClass.POISON",
+        )
+    }
+
+    @Test
+    fun `RegulatoryClass decodes from literal english snake_case`() {
+        assertEquals(
+            RegulatoryClass.POISON,
+            Json.decodeFromString(RegulatoryClass.serializer(), "\"poison\""),
+            "RegulatoryClass.POISON",
+        )
+    }
 
     // === disease enums ===
     // worktree-B (feature/serialname-en-disease) のみがこのセクションに関数追加。

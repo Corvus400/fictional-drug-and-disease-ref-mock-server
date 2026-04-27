@@ -5,7 +5,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 enum class RegulatoryClass {
-    @SerialName("毒薬")
+    /** 毒薬 */
+    @SerialName("poison")
     POISON,
 
     @SerialName("劇薬")
