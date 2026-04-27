@@ -12,4 +12,5 @@ enum class NameSlot(val defaultPattern: Pattern) {
     DISEASE_DIFFERENTIAL(defaultPattern = Pattern.B),
     DISEASE_COMPLICATION(defaultPattern = Pattern.C),
     DRUG_APPEARANCE(defaultPattern = Pattern.A),
+    DRUG_ORIGINAL_DESCRIPTION(defaultPattern = Pattern.A),
 }
