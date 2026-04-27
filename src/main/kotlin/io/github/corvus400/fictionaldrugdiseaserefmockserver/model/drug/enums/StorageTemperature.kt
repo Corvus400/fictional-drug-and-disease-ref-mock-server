@@ -9,7 +9,8 @@ enum class StorageTemperature {
     @SerialName("room_temperature")
     ROOM_TEMPERATURE,
 
-    @SerialName("冷所")
+    /** 冷所 */
+    @SerialName("cold")
     COLD,
 
     @SerialName("冷凍")
