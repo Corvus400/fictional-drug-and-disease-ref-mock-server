@@ -5,7 +5,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 enum class StorageTemperature {
-    @SerialName("室温")
+    /** 室温 */
+    @SerialName("room_temperature")
     ROOM_TEMPERATURE,
 
     @SerialName("冷所")

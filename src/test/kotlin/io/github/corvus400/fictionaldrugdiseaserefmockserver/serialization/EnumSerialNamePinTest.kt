@@ -7,6 +7,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.He
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RenalSeverity
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RouteOfAdministration
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.StorageTemperature
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -617,6 +618,24 @@ class EnumSerialNamePinTest {
             RouteOfAdministration.TRANSDERMAL,
             Json.decodeFromString(RouteOfAdministration.serializer(), "\"transdermal\""),
             "RouteOfAdministration.TRANSDERMAL",
+        )
+    }
+
+    @Test
+    fun `StorageTemperature encodes to literal english snake_case`() {
+        assertEquals(
+            "\"room_temperature\"",
+            Json.encodeToString(StorageTemperature.serializer(), StorageTemperature.ROOM_TEMPERATURE),
+            "StorageTemperature.ROOM_TEMPERATURE",
+        )
+    }
+
+    @Test
+    fun `StorageTemperature decodes from literal english snake_case`() {
+        assertEquals(
+            StorageTemperature.ROOM_TEMPERATURE,
+            Json.decodeFromString(StorageTemperature.serializer(), "\"room_temperature\""),
+            "StorageTemperature.ROOM_TEMPERATURE",
         )
     }
 

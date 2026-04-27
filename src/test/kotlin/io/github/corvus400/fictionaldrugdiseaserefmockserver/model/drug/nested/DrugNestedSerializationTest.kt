@@ -255,7 +255,7 @@ class DrugNestedSerializationTest {
         )
         assertEquals(
             """{"size":"100 錠 (10 錠 × 10 PTP)",""" +
-                """"storage_condition":{"temperature":"室温","light_protection":true,""" +
+                """"storage_condition":{"temperature":"room_temperature","light_protection":true,""" +
                 """"moisture_protection":false,"additional_note":"凍結を避ける"},""" +
                 """"expiration_months":36}""",
             json,
