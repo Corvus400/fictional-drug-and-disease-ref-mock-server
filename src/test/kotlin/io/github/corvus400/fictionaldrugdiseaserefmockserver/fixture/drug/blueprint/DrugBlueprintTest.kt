@@ -13,14 +13,14 @@ class DrugBlueprintTest {
             DrugBlueprint(
                 index = 0,
                 atcFirstLetter = 'A',
-                dosageFormGroup = DosageFormGroup.ORAL,
                 regulatoryClasses = setOf(RegulatoryClass.PRESCRIPTION_REQUIRED),
                 isBiological = false,
                 isChronicPrescription = true,
+                dosageForm = DosageForm.TABLET,
             )
         assertEquals(0, blueprint.index)
         assertEquals('A', blueprint.atcFirstLetter)
-        assertEquals(DosageFormGroup.ORAL, blueprint.dosageFormGroup)
+        assertEquals(DosageForm.TABLET, blueprint.dosageForm)
         assertEquals(setOf(RegulatoryClass.PRESCRIPTION_REQUIRED), blueprint.regulatoryClasses)
         assertEquals(false, blueprint.isBiological)
         assertEquals(true, blueprint.isChronicPrescription)
@@ -32,10 +32,10 @@ class DrugBlueprintTest {
             DrugBlueprint(
                 index = -1,
                 atcFirstLetter = 'A',
-                dosageFormGroup = DosageFormGroup.ORAL,
                 regulatoryClasses = setOf(RegulatoryClass.PRESCRIPTION_REQUIRED),
                 isBiological = false,
                 isChronicPrescription = false,
+                dosageForm = DosageForm.TABLET,
             )
         }
     }
@@ -46,7 +46,6 @@ class DrugBlueprintTest {
             DrugBlueprint(
                 index = 0,
                 atcFirstLetter = 'A',
-                dosageFormGroup = DosageFormGroup.ORAL,
                 regulatoryClasses = setOf(RegulatoryClass.PRESCRIPTION_REQUIRED),
                 isBiological = false,
                 isChronicPrescription = true,
@@ -61,10 +60,10 @@ class DrugBlueprintTest {
             DrugBlueprint(
                 index = 0,
                 atcFirstLetter = 'Z',
-                dosageFormGroup = DosageFormGroup.ORAL,
                 regulatoryClasses = setOf(RegulatoryClass.PRESCRIPTION_REQUIRED),
                 isBiological = false,
                 isChronicPrescription = false,
+                dosageForm = DosageForm.TABLET,
             )
         }
     }

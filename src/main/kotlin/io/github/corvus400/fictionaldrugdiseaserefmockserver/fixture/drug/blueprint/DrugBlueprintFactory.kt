@@ -19,7 +19,6 @@ object DrugBlueprintFactory {
             DrugBlueprint(
                 index = index,
                 atcFirstLetter = atcLetter,
-                dosageFormGroup = deriveDosageFormGroup(atcLetter = atcLetter),
                 regulatoryClasses =
                 deriveRegulatoryClasses(
                     atcLetter = atcLetter,
@@ -31,15 +30,6 @@ object DrugBlueprintFactory {
             )
         }
     }
-
-    private fun deriveDosageFormGroup(atcLetter: Char): DosageFormGroup =
-        when (atcLetter) {
-            'D' -> DosageFormGroup.EXTERNAL
-            'R' -> DosageFormGroup.INHALATION
-            'S' -> DosageFormGroup.OPHTHALMIC
-            'J', 'L' -> DosageFormGroup.INJECTION
-            else -> DosageFormGroup.ORAL
-        }
 
     internal fun deriveDosageForm(atcLetter: Char, index: Int): DosageForm {
         val forms: List<DosageForm> = DOSAGE_FORMS_BY_ATC.getValue(atcLetter)

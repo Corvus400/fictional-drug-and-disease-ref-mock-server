@@ -1,7 +1,6 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.IsoDateFormatter
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.blueprint.DosageFormGroup
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.blueprint.DrugBlueprint
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.BucketNameCoiner
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.FixmergeNameAdapter
@@ -159,24 +158,6 @@ class DrugGenerator(
         val suffix = (blueprint.index % ATC_CODE_SUFFIX_MOD).toString().padStart(length = 2, padChar = '0')
         return "${blueprint.atcFirstLetter}01AA$suffix"
     }
-
-    private fun dosageFormOf(group: DosageFormGroup): DosageForm =
-        when (group) {
-            DosageFormGroup.ORAL -> DosageForm.TABLET
-            DosageFormGroup.EXTERNAL -> DosageForm.OINTMENT
-            DosageFormGroup.INJECTION -> DosageForm.INJECTION_FORM
-            DosageFormGroup.INHALATION -> DosageForm.INHALER
-            DosageFormGroup.OPHTHALMIC -> DosageForm.EYE_DROPS
-        }
-
-    private fun routeOf(group: DosageFormGroup): RouteOfAdministration =
-        when (group) {
-            DosageFormGroup.ORAL -> RouteOfAdministration.ORAL
-            DosageFormGroup.EXTERNAL -> RouteOfAdministration.TOPICAL
-            DosageFormGroup.INJECTION -> RouteOfAdministration.INJECTION_ROUTE
-            DosageFormGroup.INHALATION -> RouteOfAdministration.INHALATION
-            DosageFormGroup.OPHTHALMIC -> RouteOfAdministration.OPHTHALMIC
-        }
 
     private fun routeOf(form: DosageForm): RouteOfAdministration =
         when (form) {
