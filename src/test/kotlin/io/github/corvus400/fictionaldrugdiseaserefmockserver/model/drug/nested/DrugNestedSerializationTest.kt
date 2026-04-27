@@ -90,7 +90,7 @@ class DrugNestedSerializationTest {
                 """"renal_adjustment":[{"range":""" +
                 """{"min_ml_per_min":30,"max_ml_per_min":59,"severity":"中等度低下","label":"30-59 mL/min"},""" +
                 """"dose":"通常用量の 1/2 に減量"}],""" +
-                """"hepatic_adjustment":[{"severity":"重度","dose":"投与回避"}]}""",
+                """"hepatic_adjustment":[{"severity":"severe","dose":"投与回避"}]}""",
             json,
         )
     }
