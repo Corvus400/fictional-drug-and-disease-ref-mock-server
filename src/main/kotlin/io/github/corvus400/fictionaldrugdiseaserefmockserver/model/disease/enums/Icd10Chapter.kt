@@ -33,7 +33,8 @@ enum class Icd10Chapter {
     @SerialName("chapter_vii")
     CHAPTER_VII,
 
-    @SerialName("耳および乳様突起の疾患")
+    /** 耳および乳様突起の疾患 */
+    @SerialName("chapter_viii")
     CHAPTER_VIII,
 
     @SerialName("循環器系の疾患")
