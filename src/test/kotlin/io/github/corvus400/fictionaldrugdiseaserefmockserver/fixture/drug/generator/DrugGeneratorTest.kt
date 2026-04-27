@@ -431,6 +431,33 @@ class DrugGeneratorTest {
     }
 
     @Test
+    fun `regulatory class counts are preserved across the full inventory after fixed overrides`() {
+        val drugs = generator.generate(blueprints = DrugBlueprintFactory.build())
+        val prescriptionRequiredCount =
+            drugs.count { drug -> RegulatoryClass.PRESCRIPTION_REQUIRED in drug.regulatoryClass }
+        val psychotropic1Count =
+            drugs.count { drug -> RegulatoryClass.PSYCHOTROPIC_1 in drug.regulatoryClass }
+        val poisonCount =
+            drugs.count { drug -> RegulatoryClass.POISON in drug.regulatoryClass }
+
+        assertEquals(
+            expected = PRESCRIPTION_REQUIRED_EXPECTED_COUNT,
+            actual = prescriptionRequiredCount,
+            message = "PRESCRIPTION_REQUIRED count must be preserved after fixed overrides",
+        )
+        assertEquals(
+            expected = PSYCHOTROPIC_1_EXPECTED_COUNT,
+            actual = psychotropic1Count,
+            message = "PSYCHOTROPIC_1 count must be preserved after fixed overrides",
+        )
+        assertEquals(
+            expected = POISON_EXPECTED_COUNT,
+            actual = poisonCount,
+            message = "POISON count must be preserved after fixed overrides",
+        )
+    }
+
+    @Test
     fun `relatedDiseaseIds reference only existing disease IDs for all blueprints`() {
         val existingDiseaseIds: Set<String> =
             (0..79).map { "disease_${it.toString().padStart(length = 4, padChar = '0')}" }.toSet()
@@ -450,6 +477,9 @@ class DrugGeneratorTest {
     private companion object {
         const val APPEARANCE_UNIQUE_FLOOR: Int = 30
         const val DESCRIPTION_UNIQUE_FLOOR: Int = 30
+        const val PRESCRIPTION_REQUIRED_EXPECTED_COUNT: Int = 22
+        const val PSYCHOTROPIC_1_EXPECTED_COUNT: Int = 4
+        const val POISON_EXPECTED_COUNT: Int = 2
 
         val ISO_8601_DATE_PATTERN: Regex = Regex("""^\d{4}-\d{2}-\d{2}$""")
 
