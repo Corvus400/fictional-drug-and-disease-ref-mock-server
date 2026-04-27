@@ -9,7 +9,8 @@ enum class RenalSeverity {
     @SerialName("normal")
     NORMAL,
 
-    @SerialName("軽度低下")
+    /** 軽度低下 */
+    @SerialName("mild")
     MILD,
 
     @SerialName("中等度低下")
