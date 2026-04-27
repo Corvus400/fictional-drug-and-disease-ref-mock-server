@@ -280,6 +280,11 @@ class EnumSerialNamePinTest {
             Json.encodeToString(FrequencyBand.serializer(), FrequencyBand.BETWEEN_1_AND_5_PERCENT),
             "FrequencyBand.BETWEEN_1_AND_5_PERCENT",
         )
+        assertEquals(
+            "\"under_1_percent\"",
+            Json.encodeToString(FrequencyBand.serializer(), FrequencyBand.UNDER_1_PERCENT),
+            "FrequencyBand.UNDER_1_PERCENT",
+        )
     }
 
     @Test
@@ -293,6 +298,11 @@ class EnumSerialNamePinTest {
             FrequencyBand.BETWEEN_1_AND_5_PERCENT,
             Json.decodeFromString(FrequencyBand.serializer(), "\"between_1_and_5_percent\""),
             "FrequencyBand.BETWEEN_1_AND_5_PERCENT",
+        )
+        assertEquals(
+            FrequencyBand.UNDER_1_PERCENT,
+            Json.decodeFromString(FrequencyBand.serializer(), "\"under_1_percent\""),
+            "FrequencyBand.UNDER_1_PERCENT",
         )
     }
 
