@@ -5,8 +5,8 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.Drug
 /**
  * 医薬品の検索ロジックを提供する純関数オブジェクト。
  *
- * 副作用なし・シナリオ非依存。`scenarioManager` / `FixtureProvider` / `getByScenario` には
- * 依存しない。呼び出し側 (route 層) が解決済みの `items` を渡し、本オブジェクトは
+ * 副作用なし・シナリオ非依存。シナリオ管理機構や Fixture 解決 API には依存せず、
+ * 呼び出し側 (route 層) が解決済みの `items` を渡す。本オブジェクトは
  * クエリパラメータに従って絞り込みのみを行う。
  */
 object DrugSearchService {
