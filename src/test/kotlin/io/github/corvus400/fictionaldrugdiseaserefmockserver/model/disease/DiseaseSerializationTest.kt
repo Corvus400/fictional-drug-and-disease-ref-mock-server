@@ -28,7 +28,7 @@ class DiseaseSerializationTest {
     fun `Disease serializes classification enums with Japanese SerialName values`() {
         val json = AppJson.encodeToString(minimalDisease())
         assertTrue(json.contains(""""icd10_chapter":"内分泌、栄養および代謝疾患""""))
-        assertTrue(json.contains(""""medical_department":["内分泌代謝科"]"""))
+        assertTrue(json.contains(""""medical_department":["endocrinology"]"""))
         assertTrue(json.contains(""""chronicity":"慢性""""))
     }
 
