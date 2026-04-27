@@ -11,6 +11,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.DrugLi
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.DrugListQuery
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.ErrorResponse
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RouteOfAdministration
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.ApiTag
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.documentIdDetailEndpoint
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.documentScenarioEndpoint
@@ -153,7 +154,8 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
                                 required = false
                             }
                             queryParameter<String>("route") {
-                                description = "投与経路の `@SerialName` 値 (例: `内服`)。" +
+                                description = "投与経路の `@SerialName` 値 " +
+                                    "(例: `${RouteOfAdministration.ORAL.serialName}`)。" +
                                     "指定時は `route_of_administration` が一致するものに絞り込み"
                                 required = false
                             }

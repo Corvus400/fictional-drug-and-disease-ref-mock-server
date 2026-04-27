@@ -126,6 +126,16 @@ class OpenApiDocTest {
         )
     }
 
+    @Test
+    fun `drug route description contains english SerialName via interpolation`() = testApplication {
+        application { module() }
+        val description = fetchParameterDescription(path = "/drugs", parameterName = "route")
+        assertTrue(
+            description.contains("oral"),
+            "route description に英語 SerialName 'oral' が含まれていない: $description",
+        )
+    }
+
     private suspend fun ApplicationTestBuilder.fetchParameterDescription(
         path: String,
         parameterName: String,
