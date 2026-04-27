@@ -31,6 +31,7 @@ class EnumSerialNamePinTest {
     fun `Chronicity encodes to literal english snake_case`() {
         assertEquals("\"acute\"", AppJson.encodeToString(Chronicity.ACUTE))
         assertEquals("\"subacute\"", AppJson.encodeToString(Chronicity.SUBACUTE))
+        assertEquals("\"chronic\"", AppJson.encodeToString(Chronicity.CHRONIC))
     }
 
     @Test
@@ -42,6 +43,10 @@ class EnumSerialNamePinTest {
         assertEquals(
             Chronicity.SUBACUTE,
             AppJson.decodeFromString<Chronicity>("\"subacute\""),
+        )
+        assertEquals(
+            Chronicity.CHRONIC,
+            AppJson.decodeFromString<Chronicity>("\"chronic\""),
         )
     }
 
