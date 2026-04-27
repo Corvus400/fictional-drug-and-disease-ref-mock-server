@@ -17,7 +17,8 @@ enum class DoseUnit {
     @SerialName("microgram")
     MICROGRAM,
 
-    @SerialName("mL")
+    /** ミリリットル */
+    @SerialName("ml")
     ML,
 
     @SerialName("L")
