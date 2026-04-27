@@ -35,7 +35,7 @@ class DiseaseNestedSerializationTest {
             ),
         )
         assertEquals(
-            """{"name":"HbA1c 相当値","category":"血液検査",""" +
+            """{"name":"HbA1c 相当値","category":"blood_test",""" +
                 """"typical_finding":"6.5% 以上で高値","reference_range":"4.6-6.2%"}""",
             json,
         )
