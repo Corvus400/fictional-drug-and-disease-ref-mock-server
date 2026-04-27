@@ -54,6 +54,17 @@ class DiseaseListFixtures(
     )
 
     /**
+     * シナリオ別の `Disease` 全件。`/diseases` ハンドラで `DiseaseSearchService.applyKeyword`
+     * を呼び出す際の元データ (Phase 11-10b)。`summariesByScenario` と同一のシナリオ集合だが、
+     * `DiseaseSummary` は keyword 検索対象 (`nameKana` / `nameEnglish` / `synonyms`) を持たない
+     * ため、検索段階では Disease 全体が必要。
+     */
+    val diseasesByScenario: Map<String, List<Disease>> = mapOf(
+        "default" to diseases,
+        "empty" to emptyList(),
+    )
+
+    /**
      * 指定シナリオを `page` / `pageSize` でスライスした `DiseaseListResponse` を返す。
      * `/diseases` ハンドラ (Phase 9-4b) と OpenAPI 例示 (`scenarios`) で共有される。
      */
