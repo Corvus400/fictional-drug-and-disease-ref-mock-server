@@ -77,7 +77,8 @@ enum class Icd10Chapter {
     @SerialName("chapter_xviii")
     CHAPTER_XVIII,
 
-    @SerialName("損傷、中毒およびその他の外因の影響")
+    /** 損傷、中毒およびその他の外因の影響 */
+    @SerialName("chapter_xix")
     CHAPTER_XIX,
 
     @SerialName("傷病および死亡の外因")
