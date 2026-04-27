@@ -17,7 +17,8 @@ enum class ExamCategory {
     @SerialName("physiological")
     PHYSIOLOGICAL,
 
-    @SerialName("病理検査")
+    /** 病理検査 */
+    @SerialName("pathology")
     PATHOLOGY,
 
     @SerialName("問診")
