@@ -42,7 +42,7 @@ class DrugSerializationTest {
         val json = AppJson.encodeToString(minimalDrug())
         assertTrue(json.contains(""""regulatory_class":["prescription_required"]"""))
         assertTrue(json.contains(""""dosage_form":"錠剤""""))
-        assertTrue(json.contains(""""route_of_administration":"内服""""))
+        assertTrue(json.contains(""""route_of_administration":"oral""""))
     }
 
     @Test

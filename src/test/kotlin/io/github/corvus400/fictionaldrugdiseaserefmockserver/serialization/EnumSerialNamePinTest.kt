@@ -1,6 +1,7 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.serialization
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RouteOfAdministration
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -133,6 +134,24 @@ class EnumSerialNamePinTest {
             RegulatoryClass.PRESCRIPTION_REQUIRED,
             Json.decodeFromString(RegulatoryClass.serializer(), "\"prescription_required\""),
             "RegulatoryClass.PRESCRIPTION_REQUIRED",
+        )
+    }
+
+    @Test
+    fun `RouteOfAdministration encodes to literal english snake_case`() {
+        assertEquals(
+            "\"oral\"",
+            Json.encodeToString(RouteOfAdministration.serializer(), RouteOfAdministration.ORAL),
+            "RouteOfAdministration.ORAL",
+        )
+    }
+
+    @Test
+    fun `RouteOfAdministration decodes from literal english snake_case`() {
+        assertEquals(
+            RouteOfAdministration.ORAL,
+            Json.decodeFromString(RouteOfAdministration.serializer(), "\"oral\""),
+            "RouteOfAdministration.ORAL",
         )
     }
 

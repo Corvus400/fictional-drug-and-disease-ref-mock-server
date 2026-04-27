@@ -92,7 +92,7 @@ class DrugModuleFilterTest {
     fun `GET drugs route= returns items whose routeOfAdministration serial name equals value`() = testApplication {
         application { module() }
 
-        val response = client.get("/drugs?route=内服&page_size=100")
+        val response = client.get("/drugs?route=oral&page_size=100")
 
         assertEquals(HttpStatusCode.OK, response.status)
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
@@ -100,13 +100,13 @@ class DrugModuleFilterTest {
         assertNotNull(totalCount, "response must include total_count")
         assertTrue(
             actual = totalCount in 1 until 120,
-            message = "total_count=$totalCount must be 1..<120 for route=内服",
+            message = "total_count=$totalCount must be 1..<120 for route=oral",
         )
         val items = body["items"]?.jsonArray
         assertNotNull(items, "response must include items array")
         assertTrue(
             actual = items.isNotEmpty(),
-            message = "filtered items must be non-empty for route=内服",
+            message = "filtered items must be non-empty for route=oral",
         )
         items.forEach { item ->
             val id = item.jsonObject["id"]?.jsonPrimitive?.content
@@ -116,9 +116,9 @@ class DrugModuleFilterTest {
             val detail = json.parseToJsonElement(string = detailResponse.bodyAsText()).jsonObject
             val routeValue = detail["route_of_administration"]?.jsonPrimitive?.content
             assertEquals(
-                expected = "内服",
+                expected = "oral",
                 actual = routeValue,
-                message = "item id=$id has route_of_administration=$routeValue; must be '内服' under route=内服 filter",
+                message = "item id=$id has route_of_administration=$routeValue; must be 'oral' under route=oral filter",
             )
         }
     }
