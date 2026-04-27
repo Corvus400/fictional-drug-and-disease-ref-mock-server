@@ -1,6 +1,7 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.disease
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.module
+import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.headers
 import io.ktor.client.request.post
@@ -12,8 +13,10 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.server.testing.testApplication
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import java.net.URLEncoder
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -84,16 +87,17 @@ class DiseaseModuleKeywordTest {
 
     /**
      * Phase 11-11b の検証テスト (#112): default シナリオ (80 件) に対して
-     * `keyword` ヒット件数が 1..80 の範囲で正しく返ることを確認する。
+     * 実在 keyword でのヒット件数が 1..80 の範囲で正しく返ることを確認する。
      *
-     * Issue 本文の Red サンプルでは `keyword=` (空文字) を使うため、`DiseaseSearchService`
-     * の blank-no-op で全 80 件が返るが、`assertTrue(count in 1..80)` は満たされる。
-     * #111 で実装済みのため Green は即時成立し、本コミットは検証テストの追加。
-     * Refactor 段階で実在 keyword を `knownDiseaseKeyword()` ヘルパーに集約する想定。
+     * keyword は `knownDiseaseKeyword()` 経由で default シナリオ先頭エントリの `name`
+     * 先頭 2 文字から動的に派生させる (SSOT)。fixmerge レキシコン由来で fixture 名は
+     * 起動時生成のためハードコードに耐えない。`name` 先頭 2 文字を切り出すことで
+     * `keyword_target=name` + `keyword_match=partial` 検索が常に最低 1 件 (= 抽出元の
+     * 当該疾患) にヒットすることを保証する。
      *
      * `DiseaseModuleKeywordTest` の既存ペア:
      * - non-matching keyword (`zzznotexistzzz`) → 0 件 (negative complement)
-     * - keyword= → 1..80 件 (positive complement、本テスト)
+     * - 実在 keyword → 1..80 件 (positive complement、本テスト)
      */
     @Test
     fun `GET diseases under default scenario with keyword returns positive filtered count`() = testApplication {
@@ -103,17 +107,45 @@ class DiseaseModuleKeywordTest {
             setBody(body = """{"state": "default"}""")
         }
 
+        val keyword = knownDiseaseKeyword(client = client)
+        val encodedKeyword = URLEncoder.encode(keyword, Charsets.UTF_8)
         val response = client.get(
-            urlString = "/diseases?keyword=&keyword_target=name&keyword_match=partial&page_size=100",
+            urlString = "/diseases?keyword=$encodedKeyword" +
+                "&keyword_target=name&keyword_match=partial&page_size=100",
         )
         assertEquals(expected = HttpStatusCode.OK, actual = response.status)
         val count = response.totalCount()
         assertTrue(
             actual = count in 1..80,
-            message = "default scenario keyword filter must return count in 1..80 (got $count)",
+            message = "keyword=$keyword must filter default scenario count to 1..80 (got $count)",
         )
 
         client.post(urlString = "/__admin/reset")
+    }
+
+    /**
+     * default シナリオで少なくとも 1 件にヒットする keyword を返す SSOT ヘルパー。
+     *
+     * `/diseases?page_size=1` で先頭エントリの `name` を取得し先頭 [KEYWORD_PREFIX_LENGTH]
+     * 文字を抜粋する。`keyword_target=name` + `keyword_match=partial` 検索が抽出元の
+     * 疾患を必ずヒットさせるため `total_count >= 1` を保証する。
+     */
+    private suspend fun knownDiseaseKeyword(client: HttpClient): String {
+        val response = client.get(urlString = "/diseases?page_size=1")
+        assertEquals(expected = HttpStatusCode.OK, actual = response.status)
+        val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
+        val firstName = body["items"]
+            ?.jsonArray
+            ?.firstOrNull()
+            ?.jsonObject?.get(key = "name")
+            ?.jsonPrimitive?.content
+        assertNotNull(actual = firstName, message = "default scenario must have at least one disease item")
+        val keyword = firstName.take(n = KEYWORD_PREFIX_LENGTH)
+        assertTrue(
+            actual = keyword.isNotEmpty(),
+            message = "first disease name must be non-empty (got '$firstName')",
+        )
+        return keyword
     }
 
     private suspend fun HttpResponse.totalCount(): Int {
@@ -122,5 +154,9 @@ class DiseaseModuleKeywordTest {
         val totalCount = body["total_count"]?.jsonPrimitive?.content?.toIntOrNull()
         assertNotNull(actual = totalCount, message = "response body must have a numeric total_count")
         return totalCount
+    }
+
+    companion object {
+        private const val KEYWORD_PREFIX_LENGTH: Int = 2
     }
 }
