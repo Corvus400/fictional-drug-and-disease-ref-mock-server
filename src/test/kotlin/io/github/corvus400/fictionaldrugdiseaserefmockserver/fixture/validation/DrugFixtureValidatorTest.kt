@@ -213,6 +213,31 @@ class DrugFixtureValidatorTest {
     }
 
     @Test
+    fun `validate reports an external violation when SUPPOSITORY has empty administrationPrecautions`() {
+        val drugs = buildFreshGenerator().generate(blueprints = DrugBlueprintFactory.build())
+        val suppository = drugs.first { drug -> drug.dosageForm == DosageForm.SUPPOSITORY }
+        val corrupted = suppository.copy(administrationPrecautions = emptyList())
+        val withCorrupted = drugs.map { drug -> if (drug.id == suppository.id) corrupted else drug }
+
+        val violations = DrugFixtureValidator.validate(drugs = withCorrupted)
+
+        assertEquals(
+            expected = 1,
+            actual = violations.size,
+            message = "expected exactly 1 violation but got $violations",
+        )
+        assertContainsFixtureViolation(
+            violations = violations,
+            expected = FixtureViolation(
+                entityType = ENTITY_TYPE_DRUG,
+                entityId = suppository.id,
+                field = "administrationPrecautions",
+                message = "external topical requires administrationPrecautions size >= 1",
+            ),
+        )
+    }
+
+    @Test
     fun `validate reports a biological violation when handlingPrecautions is empty`() {
         val drugs = buildFreshGenerator().generate(blueprints = DrugBlueprintFactory.build())
         val base = drugs.first()
