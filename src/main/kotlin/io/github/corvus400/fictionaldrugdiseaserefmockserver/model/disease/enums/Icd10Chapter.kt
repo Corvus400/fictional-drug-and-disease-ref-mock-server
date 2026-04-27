@@ -17,7 +17,8 @@ enum class Icd10Chapter {
     @SerialName("chapter_iii")
     CHAPTER_III,
 
-    @SerialName("内分泌、栄養および代謝疾患")
+    /** 内分泌、栄養および代謝疾患 */
+    @SerialName("chapter_iv")
     CHAPTER_IV,
 
     @SerialName("精神および行動の障害")
