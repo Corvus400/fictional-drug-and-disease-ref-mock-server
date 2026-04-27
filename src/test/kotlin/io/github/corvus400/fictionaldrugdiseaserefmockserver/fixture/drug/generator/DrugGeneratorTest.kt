@@ -1,7 +1,6 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.DiseaseFixtureProvider
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.blueprint.DosageFormGroup
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.blueprint.DrugBlueprint
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.blueprint.DrugBlueprintFactory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.placeholder.PlaceholderContractMessages
@@ -36,10 +35,10 @@ class DrugGeneratorTest {
         DrugBlueprint(
             index = 0,
             atcFirstLetter = 'A',
-            dosageFormGroup = DosageFormGroup.ORAL,
             regulatoryClasses = setOf(RegulatoryClass.ORDINARY),
             isBiological = false,
             isChronicPrescription = true,
+            dosageForm = DosageForm.TABLET,
         )
 
     @Test
@@ -224,19 +223,19 @@ class DrugGeneratorTest {
 
     @Test
     fun `generate for external blueprint populates administrationPrecautions`() {
+        val externalForms = setOf(
+            DosageForm.OINTMENT,
+            DosageForm.CREAM,
+            DosageForm.PATCH,
+            DosageForm.EYE_DROPS,
+            DosageForm.NASAL_SPRAY,
+        )
         val externalBlueprint =
-            DrugBlueprintFactory.build().first { it.dosageFormGroup == DosageFormGroup.EXTERNAL }
+            DrugBlueprintFactory.build().first { it.dosageForm in externalForms }
         val drug = generator.generate(blueprint = externalBlueprint)
 
         assertTrue(
-            drug.dosageForm in
-                setOf(
-                    DosageForm.OINTMENT,
-                    DosageForm.CREAM,
-                    DosageForm.PATCH,
-                    DosageForm.EYE_DROPS,
-                    DosageForm.NASAL_SPRAY,
-                ),
+            drug.dosageForm in externalForms,
             "dosageForm '${drug.dosageForm}' is not an external form",
         )
         assertTrue(

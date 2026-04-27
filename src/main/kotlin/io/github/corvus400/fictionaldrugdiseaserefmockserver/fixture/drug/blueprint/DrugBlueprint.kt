@@ -13,11 +13,10 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.Re
 data class DrugBlueprint(
     val index: Int,
     val atcFirstLetter: Char,
-    val dosageFormGroup: DosageFormGroup,
     val regulatoryClasses: Set<RegulatoryClass>,
     val isBiological: Boolean,
     val isChronicPrescription: Boolean,
-    val dosageForm: DosageForm = DosageForm.TABLET,
+    val dosageForm: DosageForm,
 ) {
     init {
         require(index >= 0) { "index must be non-negative, got $index" }
@@ -31,5 +30,3 @@ data class DrugBlueprint(
             setOf('A', 'B', 'C', 'D', 'G', 'H', 'J', 'L', 'M', 'N', 'P', 'R', 'S', 'V')
     }
 }
-
-enum class DosageFormGroup { ORAL, EXTERNAL, INJECTION, INHALATION, OPHTHALMIC }
