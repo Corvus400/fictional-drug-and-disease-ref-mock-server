@@ -17,7 +17,8 @@ enum class RouteOfAdministration {
     @SerialName("injection_route")
     INJECTION_ROUTE,
 
-    @SerialName("吸入")
+    /** 吸入 */
+    @SerialName("inhalation")
     INHALATION,
 
     @SerialName("坐剤")
