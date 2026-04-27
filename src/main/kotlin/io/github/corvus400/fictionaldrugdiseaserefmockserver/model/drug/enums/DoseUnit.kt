@@ -37,6 +37,7 @@ enum class DoseUnit {
     @SerialName("mol")
     MOL,
 
+    /** ミリモル */
     @SerialName("mmol")
     MMOL,
 
