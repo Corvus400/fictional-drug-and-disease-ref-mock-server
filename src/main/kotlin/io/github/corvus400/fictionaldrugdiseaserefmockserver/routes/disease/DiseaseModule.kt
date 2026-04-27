@@ -171,6 +171,11 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
                                     "指定時は `chronicity` が一致するものに絞り込み"
                                 required = false
                             }
+                            queryParameter<String>("infectious") {
+                                description = "感染性の有無 (`true` / `false`)。" +
+                                    "指定時は `infectious` が一致するものに絞り込み"
+                                required = false
+                            }
                             queryParameter<String>("keyword") {
                                 description = "検索キーワード。空白区切りで複数語を渡すと AND 結合 " +
                                     "(各語が `keyword_target` の対象フィールドのいずれかにヒットすればよい)。" +
