@@ -8,17 +8,20 @@ enum class DiseaseKeywordTarget {
 
     companion object {
         /**
-         * `/diseases` のクエリパラメータ `keyword_target` を `DiseaseKeywordTarget` に解決する。
+         * `keyword_target` クエリパラメータを `DiseaseKeywordTarget` に解釈する。
          *
-         * 受理値は enum 名の case-insensitive (例: `name`, `NAME`, `name_english`, `synonyms`)。
-         * null / 不一致は既定値 `NAME` を返す (Phase 11 仕様: 既定の検索対象は名称)。
+         * `null` / 空文字は既定値 `NAME` にフォールバックする (`/diseases` 検索 API 既定挙動)。
+         * 受理値は lower-case 厳密一致 (`name` / `name_english` / `synonyms`)。不正値 (例: `NAME`
+         * など大文字、`title`) のバリデーションエラー化は別 Issue (#91) で扱う想定で、現状は
+         * 安全側に既定値へフォールバックする。Drug 側 PR #286 (`DrugKeywordTarget.fromQuery`) と
+         * 仕様統一。
          */
-        fun fromQuery(value: String?): DiseaseKeywordTarget =
-            when (value?.uppercase()) {
-                "NAME" -> NAME
-                "NAME_ENGLISH" -> NAME_ENGLISH
-                "SYNONYMS" -> SYNONYMS
-                else -> NAME
-            }
+        fun fromQuery(value: String?): DiseaseKeywordTarget = when (value) {
+            null, "" -> NAME
+            "name" -> NAME
+            "name_english" -> NAME_ENGLISH
+            "synonyms" -> SYNONYMS
+            else -> NAME
+        }
     }
 }
