@@ -7,9 +7,9 @@ import kotlin.test.assertEquals
 
 class DiseaseEnumSerializationTest {
     @Test
-    fun `Icd10Chapter CHAPTER_I serializes to JSON string 感染症および寄生虫症`() {
+    fun `Icd10Chapter CHAPTER_I serializes to JSON string chapter_i`() {
         val json = AppJson.encodeToString(Icd10Chapter.CHAPTER_I)
-        assertEquals("\"感染症および寄生虫症\"", json)
+        assertEquals("\"chapter_i\"", json)
     }
 
     @Test
