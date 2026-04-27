@@ -5,7 +5,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 enum class PrecautionPopulationCategory {
-    @SerialName("合併症")
+    /** 合併症 */
+    @SerialName("comorbidity")
     COMORBIDITY,
 
     @SerialName("腎機能障害")
