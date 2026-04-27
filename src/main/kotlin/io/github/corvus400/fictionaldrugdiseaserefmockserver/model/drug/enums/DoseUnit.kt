@@ -9,6 +9,7 @@ enum class DoseUnit {
     @SerialName("mg")
     MG,
 
+    /** グラム */
     @SerialName("g")
     G,
 
