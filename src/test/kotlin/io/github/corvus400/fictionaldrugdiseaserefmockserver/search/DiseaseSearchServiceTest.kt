@@ -127,6 +127,23 @@ class DiseaseSearchServiceTest {
         assertEquals(listOf("disease_0001"), result.map { it.id })
     }
 
+    @Test
+    fun `applyKeyword with unicode keyword on synonyms list works correctly`() {
+        val items =
+            listOf(
+                disease(id = "disease_0001", synonyms = listOf("本態性高血圧症", "原発性高血圧")),
+                disease(id = "disease_0002", synonyms = listOf("糖尿病")),
+            )
+        val result =
+            DiseaseSearchService.applyKeyword(
+                items = items,
+                keyword = "高血圧",
+                match = KeywordMatch.PARTIAL,
+                target = DiseaseKeywordTarget.SYNONYMS,
+            )
+        assertEquals(listOf("disease_0001"), result.map { it.id })
+    }
+
     private fun disease(
         id: String,
         name: String,
