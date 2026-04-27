@@ -29,7 +29,7 @@ class DrugSummarySerializationTest {
         assertEquals("テスト販売名", jsonObject["brand_name"]?.toString()?.trim('"'))
         assertEquals("テスト一般名", jsonObject["generic_name"]?.toString()?.trim('"'))
         assertEquals("経口鎮痛薬", jsonObject["therapeutic_category_name"]?.toString()?.trim('"'))
-        assertTrue(encoded.contains(""""regulatory_class":["処方箋医薬品"]"""))
+        assertTrue(encoded.contains(""""regulatory_class":["prescription_required"]"""))
         assertTrue(encoded.contains(""""dosage_form":"錠剤""""))
 
         val keyCasingViolations = jsonObject.keys.filter { key ->

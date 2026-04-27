@@ -7,9 +7,9 @@ import kotlin.test.assertEquals
 
 class DrugEnumSerializationTest {
     @Test
-    fun `RegulatoryClass PRESCRIPTION_REQUIRED serializes to JSON string 処方箋医薬品`() {
+    fun `RegulatoryClass PRESCRIPTION_REQUIRED serializes to JSON string prescription_required`() {
         val json = AppJson.encodeToString(RegulatoryClass.PRESCRIPTION_REQUIRED)
-        assertEquals("\"処方箋医薬品\"", json)
+        assertEquals("\"prescription_required\"", json)
     }
 
     @Test
