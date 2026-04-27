@@ -87,17 +87,27 @@ class DiseaseModuleKeywordTest {
 
     /**
      * Phase 11-11b の検証テスト (#112): default シナリオ (80 件) に対して
-     * 実在 keyword でのヒット件数が 1..80 の範囲で正しく返ることを確認する。
+     * 実在 keyword でのヒット件数が `MIN_FILTERED_COUNT until DEFAULT_TOTAL_COUNT`
+     * の範囲で正しく返ることを確認する。
      *
      * keyword は `knownDiseaseKeyword()` 経由で default シナリオ先頭エントリの `name`
-     * 先頭 2 文字から動的に派生させる (SSOT)。fixmerge レキシコン由来で fixture 名は
-     * 起動時生成のためハードコードに耐えない。`name` 先頭 2 文字を切り出すことで
-     * `keyword_target=name` + `keyword_match=partial` 検索が常に最低 1 件 (= 抽出元の
-     * 当該疾患) にヒットすることを保証する。
+     * 先頭 [KEYWORD_PREFIX_LENGTH] 文字から動的に派生させる (SSOT)。fixmerge レキシコン
+     * 由来で fixture 名は起動時生成のためハードコードに耐えない。
+     *
+     * ## トートロジー回避設計 (Drug 側 PR #289 整合)
+     *
+     * 単純な `filtered >= 1` だと抽出元 disease 自身が必ずマッチする 1 件で常に成立し、
+     * 「フィルタが他の disease を除外した」ことを検証できない (定義上の真)。
+     * `filtered in MIN_FILTERED_COUNT until DEFAULT_TOTAL_COUNT` (= 2..79) を要求し、
+     *
+     * - 抽出元 + さらに別の disease にもヒット (≥ 2) で「フィルタが他にも当たる」
+     * - 全件 80 未満 (< 80) で「フィルタが何かを除外している」
+     *
+     * の両面でフィルタが実質機能していることを保証する。
      *
      * `DiseaseModuleKeywordTest` の既存ペア:
      * - non-matching keyword (`zzznotexistzzz`) → 0 件 (negative complement)
-     * - 実在 keyword → 1..80 件 (positive complement、本テスト)
+     * - 実在 keyword → 2..79 件 (positive complement、本テスト)
      */
     @Test
     fun `GET diseases under default scenario with keyword returns positive filtered count`() = testApplication {
@@ -107,6 +117,13 @@ class DiseaseModuleKeywordTest {
             setBody(body = """{"state": "default"}""")
         }
 
+        val unfilteredCount = client.get(urlString = "/diseases?page_size=100").totalCount()
+        assertEquals(
+            expected = DEFAULT_TOTAL_COUNT,
+            actual = unfilteredCount,
+            message = "precondition: default シナリオは $DEFAULT_TOTAL_COUNT 件であるべき (got $unfilteredCount)",
+        )
+
         val keyword = knownDiseaseKeyword(client = client)
         val encodedKeyword = URLEncoder.encode(keyword, Charsets.UTF_8)
         val response = client.get(
@@ -114,10 +131,11 @@ class DiseaseModuleKeywordTest {
                 "&keyword_target=name&keyword_match=partial&page_size=100",
         )
         assertEquals(expected = HttpStatusCode.OK, actual = response.status)
-        val count = response.totalCount()
+        val filteredCount = response.totalCount()
         assertTrue(
-            actual = count in 1..80,
-            message = "keyword=$keyword must filter default scenario count to 1..80 (got $count)",
+            actual = filteredCount in MIN_FILTERED_COUNT until DEFAULT_TOTAL_COUNT,
+            message = "keyword=$keyword must filter default scenario count to " +
+                "$MIN_FILTERED_COUNT until $DEFAULT_TOTAL_COUNT (got $filteredCount)",
         )
 
         client.post(urlString = "/__admin/reset")
@@ -158,5 +176,7 @@ class DiseaseModuleKeywordTest {
 
     companion object {
         private const val KEYWORD_PREFIX_LENGTH: Int = 2
+        private const val MIN_FILTERED_COUNT: Int = 2
+        private const val DEFAULT_TOTAL_COUNT: Int = 80
     }
 }
