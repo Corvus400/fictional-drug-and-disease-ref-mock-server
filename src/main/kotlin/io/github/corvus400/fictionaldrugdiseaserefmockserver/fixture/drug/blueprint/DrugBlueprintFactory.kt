@@ -40,6 +40,11 @@ object DrugBlueprintFactory {
             else -> DosageFormGroup.ORAL
         }
 
+    internal fun deriveDosageForm(atcLetter: Char, index: Int): DosageForm {
+        val forms: List<DosageForm> = DOSAGE_FORMS_BY_ATC.getValue(atcLetter)
+        return forms[index % forms.size]
+    }
+
     private fun deriveRegulatoryClasses(
         atcLetter: Char,
         index: Int,
