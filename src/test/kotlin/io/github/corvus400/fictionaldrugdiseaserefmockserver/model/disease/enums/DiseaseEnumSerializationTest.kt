@@ -13,9 +13,9 @@ class DiseaseEnumSerializationTest {
     }
 
     @Test
-    fun `MedicalDepartment INTERNAL_MEDICINE serializes to JSON string 内科`() {
+    fun `MedicalDepartment INTERNAL_MEDICINE serializes to JSON string internal_medicine`() {
         val json = AppJson.encodeToString(MedicalDepartment.INTERNAL_MEDICINE)
-        assertEquals("\"内科\"", json)
+        assertEquals("\"internal_medicine\"", json)
     }
 
     @Test
