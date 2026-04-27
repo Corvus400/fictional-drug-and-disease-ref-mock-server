@@ -5,7 +5,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 enum class PrevalenceUnit {
-    @SerialName("人口対")
+    /** 人口対 */
+    @SerialName("per_population")
     PER_POPULATION,
 
     @SerialName("患者対")

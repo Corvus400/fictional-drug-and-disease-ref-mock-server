@@ -5,6 +5,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.MedicalDepartment
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.OnsetPattern
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.PrevalenceUnit
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.AppJson
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -327,6 +328,19 @@ class EnumSerialNamePinTest {
         assertEquals(
             OnsetPattern.RELAPSING,
             AppJson.decodeFromString<OnsetPattern>("\"relapsing\""),
+        )
+    }
+
+    @Test
+    fun `PrevalenceUnit encodes to literal english snake_case`() {
+        assertEquals("\"per_population\"", AppJson.encodeToString(PrevalenceUnit.PER_POPULATION))
+    }
+
+    @Test
+    fun `PrevalenceUnit decodes from literal english snake_case`() {
+        assertEquals(
+            PrevalenceUnit.PER_POPULATION,
+            AppJson.decodeFromString<PrevalenceUnit>("\"per_population\""),
         )
     }
 }
