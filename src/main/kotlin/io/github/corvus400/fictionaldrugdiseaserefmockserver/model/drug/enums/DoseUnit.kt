@@ -13,7 +13,8 @@ enum class DoseUnit {
     @SerialName("g")
     G,
 
-    @SerialName("μg")
+    /** マイクログラム */
+    @SerialName("microgram")
     MICROGRAM,
 
     @SerialName("mL")
