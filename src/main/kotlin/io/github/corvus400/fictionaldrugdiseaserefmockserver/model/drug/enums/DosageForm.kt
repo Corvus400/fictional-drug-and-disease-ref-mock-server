@@ -29,7 +29,8 @@ enum class DosageForm {
     @SerialName("injection_form")
     INJECTION_FORM,
 
-    @SerialName("軟膏")
+    /** 軟膏 */
+    @SerialName("ointment")
     OINTMENT,
 
     @SerialName("クリーム")
