@@ -300,6 +300,7 @@ class EnumSerialNamePinTest {
     @Test
     fun `OnsetPattern encodes to literal english snake_case`() {
         assertEquals("\"acute\"", AppJson.encodeToString(OnsetPattern.ACUTE))
+        assertEquals("\"subacute\"", AppJson.encodeToString(OnsetPattern.SUBACUTE))
     }
 
     @Test
@@ -307,6 +308,10 @@ class EnumSerialNamePinTest {
         assertEquals(
             OnsetPattern.ACUTE,
             AppJson.decodeFromString<OnsetPattern>("\"acute\""),
+        )
+        assertEquals(
+            OnsetPattern.SUBACUTE,
+            AppJson.decodeFromString<OnsetPattern>("\"subacute\""),
         )
     }
 }
