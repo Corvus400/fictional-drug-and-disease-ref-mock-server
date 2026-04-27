@@ -81,7 +81,8 @@ enum class Icd10Chapter {
     @SerialName("chapter_xix")
     CHAPTER_XIX,
 
-    @SerialName("傷病および死亡の外因")
+    /** 傷病および死亡の外因 */
+    @SerialName("chapter_xx")
     CHAPTER_XX,
 
     @SerialName("健康状態に影響を及ぼす要因および保健サービスの利用")
