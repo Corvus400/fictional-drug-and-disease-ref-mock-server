@@ -45,7 +45,8 @@ enum class DosageForm {
     @SerialName("eye_drops")
     EYE_DROPS,
 
-    @SerialName("坐剤")
+    /** 坐剤 */
+    @SerialName("suppository")
     SUPPOSITORY,
 
     @SerialName("吸入剤")
