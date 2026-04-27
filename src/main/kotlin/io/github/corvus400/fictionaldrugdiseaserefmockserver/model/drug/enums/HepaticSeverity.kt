@@ -5,7 +5,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 enum class HepaticSeverity {
-    @SerialName("軽度")
+    /** 軽度 */
+    @SerialName("mild")
     MILD,
 
     @SerialName("中等度")
