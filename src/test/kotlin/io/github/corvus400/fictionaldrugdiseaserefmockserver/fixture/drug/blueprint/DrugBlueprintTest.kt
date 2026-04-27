@@ -1,5 +1,6 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.blueprint
 
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DosageForm
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -37,6 +38,21 @@ class DrugBlueprintTest {
                 isChronicPrescription = false,
             )
         }
+    }
+
+    @Test
+    fun `DrugBlueprint exposes dosageForm with the value passed to the constructor`() {
+        val blueprint =
+            DrugBlueprint(
+                index = 0,
+                atcFirstLetter = 'A',
+                dosageFormGroup = DosageFormGroup.ORAL,
+                regulatoryClasses = setOf(RegulatoryClass.PRESCRIPTION_REQUIRED),
+                isBiological = false,
+                isChronicPrescription = true,
+                dosageForm = DosageForm.CAPSULE,
+            )
+        assertEquals(DosageForm.CAPSULE, blueprint.dosageForm)
     }
 
     @Test

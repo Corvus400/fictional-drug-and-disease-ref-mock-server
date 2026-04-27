@@ -1,5 +1,6 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.blueprint
 
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DosageForm
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass
 
 /**
@@ -16,6 +17,7 @@ data class DrugBlueprint(
     val regulatoryClasses: Set<RegulatoryClass>,
     val isBiological: Boolean,
     val isChronicPrescription: Boolean,
+    val dosageForm: DosageForm = DosageForm.TABLET,
 ) {
     init {
         require(index >= 0) { "index must be non-negative, got $index" }
