@@ -173,16 +173,21 @@ internal object DiseaseNestedBuilders {
     ): List<Exam> {
         val countSeed = stableHash(id = id, slot = DiseaseFieldSlot.REQUIRED_EXAM_COUNT.ordinal, index = 0)
         val count = ValueRangeGenerator.pickCount(seed = countSeed, range = REQUIRED_EXAM_RANGE)
+        val primaryCategory = primaryExamCategoryFor(chapter = chapter)
         val exams = (0 until count).map { offset ->
-            val categorySeed = stableHash(
-                id = id,
-                slot = DiseaseFieldSlot.REQUIRED_EXAM_CATEGORY.ordinal,
-                index = offset,
-            )
-            val category = ValueRangeGenerator.pickOne(
-                seed = categorySeed,
-                candidates = ExamCategory.entries.toList(),
-            )
+            val category = if (offset == 0) {
+                primaryCategory
+            } else {
+                val categorySeed = stableHash(
+                    id = id,
+                    slot = DiseaseFieldSlot.REQUIRED_EXAM_CATEGORY.ordinal,
+                    index = offset,
+                )
+                ValueRangeGenerator.pickOne(
+                    seed = categorySeed,
+                    candidates = ExamCategory.entries.toList(),
+                )
+            }
             val nameSeed = stableHash(
                 id = id,
                 slot = DiseaseFieldSlot.REQUIRED_EXAM_NAME.ordinal,
@@ -488,6 +493,31 @@ internal object DiseaseNestedBuilders {
         val sexSeed = stableHash(id = id, slot = DiseaseFieldSlot.EPIDEMIOLOGY_SEX_RATIO.ordinal, index = 0)
         val maleRatio = ValueRangeGenerator.pickInRange(seed = sexSeed, range = SEX_RATIO_RANGE)
         return SexDistribution(maleRatio = maleRatio, femaleRatio = SEX_RATIO_BASE, note = "架空比率")
+    }
+
+    private fun primaryExamCategoryFor(chapter: Icd10Chapter): ExamCategory = when (chapter) {
+        Icd10Chapter.CHAPTER_I -> ExamCategory.BLOOD_TEST
+        Icd10Chapter.CHAPTER_II -> ExamCategory.PATHOLOGY
+        Icd10Chapter.CHAPTER_III -> ExamCategory.BLOOD_TEST
+        Icd10Chapter.CHAPTER_IV -> ExamCategory.BLOOD_TEST
+        Icd10Chapter.CHAPTER_V -> ExamCategory.INTERVIEW
+        Icd10Chapter.CHAPTER_VI -> ExamCategory.PHYSIOLOGICAL
+        Icd10Chapter.CHAPTER_VII -> ExamCategory.PHYSIOLOGICAL
+        Icd10Chapter.CHAPTER_VIII -> ExamCategory.PHYSIOLOGICAL
+        Icd10Chapter.CHAPTER_IX -> ExamCategory.IMAGING
+        Icd10Chapter.CHAPTER_X -> ExamCategory.IMAGING
+        Icd10Chapter.CHAPTER_XI -> ExamCategory.IMAGING
+        Icd10Chapter.CHAPTER_XII -> ExamCategory.PATHOLOGY
+        Icd10Chapter.CHAPTER_XIII -> ExamCategory.IMAGING
+        Icd10Chapter.CHAPTER_XIV -> ExamCategory.IMAGING
+        Icd10Chapter.CHAPTER_XV -> ExamCategory.IMAGING
+        Icd10Chapter.CHAPTER_XVI -> ExamCategory.IMAGING
+        Icd10Chapter.CHAPTER_XVII -> ExamCategory.IMAGING
+        Icd10Chapter.CHAPTER_XVIII -> ExamCategory.INTERVIEW
+        Icd10Chapter.CHAPTER_XIX -> ExamCategory.IMAGING
+        Icd10Chapter.CHAPTER_XX -> ExamCategory.INTERVIEW
+        Icd10Chapter.CHAPTER_XXI -> ExamCategory.INTERVIEW
+        Icd10Chapter.CHAPTER_XXII -> ExamCategory.INTERVIEW
     }
 
     private fun primaryDepartmentFor(chapter: Icd10Chapter): MedicalDepartment =
