@@ -7,6 +7,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.Fixm
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.MedicalDepartment
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.PrevalenceUnit
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -21,6 +22,14 @@ class DiseaseEnumCoverageTest {
     fun `MedicalDepartment 全 16 値が primary department に出現する`() {
         val primaries: Set<MedicalDepartment> = diseases.map { it.medicalDepartment.first() }.toSet()
         assertEquals(expected = MedicalDepartment.entries.toSet(), actual = primaries)
+    }
+
+    @Test
+    fun `PrevalenceUnit 全 3 値が出現する`() {
+        val used: Set<PrevalenceUnit> = diseases
+            .mapNotNull { it.epidemiology?.prevalence?.unit }
+            .toSet()
+        assertEquals(expected = PrevalenceUnit.entries.toSet(), actual = used)
     }
 
     @Test

@@ -354,6 +354,7 @@ internal object DiseaseNestedBuilders {
     fun buildEpidemiology(
         id: String,
         chapter: Icd10Chapter,
+        isRareDisease: Boolean,
     ): EpidemiologyInfo {
         val prevalenceSeed = stableHash(
             id = id,
@@ -361,11 +362,13 @@ internal object DiseaseNestedBuilders {
             index = 0,
         )
         val rate = ValueRangeGenerator.pickInRange(seed = prevalenceSeed, range = PREVALENCE_RATE_RANGE)
+        val unit = derivePrevalenceUnit(chapter = chapter, isRareDisease = isRareDisease)
+        val denominator = denominatorFor(unit = unit)
         val prevalence = Prevalence(
             rate = rate.toDouble(),
-            denominator = PREVALENCE_DENOMINATOR,
-            unit = PrevalenceUnit.PER_POPULATION,
-            label = "人口 $PREVALENCE_DENOMINATOR 対 $rate (架空)",
+            denominator = denominator,
+            unit = unit,
+            label = labelFor(unit = unit, rate = rate, denominator = denominator),
         )
         val ageSeed = stableHash(id = id, slot = DiseaseFieldSlot.EPIDEMIOLOGY_ONSET_AGE.ordinal, index = 0)
         val minAge = ValueRangeGenerator.pickInRange(seed = ageSeed, range = ONSET_MIN_AGE_RANGE)
@@ -458,6 +461,26 @@ internal object DiseaseNestedBuilders {
         return listOf(cardiacImaging) + exams
     }
 
+    private fun derivePrevalenceUnit(chapter: Icd10Chapter, isRareDisease: Boolean): PrevalenceUnit = when {
+        chapter == Icd10Chapter.CHAPTER_XV -> PrevalenceUnit.PER_BIRTH
+        chapter == Icd10Chapter.CHAPTER_XVI -> PrevalenceUnit.PER_BIRTH
+        chapter == Icd10Chapter.CHAPTER_XVII -> PrevalenceUnit.PER_BIRTH
+        isRareDisease -> PrevalenceUnit.PER_PATIENT
+        else -> PrevalenceUnit.PER_POPULATION
+    }
+
+    private fun denominatorFor(unit: PrevalenceUnit): Int = when (unit) {
+        PrevalenceUnit.PER_BIRTH -> DENOMINATOR_PER_BIRTH
+        PrevalenceUnit.PER_PATIENT -> DENOMINATOR_PER_PATIENT
+        PrevalenceUnit.PER_POPULATION -> DENOMINATOR_PER_POPULATION
+    }
+
+    private fun labelFor(unit: PrevalenceUnit, rate: Int, denominator: Int): String = when (unit) {
+        PrevalenceUnit.PER_BIRTH -> "出生 $denominator 対 $rate (架空)"
+        PrevalenceUnit.PER_PATIENT -> "患者 $denominator 対 $rate (架空)"
+        PrevalenceUnit.PER_POPULATION -> "人口 $denominator 対 $rate (架空)"
+    }
+
     private fun buildSexDistribution(id: String, chapter: Icd10Chapter): SexDistribution {
         if (chapter == Icd10Chapter.CHAPTER_XV) {
             return SexDistribution(maleRatio = 0, femaleRatio = SEX_RATIO_BASE, note = "女性優位 (架空)")
@@ -514,7 +537,9 @@ internal object DiseaseNestedBuilders {
 
     private const val ID_PAD_LENGTH: Int = 4
     private const val ONSET_AGE_SPAN: Int = 10
-    private const val PREVALENCE_DENOMINATOR: Int = 100_000
+    private const val DENOMINATOR_PER_BIRTH: Int = 1_000
+    private const val DENOMINATOR_PER_PATIENT: Int = 100
+    private const val DENOMINATOR_PER_POPULATION: Int = 100_000
     private const val SEX_RATIO_BASE: Int = 1
     private const val GRADING_SYSTEM_LABEL: String = "架空重症度分類"
 
