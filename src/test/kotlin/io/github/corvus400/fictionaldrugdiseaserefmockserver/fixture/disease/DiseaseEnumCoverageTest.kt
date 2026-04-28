@@ -5,6 +5,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.gen
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.DiseasePlaceholderDictionary
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.FixmergeNameAdapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.ExamCategory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.MedicalDepartment
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.PrevalenceUnit
@@ -22,6 +23,20 @@ class DiseaseEnumCoverageTest {
     fun `MedicalDepartment 全 16 値が primary department に出現する`() {
         val primaries: Set<MedicalDepartment> = diseases.map { it.medicalDepartment.first() }.toSet()
         assertEquals(expected = MedicalDepartment.entries.toSet(), actual = primaries)
+    }
+
+    @Test
+    fun `requiredExams primary が icd10Chapter ベースで決定論的に割り当てられる`() {
+        val violations: List<String> = diseases.mapNotNull { disease ->
+            val expected = expectedPrimaryExamCategoryFor(chapter = disease.icd10Chapter)
+            val actual = disease.requiredExams.first().category
+            if (actual != expected) {
+                "${disease.id} (chapter=${disease.icd10Chapter}): expected=$expected actual=$actual"
+            } else {
+                null
+            }
+        }
+        assertTrue(actual = violations.isEmpty(), message = "primary 不一致 ${violations.size} 件: $violations")
     }
 
     @Test
@@ -53,5 +68,30 @@ class DiseaseEnumCoverageTest {
                 adapter = FixmergeNameAdapter(),
                 placeholderDictionary = DiseasePlaceholderDictionary(),
             )
+
+        fun expectedPrimaryExamCategoryFor(chapter: Icd10Chapter): ExamCategory = when (chapter) {
+            Icd10Chapter.CHAPTER_I -> ExamCategory.BLOOD_TEST
+            Icd10Chapter.CHAPTER_II -> ExamCategory.PATHOLOGY
+            Icd10Chapter.CHAPTER_III -> ExamCategory.BLOOD_TEST
+            Icd10Chapter.CHAPTER_IV -> ExamCategory.BLOOD_TEST
+            Icd10Chapter.CHAPTER_V -> ExamCategory.INTERVIEW
+            Icd10Chapter.CHAPTER_VI -> ExamCategory.PHYSIOLOGICAL
+            Icd10Chapter.CHAPTER_VII -> ExamCategory.PHYSIOLOGICAL
+            Icd10Chapter.CHAPTER_VIII -> ExamCategory.PHYSIOLOGICAL
+            Icd10Chapter.CHAPTER_IX -> ExamCategory.IMAGING
+            Icd10Chapter.CHAPTER_X -> ExamCategory.IMAGING
+            Icd10Chapter.CHAPTER_XI -> ExamCategory.IMAGING
+            Icd10Chapter.CHAPTER_XII -> ExamCategory.PATHOLOGY
+            Icd10Chapter.CHAPTER_XIII -> ExamCategory.IMAGING
+            Icd10Chapter.CHAPTER_XIV -> ExamCategory.IMAGING
+            Icd10Chapter.CHAPTER_XV -> ExamCategory.IMAGING
+            Icd10Chapter.CHAPTER_XVI -> ExamCategory.IMAGING
+            Icd10Chapter.CHAPTER_XVII -> ExamCategory.IMAGING
+            Icd10Chapter.CHAPTER_XVIII -> ExamCategory.INTERVIEW
+            Icd10Chapter.CHAPTER_XIX -> ExamCategory.IMAGING
+            Icd10Chapter.CHAPTER_XX -> ExamCategory.INTERVIEW
+            Icd10Chapter.CHAPTER_XXI -> ExamCategory.INTERVIEW
+            Icd10Chapter.CHAPTER_XXII -> ExamCategory.INTERVIEW
+        }
     }
 }
