@@ -439,6 +439,12 @@ class DrugGeneratorTest {
             drugs.count { drug -> RegulatoryClass.PSYCHOTROPIC_1 in drug.regulatoryClass }
         val poisonCount =
             drugs.count { drug -> RegulatoryClass.POISON in drug.regulatoryClass }
+        val biologicalCount =
+            drugs.count { drug -> RegulatoryClass.BIOLOGICAL in drug.regulatoryClass }
+        val specifiedBiologicalCount =
+            drugs.count { drug -> RegulatoryClass.SPECIFIED_BIOLOGICAL in drug.regulatoryClass }
+        val stimulantPrecursorCount =
+            drugs.count { drug -> RegulatoryClass.STIMULANT_PRECURSOR in drug.regulatoryClass }
 
         assertEquals(
             expected = PRESCRIPTION_REQUIRED_EXPECTED_COUNT,
@@ -454,6 +460,21 @@ class DrugGeneratorTest {
             expected = POISON_EXPECTED_COUNT,
             actual = poisonCount,
             message = "POISON count must be preserved after fixed overrides",
+        )
+        assertEquals(
+            expected = BIOLOGICAL_EXPECTED_COUNT,
+            actual = biologicalCount,
+            message = "BIOLOGICAL count must be preserved after fixed overrides",
+        )
+        assertEquals(
+            expected = SPECIFIED_BIOLOGICAL_EXPECTED_COUNT,
+            actual = specifiedBiologicalCount,
+            message = "SPECIFIED_BIOLOGICAL count must be preserved after fixed overrides",
+        )
+        assertEquals(
+            expected = STIMULANT_PRECURSOR_EXPECTED_COUNT,
+            actual = stimulantPrecursorCount,
+            message = "STIMULANT_PRECURSOR count must be preserved after fixed overrides",
         )
     }
 
@@ -477,9 +498,12 @@ class DrugGeneratorTest {
     private companion object {
         const val APPEARANCE_UNIQUE_FLOOR: Int = 30
         const val DESCRIPTION_UNIQUE_FLOOR: Int = 30
-        const val PRESCRIPTION_REQUIRED_EXPECTED_COUNT: Int = 22
+        const val PRESCRIPTION_REQUIRED_EXPECTED_COUNT: Int = 26
         const val PSYCHOTROPIC_1_EXPECTED_COUNT: Int = 4
         const val POISON_EXPECTED_COUNT: Int = 2
+        const val BIOLOGICAL_EXPECTED_COUNT: Int = 2
+        const val SPECIFIED_BIOLOGICAL_EXPECTED_COUNT: Int = 2
+        const val STIMULANT_PRECURSOR_EXPECTED_COUNT: Int = 1
 
         val ISO_8601_DATE_PATTERN: Regex = Regex("""^\d{4}-\d{2}-\d{2}$""")
 

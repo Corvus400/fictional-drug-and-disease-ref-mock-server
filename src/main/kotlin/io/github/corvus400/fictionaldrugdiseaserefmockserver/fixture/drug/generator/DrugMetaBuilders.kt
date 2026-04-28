@@ -2,6 +2,7 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.gener
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.common.ValueRangeGenerator
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.stableHash
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DosageForm
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.StorageTemperature
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.ClinicalResultSection
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.NumberedParagraph
@@ -168,7 +169,11 @@ internal object DrugMetaBuilders {
         return firstDigits + secondDigits
     }
 
-    fun buildPackages(id: String): List<PackageInfo> {
+    fun buildPackages(
+        id: String,
+        dosageForm: DosageForm,
+        isBiological: Boolean,
+    ): List<PackageInfo> {
         val expirationSeed =
             stableHash(id = id, slot = DrugFieldSlot.PACKAGE_EXPIRATION.ordinal, index = 0)
         val expiration = ValueRangeGenerator.pickInRange(seed = expirationSeed, range = EXPIRATION_RANGE)
@@ -177,13 +182,39 @@ internal object DrugMetaBuilders {
                 size = "100 錠 (10 錠 × 10 PTP)",
                 storageCondition =
                 StorageCondition(
-                    temperature = StorageTemperature.ROOM_TEMPERATURE,
+                    temperature =
+                    pickStorageTemperature(
+                        form = dosageForm,
+                        isBiological = isBiological,
+                        drugId = id,
+                    ),
                     lightProtection = false,
                     moistureProtection = false,
                 ),
                 expirationMonths = expiration,
             ),
         )
+    }
+
+    private fun pickStorageTemperature(
+        form: DosageForm,
+        isBiological: Boolean,
+        drugId: String,
+    ): StorageTemperature {
+        val candidates =
+            when {
+                form == DosageForm.INJECTION_FORM && isBiological ->
+                    listOf(StorageTemperature.COLD, StorageTemperature.FROZEN)
+                form == DosageForm.INJECTION_FORM ->
+                    listOf(StorageTemperature.ROOM_TEMPERATURE, StorageTemperature.COLD)
+                form == DosageForm.EYE_DROPS ||
+                    form == DosageForm.LIQUID ||
+                    form == DosageForm.SUPPOSITORY ->
+                    listOf(StorageTemperature.COLD, StorageTemperature.ROOM_TEMPERATURE)
+                else -> listOf(StorageTemperature.ROOM_TEMPERATURE)
+            }
+        val seed = stableHash(id = drugId, slot = DrugFieldSlot.STORAGE_TEMPERATURE_PICK.ordinal, index = 0)
+        return ValueRangeGenerator.pickOne(seed = seed, candidates = candidates)
     }
 
     private fun buildNumberedParagraphs(
