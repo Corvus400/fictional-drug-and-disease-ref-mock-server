@@ -4,6 +4,11 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.Do
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass
 import kotlinx.serialization.Serializable
 
+/**
+ * 医薬品一覧サマリ — `/api/drugs` 一覧で 1 件分のカード表示に必要な最小フィールドのみ保持する軽量モデル。
+ *
+ * `Drug.toSummary()` 拡張関数で `Drug` から派生。詳細画面で必要な完全なフィールド集合は `Drug` を参照。
+ */
 @Serializable
 data class DrugSummary(
     val id: String,
