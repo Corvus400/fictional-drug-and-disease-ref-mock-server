@@ -481,7 +481,7 @@ internal object DiseaseNestedBuilders {
             Icd10Chapter.CHAPTER_XVI -> MedicalDepartment.PEDIATRICS
             Icd10Chapter.CHAPTER_XVII -> MedicalDepartment.PEDIATRICS
             Icd10Chapter.CHAPTER_XVIII -> MedicalDepartment.INTERNAL_MEDICINE
-            Icd10Chapter.CHAPTER_XIX -> MedicalDepartment.EMERGENCY
+            Icd10Chapter.CHAPTER_XIX -> MedicalDepartment.SURGERY
             Icd10Chapter.CHAPTER_XX -> MedicalDepartment.EMERGENCY
             Icd10Chapter.CHAPTER_XXI -> MedicalDepartment.INTERNAL_MEDICINE
             Icd10Chapter.CHAPTER_XXII -> MedicalDepartment.INTERNAL_MEDICINE
