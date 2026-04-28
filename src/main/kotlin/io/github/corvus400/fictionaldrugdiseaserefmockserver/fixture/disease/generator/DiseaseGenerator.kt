@@ -96,6 +96,7 @@ class DiseaseGenerator(
             epidemiology = DiseaseNestedBuilders.buildEpidemiology(
                 id = diseaseId,
                 chapter = blueprint.icd10Chapter,
+                isRareDisease = blueprint.isRareDisease,
             ),
             etiology = DiseaseNestedBuilders.buildEtiology(
                 id = diseaseId,
