@@ -4,6 +4,12 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
 
+/**
+ * 副作用頻度帯 — 添付文書 11 項「その他の副作用」の頻度区分 Enum (全 4 種)。
+ *
+ * `AdverseReaction.frequency` で使用。詳細画面 D13 ブロック (頻度別展開) の見出し決定軸。
+ * 仕様: linked-bubbling-sun-drug.md `AdverseReactionInfo` 節。
+ */
 @Serializable
 enum class FrequencyBand {
     /** 5% 以上 */

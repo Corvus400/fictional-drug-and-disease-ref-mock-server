@@ -4,6 +4,12 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
 
+/**
+ * 腎機能障害重症度 — クレアチニンクリアランス (CrCl) に基づく腎機能区分 Enum (全 5 種)。
+ *
+ * `CrClRange.severity` で使用。区分閾値は 正常 ≥90 / 軽度低下 60-89 / 中等度低下 30-59 / 重度低下 15-29 / 末期 <15 (mL/min)。
+ * 仕様: linked-bubbling-sun-drug.md `DosageInfo` 節。
+ */
 @Serializable
 enum class RenalSeverity {
     /** 正常 */

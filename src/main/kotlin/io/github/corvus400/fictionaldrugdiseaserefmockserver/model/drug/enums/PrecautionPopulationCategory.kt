@@ -4,6 +4,12 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
 
+/**
+ * 特定背景患者カテゴリ — 添付文書 9 項「特定の背景を有する患者に関する注意」の小区分 Enum (全 8 種)。
+ *
+ * `PrecautionPopulation.category` で使用。詳細画面 D10 ブロック (折り畳み) の見出し決定軸。
+ * 仕様: linked-bubbling-sun-drug.md `PrecautionPopulation` 節。
+ */
 @Serializable
 enum class PrecautionPopulationCategory {
     /** 合併症 */
