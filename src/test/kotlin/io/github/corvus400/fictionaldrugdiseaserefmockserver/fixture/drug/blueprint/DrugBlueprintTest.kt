@@ -78,7 +78,7 @@ class DrugBlueprintTest {
                 isBiological = false,
                 isChronicPrescription = false,
                 dosageForm = DosageForm.LIQUID,
-                idOverride = "LIQUID_SP_TREDECIM",
+                idOverride = "drug_0080",
                 nameOverride =
                 NameOverride(
                     brandKatakana = "トレデキム",
@@ -91,7 +91,7 @@ class DrugBlueprintTest {
                     originalSubstanceDescription = "無色澄明の液体である。",
                 ),
             )
-        assertEquals("LIQUID_SP_TREDECIM", blueprint.idOverride)
+        assertEquals("drug_0080", blueprint.idOverride)
         assertEquals("トレデキム", blueprint.nameOverride?.brandKatakana)
         assertEquals("tredecim", blueprint.nameOverride?.genericLatin)
         assertEquals("無色澄明の液体である。", blueprint.textOverride?.originalSubstanceDescription)

@@ -39,7 +39,7 @@ data class DrugBlueprint(
 /**
  * `DrugBlueprint` の名前を固定値で上書きするためのオーバーライド情報。
  *
- * `LIQUID_SP_TREDECIM` / `LIQUID_SP_SLEEP_AID` のように Generator が通常の Fixmerge 生成を
+ * `drug_0080` / `drug_0089` のように Generator が通常の Fixmerge 生成を
  * バイパスして固定の和名・英名を埋め込む必要があるケースで利用する。
  */
 data class NameOverride(
