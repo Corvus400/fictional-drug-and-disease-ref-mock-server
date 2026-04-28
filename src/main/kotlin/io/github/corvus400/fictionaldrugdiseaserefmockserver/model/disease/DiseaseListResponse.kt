@@ -2,6 +2,11 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease
 
 import kotlinx.serialization.Serializable
 
+/**
+ * 疾患一覧レスポンス: `/diseases` の返却型。サマリ配列 (`items`) とページング情報を保持する。
+ *
+ * 詳細画面遷移前の一覧表示に使用。完全な疾患情報は `items[].id` で `/diseases/{id}` から取得する。
+ */
 @Serializable
 data class DiseaseListResponse(
     val items: List<DiseaseSummary>,
