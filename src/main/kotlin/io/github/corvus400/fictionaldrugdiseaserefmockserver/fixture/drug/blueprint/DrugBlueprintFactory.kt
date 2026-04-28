@@ -124,13 +124,21 @@ object DrugBlueprintFactory {
         atcLetter: Char,
         index: Int,
     ): Set<RegulatoryClass> =
-        when (atcLetter) {
-            'N' -> setOf(neuralRegulatoryClass(index = index), RegulatoryClass.PRESCRIPTION_REQUIRED)
-            'L' ->
-                setOf(
-                    antineoplasticRegulatoryClass(index = index),
-                    RegulatoryClass.PRESCRIPTION_REQUIRED,
-                )
+        when {
+            atcLetter == 'N' && index == STIMULANT_PRECURSOR_INDEX ->
+                setOf(RegulatoryClass.STIMULANT_PRECURSOR, RegulatoryClass.PRESCRIPTION_REQUIRED)
+            atcLetter == 'N' ->
+                setOf(neuralRegulatoryClass(index = index), RegulatoryClass.PRESCRIPTION_REQUIRED)
+            atcLetter == 'L' ->
+                setOf(antineoplasticRegulatoryClass(index = index), RegulatoryClass.PRESCRIPTION_REQUIRED)
+            atcLetter == 'J' &&
+                isBiological(atcLetter = atcLetter, index = index) &&
+                index % SPECIFIED_BIOLOGICAL_PERIOD == 0 -> {
+                setOf(RegulatoryClass.SPECIFIED_BIOLOGICAL, RegulatoryClass.PRESCRIPTION_REQUIRED)
+            }
+            atcLetter == 'J' && isBiological(atcLetter = atcLetter, index = index) -> {
+                setOf(RegulatoryClass.BIOLOGICAL, RegulatoryClass.PRESCRIPTION_REQUIRED)
+            }
             else -> setOf(RegulatoryClass.ORDINARY)
         }
 
@@ -157,6 +165,8 @@ object DrugBlueprintFactory {
     private const val NEURAL_CYCLE: Int = 4
     private const val ANTINEOPLASTIC_CYCLE: Int = 2
     private const val BIOLOGICAL_PERIOD: Int = 4
+    private const val SPECIFIED_BIOLOGICAL_PERIOD: Int = 8
+    private const val STIMULANT_PRECURSOR_INDEX: Int = 87
 
     internal val DOSAGE_FORMS_BY_ATC: Map<Char, List<DosageForm>> =
         mapOf(

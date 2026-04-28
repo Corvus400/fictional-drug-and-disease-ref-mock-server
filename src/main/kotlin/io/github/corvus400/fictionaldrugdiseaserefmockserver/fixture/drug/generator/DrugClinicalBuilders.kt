@@ -79,6 +79,8 @@ internal object DrugClinicalBuilders {
         val ageSeed = stableHash(id = id, slot = DrugFieldSlot.DOSAGE_AGE.ordinal, index = 0)
         val renalSeed = stableHash(id = id, slot = DrugFieldSlot.DOSAGE_RENAL.ordinal, index = 0)
         val hepaticSeed = stableHash(id = id, slot = DrugFieldSlot.DOSAGE_HEPATIC.ordinal, index = 0)
+        val renalSeverity = pickRenalSeverity(drugId = id)
+        val renalRange = rangeOf(severity = renalSeverity)
         return DosageInfo(
             standardDosage =
             dict.renderField(
@@ -106,10 +108,10 @@ internal object DrugClinicalBuilders {
                 RenalDose(
                     range =
                     CrClRange(
-                        minMlPerMin = RENAL_MIN_ML_PER_MIN,
-                        maxMlPerMin = RENAL_MAX_ML_PER_MIN,
-                        severity = RenalSeverity.MODERATE,
-                        label = "30-59 mL/min、中等度腎機能低下",
+                        minMlPerMin = renalRange.minMlPerMin,
+                        maxMlPerMin = renalRange.maxMlPerMin,
+                        severity = renalSeverity,
+                        label = renalRange.label,
                     ),
                     dose =
                     dict.renderField(
@@ -121,7 +123,7 @@ internal object DrugClinicalBuilders {
             hepaticAdjustment =
             listOf(
                 HepaticDose(
-                    severity = HepaticSeverity.MODERATE,
+                    severity = pickHepaticSeverity(drugId = id),
                     dose =
                     dict.renderField(
                         field = ParagraphField.HEPATIC_DOSE,
@@ -130,6 +132,43 @@ internal object DrugClinicalBuilders {
                 ),
             ),
         )
+    }
+
+    private fun pickRenalSeverity(drugId: String): RenalSeverity {
+        val seed =
+            stableHash(
+                id = drugId,
+                slot = DrugFieldSlot.DOSAGE_RENAL.ordinal,
+                index = RENAL_SEVERITY_PICK_INDEX,
+            )
+        return ValueRangeGenerator.pickOne(seed = seed, candidates = RenalSeverity.entries.toList())
+    }
+
+    private fun rangeOf(severity: RenalSeverity): RenalRangeSpec =
+        when (severity) {
+            RenalSeverity.NORMAL -> RenalRangeSpec(minMlPerMin = 90, maxMlPerMin = null, label = "90 mL/min 以上、正常腎機能")
+            RenalSeverity.MILD -> RenalRangeSpec(minMlPerMin = 60, maxMlPerMin = 89, label = "60-89 mL/min、軽度腎機能低下")
+            RenalSeverity.MODERATE -> RenalRangeSpec(
+                minMlPerMin = 30,
+                maxMlPerMin = 59,
+                label = "30-59 mL/min、中等度腎機能低下"
+            )
+            RenalSeverity.SEVERE -> RenalRangeSpec(minMlPerMin = 15, maxMlPerMin = 29, label = "15-29 mL/min、高度腎機能低下")
+            RenalSeverity.END_STAGE -> RenalRangeSpec(
+                minMlPerMin = null,
+                maxMlPerMin = 14,
+                label = "15 mL/min 未満または透析、末期腎不全"
+            )
+        }
+
+    private fun pickHepaticSeverity(drugId: String): HepaticSeverity {
+        val seed =
+            stableHash(
+                id = drugId,
+                slot = DrugFieldSlot.DOSAGE_HEPATIC.ordinal,
+                index = HEPATIC_SEVERITY_PICK_INDEX,
+            )
+        return ValueRangeGenerator.pickOne(seed = seed, candidates = HepaticSeverity.entries.toList())
     }
 
     fun buildWarning(id: String, dict: DrugPlaceholderDictionary): List<NumberedParagraph> {
@@ -376,9 +415,11 @@ internal object DrugClinicalBuilders {
     private val INDICATION_COUNT_RANGE: IntRange = 1..2
     private val SHORT_LIST_COUNT_RANGE: IntRange = 1..2
 
+    private data class RenalRangeSpec(val minMlPerMin: Int?, val maxMlPerMin: Int?, val label: String)
+
     private const val PEDIATRIC_MIN_MONTHS: Int = 72
     private const val PEDIATRIC_MAX_MONTHS: Int = 144
-    private const val RENAL_MIN_ML_PER_MIN: Int = 30
-    private const val RENAL_MAX_ML_PER_MIN: Int = 59
+    private const val RENAL_SEVERITY_PICK_INDEX: Int = 100
+    private const val HEPATIC_SEVERITY_PICK_INDEX: Int = 100
     private const val DRUG_CATEGORY_PLACEHOLDER: String = "サンプル系薬"
 }
