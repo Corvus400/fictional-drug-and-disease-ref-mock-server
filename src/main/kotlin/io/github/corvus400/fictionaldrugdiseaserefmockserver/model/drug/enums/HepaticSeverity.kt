@@ -4,6 +4,12 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
 
+/**
+ * 肝機能障害重症度 — 用法用量の肝機能別調整に用いる重症度区分 Enum (全 3 種: 軽度/中等度/重度)。
+ *
+ * `HepaticDose.severity` で使用。詳細画面 D8 用法詳細タブの肝機能別行を切り替える。
+ * 仕様: linked-bubbling-sun-drug.md `DosageInfo` 節。
+ */
 @Serializable
 enum class HepaticSeverity {
     /** 軽度 */

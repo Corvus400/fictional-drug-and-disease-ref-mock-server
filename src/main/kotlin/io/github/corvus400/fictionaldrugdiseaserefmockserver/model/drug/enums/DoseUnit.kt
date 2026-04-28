@@ -4,6 +4,12 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
 
+/**
+ * 用量単位 — 医薬品の含量や用量を表す単位 Enum (全 10 種)。
+ *
+ * `Dose.unit` で使用。質量系 (mg/g/μg)、容量系 (mL/L)、生物学的活性系 (IU/mEq/mol/mmol)、比率 (%) を含む。
+ * 仕様: linked-bubbling-sun-drug.md `CompositionInfo` 節。
+ */
 @Serializable
 enum class DoseUnit {
     /** ミリグラム */
