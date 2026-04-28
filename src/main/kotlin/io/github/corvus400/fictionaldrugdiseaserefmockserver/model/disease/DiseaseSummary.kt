@@ -5,6 +5,12 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.MedicalDepartment
 import kotlinx.serialization.Serializable
 
+/**
+ * 疾患サマリ: 一覧画面用に主要分類軸のみを抜粋した軽量モデル。
+ *
+ * `DiseaseListResponse.items` 要素および検索結果として使用。詳細フィールドは含めず、
+ * 分類軸 (`icd10Chapter` / `chronicity` / `infectious` / `medicalDepartment`) で絞り込み可能。
+ */
 @Serializable
 data class DiseaseSummary(
     val id: String,

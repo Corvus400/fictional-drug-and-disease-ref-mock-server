@@ -11,6 +11,14 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.neste
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.TreatmentInfo
 import kotlinx.serialization.Serializable
 
+/**
+ * 疾患エンティティ: 単一疾患の全フィールドを保持するルートモデル。
+ *
+ * `/diseases/{id}` 詳細レスポンス本体および fixture の最小単位。分類軸
+ * (`icd10Chapter` / `chronicity` / `infectious` / `medicalDepartment`) と詳細セクション
+ * (`symptoms` / `diagnosticCriteria` / `treatments` 等) を内包する。
+ * 仕様: linked-bubbling-sun-disease.md `共通フィールド` 節。
+ */
 @Serializable
 data class Disease(
     val id: String,
@@ -20,6 +28,7 @@ data class Disease(
     val icd10Chapter: Icd10Chapter,
     val medicalDepartment: List<MedicalDepartment>,
     val chronicity: Chronicity,
+    /** 感染性疾患か (`true` のとき他者への伝播能を持つ。`/diseases?infectious=true` のフィルタ条件)。 */
     val infectious: Boolean,
     val synonyms: List<String> = emptyList(),
     val summary: String,
@@ -36,5 +45,6 @@ data class Disease(
     val prevention: List<String> = emptyList(),
     val relatedDrugIds: List<String> = emptyList(),
     val relatedDiseaseIds: List<String> = emptyList(),
+    /** 最終改訂日 (`YYYY-MM-DD` 形式の固定文字列)。`IsoDateFormatter` が生成する ISO 8601 日付。 */
     val revisedAt: String,
 )
