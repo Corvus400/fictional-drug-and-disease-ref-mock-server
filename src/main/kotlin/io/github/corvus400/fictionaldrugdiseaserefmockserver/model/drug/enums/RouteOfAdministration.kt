@@ -4,6 +4,13 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
 
+/**
+ * 投与経路 — 医薬品の投与経路を表す Enum。用法用量 UI の表現形式と適用上の注意の要否を決定する分類軸 (全 8 種)。
+ *
+ * `Drug.routeOfAdministration` で使用。`RouteOfAdministration.ORAL.serialName` で `/drugs?route=<value>` クエリ値を取得。
+ * 注: 剤形側の `DosageForm.INJECTION_FORM` (`"injection_form"`) とは serialName が異なるため衝突しない。
+ * 仕様: linked-bubbling-sun-drug.md `分類軸` 節。
+ */
 @Serializable
 enum class RouteOfAdministration {
     /** 内服 */

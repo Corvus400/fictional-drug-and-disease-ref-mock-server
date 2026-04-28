@@ -4,6 +4,13 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
 
+/**
+ * 規制区分 — 医薬品の薬事規制上の分類 Enum。詳細画面先頭バッジと警告色強調を決定する分類軸 (全 11 種、複数値可)。
+ *
+ * `Drug.regulatoryClass` (`List<RegulatoryClass>`) で使用。
+ * `RegulatoryClass.POISON.serialName` で `/drugs?regulatory_class=<value>` クエリ値を取得。
+ * 仕様: linked-bubbling-sun-drug.md `分類軸` 節。
+ */
 @Serializable
 enum class RegulatoryClass {
     /** 毒薬 */
