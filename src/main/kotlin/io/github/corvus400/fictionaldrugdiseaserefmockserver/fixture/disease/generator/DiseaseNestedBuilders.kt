@@ -351,7 +351,10 @@ internal object DiseaseNestedBuilders {
         }
     }
 
-    fun buildEpidemiology(id: String): EpidemiologyInfo {
+    fun buildEpidemiology(
+        id: String,
+        chapter: Icd10Chapter,
+    ): EpidemiologyInfo {
         val prevalenceSeed = stableHash(
             id = id,
             slot = DiseaseFieldSlot.EPIDEMIOLOGY_PREVALENCE.ordinal,
@@ -372,13 +375,7 @@ internal object DiseaseNestedBuilders {
             maxAgeYears = maxAge,
             label = "$minAge-$maxAge 代",
         )
-        val sexSeed = stableHash(id = id, slot = DiseaseFieldSlot.EPIDEMIOLOGY_SEX_RATIO.ordinal, index = 0)
-        val maleRatio = ValueRangeGenerator.pickInRange(seed = sexSeed, range = SEX_RATIO_RANGE)
-        val sexRatio = SexDistribution(
-            maleRatio = maleRatio,
-            femaleRatio = SEX_RATIO_BASE,
-            note = "架空比率",
-        )
+        val sexRatio = buildSexDistribution(id = id, chapter = chapter)
         val riskCountSeed = stableHash(
             id = id,
             slot = DiseaseFieldSlot.EPIDEMIOLOGY_RISK_COUNT.ordinal,
@@ -459,6 +456,15 @@ internal object DiseaseNestedBuilders {
             referenceRange = "55% 以上 (架空)",
         )
         return listOf(cardiacImaging) + exams
+    }
+
+    private fun buildSexDistribution(id: String, chapter: Icd10Chapter): SexDistribution {
+        if (chapter == Icd10Chapter.CHAPTER_XV) {
+            return SexDistribution(maleRatio = 0, femaleRatio = SEX_RATIO_BASE, note = "女性優位 (架空)")
+        }
+        val sexSeed = stableHash(id = id, slot = DiseaseFieldSlot.EPIDEMIOLOGY_SEX_RATIO.ordinal, index = 0)
+        val maleRatio = ValueRangeGenerator.pickInRange(seed = sexSeed, range = SEX_RATIO_RANGE)
+        return SexDistribution(maleRatio = maleRatio, femaleRatio = SEX_RATIO_BASE, note = "架空比率")
     }
 
     private fun primaryDepartmentFor(chapter: Icd10Chapter): MedicalDepartment =
