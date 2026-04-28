@@ -2,7 +2,6 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.ge
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.common.ValueRangeGenerator
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.placeholder.DiseaseRenderContext
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.blueprint.DrugBlueprintFactory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.stableHash
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.ExamCategory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
@@ -412,8 +411,7 @@ internal object DiseaseNestedBuilders {
                 index = offset + 1,
             )
             val drugIndex = ValueRangeGenerator.pickInRange(seed = indexSeed, range = DRUG_INDEX_RANGE)
-            DrugBlueprintFactory.FIXED_OVERRIDE_IDS_BY_INDEX[drugIndex]
-                ?: "drug_${drugIndex.toString().padStart(length = ID_PAD_LENGTH, padChar = '0')}"
+            "drug_${drugIndex.toString().padStart(length = ID_PAD_LENGTH, padChar = '0')}"
         }.distinct()
     }
 

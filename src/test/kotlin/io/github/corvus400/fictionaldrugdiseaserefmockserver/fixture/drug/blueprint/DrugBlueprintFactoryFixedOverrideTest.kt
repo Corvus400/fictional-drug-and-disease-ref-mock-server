@@ -10,57 +10,57 @@ import kotlin.test.assertTrue
 
 class DrugBlueprintFactoryFixedOverrideTest {
     @Test
-    fun `build assigns LIQUID_SP_TREDECIM idOverride to the blueprint at index 80`() {
+    fun `build assigns drug 0080 idOverride to the blueprint at index 80`() {
         val blueprints = DrugBlueprintFactory.build()
         val target: DrugBlueprint = assertNotNull(blueprints.firstOrNull { it.index == 80 })
         assertEquals(
-            expected = "LIQUID_SP_TREDECIM",
+            expected = "drug_0080",
             actual = target.idOverride,
-            message = "blueprint at index=80 must carry LIQUID_SP_TREDECIM as fixed idOverride",
+            message = "blueprint at index=80 must carry drug_0080 as fixed idOverride",
         )
         assertEquals(
             expected = DosageForm.LIQUID,
             actual = target.dosageForm,
-            message = "LIQUID_SP_TREDECIM must be assigned LIQUID dosage form",
+            message = "drug_0080 must be assigned LIQUID dosage form",
         )
         assertTrue(
             actual = RegulatoryClass.POISON in target.regulatoryClasses,
-            message = "LIQUID_SP_TREDECIM must keep POISON in regulatoryClasses, " +
+            message = "drug_0080 must keep POISON in regulatoryClasses, " +
                 "got ${target.regulatoryClasses}",
         )
     }
 
     @Test
-    fun `build assigns LIQUID_SP_SLEEP_AID idOverride and fixmerge-coined name to the blueprint at index 89`() {
+    fun `build assigns drug 0089 idOverride and fixmerge-coined name to the blueprint at index 89`() {
         val blueprints = DrugBlueprintFactory.build()
         val target: DrugBlueprint = assertNotNull(blueprints.firstOrNull { it.index == 89 })
         assertEquals(
-            expected = "LIQUID_SP_SLEEP_AID",
+            expected = "drug_0089",
             actual = target.idOverride,
-            message = "blueprint at index=89 must carry LIQUID_SP_SLEEP_AID as fixed idOverride",
+            message = "blueprint at index=89 must carry drug_0089 as fixed idOverride",
         )
         assertEquals(
             expected = DosageForm.LIQUID,
             actual = target.dosageForm,
-            message = "LIQUID_SP_SLEEP_AID must be assigned LIQUID dosage form",
+            message = "drug_0089 must be assigned LIQUID dosage form",
         )
         assertTrue(
             actual = RegulatoryClass.PSYCHOTROPIC_1 in target.regulatoryClasses,
-            message = "LIQUID_SP_SLEEP_AID must keep PSYCHOTROPIC_1 in regulatoryClasses, " +
+            message = "drug_0089 must keep PSYCHOTROPIC_1 in regulatoryClasses, " +
                 "got ${target.regulatoryClasses}",
         )
         val nameOverride: NameOverride = assertNotNull(
             actual = target.nameOverride,
-            message = "LIQUID_SP_SLEEP_AID must carry a fixmerge-coined nameOverride",
+            message = "drug_0089 must carry a fixmerge-coined nameOverride",
         )
         assertTrue(
             actual = nameOverride.brandKatakana.isNotBlank(),
-            message = "LIQUID_SP_SLEEP_AID brandKatakana must be non-blank",
+            message = "drug_0089 brandKatakana must be non-blank",
         )
         assertNotEquals(
             illegal = "アリサの睡眠薬",
             actual = nameOverride.brandKatakana,
-            message = "LIQUID_SP_SLEEP_AID brandKatakana must be the fixmerge-coined form, " +
+            message = "drug_0089 brandKatakana must be the fixmerge-coined form, " +
                 "not the raw seed token",
         )
     }
