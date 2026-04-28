@@ -93,7 +93,10 @@ class DiseaseGenerator(
                 dict = placeholderDictionary,
                 context = context,
             ),
-            epidemiology = DiseaseNestedBuilders.buildEpidemiology(id = diseaseId),
+            epidemiology = DiseaseNestedBuilders.buildEpidemiology(
+                id = diseaseId,
+                chapter = blueprint.icd10Chapter,
+            ),
             etiology = DiseaseNestedBuilders.buildEtiology(
                 id = diseaseId,
                 dict = placeholderDictionary,
