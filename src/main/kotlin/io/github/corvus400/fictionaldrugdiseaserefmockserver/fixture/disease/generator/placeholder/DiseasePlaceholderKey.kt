@@ -1,11 +1,23 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.placeholder
 
+/**
+ * プレースホルダー分類: `DiseasePlaceholderKey` のカテゴリ軸を表す enum (3 値)。
+ *
+ * `A_MEDICAL_VOCABULARY` (医療語彙)、`B_SELF_REFERENCE` (自己参照)、
+ * `D_NUMERIC_RANGE` (数値レンジ) の 3 区分。プレースホルダー解決経路の分岐に使用。
+ */
 enum class DiseasePlaceholderCategory {
     A_MEDICAL_VOCABULARY,
     B_SELF_REFERENCE,
     D_NUMERIC_RANGE,
 }
 
+/**
+ * プレースホルダーキー: 段落テンプレ内 `{{key}}` 形式トークンの識別子 enum。
+ *
+ * `jsonKey` は JSON 出力時の key 文字列、`category` は解決方式の分類軸
+ * (`DiseasePlaceholderCategory`)。`fromJsonKey` で逆引き可能 (未定義キーは `null`)。
+ */
 enum class DiseasePlaceholderKey(
     val jsonKey: String,
     val category: DiseasePlaceholderCategory,
