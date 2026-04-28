@@ -2,6 +2,12 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.ge
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.common.ValueRangeGenerator
 
+/**
+ * 段落テンプレート分類: `DiseaseParagraphTemplates` のテンプレート群を識別する enum (7 値)。
+ *
+ * 概要 / 症状 / 診断基準 / 治療 / 予後 / 疫学 / 重症度 の各説明文ブロックを区別。
+ * `DiseaseParagraphTemplates.pickTemplate(field, seed)` でシード付き選択に使用する。
+ */
 enum class DiseaseParagraphField {
     OVERVIEW_DESCRIPTION,
     SYMPTOM_DESCRIPTION,
