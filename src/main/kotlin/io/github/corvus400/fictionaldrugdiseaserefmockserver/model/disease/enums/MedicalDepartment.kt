@@ -4,6 +4,12 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
 
+/**
+ * 診療科区分: `Disease.medicalDepartment` で使用する 16 値の enum。
+ *
+ * 内科 / 循環器内科 / ... / 感染症科。`/diseases?department=<value>` クエリでフィルタ可能。
+ * `fromSerialName` で SerialName からの逆引きも提供する。
+ */
 @Serializable
 enum class MedicalDepartment {
     /** 内科 */

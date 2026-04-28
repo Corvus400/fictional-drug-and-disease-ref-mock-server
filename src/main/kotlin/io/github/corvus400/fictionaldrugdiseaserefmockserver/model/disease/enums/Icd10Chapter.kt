@@ -4,6 +4,13 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
 
+/**
+ * ICD-10 章コード: WHO ICD-10 第 I〜XXII 章を表す enum (22 値)。
+ *
+ * `Disease.icd10Chapter` フィールドおよび `/diseases?icd10_chapter=<key>` クエリで使用。
+ * SerialName は `chapter_i` 〜 `chapter_xxii`、`chapterKey` プロパティで `I` 〜 `XXII` を
+ * 取得し、`fromChapterKey` で逆引き可能。
+ */
 @Serializable
 enum class Icd10Chapter {
     /** 感染症および寄生虫症 */

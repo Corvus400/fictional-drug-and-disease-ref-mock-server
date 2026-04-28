@@ -4,6 +4,13 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
 
+/**
+ * 慢性度区分: 疾患の経過パターンを表す enum (4 値)。
+ *
+ * `Disease.chronicity` フィールドおよび `/diseases?chronicity=<value>` クエリで使用。
+ * `@SerialName` は英語 snake_case (`acute` / `subacute` / `chronic` / `relapsing`) で
+ * クライアント側 DTO とシリアライズ互換。
+ */
 @Serializable
 enum class Chronicity {
     /** 急性 */

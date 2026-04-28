@@ -4,6 +4,12 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
 
+/**
+ * 検査カテゴリ: `Exam.category` で用いる検査種別の enum (5 値)。
+ *
+ * 血液 / 画像 / 生理 / 病理 / 問診 を区別。`@SerialName` は英語 snake_case で
+ * クライアント側 DTO とシリアライズ互換。
+ */
 @Serializable
 enum class ExamCategory {
     /** 血液検査 */

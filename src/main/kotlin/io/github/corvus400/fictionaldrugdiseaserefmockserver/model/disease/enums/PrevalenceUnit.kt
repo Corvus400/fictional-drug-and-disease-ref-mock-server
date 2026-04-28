@@ -4,6 +4,12 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
 
+/**
+ * 罹患率の単位区分: `Prevalence.unit` で用いる母集団分母種別の enum (3 値)。
+ *
+ * 人口対 / 患者対 / 出生対 を区別。`@SerialName` は英語 snake_case で
+ * クライアント側 DTO とシリアライズ互換。
+ */
 @Serializable
 enum class PrevalenceUnit {
     /** 人口対 */
