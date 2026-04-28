@@ -1,8 +1,11 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator
 
 /**
- * Disease 生成で stableHash(id, slot.ordinal, offset) シード導出に使うスロット列挙。
- * magic number を排除するため DiseaseGenerator / DiseaseNestedBuilders 内部の全データ選択に利用する。
+ * 疾患生成スロット: stableHash シード派生に使うフィールド識別子の enum。
+ *
+ * `DiseaseGenerator` / `DiseaseNestedBuilders` 内のデータ選択箇所が
+ * magic number ではなくこの enum (`stableHash(id, slot.ordinal, offset)`) を参照する。
+ * 列挙子は症状 / 診断基準 / 重症度 / 治療 / 疫学 等の主要セクションごとに細分。
  */
 enum class DiseaseFieldSlot {
     MEDICAL_DEPARTMENT,

@@ -4,15 +4,11 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
 
 /**
- * Declarative intermediate representation of a disease fixture used by the Blueprint layer.
+ * 疾患フィクスチャ設計図: ID シード `index` と分類軸を保持する中間表現。
  *
- * Holds only classification axes and the seed-determining index. Conditional-required flags
- * and derived values are intentionally absent; Generators derive them from these axes
- * (e.g., infectious diseases imply at least one transmission-route field).
- *
- * `isInfectious` and `icd10Chapter` are independent classification axes — infectious disease
- * fixtures are not constrained to ICD-10 Chapter I, so Factory-side distribution control
- * stays flexible.
+ * Generator 層がこの型から条件付き必須フィールドや派生値を生成する。
+ * `isInfectious` と `icd10Chapter` は独立した分類軸 (感染症が必ず Chapter I に
+ * 入るわけではない) で、Factory 側で分布制御の自由度を残す。
  */
 data class DiseaseBlueprint(
     val index: Int,

@@ -1,5 +1,11 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.search
 
+/**
+ * キーワード検索対象: `/diseases` 検索 API でキーワードを照合するフィールドを表す enum (3 値)。
+ *
+ * `name` / `name_english` / `synonyms` の 3 値。クエリパラメータ `keyword_target` の値と
+ * 1 対 1 対応し、`fromQuery` で逆引きする。Drug 側 `DrugKeywordTarget` と仕様統一。
+ */
 enum class DiseaseKeywordTarget {
     NAME,
     NAME_ENGLISH,
