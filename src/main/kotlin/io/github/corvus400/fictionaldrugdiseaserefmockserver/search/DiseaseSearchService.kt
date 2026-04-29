@@ -72,4 +72,18 @@ object DiseaseSearchService {
             KeywordMatch.PARTIAL -> field.contains(keyword)
             KeywordMatch.PREFIX -> field.startsWith(keyword)
         }
+
+    /**
+     * `sort` キーに従って `items` を並び替える純関数。
+     * 既定キー `REVISED_AT_DESC` は最終改訂日 (`revisedAt`) の降順で並び替える。
+     * 他キーは後続サイクルで triangulation により段階的に拡張する。
+     */
+    fun applySort(
+        items: List<Disease>,
+        sort: DiseaseSortKey,
+    ): List<Disease> = when (sort) {
+        DiseaseSortKey.REVISED_AT_DESC -> items.sortedByDescending { it.revisedAt }
+        DiseaseSortKey.NAME_KANA_ASC -> items
+        DiseaseSortKey.ICD10_CHAPTER_ASC -> items
+    }
 }
