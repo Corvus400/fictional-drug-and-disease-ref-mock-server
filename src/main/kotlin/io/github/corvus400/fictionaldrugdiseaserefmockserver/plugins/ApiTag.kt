@@ -18,7 +18,6 @@ enum class ApiTag(
     val tagName: String,
     val description: String,
 ) {
-    SAMPLE("Sample", "サンプルAPI (テンプレート動作例)"),
     DRUG("Drug", "医薬品リファレンスAPI"),
     DISEASE("Disease", "疾患リファレンスAPI"),
     CATEGORIES("Categories", "カテゴリメタデータAPI"),

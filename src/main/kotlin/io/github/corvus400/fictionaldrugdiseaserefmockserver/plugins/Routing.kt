@@ -13,8 +13,6 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.disease.dise
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.disease.diseaseModule
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.drug.drugCatalogEntries
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.drug.drugModule
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.sample.sampleCatalogEntries
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.sample.sampleModule
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.scenario.ScenarioManager
 import io.ktor.server.application.Application
 
@@ -30,10 +28,6 @@ import io.ktor.server.application.Application
  * allModulesに追加せずにモジュール関数を直接呼び出してもサーバーが起動しない。
  */
 private val allModules: List<ModuleRegistration> = listOf(
-    ScenarioModuleRegistration(
-        catalogEntries = sampleCatalogEntries,
-        configure = { sm -> sampleModule(sm) },
-    ),
     ScenarioModuleRegistration(
         catalogEntries = drugCatalogEntries,
         configure = { sm -> drugModule(sm) },
