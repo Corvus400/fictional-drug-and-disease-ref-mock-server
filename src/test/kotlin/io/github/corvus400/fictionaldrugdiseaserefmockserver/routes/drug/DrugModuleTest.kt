@@ -111,6 +111,22 @@ class DrugModuleTest {
     }
 
     @Test
+    fun `GET drugs under empty scenario with sort parameter returns empty items and 200`() = testApplication {
+        application { module() }
+
+        val response = client.get("/drugs?sort=brand_name_kana") {
+            headers {
+                append(name = "X-Mock-Scenario", value = "empty")
+            }
+        }
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        val body = AppJson.decodeFromString<DrugListResponse>(response.bodyAsText())
+        assertEquals(0, body.totalCount)
+        assertTrue(body.items.isEmpty())
+    }
+
+    @Test
     fun `GET drugs with sort brand_name_kana returns items ordered by brandNameKana ascending`() =
         testApplication {
             application { module() }
