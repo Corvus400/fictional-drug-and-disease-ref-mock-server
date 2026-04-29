@@ -31,6 +31,18 @@ class DrugSearchServiceSortTest {
     }
 
     @Test
+    fun `applySort with REVISED_AT_DESC produces same order as default sort`() {
+        val items = listOf(
+            drugWith(id = "drug_0001", revisedAt = "2026-01-10"),
+            drugWith(id = "drug_0002", revisedAt = "2026-03-20"),
+            drugWith(id = "drug_0003", revisedAt = "2026-02-01"),
+        )
+        val explicit = DrugSearchService.applySort(items = items, sort = DrugSortKey.REVISED_AT_DESC)
+        val default = DrugSearchService.applySort(items = items, sort = DrugSortKey.fromQuery(null))
+        assertEquals(explicit.map { it.id }, default.map { it.id })
+    }
+
+    @Test
     fun `applySort breaks revisedAt ties by id descending when sort is REVISED_AT_DESC`() {
         val items = listOf(
             drugWith(id = "drug_0001", revisedAt = "2026-04-23"),
