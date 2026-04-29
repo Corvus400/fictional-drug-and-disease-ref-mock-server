@@ -4,7 +4,9 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disea
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.ExamCategory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.OnsetPattern
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.Exam
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.Grade
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.PharmaTreatment
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.SeverityInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.SymptomInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.TreatmentInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.testutil.sampleDisease
@@ -163,6 +165,22 @@ class DiseaseSearchServiceAdditionalFilterTest {
         assertEquals(listOf("disease_0002", "disease_0004"), result.map { it.id })
     }
 
+    @Test
+    fun `applyAdditionalFilters with hasSeverityGrading=true returns only items where severityGrading is not null`() {
+        val items =
+            listOf(
+                diseaseWithSeverityGrading(id = "disease_0001"),
+                diseaseWithoutSeverityGrading(id = "disease_0002"),
+                diseaseWithSeverityGrading(id = "disease_0003"),
+            )
+        val result =
+            DiseaseSearchService.applyAdditionalFilters(
+                items = items,
+                hasSeverityGrading = true,
+            )
+        assertEquals(listOf("disease_0001", "disease_0003"), result.map { it.id })
+    }
+
     private fun diseaseWithMainSymptoms(
         id: String,
         mainSymptoms: List<String>,
@@ -207,4 +225,23 @@ class DiseaseSearchServiceAdditionalFilterTest {
 
     private fun diseaseWithoutPharmacologicalTreatment(id: String): Disease =
         sampleDisease(id = id).copy(treatments = TreatmentInfo())
+
+    private fun diseaseWithSeverityGrading(id: String): Disease =
+        sampleDisease(id = id).copy(
+            severityGrading =
+            SeverityInfo(
+                gradingSystem = "サンプル重症度分類",
+                grades =
+                listOf(
+                    Grade(
+                        label = "軽症",
+                        criteria = "日常生活に支障が少ない",
+                        recommendedAction = "経過観察",
+                    ),
+                ),
+            ),
+        )
+
+    private fun diseaseWithoutSeverityGrading(id: String): Disease =
+        sampleDisease(id = id).copy(severityGrading = null)
 }
