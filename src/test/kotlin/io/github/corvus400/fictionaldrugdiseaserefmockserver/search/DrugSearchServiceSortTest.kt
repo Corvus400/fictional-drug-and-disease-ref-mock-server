@@ -63,11 +63,23 @@ class DrugSearchServiceSortTest {
         assertEquals(listOf("drug_0002", "drug_0003", "drug_0001"), sorted.map { it.id })
     }
 
+    @Test
+    fun `applySort sorts by therapeuticCategoryName ascending when THERAPEUTIC_CATEGORY_NAME_ASC is specified`() {
+        val items = listOf(
+            drugWith(id = "drug_0002", therapeuticCategoryName = "B降圧薬"),
+            drugWith(id = "drug_0003", therapeuticCategoryName = "C抗菌薬"),
+            drugWith(id = "drug_0001", therapeuticCategoryName = "A解熱鎮痛薬"),
+        )
+        val sorted = DrugSearchService.applySort(items = items, sort = DrugSortKey.THERAPEUTIC_CATEGORY_NAME_ASC)
+        assertEquals(listOf("drug_0001", "drug_0002", "drug_0003"), sorted.map { it.id })
+    }
+
     private fun drugWith(
         id: String,
         revisedAt: String = "2026-01-01",
         brandNameKana: String = "テストハンバイメイ",
         atcCode: String = "N02BE01",
+        therapeuticCategoryName: String = "経口鎮痛薬",
     ): Drug =
         Drug(
             id = id,
@@ -75,7 +87,7 @@ class DrugSearchServiceSortTest {
             brandName = "テスト販売名",
             brandNameKana = brandNameKana,
             atcCode = atcCode,
-            therapeuticCategoryName = "経口鎮痛薬",
+            therapeuticCategoryName = therapeuticCategoryName,
             regulatoryClass = listOf(RegulatoryClass.PRESCRIPTION_REQUIRED),
             dosageForm = DosageForm.TABLET,
             routeOfAdministration = RouteOfAdministration.ORAL,
