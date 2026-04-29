@@ -1,6 +1,5 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins
 
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.DiseaseFixtureProvider
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.blueprint.DiseaseBlueprintFactory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.DiseaseGenerator
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.DiseasePlaceholderDictionary
@@ -116,7 +115,7 @@ class CrossReferenceInitCheckTest {
                     placeholderDictionary =
                     DrugPlaceholderDictionary(
                         nameAdapter = adapter,
-                        diseaseProvider = DiseaseFixtureProvider(all = diseases),
+                        diseases = diseases,
                     ),
                 )
             return generator.generate(blueprints = DrugBlueprintFactory.build())

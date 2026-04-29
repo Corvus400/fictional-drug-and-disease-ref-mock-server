@@ -1,6 +1,5 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug
 
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.DiseaseFixtureProvider
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.DrugGenerator
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.DrugPlaceholderDictionary
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.FixmergeNameAdapter
@@ -29,7 +28,7 @@ internal object DrugListFixturesTestSupport {
     private fun buildTestDictionary(adapter: FixmergeNameAdapter): DrugPlaceholderDictionary =
         DrugPlaceholderDictionary(
             nameAdapter = adapter,
-            diseaseProvider = DiseaseFixtureProvider(all = testDiseaseFixtures()),
+            diseases = testDiseaseFixtures(),
         )
 
     private fun testDiseaseFixtures(): List<Disease> =

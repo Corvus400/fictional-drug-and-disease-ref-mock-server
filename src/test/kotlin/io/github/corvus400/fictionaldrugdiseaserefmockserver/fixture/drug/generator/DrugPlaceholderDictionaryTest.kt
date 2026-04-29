@@ -1,6 +1,5 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator
 
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.DiseaseFixtureProvider
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.placeholder.MedicalVocabularyDictionary
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.placeholder.NumericPlaceholderRanges
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.placeholder.PlaceholderCategory
@@ -164,7 +163,7 @@ class DrugPlaceholderDictionaryTest {
         val dict =
             DrugPlaceholderDictionary(
                 nameAdapter = FixmergeNameAdapter(),
-                diseaseProvider = DiseaseFixtureProvider(all = diseases),
+                diseases = diseases,
             )
         val seed = stableHash(id = "drug_0001", slot = 0, index = 0)
         val value = dict.resolve("disease", seed)
@@ -176,11 +175,11 @@ class DrugPlaceholderDictionaryTest {
     }
 
     @Test
-    fun `resolve on disease key throws when DiseaseFixtureProvider is empty`() {
+    fun `resolve on disease key throws when disease fixture list is empty`() {
         val dict =
             DrugPlaceholderDictionary(
                 nameAdapter = FixmergeNameAdapter(),
-                diseaseProvider = DiseaseFixtureProvider(all = emptyList()),
+                diseases = emptyList(),
             )
         val seed = stableHash(id = "drug_0001", slot = 0, index = 0)
         val exception =
@@ -190,7 +189,7 @@ class DrugPlaceholderDictionaryTest {
         val message = exception.message.orEmpty()
         assertTrue(
             "Drug must be generated after Disease" in message,
-            "Empty-DiseaseFixtureProvider error must mention generation-order rule; got: '$message'",
+            "Empty disease fixture list error must mention generation-order rule; got: '$message'",
         )
     }
 
@@ -213,7 +212,7 @@ class DrugPlaceholderDictionaryTest {
     private fun buildDict(): DrugPlaceholderDictionary =
         DrugPlaceholderDictionary(
             nameAdapter = FixmergeNameAdapter(),
-            diseaseProvider = DiseaseFixtureProvider(all = diseaseFixtures()),
+            diseases = diseaseFixtures(),
         )
 
     private fun diseaseFixtures(): List<Disease> =
