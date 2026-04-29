@@ -191,6 +191,46 @@ class DrugSearchServiceAdditionalFilterTest {
         assertEquals(listOf("drug_0001", "drug_0003"), result.map { it.id })
     }
 
+    @Test
+    fun `applyAdditionalFilters with PREGNANT and GERIATRIC returns items matching either category`() {
+        val items = listOf(
+            stubDrug(
+                id = "drug_0001",
+                precautions = listOf(
+                    precautionPopulation(category = PrecautionPopulationCategory.PREGNANT),
+                ),
+            ),
+            stubDrug(
+                id = "drug_0002",
+                precautions = listOf(
+                    precautionPopulation(category = PrecautionPopulationCategory.GERIATRIC),
+                ),
+            ),
+            stubDrug(
+                id = "drug_0003",
+                precautions = listOf(
+                    precautionPopulation(category = PrecautionPopulationCategory.RENAL_IMPAIRMENT),
+                ),
+            ),
+            stubDrug(
+                id = "drug_0004",
+                precautions = listOf(
+                    precautionPopulation(category = PrecautionPopulationCategory.PREGNANT),
+                    precautionPopulation(category = PrecautionPopulationCategory.GERIATRIC),
+                ),
+            ),
+            stubDrug(id = "drug_0005", precautions = emptyList()),
+        )
+        val result = DrugSearchService.applyAdditionalFilters(
+            items = items,
+            precautionCategories = listOf(
+                PrecautionPopulationCategory.PREGNANT,
+                PrecautionPopulationCategory.GERIATRIC,
+            ),
+        )
+        assertEquals(listOf("drug_0001", "drug_0002", "drug_0004"), result.map { it.id })
+    }
+
     private fun precautionPopulation(category: PrecautionPopulationCategory): PrecautionPopulation =
         PrecautionPopulation(
             category = category,
