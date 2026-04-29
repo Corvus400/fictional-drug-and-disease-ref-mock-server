@@ -45,6 +45,25 @@ class DiseaseSearchServiceAdditionalFilterTest {
         assertEquals(listOf("disease_0001", "disease_0003"), result.map { it.id })
     }
 
+    @Test
+    fun `applyAdditionalFilters with onsetPatterns=ACUTE,CHRONIC keeps items with onsetPattern ACUTE or CHRONIC`() {
+        val items =
+            listOf(
+                diseaseWithOnsetPattern(id = "disease_0001", onsetPattern = OnsetPattern.ACUTE),
+                diseaseWithOnsetPattern(id = "disease_0002", onsetPattern = OnsetPattern.CHRONIC),
+                diseaseWithOnsetPattern(id = "disease_0003", onsetPattern = OnsetPattern.SUBACUTE),
+                diseaseWithOnsetPattern(id = "disease_0004", onsetPattern = OnsetPattern.INTERMITTENT),
+                diseaseWithOnsetPattern(id = "disease_0005", onsetPattern = OnsetPattern.CHRONIC),
+                diseaseWithOnsetPattern(id = "disease_0006", onsetPattern = null),
+            )
+        val result =
+            DiseaseSearchService.applyAdditionalFilters(
+                items = items,
+                onsetPatterns = listOf(OnsetPattern.ACUTE, OnsetPattern.CHRONIC),
+            )
+        assertEquals(listOf("disease_0001", "disease_0002", "disease_0005"), result.map { it.id })
+    }
+
     private fun diseaseWithMainSymptoms(
         id: String,
         mainSymptoms: List<String>,
