@@ -146,6 +146,23 @@ class DiseaseSearchServiceAdditionalFilterTest {
         assertEquals(listOf("disease_0001", "disease_0003"), result.map { it.id })
     }
 
+    @Test
+    fun `applyAdditionalFilters with hasPharmacologicalTreatment=false keeps only empty pharmacological treatments`() {
+        val items =
+            listOf(
+                diseaseWithPharmacologicalTreatment(id = "disease_0001"),
+                diseaseWithoutPharmacologicalTreatment(id = "disease_0002"),
+                diseaseWithPharmacologicalTreatment(id = "disease_0003"),
+                diseaseWithoutPharmacologicalTreatment(id = "disease_0004"),
+            )
+        val result =
+            DiseaseSearchService.applyAdditionalFilters(
+                items = items,
+                hasPharmacologicalTreatment = false,
+            )
+        assertEquals(listOf("disease_0002", "disease_0004"), result.map { it.id })
+    }
+
     private fun diseaseWithMainSymptoms(
         id: String,
         mainSymptoms: List<String>,
