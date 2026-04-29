@@ -1,6 +1,7 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.search
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.testutil.sampleDisease
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.testutil.sampleDiseases
 import kotlin.test.Test
@@ -200,4 +201,21 @@ class DiseaseSearchServiceTest {
         val sorted = DiseaseSearchService.applySort(items = items, sort = DiseaseSortKey.NAME_KANA_ASC)
         assertEquals(listOf("disease_0002", "disease_0003", "disease_0001"), sorted.map { it.id })
     }
+
+    @Test
+    fun `applySort sorts by icd10Chapter ascending when ICD10_CHAPTER_ASC is specified`() {
+        val items =
+            listOf(
+                diseaseWith(id = "disease_0001", icd10Chapter = Icd10Chapter.CHAPTER_IX),
+                diseaseWith(id = "disease_0002", icd10Chapter = Icd10Chapter.CHAPTER_I),
+                diseaseWith(id = "disease_0003", icd10Chapter = Icd10Chapter.CHAPTER_IV),
+            )
+        val sorted = DiseaseSearchService.applySort(items = items, sort = DiseaseSortKey.ICD10_CHAPTER_ASC)
+        assertEquals(listOf("disease_0002", "disease_0003", "disease_0001"), sorted.map { it.id })
+    }
+
+    private fun diseaseWith(
+        id: String,
+        icd10Chapter: Icd10Chapter,
+    ): Disease = sampleDisease(id = id).copy(icd10Chapter = icd10Chapter)
 }
