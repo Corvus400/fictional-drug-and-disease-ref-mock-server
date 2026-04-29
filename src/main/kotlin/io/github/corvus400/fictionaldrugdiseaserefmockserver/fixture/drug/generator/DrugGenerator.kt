@@ -285,7 +285,7 @@ class DrugGenerator(
         private const val MANUFACTURER_SUFFIX: String = "製薬"
         private const val DEFAULT_MOLECULAR_FORMULA: String = "C20H25N3O"
         private val REVISED_AT_BASE: LocalDate = LocalDate.of(2026, 4, 23)
-        private const val REVISED_AT_SPREAD_DAYS: Int = 90
+        internal const val REVISED_AT_SPREAD_DAYS: Int = 90
         private val INJECTION_FORM_DOSE_UNITS: List<DoseUnit> =
             listOf(
                 DoseUnit.IU,
