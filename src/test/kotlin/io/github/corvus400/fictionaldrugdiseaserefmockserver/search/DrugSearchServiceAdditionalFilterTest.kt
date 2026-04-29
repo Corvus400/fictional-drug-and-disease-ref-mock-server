@@ -74,6 +74,90 @@ class DrugSearchServiceAdditionalFilterTest {
         assertEquals(items, result)
     }
 
+    @Test
+    fun `applyAdditionalFilters matches when adverseReactionKeyword in over5Percent only (not serious)`() {
+        val items = listOf(
+            stubDrug(
+                id = "drug_0001",
+                serious = emptyList(),
+                other = AdverseReactionByFrequency(over5Percent = listOf("yyy性発疹")),
+            ),
+            stubDrug(
+                id = "drug_0002",
+                serious = listOf(seriousReaction(name = "別の重篤副作用")),
+                other = AdverseReactionByFrequency(over5Percent = listOf("無関係")),
+            ),
+        )
+        val result = DrugSearchService.applyAdditionalFilters(
+            items = items,
+            adverseReactionKeyword = "yyy",
+        )
+        assertEquals(listOf("drug_0001"), result.map { it.id })
+    }
+
+    @Test
+    fun `applyAdditionalFilters matches when adverseReactionKeyword in between1And5Percent`() {
+        val items = listOf(
+            stubDrug(
+                id = "drug_0001",
+                serious = emptyList(),
+                other = AdverseReactionByFrequency(between1And5Percent = listOf("yyy性下痢")),
+            ),
+            stubDrug(
+                id = "drug_0002",
+                serious = emptyList(),
+                other = AdverseReactionByFrequency(between1And5Percent = listOf("無関係")),
+            ),
+        )
+        val result = DrugSearchService.applyAdditionalFilters(
+            items = items,
+            adverseReactionKeyword = "yyy",
+        )
+        assertEquals(listOf("drug_0001"), result.map { it.id })
+    }
+
+    @Test
+    fun `applyAdditionalFilters matches when adverseReactionKeyword in under1Percent`() {
+        val items = listOf(
+            stubDrug(
+                id = "drug_0001",
+                serious = emptyList(),
+                other = AdverseReactionByFrequency(under1Percent = listOf("yyy性肝障害")),
+            ),
+            stubDrug(
+                id = "drug_0002",
+                serious = emptyList(),
+                other = AdverseReactionByFrequency(under1Percent = listOf("無関係")),
+            ),
+        )
+        val result = DrugSearchService.applyAdditionalFilters(
+            items = items,
+            adverseReactionKeyword = "yyy",
+        )
+        assertEquals(listOf("drug_0001"), result.map { it.id })
+    }
+
+    @Test
+    fun `applyAdditionalFilters matches when adverseReactionKeyword in frequencyUnknown`() {
+        val items = listOf(
+            stubDrug(
+                id = "drug_0001",
+                serious = emptyList(),
+                other = AdverseReactionByFrequency(frequencyUnknown = listOf("yyy性めまい")),
+            ),
+            stubDrug(
+                id = "drug_0002",
+                serious = emptyList(),
+                other = AdverseReactionByFrequency(frequencyUnknown = listOf("無関係")),
+            ),
+        )
+        val result = DrugSearchService.applyAdditionalFilters(
+            items = items,
+            adverseReactionKeyword = "yyy",
+        )
+        assertEquals(listOf("drug_0001"), result.map { it.id })
+    }
+
     private fun seriousReaction(name: String): AdverseReaction = AdverseReaction(
         name = name,
         frequency = FrequencyBand.UNKNOWN,
@@ -85,6 +169,7 @@ class DrugSearchServiceAdditionalFilterTest {
     private fun stubDrug(
         id: String,
         serious: List<AdverseReaction> = emptyList(),
+        other: AdverseReactionByFrequency = AdverseReactionByFrequency(),
     ): Drug =
         Drug(
             id = id,
@@ -108,7 +193,7 @@ class DrugSearchServiceAdditionalFilterTest {
             dosage = DosageInfo(standardDosage = "通常、成人には 1 回 100 mg を経口投与"),
             adverseReactions = AdverseReactionInfo(
                 serious = serious,
-                other = AdverseReactionByFrequency(),
+                other = other,
             ),
             packages = listOf(
                 PackageInfo(

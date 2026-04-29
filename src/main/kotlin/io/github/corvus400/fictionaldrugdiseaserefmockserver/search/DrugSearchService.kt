@@ -1,6 +1,7 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.search
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.Drug
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.allMatchableTexts
 
 /**
  * 医薬品の検索ロジックを提供する純関数オブジェクト。
@@ -92,8 +93,9 @@ object DrugSearchService {
      * 追加フィルタ — `keyword` / `sort` 後段に適用される副次的な絞り込み群。
      *
      * `adverseReactionKeyword` が非 null/非 blank の場合、`adverseReactions.serious[].name`
-     * を 1 語の部分一致で絞り込む。複数語 AND は本フェーズではスコープ外 (YAGNI)。
-     * いずれの引数もデフォルト無指定で素通しになる純関数。
+     * および `adverseReactions.other.over5Percent[]` / `between1And5Percent[]` /
+     * `under1Percent[]` / `frequencyUnknown[]` を 1 語の部分一致で絞り込む。複数語 AND は
+     * 本フェーズではスコープ外 (YAGNI)。いずれの引数もデフォルト無指定で素通しになる純関数。
      */
     fun applyAdditionalFilters(
         items: List<Drug>,
@@ -103,9 +105,7 @@ object DrugSearchService {
             return items
         }
         return items.filter { drug ->
-            drug.adverseReactions.serious.any { reaction ->
-                reaction.name.contains(adverseReactionKeyword)
-            }
+            drug.adverseReactions.allMatchableTexts().any { it.contains(adverseReactionKeyword) }
         }
     }
 }

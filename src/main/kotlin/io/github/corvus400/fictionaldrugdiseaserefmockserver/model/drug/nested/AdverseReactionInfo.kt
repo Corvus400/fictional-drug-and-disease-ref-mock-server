@@ -43,3 +43,15 @@ data class AdverseReactionByFrequency(
     /** 発現頻度不明の副作用名リスト。 */
     val frequencyUnknown: List<String> = emptyList(),
 )
+
+/**
+ * `adverseReactions.serious[].name` と `adverseReactions.other.*` の全副作用名テキストを
+ * 1 つの `Sequence<String>` として返す。`adverseReactionKeyword` の部分一致対象を集約する用途。
+ */
+fun AdverseReactionInfo.allMatchableTexts(): Sequence<String> = sequence {
+    serious.forEach { yield(it.name) }
+    yieldAll(other.over5Percent)
+    yieldAll(other.between1And5Percent)
+    yieldAll(other.under1Percent)
+    yieldAll(other.frequencyUnknown)
+}
