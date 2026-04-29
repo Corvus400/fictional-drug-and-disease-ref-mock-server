@@ -4,6 +4,8 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.DrugLi
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.blueprint.DrugBlueprintFactory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.DrugListResponse
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.toSummary
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.search.DrugSearchService
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.search.DrugSortKey
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -28,7 +30,8 @@ class DrugListFixturesTest {
         val fixtures = DrugListFixtures(drugs = drugs)
 
         val expectedPageSize = DrugListFixtures.DEFAULT_PAGE_SIZE
-        val expectedItems = drugs.map { drug -> drug.toSummary() }.take(n = expectedPageSize)
+        val sortedDrugs = DrugSearchService.applySort(items = drugs, sort = DrugSortKey.REVISED_AT_DESC)
+        val expectedItems = sortedDrugs.map { drug -> drug.toSummary() }.take(n = expectedPageSize)
         val expectedTotalPages = (drugs.size + expectedPageSize - 1) / expectedPageSize
         assertEquals(
             expected = DrugListResponse(
@@ -39,7 +42,8 @@ class DrugListFixturesTest {
                 totalCount = drugs.size,
             ),
             actual = fixtures.getByScenario(scenario = "default"),
-            message = "default scenario must expose first page with DEFAULT_PAGE_SIZE summaries",
+            message = "default scenario must expose first page with DEFAULT_PAGE_SIZE summaries " +
+                "(sorted by revised_at desc)",
         )
     }
 

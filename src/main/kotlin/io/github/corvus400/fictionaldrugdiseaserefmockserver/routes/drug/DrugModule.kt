@@ -20,6 +20,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.resolveScen
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.respondWithScenario
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.scenario.ScenarioManager
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.search.DrugKeywordTarget
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.search.DrugSortKey
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.search.KeywordMatch
 import io.github.smiley4.ktoropenapi.get
 import io.github.smiley4.ktoropenapi.route
@@ -187,6 +188,12 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
                                     "販売名カナ) / `both` (既定。両方)。"
                                 required = false
                             }
+                            queryParameter<String>("sort") {
+                                description = "ソート順。`-revised_at` (既定。改訂日降順) / " +
+                                    "`brand_name_kana` (販売名カナ昇順) / `atc_code` (ATC コード昇順) / " +
+                                    "`therapeutic_category_name` (薬効カテゴリ名昇順)。"
+                                required = false
+                            }
                         }
                     },
                 )
@@ -210,6 +217,7 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
                 val keywordTarget = DrugKeywordTarget.fromQuery(
                     value = call.request.queryParameters["keyword_target"],
                 )
+                val sortKey = DrugSortKey.fromQuery(raw = call.request.queryParameters["sort"])
                 val resolved = call.resolveScenarioWithOverride(
                     scenarioManager = scenarioManager,
                     endpointName = drugListMetadata.endpointName,
@@ -229,6 +237,7 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
                                 keywordMatch = keywordMatch,
                                 keywordTarget = keywordTarget,
                             ),
+                            sortKey = sortKey,
                         )
                     },
                 )
