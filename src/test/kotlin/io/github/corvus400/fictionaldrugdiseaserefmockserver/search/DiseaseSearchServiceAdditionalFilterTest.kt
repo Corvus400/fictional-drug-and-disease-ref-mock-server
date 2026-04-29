@@ -4,7 +4,9 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disea
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.ExamCategory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.OnsetPattern
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.Exam
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.PharmaTreatment
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.SymptomInfo
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.TreatmentInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.testutil.sampleDisease
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -128,6 +130,22 @@ class DiseaseSearchServiceAdditionalFilterTest {
         assertEquals(listOf("disease_0001", "disease_0002", "disease_0003"), result.map { it.id })
     }
 
+    @Test
+    fun `applyAdditionalFilters with hasPharmacologicalTreatment=true keeps only pharmacological treatments`() {
+        val items =
+            listOf(
+                diseaseWithPharmacologicalTreatment(id = "disease_0001"),
+                diseaseWithoutPharmacologicalTreatment(id = "disease_0002"),
+                diseaseWithPharmacologicalTreatment(id = "disease_0003"),
+            )
+        val result =
+            DiseaseSearchService.applyAdditionalFilters(
+                items = items,
+                hasPharmacologicalTreatment = true,
+            )
+        assertEquals(listOf("disease_0001", "disease_0003"), result.map { it.id })
+    }
+
     private fun diseaseWithMainSymptoms(
         id: String,
         mainSymptoms: List<String>,
@@ -155,4 +173,21 @@ class DiseaseSearchServiceAdditionalFilterTest {
                 )
             },
         )
+
+    private fun diseaseWithPharmacologicalTreatment(id: String): Disease =
+        sampleDisease(id = id).copy(
+            treatments = TreatmentInfo(
+                pharmacological = listOf(
+                    PharmaTreatment(
+                        drugCategory = "抗炎症薬",
+                        drugIds = listOf("drug_0001"),
+                        indication = "炎症抑制",
+                        notes = "症状に応じて調整",
+                    ),
+                ),
+            ),
+        )
+
+    private fun diseaseWithoutPharmacologicalTreatment(id: String): Disease =
+        sampleDisease(id = id).copy(treatments = TreatmentInfo())
 }
