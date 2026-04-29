@@ -39,4 +39,17 @@ enum class ExamCategory {
      */
     val serialName: String
         get() = serializer().descriptor.getElementName(index = ordinal)
+
+    companion object {
+        /**
+         * `/diseases?exam_category=...` クエリ値 ([raw]) を enum 定数名 (例: `IMAGING`) として解決する。
+         *
+         * 未知の値は [IllegalArgumentException] を投げ、Route 層で 400 + `INVALID_EXAM_CATEGORY`
+         * の `ErrorResponse` に変換される。`runCatching {} .getOrNull()` 等での握りつぶし禁止
+         * (基本方針 10: エラー可視性)。
+         */
+        fun fromQueryOrThrow(raw: String): ExamCategory =
+            runCatching { valueOf(value = raw) }
+                .getOrElse { throw IllegalArgumentException("Unknown exam_category: $raw") }
+    }
 }
