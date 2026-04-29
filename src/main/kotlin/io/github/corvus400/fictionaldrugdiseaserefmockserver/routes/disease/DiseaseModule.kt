@@ -12,8 +12,10 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disea
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.DiseaseListResponse
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.DiseaseSummary
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Chronicity
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.ExamCategory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.MedicalDepartment
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.OnsetPattern
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.toSummary
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.ApiTag
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.documentIdDetailEndpoint
@@ -199,6 +201,33 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
                                     "未対応キーは 400 BadRequest。"
                                 required = false
                             }
+                            queryParameter<String>("symptom_keyword") {
+                                description = "主症状キーワード (部分一致)。`symptoms.mainSymptoms[]` を対象に絞り込む。" +
+                                    "空または未指定時は絞り込みを行わない。"
+                                required = false
+                            }
+                            queryParameter<String>("onset_pattern") {
+                                description = "発症パターン (`OnsetPattern` の enum 名、例: `${OnsetPattern.ACUTE.name}`)。" +
+                                    "複数指定時は OR 結合、他フィルタとは AND 結合。未知の値は HTTP 400 + " +
+                                    "`ErrorResponse(code=\"INVALID_ONSET_PATTERN\")` を返す。"
+                                required = false
+                            }
+                            queryParameter<String>("exam_category") {
+                                description = "検査カテゴリ (`ExamCategory` の enum 名、例: `${ExamCategory.IMAGING.name}`)。" +
+                                    "複数指定時は OR 結合、他フィルタとは AND 結合。未知の値は HTTP 400 + " +
+                                    "`ErrorResponse(code=\"INVALID_EXAM_CATEGORY\")` を返す。"
+                                required = false
+                            }
+                            queryParameter<String>("has_pharmacological_treatment") {
+                                description = "薬物治療の有無 (`true` / `false`)。" +
+                                    "指定時は `treatments.pharmacological` の空/非空で絞り込む。"
+                                required = false
+                            }
+                            queryParameter<String>("has_severity_grading") {
+                                description = "重症度分類の有無 (`true` / `false`)。" +
+                                    "指定時は `severityGrading` の null / non-null で絞り込む。"
+                                required = false
+                            }
                         }
                     },
                 )
@@ -219,6 +248,35 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
                 val chronicityFilter = call.request.queryParameters["chronicity"]
                 val infectiousFilter = call.request.queryParameters["infectious"]?.toBooleanStrictOrNull()
                 val keyword = call.request.queryParameters["keyword"]
+                val symptomKeyword = call.request.queryParameters["symptom_keyword"]
+                val onsetPatterns = try {
+                    call.request.queryParameters
+                        .getAll(name = "onset_pattern")
+                        .orEmpty()
+                        .map { raw -> OnsetPattern.fromQueryOrThrow(raw = raw) }
+                } catch (e: IllegalArgumentException) {
+                    call.respond(
+                        status = HttpStatusCode.BadRequest,
+                        message = ErrorResponse(code = "INVALID_ONSET_PATTERN", message = e.message.orEmpty()),
+                    )
+                    return@handle
+                }
+                val examCategories = try {
+                    call.request.queryParameters
+                        .getAll(name = "exam_category")
+                        .orEmpty()
+                        .map { raw -> ExamCategory.fromQueryOrThrow(raw = raw) }
+                } catch (e: IllegalArgumentException) {
+                    call.respond(
+                        status = HttpStatusCode.BadRequest,
+                        message = ErrorResponse(code = "INVALID_EXAM_CATEGORY", message = e.message.orEmpty()),
+                    )
+                    return@handle
+                }
+                val hasPharmacologicalTreatment =
+                    call.request.queryParameters["has_pharmacological_treatment"]?.toBooleanStrictOrNull()
+                val hasSeverityGrading =
+                    call.request.queryParameters["has_severity_grading"]?.toBooleanStrictOrNull()
                 val keywordMatch = KeywordMatch.fromQuery(value = call.request.queryParameters["keyword_match"])
                 val keywordTarget = DiseaseKeywordTarget.fromQuery(
                     value = call.request.queryParameters["keyword_target"]
@@ -255,7 +313,15 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
                             match = keywordMatch,
                             target = keywordTarget,
                         )
-                        val sorted = DiseaseSearchService.applySort(items = keywordFiltered, sort = sortKey)
+                        val additionallyFiltered = DiseaseSearchService.applyAdditionalFilters(
+                            items = keywordFiltered,
+                            symptomKeyword = symptomKeyword,
+                            onsetPatterns = onsetPatterns,
+                            examCategories = examCategories,
+                            hasPharmacologicalTreatment = hasPharmacologicalTreatment,
+                            hasSeverityGrading = hasSeverityGrading,
+                        )
+                        val sorted = DiseaseSearchService.applySort(items = additionallyFiltered, sort = sortKey)
                         paginate(
                             summaries = sorted.map { it.toSummary() },
                             page = page,
