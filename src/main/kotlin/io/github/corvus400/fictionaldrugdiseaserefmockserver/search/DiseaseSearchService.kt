@@ -91,4 +91,25 @@ object DiseaseSearchService {
         DiseaseSortKey.NAME_KANA_ASC -> items.sortedBy { it.nameKana }
         DiseaseSortKey.ICD10_CHAPTER_ASC -> items.sortedBy { it.icd10Chapter.ordinal }
     }
+
+    /**
+     * 追加フィルタ — `keyword` / `sort` 後段に適用される副次的な絞り込み群。
+     *
+     * 本フェーズ (Phase 13-11) では `symptomKeyword` のみ受け付ける。引数無指定時は素通しする
+     * 純関数。後続フェーズで `onsetPattern` / `examCategory` / `hasPharmacologicalTreatment` /
+     * `hasSeverityGrading` を triangulation で順次追加する (issue #74 — DrugSearchService の
+     * `applyAdditionalFilters` と対称設計)。
+     */
+    fun applyAdditionalFilters(
+        items: List<Disease>,
+        symptomKeyword: String? = null,
+    ): List<Disease> {
+        var result = items
+        if (!symptomKeyword.isNullOrBlank()) {
+            result = result.filter { disease ->
+                disease.symptoms.mainSymptoms.any { it.contains(symptomKeyword) }
+            }
+        }
+        return result
+    }
 }
