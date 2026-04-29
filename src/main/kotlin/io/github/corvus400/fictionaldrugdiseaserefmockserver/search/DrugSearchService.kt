@@ -83,7 +83,7 @@ object DrugSearchService {
         DrugSortKey.REVISED_AT_DESC -> items.sortedWith(
             compareByDescending<Drug> { it.revisedAt }.thenByDescending { it.id },
         )
-        DrugSortKey.BRAND_NAME_KANA_ASC,
+        DrugSortKey.BRAND_NAME_KANA_ASC -> items.sortedBy { it.brandNameKana }
         DrugSortKey.ATC_CODE_ASC,
         DrugSortKey.THERAPEUTIC_CATEGORY_NAME_ASC,
         -> items
