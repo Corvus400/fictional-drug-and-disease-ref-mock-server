@@ -75,14 +75,19 @@ object DiseaseSearchService {
 
     /**
      * `sort` キーに従って `items` を並び替える純関数。
-     * 既定キー `REVISED_AT_DESC` は最終改訂日 (`revisedAt`) の降順で並び替える。
+     * 既定キー `REVISED_AT_DESC` は最終改訂日 (`revisedAt`) の降順で並び替え、
+     * 同 `revisedAt` 衝突時は `id` 降順で tie-break する (#118 と対称な API 契約)。
      * 他キーは後続サイクルで triangulation により段階的に拡張する。
      */
     fun applySort(
         items: List<Disease>,
         sort: DiseaseSortKey,
     ): List<Disease> = when (sort) {
-        DiseaseSortKey.REVISED_AT_DESC -> items.sortedByDescending { it.revisedAt }
+        DiseaseSortKey.REVISED_AT_DESC ->
+            items.sortedWith(
+                compareByDescending<Disease> { it.revisedAt }
+                    .thenByDescending { it.id },
+            )
         DiseaseSortKey.NAME_KANA_ASC -> items
         DiseaseSortKey.ICD10_CHAPTER_ASC -> items
     }

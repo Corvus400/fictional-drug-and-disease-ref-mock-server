@@ -172,6 +172,18 @@ class DiseaseSearchServiceTest {
         assertEquals(listOf("disease_0002", "disease_0003", "disease_0001"), sorted.map { it.id })
     }
 
+    @Test
+    fun `applySort breaks revisedAt ties by id descending`() {
+        val items =
+            listOf(
+                diseaseWith(id = "disease_0001", revisedAt = "2026-04-23"),
+                diseaseWith(id = "disease_0002", revisedAt = "2026-04-23"),
+                diseaseWith(id = "disease_0003", revisedAt = "2026-04-23"),
+            )
+        val sorted = DiseaseSearchService.applySort(items = items, sort = DiseaseSortKey.REVISED_AT_DESC)
+        assertEquals(listOf("disease_0003", "disease_0002", "disease_0001"), sorted.map { it.id })
+    }
+
     private fun diseaseWith(
         id: String,
         revisedAt: String,
