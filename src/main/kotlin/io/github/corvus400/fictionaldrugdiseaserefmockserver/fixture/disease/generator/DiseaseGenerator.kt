@@ -146,7 +146,7 @@ class DiseaseGenerator(
         private const val COMPLICATION_COUNT: Int = 2
         private const val DISEASE_ID_PAD_LENGTH: Int = 4
         private val REVISED_AT_BASE: LocalDate = LocalDate.of(2026, 4, 23)
-        private const val REVISED_AT_SPREAD_DAYS: Int = 90
+        internal const val REVISED_AT_SPREAD_DAYS: Int = 90
 
         private fun revisedAtFor(blueprint: DiseaseBlueprint): String =
             IsoDateFormatter.formatDate(
