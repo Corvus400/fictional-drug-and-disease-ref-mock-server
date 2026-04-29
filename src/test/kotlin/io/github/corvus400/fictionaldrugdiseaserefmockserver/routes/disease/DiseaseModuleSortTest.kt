@@ -1,5 +1,6 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.disease
 
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.ErrorResponse
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.module
 import io.ktor.client.request.get
@@ -65,7 +66,7 @@ class DiseaseModuleSortTest {
         }
 
     @Test
-    fun `GET diseases with sort invalid_key returns 400 BadRequest`() = testApplication {
+    fun `GET diseases with invalid sort returns 400 with INVALID_SORT_KEY error`() = testApplication {
         application { module() }
 
         val response = client.get("/diseases?sort=invalid_key")
@@ -75,5 +76,7 @@ class DiseaseModuleSortTest {
             actual = response.status,
             message = "unknown sort key must surface as 400 BadRequest, got ${response.status}",
         )
+        val error = json.decodeFromString<ErrorResponse>(string = response.bodyAsText())
+        assertEquals(expected = "INVALID_SORT_KEY", actual = error.code)
     }
 }
