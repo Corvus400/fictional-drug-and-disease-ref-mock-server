@@ -2,8 +2,8 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.config.MockServerConfig
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.di.configureDependencies
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.DiseaseFixtureProvider
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.DrugFixtureProvider
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.Drug
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.CrossReferenceInitCheck
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.configureLogging
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.configureOpenAPI
@@ -32,11 +32,11 @@ fun Application.module() {
 
     // 起動時 fail-fast: fixture の drug↔disease 参照整合性を検証し、
     // dangling があれば IllegalStateException で起動を失敗させる (Issue #49)。
-    val drugProvider: DrugFixtureProvider by dependencies
-    val diseaseProvider: DiseaseFixtureProvider by dependencies
+    val drugs: List<Drug> by dependencies
+    val diseases: List<Disease> by dependencies
     CrossReferenceInitCheck.run(
-        drugs = drugProvider.all,
-        diseases = diseaseProvider.all,
+        drugs = drugs,
+        diseases = diseases,
     )
 
     // Plugins

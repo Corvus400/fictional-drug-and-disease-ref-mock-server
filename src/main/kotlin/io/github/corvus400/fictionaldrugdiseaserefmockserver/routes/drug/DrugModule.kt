@@ -6,10 +6,10 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog.EndpointReg
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog.ScenarioMeta
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog.toEntry
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.DrugDetailFixtures
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.DrugFixtureProvider
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.DrugListFixtures
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.DrugListQuery
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.ErrorResponse
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.Drug
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DosageForm
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RouteOfAdministration
@@ -73,7 +73,7 @@ val drugCatalogEntries: List<EndpointEntry> = listOf(
 )
 
 fun Application.drugModule(scenarioManager: ScenarioManager) {
-    val provider: DrugFixtureProvider by dependencies
+    val drugs: List<Drug> by dependencies
     val drugListFixtures: DrugListFixtures by dependencies
     val drugDetailFixtures: DrugDetailFixtures by dependencies
     routing {
@@ -82,7 +82,7 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
                 metadata = drugDetailMetadata,
                 endpointDescription = "`id` で指定した医薬品詳細 Fixture を返す。",
                 idParamDescription = "医薬品 ID (`drug_NNNN` 形式)",
-                exampleFixture = provider.all.first(),
+                exampleFixture = drugs.first(),
             )
         }) {
             val id = call.parameters["id"]

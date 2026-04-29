@@ -1,6 +1,5 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator
 
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.DiseaseFixtureProvider
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.FixmergeNameAdapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Chronicity
@@ -54,7 +53,7 @@ class DrugClinicalBuildersTest {
     private fun buildDict(): DrugPlaceholderDictionary =
         DrugPlaceholderDictionary(
             nameAdapter = FixmergeNameAdapter(),
-            diseaseProvider = DiseaseFixtureProvider(all = diseaseFixtures()),
+            diseases = diseaseFixtures(),
         )
 
     private fun diseaseFixtures(): List<Disease> =

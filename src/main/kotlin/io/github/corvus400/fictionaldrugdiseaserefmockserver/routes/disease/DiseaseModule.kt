@@ -6,7 +6,6 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog.EndpointReg
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog.ScenarioMeta
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog.toEntry
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.DiseaseDetailFixtures
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.DiseaseFixtureProvider
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.DiseaseListFixtures
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.ErrorResponse
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
@@ -78,7 +77,7 @@ val diseaseCatalogEntries: List<EndpointEntry> = listOf(
 )
 
 fun Application.diseaseModule(scenarioManager: ScenarioManager) {
-    val provider: DiseaseFixtureProvider by dependencies
+    val diseases: List<Disease> by dependencies
     val diseaseListFixtures: DiseaseListFixtures by dependencies
     val diseaseDetailFixtures: DiseaseDetailFixtures by dependencies
     routing {
@@ -89,7 +88,7 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
                     " Admin API `POST /__admin/configs/${diseaseDetailMetadata.endpointName}` で" +
                     " delayMs / statusCode / headers をオーバーライド可能。",
                 idParamDescription = "疾患 ID (`disease_NNNN` 形式)",
-                exampleFixture = provider.all.first(),
+                exampleFixture = diseases.first(),
             )
         }) {
             val id = call.parameters["id"]
