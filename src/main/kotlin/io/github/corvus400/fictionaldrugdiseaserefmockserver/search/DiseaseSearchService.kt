@@ -97,7 +97,7 @@ object DiseaseSearchService {
     /**
      * 追加フィルタ — `keyword` / `sort` 後段に適用される副次的な絞り込み群。
      *
-     * 本フェーズ (Phase 13-16) までで `symptomKeyword` / `onsetPatterns` /
+     * 本フェーズ (Phase 13-17) までで `symptomKeyword` / `onsetPatterns` /
      * `examCategories` / `hasPharmacologicalTreatment` を受け付ける。`examCategories` はクエリ層で 0/1 個に
      * 解決される単値フィルタ前提だが、本層では `DrugSearchService.applyAdditionalFilters`
      * の `precautionCategories` と同じく集合扱いにして将来の複数値拡張に備える。
@@ -127,10 +127,16 @@ object DiseaseSearchService {
                 disease.requiredExams.any { it.category in examCategories }
             }
         }
-        if (hasPharmacologicalTreatment == true) {
-            result = result.filter { disease ->
-                disease.treatments.pharmacological.isNotEmpty()
-            }
+        when (hasPharmacologicalTreatment) {
+            true ->
+                result = result.filter { disease ->
+                    disease.treatments.pharmacological.isNotEmpty()
+                }
+            false ->
+                result = result.filter { disease ->
+                    disease.treatments.pharmacological.isEmpty()
+                }
+            null -> Unit
         }
         return result
     }
