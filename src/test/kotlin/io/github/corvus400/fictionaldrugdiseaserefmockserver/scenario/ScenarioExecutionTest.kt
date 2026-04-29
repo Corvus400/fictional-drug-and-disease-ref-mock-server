@@ -12,6 +12,7 @@ import io.ktor.server.testing.testApplication
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.boolean
+import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonPrimitive
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -119,4 +120,82 @@ class ScenarioExecutionTest {
             message = "Expected delay of at least 300ms, but got ${elapsed}ms",
         )
     }
+
+    @Test
+    fun `drug list switches between default 120 and empty 0 via Admin API and reset restores 120`() =
+        testApplication {
+            application { module() }
+
+            client.post("/__admin/reset")
+
+            val defaultResponse = client.get("/drugs")
+            val defaultBody = json.decodeFromString<JsonObject>(defaultResponse.bodyAsText())
+            assertEquals(
+                expected = 120,
+                actual = defaultBody["total_count"]?.jsonPrimitive?.int,
+                message = "default シナリオの /drugs total_count は 120",
+            )
+
+            client.post("/__admin/configs/drugList") {
+                contentType(ContentType.Application.Json)
+                setBody("""{"state":"empty"}""")
+            }
+
+            val emptyResponse = client.get("/drugs")
+            val emptyBody = json.decodeFromString<JsonObject>(emptyResponse.bodyAsText())
+            assertEquals(
+                expected = 0,
+                actual = emptyBody["total_count"]?.jsonPrimitive?.int,
+                message = "empty オーバーライド後の /drugs total_count は 0",
+            )
+
+            client.post("/__admin/reset")
+
+            val restoredResponse = client.get("/drugs")
+            val restoredBody = json.decodeFromString<JsonObject>(restoredResponse.bodyAsText())
+            assertEquals(
+                expected = 120,
+                actual = restoredBody["total_count"]?.jsonPrimitive?.int,
+                message = "reset 後の /drugs total_count は default の 120 に戻る",
+            )
+        }
+
+    @Test
+    fun `disease list switches between default 80 and empty 0 via Admin API and reset restores 80`() =
+        testApplication {
+            application { module() }
+
+            client.post("/__admin/reset")
+
+            val defaultResponse = client.get("/diseases")
+            val defaultBody = json.decodeFromString<JsonObject>(defaultResponse.bodyAsText())
+            assertEquals(
+                expected = 80,
+                actual = defaultBody["total_count"]?.jsonPrimitive?.int,
+                message = "default シナリオの /diseases total_count は 80",
+            )
+
+            client.post("/__admin/configs/diseaseList") {
+                contentType(ContentType.Application.Json)
+                setBody("""{"state":"empty"}""")
+            }
+
+            val emptyResponse = client.get("/diseases")
+            val emptyBody = json.decodeFromString<JsonObject>(emptyResponse.bodyAsText())
+            assertEquals(
+                expected = 0,
+                actual = emptyBody["total_count"]?.jsonPrimitive?.int,
+                message = "empty オーバーライド後の /diseases total_count は 0",
+            )
+
+            client.post("/__admin/reset")
+
+            val restoredResponse = client.get("/diseases")
+            val restoredBody = json.decodeFromString<JsonObject>(restoredResponse.bodyAsText())
+            assertEquals(
+                expected = 80,
+                actual = restoredBody["total_count"]?.jsonPrimitive?.int,
+                message = "reset 後の /diseases total_count は default の 80 に戻る",
+            )
+        }
 }

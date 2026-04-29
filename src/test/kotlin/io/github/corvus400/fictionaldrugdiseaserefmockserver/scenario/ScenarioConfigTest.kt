@@ -72,4 +72,53 @@ class ScenarioConfigTest {
         val getResponse = client.get("/__admin/configs")
         assertEquals("{}", getResponse.bodyAsText())
     }
+
+    @Test
+    fun `admin set drugList empty config is reflected on configs and reset clears it`() = testApplication {
+        application { module() }
+
+        client.post("/__admin/reset")
+
+        val setResponse = client.post("/__admin/configs/drugList") {
+            contentType(ContentType.Application.Json)
+            setBody("""{"state":"empty"}""")
+        }
+        assertEquals(HttpStatusCode.OK, setResponse.status)
+
+        val afterSet = client.get("/__admin/configs").bodyAsText()
+        assertTrue(
+            actual = afterSet.contains("drugList") && afterSet.contains("empty"),
+            message = "POST 後の /__admin/configs に drugList=empty が含まれている必要がある: $afterSet",
+        )
+
+        val resetResponse = client.post("/__admin/reset")
+        assertEquals(HttpStatusCode.OK, resetResponse.status)
+
+        val afterReset = client.get("/__admin/configs").bodyAsText()
+        assertEquals(
+            expected = "{}",
+            actual = afterReset,
+            message = "reset 後の /__admin/configs は空オブジェクトに戻る必要がある",
+        )
+    }
+
+    @Test
+    fun `admin set diseaseList empty config is reflected on configs body`() = testApplication {
+        application { module() }
+
+        client.post("/__admin/reset")
+
+        client.post("/__admin/configs/diseaseList") {
+            contentType(ContentType.Application.Json)
+            setBody("""{"state":"empty"}""")
+        }
+
+        val body = client.get("/__admin/configs").bodyAsText()
+        assertTrue(
+            actual = body.contains("diseaseList") && body.contains("empty"),
+            message = "/__admin/configs body に diseaseList=empty が反映されている必要がある: $body",
+        )
+
+        client.post("/__admin/reset")
+    }
 }
