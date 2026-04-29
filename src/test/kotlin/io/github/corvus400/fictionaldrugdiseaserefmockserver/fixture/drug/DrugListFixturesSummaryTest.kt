@@ -13,7 +13,7 @@ import kotlin.test.assertNotNull
 
 class DrugListFixturesSummaryTest {
     @Test
-    fun `default scenario items first entry has exactly 6 fields matching DrugSummary shape`() {
+    fun `default scenario items first entry has exactly 9 fields matching DrugSummary shape`() {
         val drugs = buildFreshGenerator().generate(blueprints = DrugBlueprintFactory.build())
         val fixtures = DrugListFixtures(drugs = drugs)
 
@@ -33,9 +33,12 @@ class DrugListFixturesSummaryTest {
                 "therapeutic_category_name",
                 "regulatory_class",
                 "dosage_form",
+                "brand_name_kana",
+                "atc_code",
+                "revised_at",
             ),
             actual = firstItem.keys,
-            message = "items[0] must expose exactly 6 DrugSummary snake_case fields",
+            message = "items[0] must expose exactly 9 DrugSummary snake_case fields",
         )
     }
 }

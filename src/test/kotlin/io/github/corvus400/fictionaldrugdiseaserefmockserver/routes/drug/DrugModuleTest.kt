@@ -49,7 +49,7 @@ class DrugModuleTest {
     }
 
     @Test
-    fun `GET drugs default scenario first page exposes 6 DrugSummary fields and total_count 120`() =
+    fun `GET drugs default scenario first page exposes 9 DrugSummary fields and total_count 120`() =
         testApplication {
             application { module() }
 
@@ -77,9 +77,12 @@ class DrugModuleTest {
                     "therapeutic_category_name",
                     "regulatory_class",
                     "dosage_form",
+                    "brand_name_kana",
+                    "atc_code",
+                    "revised_at",
                 ),
                 actual = firstItemKeys,
-                message = "HTTP response items[0] must expose exactly 6 DrugSummary snake_case fields",
+                message = "HTTP response items[0] must expose exactly 9 DrugSummary snake_case fields",
             )
         }
 
