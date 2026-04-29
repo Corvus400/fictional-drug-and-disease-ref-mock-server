@@ -41,15 +41,27 @@ class DrugSearchServiceSortTest {
         assertEquals(listOf("drug_0003", "drug_0002", "drug_0001"), sorted.map { it.id })
     }
 
+    @Test
+    fun `applySort sorts by brandNameKana ascending when BRAND_NAME_KANA_ASC is specified`() {
+        val items = listOf(
+            drugWith(id = "drug_0001", brandNameKana = "サンブル"),
+            drugWith(id = "drug_0002", brandNameKana = "アイウエ"),
+            drugWith(id = "drug_0003", brandNameKana = "カキクケ"),
+        )
+        val sorted = DrugSearchService.applySort(items = items, sort = DrugSortKey.BRAND_NAME_KANA_ASC)
+        assertEquals(listOf("drug_0002", "drug_0003", "drug_0001"), sorted.map { it.id })
+    }
+
     private fun drugWith(
         id: String,
-        revisedAt: String,
+        revisedAt: String = "2026-01-01",
+        brandNameKana: String = "テストハンバイメイ",
     ): Drug =
         Drug(
             id = id,
             genericName = "テスト一般名",
             brandName = "テスト販売名",
-            brandNameKana = "テストハンバイメイ",
+            brandNameKana = brandNameKana,
             atcCode = "N02BE01",
             therapeuticCategoryName = "経口鎮痛薬",
             regulatoryClass = listOf(RegulatoryClass.PRESCRIPTION_REQUIRED),
