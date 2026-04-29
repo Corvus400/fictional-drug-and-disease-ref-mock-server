@@ -203,8 +203,10 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
                     call.request.queryParameters["page_size"]?.toIntOrNull()
                         ?: DiseaseListFixtures.DEFAULT_PAGE_SIZE
                     ).coerceAtMost(maximumValue = DiseaseListFixtures.MAX_PAGE_SIZE)
-                val chapterFilter = call.request.queryParameters["icd10_chapter"]
-                    ?.let { Icd10Chapter.fromChapterKey(key = it) }
+                val chapterParam = call.request.queryParameters["icd10_chapter"]
+                    ?.takeIf { it.isNotEmpty() }
+                val chapterFilter = chapterParam?.let { Icd10Chapter.fromSerialName(serialName = it) }
+                val rejectChapterFilter = chapterParam != null && chapterFilter == null
                 val departmentFilter = call.request.queryParameters["department"]
                     ?.let { MedicalDepartment.fromSerialName(key = it) }
                 val chronicityFilter = call.request.queryParameters["chronicity"]
@@ -225,6 +227,7 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
                         val filtered = applyDiseaseListFilters(
                             diseases = scenarioDiseases,
                             chapterFilter = chapterFilter,
+                            rejectChapterFilter = rejectChapterFilter,
                             departmentFilter = departmentFilter,
                             chronicitySerialName = chronicityFilter,
                             infectiousFilter = infectiousFilter,
@@ -253,19 +256,25 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
  * `DiseaseSummary` 版から差し替え)。
  *
  * `icd10_chapter` / `department` / `chronicity` / `infectious` を AND 合成する。引数の null は
- * 「このフィルタを適用しない」を表す。`chronicitySerialName` は `Chronicity.serialName` と生文字列
- * 比較するため、未知キーは `null` ではなくヒット 0 件を返す (fromChapterKey / fromSerialName とは
- * 非対称)。`infectiousFilter` は `toBooleanStrictOrNull()` で parse するため `"true"`/`"false"` 以外
- * は `null` に落ちて無視する。Disease 全体を返すのは、後段で `DiseaseSearchService.applyKeyword`
- * が `nameKana` / `nameEnglish` / `synonyms` を参照するため。
+ * 「このフィルタを適用しない」を表す。`rejectChapterFilter=true` は呼び出し元で `icd10_chapter`
+ * クエリが提供されたが `Icd10Chapter.fromSerialName` で解決できなかった (旧ローマ数字など) ことを
+ * 表し、その場合は即座に空リストを返す。`chronicitySerialName` は `Chronicity.serialName` と生文字列
+ * 比較するため、未知キーは `null` ではなくヒット 0 件を返す。`infectiousFilter` は
+ * `toBooleanStrictOrNull()` で parse するため `"true"`/`"false"` 以外は `null` に落ちて無視する。
+ * Disease 全体を返すのは、後段で `DiseaseSearchService.applyKeyword` が `nameKana` / `nameEnglish` /
+ * `synonyms` を参照するため。
  */
 private fun applyDiseaseListFilters(
     diseases: List<Disease>,
     chapterFilter: Icd10Chapter?,
+    rejectChapterFilter: Boolean,
     departmentFilter: MedicalDepartment?,
     chronicitySerialName: String?,
     infectiousFilter: Boolean?,
 ): List<Disease> {
+    if (rejectChapterFilter) {
+        return emptyList()
+    }
     var result = diseases
     if (chapterFilter != null) {
         result = result.filter { it.icd10Chapter == chapterFilter }
