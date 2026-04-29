@@ -30,6 +30,28 @@ class DiseaseListFixturesPreconditionTest {
         )
     }
 
+    @Test
+    fun `allDiseases has at least 1 with treatments_pharmacological non-empty`() {
+        val diseases = buildFreshGenerator().generate(blueprints = DiseaseBlueprintFactory.build())
+
+        assertTrue(
+            actual = diseases.any { it.treatments.pharmacological.isNotEmpty() },
+            message = "Phase 13 has_pharmacological_treatment=true Red premise: " +
+                "at least 1 disease must populate treatments.pharmacological",
+        )
+    }
+
+    @Test
+    fun `allDiseases has at least 1 with treatments_pharmacological empty`() {
+        val diseases = buildFreshGenerator().generate(blueprints = DiseaseBlueprintFactory.build())
+
+        assertTrue(
+            actual = diseases.any { it.treatments.pharmacological.isEmpty() },
+            message = "Phase 13 has_pharmacological_treatment=false Red premise: " +
+                "at least 1 disease must leave treatments.pharmacological as default empty",
+        )
+    }
+
     private companion object {
         fun buildFreshGenerator(): DiseaseGenerator =
             DiseaseGenerator(

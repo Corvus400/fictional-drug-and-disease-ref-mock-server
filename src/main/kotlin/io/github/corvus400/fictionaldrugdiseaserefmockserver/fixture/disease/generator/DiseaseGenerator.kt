@@ -127,6 +127,7 @@ class DiseaseGenerator(
             complications = complications.map { it.katakana },
             treatments = DiseaseNestedBuilders.buildTreatments(
                 id = diseaseId,
+                chapter = blueprint.icd10Chapter,
                 dict = placeholderDictionary,
                 context = context,
             ),
