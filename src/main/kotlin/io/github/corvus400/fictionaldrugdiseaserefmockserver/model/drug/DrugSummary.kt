@@ -17,6 +17,9 @@ data class DrugSummary(
     val therapeuticCategoryName: String,
     val regulatoryClass: List<RegulatoryClass>,
     val dosageForm: DosageForm,
+    val brandNameKana: String,
+    val atcCode: String,
+    val revisedAt: String,
 )
 
 fun Drug.toSummary(): DrugSummary =
@@ -27,4 +30,7 @@ fun Drug.toSummary(): DrugSummary =
         therapeuticCategoryName = therapeuticCategoryName,
         regulatoryClass = regulatoryClass,
         dosageForm = dosageForm,
+        brandNameKana = brandNameKana,
+        atcCode = atcCode,
+        revisedAt = revisedAt,
     )
