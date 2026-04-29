@@ -51,4 +51,17 @@ enum class PrecautionPopulationCategory {
      */
     val serialName: String
         get() = serializer().descriptor.getElementName(index = ordinal)
+
+    companion object {
+        /**
+         * `/drugs?precaution_category=...` クエリ値 ([raw]) を enum 定数名 (例: `PREGNANT`) として解決する。
+         *
+         * 未知の値は [IllegalArgumentException] を投げ、Route 層で 400 + `INVALID_PRECAUTION_CATEGORY`
+         * の `ErrorResponse` に変換される。`runCatching {} .getOrNull()` 等での握りつぶし禁止
+         * (基本方針 10: エラー可視性)。
+         */
+        fun fromQueryOrThrow(raw: String): PrecautionPopulationCategory =
+            runCatching { valueOf(value = raw) }
+                .getOrElse { throw IllegalArgumentException("Unknown precaution_category: $raw") }
+    }
 }
