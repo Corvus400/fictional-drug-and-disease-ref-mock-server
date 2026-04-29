@@ -229,7 +229,7 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
                 } catch (_: IllegalArgumentException) {
                     call.respond(
                         status = HttpStatusCode.BadRequest,
-                        message = ErrorResponse(code = "BAD_REQUEST", message = "Unknown sort key: $sortRaw"),
+                        message = ErrorResponse(code = "INVALID_SORT_KEY", message = "Unknown sort key: $sortRaw"),
                     )
                     return@handle
                 }
