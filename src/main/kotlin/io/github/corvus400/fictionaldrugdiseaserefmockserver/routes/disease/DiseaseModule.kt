@@ -223,7 +223,16 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
                 val keywordTarget = DiseaseKeywordTarget.fromQuery(
                     value = call.request.queryParameters["keyword_target"]
                 )
-                val sortKey = DiseaseSortKey.fromQuery(raw = call.request.queryParameters["sort"])
+                val sortRaw = call.request.queryParameters["sort"]
+                val sortKey = try {
+                    DiseaseSortKey.fromQuery(raw = sortRaw)
+                } catch (_: IllegalArgumentException) {
+                    call.respond(
+                        status = HttpStatusCode.BadRequest,
+                        message = ErrorResponse(code = "BAD_REQUEST", message = "Unknown sort key: $sortRaw"),
+                    )
+                    return@handle
+                }
                 val resolved = call.resolveScenarioWithOverride(
                     scenarioManager = scenarioManager,
                     endpointName = diseaseListMetadata.endpointName,
