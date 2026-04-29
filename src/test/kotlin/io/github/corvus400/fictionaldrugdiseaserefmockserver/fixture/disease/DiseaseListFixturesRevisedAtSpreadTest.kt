@@ -15,10 +15,11 @@ class DiseaseListFixturesRevisedAtSpreadTest {
         val distinct = diseases.map { disease -> disease.revisedAt }.distinct()
 
         assertEquals(
-            expected = minOf(diseases.size, DiseaseGenerator.REVISED_AT_SPREAD_DAYS),
+            expected = diseases.size,
             actual = distinct.size,
-            message = "Disease revisedAt must use the full deterministic spread for Phase 12 REVISED_AT_DESC " +
-                "(got ${distinct.size} distinct over ${diseases.size}). See #313 and #73 Phase 6 finding.",
+            message =
+            "Disease fixtures must be fully unique within SPREAD=${DiseaseGenerator.REVISED_AT_SPREAD_DAYS} " +
+                "for #313 (got ${distinct.size} distinct over ${diseases.size}).",
         )
     }
 
