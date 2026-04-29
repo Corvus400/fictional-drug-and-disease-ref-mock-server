@@ -23,6 +23,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.respondWith
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.scenario.ScenarioManager
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.search.DiseaseKeywordTarget
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.search.DiseaseSearchService
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.search.DiseaseSortKey
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.search.KeywordMatch
 import io.github.smiley4.ktoropenapi.get
 import io.github.smiley4.ktoropenapi.route
@@ -192,6 +193,12 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
                                     "にフォールバック。"
                                 required = false
                             }
+                            queryParameter<String>("sort") {
+                                description = "並び替えキー。未指定は `-revised_at` (改訂日降順)、" +
+                                    "`name_kana` (読み仮名昇順) / `icd10_chapter` (ICD-10 章昇順) を許容。" +
+                                    "未対応キーは 400 BadRequest。"
+                                required = false
+                            }
                         }
                     },
                 )
@@ -216,6 +223,7 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
                 val keywordTarget = DiseaseKeywordTarget.fromQuery(
                     value = call.request.queryParameters["keyword_target"]
                 )
+                val sortKey = DiseaseSortKey.fromQuery(raw = call.request.queryParameters["sort"])
                 val resolved = call.resolveScenarioWithOverride(
                     scenarioManager = scenarioManager,
                     endpointName = diseaseListMetadata.endpointName,
@@ -238,8 +246,9 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
                             match = keywordMatch,
                             target = keywordTarget,
                         )
+                        val sorted = DiseaseSearchService.applySort(items = keywordFiltered, sort = sortKey)
                         paginate(
-                            summaries = keywordFiltered.map { it.toSummary() },
+                            summaries = sorted.map { it.toSummary() },
                             page = page,
                             pageSize = pageSize,
                         )
