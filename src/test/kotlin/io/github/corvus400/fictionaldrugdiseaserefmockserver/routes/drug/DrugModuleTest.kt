@@ -1,6 +1,8 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.drug
 
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.DrugListResponse
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.module
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.AppJson
 import io.ktor.client.request.get
 import io.ktor.client.request.headers
 import io.ktor.client.statement.bodyAsText
@@ -106,4 +108,21 @@ class DrugModuleTest {
             message = "empty scenario must expose envelope with items.size == 0",
         )
     }
+
+    @Test
+    fun `GET drugs with sort brand_name_kana returns items ordered by brandNameKana ascending`() =
+        testApplication {
+            application { module() }
+
+            val response = client.get("/drugs?sort=brand_name_kana&page_size=100")
+
+            assertEquals(HttpStatusCode.OK, response.status)
+            val body = AppJson.decodeFromString<DrugListResponse>(response.bodyAsText())
+            val kanas = body.items.map { summary -> summary.brandNameKana }
+            assertEquals(
+                expected = kanas.sorted(),
+                actual = kanas,
+                message = "sort=brand_name_kana must order items by brandNameKana ascending",
+            )
+        }
 }
