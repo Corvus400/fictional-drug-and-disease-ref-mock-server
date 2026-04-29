@@ -39,4 +39,17 @@ enum class OnsetPattern {
      */
     val serialName: String
         get() = serializer().descriptor.getElementName(index = ordinal)
+
+    companion object {
+        /**
+         * `/diseases?onset_pattern=...` クエリ値 ([raw]) を enum 定数名 (例: `ACUTE`) として解決する。
+         *
+         * 未知の値は [IllegalArgumentException] を投げ、Route 層で 400 + `INVALID_ONSET_PATTERN`
+         * の `ErrorResponse` に変換される。`runCatching {} .getOrNull()` 等での握りつぶし禁止
+         * (基本方針 10: エラー可視性)。
+         */
+        fun fromQueryOrThrow(raw: String): OnsetPattern =
+            runCatching { valueOf(value = raw) }
+                .getOrElse { throw IllegalArgumentException("Unknown onset_pattern: $raw") }
+    }
 }
