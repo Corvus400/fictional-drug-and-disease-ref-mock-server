@@ -240,6 +240,7 @@ internal object DiseaseNestedBuilders {
 
     fun buildTreatments(
         id: String,
+        chapter: Icd10Chapter,
         dict: DiseasePlaceholderDictionary,
         context: DiseaseRenderContext,
     ): TreatmentInfo {
@@ -248,9 +249,14 @@ internal object DiseaseNestedBuilders {
             slot = DiseaseFieldSlot.TREATMENT_PHARMA_COUNT.ordinal,
             index = 0,
         )
+        val pharmaRange = if (chapter == Icd10Chapter.CHAPTER_IV) {
+            TREATMENT_PHARMA_RANGE_REQUIRED
+        } else {
+            TREATMENT_PHARMA_RANGE_OPTIONAL
+        }
         val pharmaCount = ValueRangeGenerator.pickCount(
             seed = pharmaCountSeed,
-            range = TREATMENT_PHARMA_RANGE,
+            range = pharmaRange,
         )
         val pharmacological = (0 until pharmaCount).map { offset ->
             PharmaTreatment(
@@ -552,7 +558,8 @@ internal object DiseaseNestedBuilders {
     private val DIAGNOSTIC_SUPPORTING_RANGE: IntRange = 1..2
     private val REQUIRED_EXAM_RANGE: IntRange = 2..3
     private val SEVERITY_GRADE_RANGE: IntRange = 2..3
-    private val TREATMENT_PHARMA_RANGE: IntRange = 1..2
+    private val TREATMENT_PHARMA_RANGE_REQUIRED: IntRange = 1..2
+    private val TREATMENT_PHARMA_RANGE_OPTIONAL: IntRange = 0..2
     private val TREATMENT_NONPHARMA_RANGE: IntRange = 1..2
     private val TREATMENT_ACUTE_RANGE: IntRange = 1..2
     private val PREVENTION_RANGE: IntRange = 1..2
