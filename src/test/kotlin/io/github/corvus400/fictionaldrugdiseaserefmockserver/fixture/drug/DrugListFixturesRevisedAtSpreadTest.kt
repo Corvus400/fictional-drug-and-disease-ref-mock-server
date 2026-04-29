@@ -14,10 +14,10 @@ class DrugListFixturesRevisedAtSpreadTest {
         val distinct = drugs.map { drug -> drug.revisedAt }.distinct()
 
         assertEquals(
-            expected = minOf(drugs.size, DrugGenerator.REVISED_AT_SPREAD_DAYS),
+            expected = DrugGenerator.REVISED_AT_SPREAD_DAYS,
             actual = distinct.size,
-            message = "Drug revisedAt must use the full deterministic spread for Phase 12 REVISED_AT_DESC " +
-                "(got ${distinct.size} distinct over ${drugs.size}). See #313 and #73 Phase 6 finding.",
+            message = "Drug 120 fixtures must use SPREAD=90 as designed for #313 " +
+                "(got ${distinct.size} distinct over ${drugs.size}). Tie-break determinism is covered by Phase 12 #118.",
         )
     }
 }
