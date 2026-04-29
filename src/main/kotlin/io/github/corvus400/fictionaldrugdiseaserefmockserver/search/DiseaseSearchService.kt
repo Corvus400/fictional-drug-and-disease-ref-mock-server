@@ -88,7 +88,7 @@ object DiseaseSearchService {
                 compareByDescending<Disease> { it.revisedAt }
                     .thenByDescending { it.id },
             )
-        DiseaseSortKey.NAME_KANA_ASC -> items
+        DiseaseSortKey.NAME_KANA_ASC -> items.sortedBy { it.nameKana }
         DiseaseSortKey.ICD10_CHAPTER_ASC -> items
     }
 }
