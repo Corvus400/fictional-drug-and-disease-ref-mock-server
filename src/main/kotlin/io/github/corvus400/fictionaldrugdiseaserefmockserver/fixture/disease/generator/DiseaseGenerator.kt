@@ -136,7 +136,7 @@ class DiseaseGenerator(
                 id = diseaseId,
                 selfIndex = blueprint.index,
             ),
-            revisedAt = DEFAULT_REVISED_AT,
+            revisedAt = revisedAtFor(blueprint = blueprint),
         )
     }
 
@@ -145,7 +145,12 @@ class DiseaseGenerator(
         private const val DIFFERENTIAL_COUNT: Int = 2
         private const val COMPLICATION_COUNT: Int = 2
         private const val DISEASE_ID_PAD_LENGTH: Int = 4
-        private val DEFAULT_REVISED_AT: String =
-            IsoDateFormatter.formatDate(date = LocalDate.of(2026, 4, 23))
+        private val REVISED_AT_BASE: LocalDate = LocalDate.of(2026, 4, 23)
+        private const val REVISED_AT_SPREAD_DAYS: Int = 90
+
+        private fun revisedAtFor(blueprint: DiseaseBlueprint): String =
+            IsoDateFormatter.formatDate(
+                date = REVISED_AT_BASE.minusDays((blueprint.index % REVISED_AT_SPREAD_DAYS).toLong()),
+            )
     }
 }
