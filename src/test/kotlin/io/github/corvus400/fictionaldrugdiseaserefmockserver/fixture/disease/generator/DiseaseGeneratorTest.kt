@@ -329,10 +329,8 @@ class DiseaseGeneratorTest {
             "differentialDiagnoses empty for ${disease.id}",
         )
         assertTrue(disease.complications.isNotEmpty(), "complications empty for ${disease.id}")
-        assertTrue(
-            disease.treatments.pharmacological.isNotEmpty(),
-            "treatments.pharmacological empty for ${disease.id}",
-        )
+        // treatments.pharmacological は章別必須 (Ch.IV のみ) のため共通 populate 検証から除外。
+        // 章別の非 empty 検証は同ファイルの CHAPTER_IV 専用テストで担保されている。
         assertTrue(disease.prevention.isNotEmpty(), "prevention empty for ${disease.id}")
         assertTrue(disease.relatedDrugIds.isNotEmpty(), "relatedDrugIds empty for ${disease.id}")
         assertTrue(
