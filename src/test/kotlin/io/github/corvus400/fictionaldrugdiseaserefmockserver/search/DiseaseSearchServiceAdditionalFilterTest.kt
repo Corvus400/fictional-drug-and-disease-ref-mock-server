@@ -198,6 +198,40 @@ class DiseaseSearchServiceAdditionalFilterTest {
         assertEquals(listOf("disease_0002", "disease_0004"), result.map { it.id })
     }
 
+    @Test
+    fun `applyAdditionalFilters with symptomKeyword=X and hasSeverityGrading=true returns AND intersection`() {
+        val items =
+            listOf(
+                diseaseWithMainSymptomsAndSeverityGrading(
+                    id = "disease_0001",
+                    mainSymptoms = listOf("X症候群"),
+                    hasSeverityGrading = true,
+                ),
+                diseaseWithMainSymptomsAndSeverityGrading(
+                    id = "disease_0002",
+                    mainSymptoms = listOf("X症候群"),
+                    hasSeverityGrading = false,
+                ),
+                diseaseWithMainSymptomsAndSeverityGrading(
+                    id = "disease_0003",
+                    mainSymptoms = listOf("無関係な症状"),
+                    hasSeverityGrading = true,
+                ),
+                diseaseWithMainSymptomsAndSeverityGrading(
+                    id = "disease_0004",
+                    mainSymptoms = listOf("頭痛"),
+                    hasSeverityGrading = false,
+                ),
+            )
+        val result =
+            DiseaseSearchService.applyAdditionalFilters(
+                items = items,
+                symptomKeyword = "X",
+                hasSeverityGrading = true,
+            )
+        assertEquals(listOf("disease_0001"), result.map { it.id })
+    }
+
     private fun diseaseWithMainSymptoms(
         id: String,
         mainSymptoms: List<String>,
@@ -261,4 +295,18 @@ class DiseaseSearchServiceAdditionalFilterTest {
 
     private fun diseaseWithoutSeverityGrading(id: String): Disease =
         sampleDisease(id = id).copy(severityGrading = null)
+
+    private fun diseaseWithMainSymptomsAndSeverityGrading(
+        id: String,
+        mainSymptoms: List<String>,
+        hasSeverityGrading: Boolean,
+    ): Disease =
+        diseaseWithMainSymptoms(id = id, mainSymptoms = mainSymptoms).copy(
+            severityGrading =
+            if (hasSeverityGrading) {
+                diseaseWithSeverityGrading(id = id).severityGrading
+            } else {
+                null
+            },
+        )
 }
