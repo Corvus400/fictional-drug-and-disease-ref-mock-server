@@ -15,7 +15,7 @@ import kotlin.test.assertNotNull
 
 class DiseaseListFixturesSummaryTest {
     @Test
-    fun `default scenario items(0) has exactly 6 fields and matches DiseaseSummary shape`() {
+    fun `default scenario items(0) has exactly 8 fields and matches DiseaseSummary shape`() {
         val diseases = DiseaseGenerator(
             adapter = FixmergeNameAdapter(),
             placeholderDictionary = DiseasePlaceholderDictionary(),
@@ -31,12 +31,21 @@ class DiseaseListFixturesSummaryTest {
         assertNotNull(firstItem, "default scenario must have at least one item")
 
         assertEquals(
-            expected = 6,
+            expected = 8,
             actual = firstItem.size,
-            message = "items[0] must expose exactly 6 fields (DiseaseSummary shape), got keys=${firstItem.keys}",
+            message = "items[0] must expose exactly 8 fields (DiseaseSummary shape), got keys=${firstItem.keys}",
         )
         assertEquals(
-            expected = setOf("id", "name", "icd10_chapter", "medical_department", "chronicity", "infectious"),
+            expected = setOf(
+                "id",
+                "name",
+                "icd10_chapter",
+                "medical_department",
+                "chronicity",
+                "infectious",
+                "name_kana",
+                "revised_at",
+            ),
             actual = firstItem.keys,
             message = "items[0] keys must match DiseaseSummary snake_case shape",
         )

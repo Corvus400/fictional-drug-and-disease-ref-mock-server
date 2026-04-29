@@ -5,6 +5,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.validation.
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.DiseaseListResponse
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.DiseaseSummary
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.toSummary
 import kotlin.math.ceil
 
 /**
@@ -34,16 +35,7 @@ class DiseaseListFixtures(
         }
     }
 
-    private val defaultSummaries: List<DiseaseSummary> = diseases.map { disease ->
-        DiseaseSummary(
-            id = disease.id,
-            name = disease.name,
-            icd10Chapter = disease.icd10Chapter,
-            medicalDepartment = disease.medicalDepartment,
-            chronicity = disease.chronicity,
-            infectious = disease.infectious,
-        )
-    }
+    private val defaultSummaries: List<DiseaseSummary> = diseases.map { it.toSummary() }
 
     /**
      * シナリオ別の `DiseaseSummary` 全件。ページング (`resolve`) の元データ。

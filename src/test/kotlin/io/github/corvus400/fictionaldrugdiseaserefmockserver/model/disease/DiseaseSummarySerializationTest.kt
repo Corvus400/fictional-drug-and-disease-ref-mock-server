@@ -13,7 +13,7 @@ import kotlin.test.assertTrue
 
 class DiseaseSummarySerializationTest {
     @Test
-    fun `DiseaseSummary serializes with exactly 6 snake_case fields`() {
+    fun `DiseaseSummary serializes with exactly 8 snake_case fields`() {
         val summary = DiseaseSummary(
             id = "disease_0001",
             name = "テスト疾患",
@@ -21,13 +21,24 @@ class DiseaseSummarySerializationTest {
             medicalDepartment = listOf(MedicalDepartment.ENDOCRINOLOGY),
             chronicity = Chronicity.CHRONIC,
             infectious = false,
+            nameKana = "テストシッカン",
+            revisedAt = "2026-04-23",
         )
 
         val jsonObject = Json.parseToJsonElement(AppJson.encodeToString(summary)).jsonObject
 
-        assertEquals(6, jsonObject.size)
+        assertEquals(8, jsonObject.size)
         assertEquals(
-            setOf("id", "name", "icd10_chapter", "medical_department", "chronicity", "infectious"),
+            setOf(
+                "id",
+                "name",
+                "icd10_chapter",
+                "medical_department",
+                "chronicity",
+                "infectious",
+                "name_kana",
+                "revised_at",
+            ),
             jsonObject.keys,
         )
         val keyCasingViolations = jsonObject.keys.filter { key ->
@@ -43,5 +54,7 @@ class DiseaseSummarySerializationTest {
         assertEquals("[\"endocrinology\"]", jsonObject["medical_department"]?.toString())
         assertEquals("\"chronic\"", jsonObject["chronicity"]?.toString())
         assertEquals("false", jsonObject["infectious"]?.toString())
+        assertEquals("テストシッカン", jsonObject["name_kana"]?.toString()?.trim('"'))
+        assertEquals("2026-04-23", jsonObject["revised_at"]?.toString()?.trim('"'))
     }
 }
