@@ -95,6 +95,39 @@ class DiseaseSearchServiceAdditionalFilterTest {
         assertEquals(listOf("disease_0001", "disease_0003"), result.map { it.id })
     }
 
+    @Test
+    fun `applyAdditionalFilters with examCategories=IMAGING,BLOOD_TEST applies OR to requiredExams`() {
+        val items =
+            listOf(
+                diseaseWithExamCategories(
+                    id = "disease_0001",
+                    categories = listOf(ExamCategory.IMAGING),
+                ),
+                diseaseWithExamCategories(
+                    id = "disease_0002",
+                    categories = listOf(ExamCategory.BLOOD_TEST),
+                ),
+                diseaseWithExamCategories(
+                    id = "disease_0003",
+                    categories = listOf(ExamCategory.PHYSIOLOGICAL, ExamCategory.IMAGING),
+                ),
+                diseaseWithExamCategories(
+                    id = "disease_0004",
+                    categories = listOf(ExamCategory.INTERVIEW),
+                ),
+                diseaseWithExamCategories(
+                    id = "disease_0005",
+                    categories = listOf(ExamCategory.PATHOLOGY),
+                ),
+            )
+        val result =
+            DiseaseSearchService.applyAdditionalFilters(
+                items = items,
+                examCategories = listOf(ExamCategory.IMAGING, ExamCategory.BLOOD_TEST),
+            )
+        assertEquals(listOf("disease_0001", "disease_0002", "disease_0003"), result.map { it.id })
+    }
+
     private fun diseaseWithMainSymptoms(
         id: String,
         mainSymptoms: List<String>,
