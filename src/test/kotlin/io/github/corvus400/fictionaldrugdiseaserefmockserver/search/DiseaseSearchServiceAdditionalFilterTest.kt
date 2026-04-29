@@ -181,6 +181,23 @@ class DiseaseSearchServiceAdditionalFilterTest {
         assertEquals(listOf("disease_0001", "disease_0003"), result.map { it.id })
     }
 
+    @Test
+    fun `applyAdditionalFilters with hasSeverityGrading=false returns only items where severityGrading is null`() {
+        val items =
+            listOf(
+                diseaseWithSeverityGrading(id = "disease_0001"),
+                diseaseWithoutSeverityGrading(id = "disease_0002"),
+                diseaseWithSeverityGrading(id = "disease_0003"),
+                diseaseWithoutSeverityGrading(id = "disease_0004"),
+            )
+        val result =
+            DiseaseSearchService.applyAdditionalFilters(
+                items = items,
+                hasSeverityGrading = false,
+            )
+        assertEquals(listOf("disease_0002", "disease_0004"), result.map { it.id })
+    }
+
     private fun diseaseWithMainSymptoms(
         id: String,
         mainSymptoms: List<String>,
