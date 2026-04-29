@@ -10,6 +10,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.coun
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixmerge.coinage.CoinedName
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixmerge.nameslot.NameSlot
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
 import java.time.LocalDate
 
 class DiseaseGenerator(
@@ -113,11 +114,15 @@ class DiseaseGenerator(
                 id = diseaseId,
                 chapter = blueprint.icd10Chapter,
             ),
-            severityGrading = DiseaseNestedBuilders.buildSeverityGrading(
-                id = diseaseId,
-                dict = placeholderDictionary,
-                context = context,
-            ),
+            severityGrading = if (blueprint.icd10Chapter in CHAPTERS_REQUIRING_SEVERITY_GRADING) {
+                DiseaseNestedBuilders.buildSeverityGrading(
+                    id = diseaseId,
+                    dict = placeholderDictionary,
+                    context = context,
+                )
+            } else {
+                null
+            },
             differentialDiagnoses = differentials.map { it.katakana },
             complications = complications.map { it.katakana },
             treatments = DiseaseNestedBuilders.buildTreatments(
@@ -147,6 +152,14 @@ class DiseaseGenerator(
         private const val DISEASE_ID_PAD_LENGTH: Int = 4
         private val REVISED_AT_BASE: LocalDate = LocalDate.of(2026, 4, 23)
         internal const val REVISED_AT_SPREAD_DAYS: Int = 90
+
+        // 仕様: severityGrading は Ch.II (新生物) と Ch.IX (循環器系) のみ非 null。
+        // 他章は Disease モデルのデフォルト値 null を維持する。
+        // DiseaseFixtureValidator.chapterTwoViolations / chapterNineViolations と整合。
+        private val CHAPTERS_REQUIRING_SEVERITY_GRADING: Set<Icd10Chapter> = setOf(
+            Icd10Chapter.CHAPTER_II,
+            Icd10Chapter.CHAPTER_IX,
+        )
 
         private fun revisedAtFor(blueprint: DiseaseBlueprint): String =
             IsoDateFormatter.formatDate(

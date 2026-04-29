@@ -316,7 +316,8 @@ class DiseaseGeneratorTest {
         val prognosis = assertNotNull(disease.prognosis, "prognosis null for ${disease.id}")
         assertTrue(prognosis.isNotBlank(), "prognosis blank for ${disease.id}")
         assertNotNull(disease.epidemiology, "epidemiology null for ${disease.id}")
-        assertNotNull(disease.severityGrading, "severityGrading null for ${disease.id}")
+        // severityGrading は章別必須 (Ch.II/IX のみ) のため共通 populate 検証から除外。
+        // 章別の非 null 検証は同ファイルの CHAPTER_II / CHAPTER_IX 専用テストで担保されている。
         assertTrue(
             disease.medicalDepartment.isNotEmpty(),
             "medicalDepartment empty for ${disease.id}",
