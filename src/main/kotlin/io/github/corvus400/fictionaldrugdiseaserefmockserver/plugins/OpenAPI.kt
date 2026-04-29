@@ -83,13 +83,13 @@ private fun buildApiDescription(): String {
         |
         |### 1. X-Mock-Scenario ヘッダー（リクエスト単位）
         |```bash
-        |curl -H "X-Mock-Scenario: empty" http://localhost:8080/api/sample
+        |curl -H "X-Mock-Scenario: empty" http://localhost:8080/drugs
         |```
         |
         |### 2. Admin API（サーバー全体のオーバーライド）
         |```bash
         |# シナリオ設定
-        |curl -X POST http://localhost:8080/__admin/configs/sample \
+        |curl -X POST http://localhost:8080/__admin/configs/drugList \
         |  -H "Content-Type: application/json" \
         |  -d '{"state": "empty"}'
         |
