@@ -72,12 +72,17 @@ object DrugSearchService {
     /**
      * `sort` キーに従って `items` を並び替えた新しいリストを返す純関数。
      * 副作用なし・シナリオ非依存。後続 triangulation で sort key 対応を段階的に拡張する。
+     *
+     * `revisedAt` が同値の場合、API 契約として `id` 降順で tie-break する (`drug_NNNN` の数値が
+     * 大きいほど新しい fixture という運用と一致させ、`-revised_at` の「新しい順」を貫徹するため)。
      */
     fun applySort(
         items: List<Drug>,
         sort: DrugSortKey,
     ): List<Drug> = when (sort) {
-        DrugSortKey.REVISED_AT_DESC -> items.sortedByDescending { it.revisedAt }
+        DrugSortKey.REVISED_AT_DESC -> items.sortedWith(
+            compareByDescending<Drug> { it.revisedAt }.thenByDescending { it.id },
+        )
         DrugSortKey.BRAND_NAME_KANA_ASC,
         DrugSortKey.ATC_CODE_ASC,
         DrugSortKey.THERAPEUTIC_CATEGORY_NAME_ASC,

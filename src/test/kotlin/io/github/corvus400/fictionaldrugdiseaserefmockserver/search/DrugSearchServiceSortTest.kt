@@ -30,6 +30,17 @@ class DrugSearchServiceSortTest {
         assertEquals(listOf("drug_0002", "drug_0003", "drug_0001"), sorted.map { it.id })
     }
 
+    @Test
+    fun `applySort breaks revisedAt ties by id descending when sort is REVISED_AT_DESC`() {
+        val items = listOf(
+            drugWith(id = "drug_0001", revisedAt = "2026-04-23"),
+            drugWith(id = "drug_0002", revisedAt = "2026-04-23"),
+            drugWith(id = "drug_0003", revisedAt = "2026-04-23"),
+        )
+        val sorted = DrugSearchService.applySort(items = items, sort = DrugSortKey.REVISED_AT_DESC)
+        assertEquals(listOf("drug_0003", "drug_0002", "drug_0001"), sorted.map { it.id })
+    }
+
     private fun drugWith(
         id: String,
         revisedAt: String,
