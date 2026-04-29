@@ -2,11 +2,13 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.disease
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.module
 import io.ktor.client.request.get
+import io.ktor.client.request.header
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.encodeURLParameter
 import io.ktor.server.testing.testApplication
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlin.test.Test
@@ -31,6 +33,19 @@ class DiseaseModuleAdditionalFilterTest {
             message = "symptom_keyword=発熱 must filter total_count to 1..<80, got $totalCount",
         )
     }
+
+    @Test
+    fun `GET diseases under empty scenario with symptom_keyword X returns HTTP 200 and empty items`() =
+        testApplication {
+            application { module() }
+
+            val keyword = "発熱".encodeURLParameter()
+            val response = client.get(urlString = "/diseases?symptom_keyword=$keyword") {
+                header(key = "X-Mock-Scenario", value = "empty")
+            }
+
+            assertOkEmptyItems(response = response)
+        }
 
     @Test
     fun `GET diseases with onset_pattern ACUTE and CHRONIC returns OR-filtered items`() = testApplication {
@@ -89,6 +104,18 @@ class DiseaseModuleAdditionalFilterTest {
         }
 
     @Test
+    fun `GET diseases under empty scenario with has_pharmacological_treatment true returns HTTP 200 and empty items`() =
+        testApplication {
+            application { module() }
+
+            val response = client.get(urlString = "/diseases?has_pharmacological_treatment=true") {
+                header(key = "X-Mock-Scenario", value = "empty")
+            }
+
+            assertOkEmptyItems(response = response)
+        }
+
+    @Test
     fun `GET diseases with has_pharmacological_treatment false returns items with empty pharmacological`() =
         testApplication {
             application { module() }
@@ -126,6 +153,18 @@ class DiseaseModuleAdditionalFilterTest {
                 actual = totalCount in 1 until DEFAULT_DISEASE_COUNT,
                 message = "has_severity_grading=true must filter total_count to 1..<80, got $totalCount",
             )
+        }
+
+    @Test
+    fun `GET diseases under empty scenario with has_severity_grading true returns HTTP 200 and empty items`() =
+        testApplication {
+            application { module() }
+
+            val response = client.get(urlString = "/diseases?has_severity_grading=true") {
+                header(key = "X-Mock-Scenario", value = "empty")
+            }
+
+            assertOkEmptyItems(response = response)
         }
 
     @Test
@@ -199,6 +238,15 @@ class DiseaseModuleAdditionalFilterTest {
         val totalCount = body["total_count"]?.jsonPrimitive?.content?.toIntOrNull()
         assertNotNull(actual = totalCount, message = "response must include numeric total_count")
         return totalCount
+    }
+
+    private suspend fun assertOkEmptyItems(response: io.ktor.client.statement.HttpResponse) {
+        assertEquals(expected = HttpStatusCode.OK, actual = response.status)
+        val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
+        assertEquals(expected = 0, actual = body["total_count"]?.jsonPrimitive?.content?.toIntOrNull())
+        val items = body["items"]?.jsonArray
+        assertNotNull(actual = items, message = "response body must include items array")
+        assertEquals(expected = 0, actual = items.size)
     }
 
     private companion object {
