@@ -74,6 +74,14 @@ class DrugSearchServiceSortTest {
         assertEquals(listOf("drug_0001", "drug_0002", "drug_0003"), sorted.map { it.id })
     }
 
+    @Test
+    fun `applySort output is deterministic across repeated invocations for same input`() {
+        val items = (1..120).map { drugWith(id = "drug_%04d".format(it), brandNameKana = "カナ$it") }
+        val firstSorted = DrugSearchService.applySort(items = items, sort = DrugSortKey.BRAND_NAME_KANA_ASC)
+        val secondSorted = DrugSearchService.applySort(items = items, sort = DrugSortKey.BRAND_NAME_KANA_ASC)
+        assertEquals(firstSorted.map { it.id }, secondSorted.map { it.id })
+    }
+
     private fun drugWith(
         id: String,
         revisedAt: String = "2026-01-01",
