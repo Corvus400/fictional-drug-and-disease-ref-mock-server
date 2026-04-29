@@ -78,6 +78,9 @@ class DrugListFixtures(
      * ものに絞り込む (Phase 10-1b)。`DrugListQuery.keyword` を非 null かつ非空白で渡すと、
      * `keywordMatch` (PARTIAL/PREFIX) と `keywordTarget` (GENERIC/BRAND/BOTH) に従って
      * `DrugSearchService.applyKeyword` で絞り込む (Phase 11-10a)。複数指定時は AND 結合。
+     * `DrugListQuery.adverseReactionKeyword` を非 null かつ非空白で渡すと、
+     * `DrugSearchService.applyAdditionalFilters` で `adverseReactions.serious[].name` および
+     * `adverseReactions.other.*` を対象に部分一致で絞り込む (Phase 13-8)。
      * いずれも `null` の場合は従来通り全件を対象とする。
      */
     fun resolve(
@@ -183,6 +186,16 @@ class DrugListFixtures(
                 keyword = keyword,
                 match = query.keywordMatch,
                 target = query.keywordTarget,
+            )
+            val matchedIds = matchedDrugs.map { drug -> drug.id }.toSet()
+            filtered = filtered.filter { summary -> summary.id in matchedIds }
+        }
+        val adverseReactionKeyword = query.adverseReactionKeyword
+        if (!adverseReactionKeyword.isNullOrBlank()) {
+            val candidateDrugs = filtered.mapNotNull { summary -> allDrugsById[summary.id] }
+            val matchedDrugs = DrugSearchService.applyAdditionalFilters(
+                items = candidateDrugs,
+                adverseReactionKeyword = adverseReactionKeyword,
             )
             val matchedIds = matchedDrugs.map { drug -> drug.id }.toSet()
             filtered = filtered.filter { summary -> summary.id in matchedIds }

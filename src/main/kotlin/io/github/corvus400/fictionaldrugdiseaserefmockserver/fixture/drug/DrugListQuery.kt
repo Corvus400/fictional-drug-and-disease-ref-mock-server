@@ -19,4 +19,5 @@ data class DrugListQuery(
     val keyword: String? = null,
     val keywordMatch: KeywordMatch = KeywordMatch.PARTIAL,
     val keywordTarget: DrugKeywordTarget = DrugKeywordTarget.BOTH,
+    val adverseReactionKeyword: String? = null,
 )
