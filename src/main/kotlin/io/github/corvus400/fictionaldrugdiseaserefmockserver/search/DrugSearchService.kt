@@ -85,6 +85,6 @@ object DrugSearchService {
         )
         DrugSortKey.BRAND_NAME_KANA_ASC -> items.sortedBy { it.brandNameKana }
         DrugSortKey.ATC_CODE_ASC -> items.sortedBy { it.atcCode }
-        DrugSortKey.THERAPEUTIC_CATEGORY_NAME_ASC -> items
+        DrugSortKey.THERAPEUTIC_CATEGORY_NAME_ASC -> items.sortedBy { it.therapeuticCategoryName }
     }
 }
