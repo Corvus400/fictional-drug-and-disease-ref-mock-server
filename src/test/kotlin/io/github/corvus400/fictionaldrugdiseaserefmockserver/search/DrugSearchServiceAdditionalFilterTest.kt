@@ -231,6 +231,42 @@ class DrugSearchServiceAdditionalFilterTest {
         assertEquals(listOf("drug_0001", "drug_0002", "drug_0004"), result.map { it.id })
     }
 
+    @Test
+    fun `applyAdditionalFilters combined adverseReactionKeyword and precautionCategories returns AND intersection`() {
+        val items = listOf(
+            // 両条件マッチ: keyword "xxx" を serious に含み、かつ precaution に PREGNANT を含む
+            stubDrug(
+                id = "drug_0001",
+                serious = listOf(seriousReaction(name = "xxx症候群")),
+                precautions = listOf(precautionPopulation(category = PrecautionPopulationCategory.PREGNANT)),
+            ),
+            // keyword のみマッチ: precaution は GERIATRIC のみで PREGNANT を含まない
+            stubDrug(
+                id = "drug_0002",
+                serious = listOf(seriousReaction(name = "xxx肝障害")),
+                precautions = listOf(precautionPopulation(category = PrecautionPopulationCategory.GERIATRIC)),
+            ),
+            // precaution のみマッチ: serious は keyword 不一致
+            stubDrug(
+                id = "drug_0003",
+                serious = listOf(seriousReaction(name = "別の重篤副作用")),
+                precautions = listOf(precautionPopulation(category = PrecautionPopulationCategory.PREGNANT)),
+            ),
+            // どちらもマッチしない
+            stubDrug(
+                id = "drug_0004",
+                serious = listOf(seriousReaction(name = "別")),
+                precautions = listOf(precautionPopulation(category = PrecautionPopulationCategory.GERIATRIC)),
+            ),
+        )
+        val result = DrugSearchService.applyAdditionalFilters(
+            items = items,
+            adverseReactionKeyword = "xxx",
+            precautionCategories = listOf(PrecautionPopulationCategory.PREGNANT),
+        )
+        assertEquals(listOf("drug_0001"), result.map { it.id })
+    }
+
     private fun precautionPopulation(category: PrecautionPopulationCategory): PrecautionPopulation =
         PrecautionPopulation(
             category = category,
