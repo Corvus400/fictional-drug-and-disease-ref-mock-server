@@ -1,7 +1,9 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.search
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.ExamCategory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.OnsetPattern
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.Exam
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.SymptomInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.testutil.sampleDisease
 import kotlin.test.Test
@@ -64,6 +66,35 @@ class DiseaseSearchServiceAdditionalFilterTest {
         assertEquals(listOf("disease_0001", "disease_0002", "disease_0005"), result.map { it.id })
     }
 
+    @Test
+    fun `applyAdditionalFilters with examCategories=IMAGING keeps only items whose requiredExams contain IMAGING`() {
+        val items =
+            listOf(
+                diseaseWithExamCategories(
+                    id = "disease_0001",
+                    categories = listOf(ExamCategory.IMAGING),
+                ),
+                diseaseWithExamCategories(
+                    id = "disease_0002",
+                    categories = listOf(ExamCategory.BLOOD_TEST),
+                ),
+                diseaseWithExamCategories(
+                    id = "disease_0003",
+                    categories = listOf(ExamCategory.PHYSIOLOGICAL, ExamCategory.IMAGING),
+                ),
+                diseaseWithExamCategories(
+                    id = "disease_0004",
+                    categories = listOf(ExamCategory.INTERVIEW),
+                ),
+            )
+        val result =
+            DiseaseSearchService.applyAdditionalFilters(
+                items = items,
+                examCategories = listOf(ExamCategory.IMAGING),
+            )
+        assertEquals(listOf("disease_0001", "disease_0003"), result.map { it.id })
+    }
+
     private fun diseaseWithMainSymptoms(
         id: String,
         mainSymptoms: List<String>,
@@ -75,5 +106,20 @@ class DiseaseSearchServiceAdditionalFilterTest {
     ): Disease =
         sampleDisease(id = id).copy(
             symptoms = SymptomInfo(mainSymptoms = listOf("頭痛"), onsetPattern = onsetPattern),
+        )
+
+    private fun diseaseWithExamCategories(
+        id: String,
+        categories: List<ExamCategory>,
+    ): Disease =
+        sampleDisease(id = id).copy(
+            requiredExams =
+            categories.mapIndexed { index, category ->
+                Exam(
+                    name = "検査$index",
+                    category = category,
+                    typicalFinding = "所見$index",
+                )
+            },
         )
 }

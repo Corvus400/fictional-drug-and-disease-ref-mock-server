@@ -1,6 +1,7 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.search
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.ExamCategory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.OnsetPattern
 
 object DiseaseSearchService {
@@ -96,17 +97,18 @@ object DiseaseSearchService {
     /**
      * 追加フィルタ — `keyword` / `sort` 後段に適用される副次的な絞り込み群。
      *
-     * 本フェーズ (Phase 13-12) までで `symptomKeyword` と `onsetPatterns` を受け付ける。
-     * `onsetPatterns` はクエリ層で 0/1 個に解決される単値フィルタ前提だが、本層では
-     * `DrugSearchService.applyAdditionalFilters` の `precautionCategories` と同じく
-     * 集合扱いにして将来の複数値拡張に備える。引数無指定時は素通しする純関数。
-     * 後続フェーズで `examCategory` / `hasPharmacologicalTreatment` /
+     * 本フェーズ (Phase 13-14) までで `symptomKeyword` / `onsetPatterns` /
+     * `examCategories` を受け付ける。`examCategories` はクエリ層で 0/1 個に
+     * 解決される単値フィルタ前提だが、本層では `DrugSearchService.applyAdditionalFilters`
+     * の `precautionCategories` と同じく集合扱いにして将来の複数値拡張に備える。
+     * 引数無指定時は素通しする純関数。後続フェーズで `hasPharmacologicalTreatment` /
      * `hasSeverityGrading` を triangulation で順次追加する (issue #74)。
      */
     fun applyAdditionalFilters(
         items: List<Disease>,
         symptomKeyword: String? = null,
         onsetPatterns: List<OnsetPattern> = emptyList(),
+        examCategories: List<ExamCategory> = emptyList(),
     ): List<Disease> {
         var result = items
         if (!symptomKeyword.isNullOrBlank()) {
@@ -117,6 +119,11 @@ object DiseaseSearchService {
         if (onsetPatterns.isNotEmpty()) {
             result = result.filter { disease ->
                 disease.symptoms.onsetPattern in onsetPatterns
+            }
+        }
+        if (examCategories.isNotEmpty()) {
+            result = result.filter { disease ->
+                disease.requiredExams.any { it.category in examCategories }
             }
         }
         return result
