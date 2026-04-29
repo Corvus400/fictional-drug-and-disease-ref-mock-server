@@ -81,7 +81,11 @@ class DrugListFixtures(
      * `DrugListQuery.adverseReactionKeyword` を非 null かつ非空白で渡すと、
      * `DrugSearchService.applyAdditionalFilters` で `adverseReactions.serious[].name` および
      * `adverseReactions.other.*` を対象に部分一致で絞り込む (Phase 13-8)。
-     * いずれも `null` の場合は従来通り全件を対象とする。
+     * `DrugListQuery.precautionCategories` を非空で渡すと、同じく
+     * `DrugSearchService.applyAdditionalFilters` で `precautionsForSpecificPopulations[].category`
+     * のいずれかが指定カテゴリ集合に含まれる医薬品のみを残す (OR 結合)。
+     * `adverseReactionKeyword` と同時指定時は AND 結合で順次絞り込む (Phase 13-9)。
+     * いずれも `null` / 空の場合は従来通り全件を対象とする。
      */
     fun resolve(
         scenario: String,
@@ -191,11 +195,13 @@ class DrugListFixtures(
             filtered = filtered.filter { summary -> summary.id in matchedIds }
         }
         val adverseReactionKeyword = query.adverseReactionKeyword
-        if (!adverseReactionKeyword.isNullOrBlank()) {
+        val precautionCategories = query.precautionCategories
+        if (!adverseReactionKeyword.isNullOrBlank() || precautionCategories.isNotEmpty()) {
             val candidateDrugs = filtered.mapNotNull { summary -> allDrugsById[summary.id] }
             val matchedDrugs = DrugSearchService.applyAdditionalFilters(
                 items = candidateDrugs,
                 adverseReactionKeyword = adverseReactionKeyword,
+                precautionCategories = precautionCategories,
             )
             val matchedIds = matchedDrugs.map { drug -> drug.id }.toSet()
             filtered = filtered.filter { summary -> summary.id in matchedIds }

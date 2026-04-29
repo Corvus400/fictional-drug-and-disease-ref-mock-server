@@ -11,6 +11,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.DrugLi
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.ErrorResponse
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.Drug
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DosageForm
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.PrecautionPopulationCategory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RouteOfAdministration
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.ApiTag
@@ -201,6 +202,15 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
                                     "空または未指定時は絞り込みを行わない。"
                                 required = false
                             }
+                            queryParameter<String>("precaution_category") {
+                                description = "特定背景患者カテゴリ (`PrecautionPopulationCategory` の enum 名 " +
+                                    "(例: `${PrecautionPopulationCategory.PREGNANT.name}` / " +
+                                    "`${PrecautionPopulationCategory.GERIATRIC.name}`))。" +
+                                    "複数指定時 (`?precaution_category=A&precaution_category=B`) は OR 結合、" +
+                                    "他フィルタとは AND 結合。未知の値は HTTP 400 + " +
+                                    "`ErrorResponse(code=\"INVALID_PRECAUTION_CATEGORY\")` を返す。"
+                                required = false
+                            }
                         }
                     },
                 )
@@ -225,6 +235,21 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
                     value = call.request.queryParameters["keyword_target"],
                 )
                 val adverseReactionKeyword = call.request.queryParameters["adverse_reaction_keyword"]
+                val precautionCategories = try {
+                    call.request.queryParameters
+                        .getAll(name = "precaution_category")
+                        .orEmpty()
+                        .map { raw -> PrecautionPopulationCategory.fromQueryOrThrow(raw = raw) }
+                } catch (e: IllegalArgumentException) {
+                    call.respond(
+                        status = HttpStatusCode.BadRequest,
+                        message = ErrorResponse(
+                            code = "INVALID_PRECAUTION_CATEGORY",
+                            message = e.message.orEmpty(),
+                        ),
+                    )
+                    return@handle
+                }
                 val sortKey = try {
                     DrugSortKey.fromQuery(raw = call.request.queryParameters["sort"])
                 } catch (e: IllegalArgumentException) {
@@ -253,6 +278,7 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
                                 keywordMatch = keywordMatch,
                                 keywordTarget = keywordTarget,
                                 adverseReactionKeyword = adverseReactionKeyword,
+                                precautionCategories = precautionCategories,
                             ),
                             sortKey = sortKey,
                         )
