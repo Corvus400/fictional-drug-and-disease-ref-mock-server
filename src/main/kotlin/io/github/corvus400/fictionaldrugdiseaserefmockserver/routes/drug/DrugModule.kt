@@ -194,6 +194,13 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
                                     "`therapeutic_category_name` (薬効カテゴリ名昇順)。"
                                 required = false
                             }
+                            queryParameter<String>("adverse_reaction_keyword") {
+                                description = "副作用キーワード (部分一致)。" +
+                                    "`adverseReactions.serious[].name` および " +
+                                    "`adverseReactions.other.*` の全副作用名テキストを対象に絞り込む。" +
+                                    "空または未指定時は絞り込みを行わない。"
+                                required = false
+                            }
                         }
                     },
                 )
@@ -217,6 +224,7 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
                 val keywordTarget = DrugKeywordTarget.fromQuery(
                     value = call.request.queryParameters["keyword_target"],
                 )
+                val adverseReactionKeyword = call.request.queryParameters["adverse_reaction_keyword"]
                 val sortKey = try {
                     DrugSortKey.fromQuery(raw = call.request.queryParameters["sort"])
                 } catch (e: IllegalArgumentException) {
@@ -244,6 +252,7 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
                                 keyword = keyword,
                                 keywordMatch = keywordMatch,
                                 keywordTarget = keywordTarget,
+                                adverseReactionKeyword = adverseReactionKeyword,
                             ),
                             sortKey = sortKey,
                         )
