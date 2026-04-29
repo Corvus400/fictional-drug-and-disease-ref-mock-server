@@ -2,8 +2,12 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.drug
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.module
 import io.ktor.client.request.get
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
+import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.contentType
 import io.ktor.server.testing.testApplication
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray
@@ -155,5 +159,99 @@ class DrugModuleAdditionalFilterTest {
                 actual = message.contains("INVALID"),
                 message = "ErrorResponse message=$message must mention the rejected raw value 'INVALID'",
             )
+        }
+
+    /**
+     * 基本方針 9 シナリオ非依存原則の検証 (Phase 13-10 / Issue #147)。
+     *
+     * `empty` シナリオ (0 件入力) × `adverse_reaction_keyword` で 200 OK + 空 envelope を返し、
+     * 例外送出や 5xx に退行しないことを pin する。Issue #147 本文の Red ケース 1。
+     */
+    @Test
+    fun `GET drugs under empty scenario with adverse_reaction_keyword=X returns HTTP 200 + empty envelope`() =
+        testApplication {
+            application { module() }
+
+            val configResponse = client.post(urlString = "/__admin/configs/drugList") {
+                contentType(type = ContentType.Application.Json)
+                setBody(body = """{"state":"empty"}""")
+            }
+            assertEquals(
+                expected = HttpStatusCode.OK,
+                actual = configResponse.status,
+                message = "Admin API must accept drugList empty scenario override",
+            )
+
+            val response = client.get(urlString = "/drugs?adverse_reaction_keyword=X")
+
+            assertEquals(
+                expected = HttpStatusCode.OK,
+                actual = response.status,
+                message = "empty scenario × adverse_reaction_keyword must return 200 OK, not propagate an exception",
+            )
+            val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
+            val totalCount = body["total_count"]?.jsonPrimitive?.content?.toIntOrNull()
+            assertNotNull(actual = totalCount, message = "response body must have a numeric total_count")
+            assertEquals(
+                expected = 0,
+                actual = totalCount,
+                message = "empty scenario × adverse_reaction_keyword must report total_count=0",
+            )
+            val items = body["items"]?.jsonArray
+            assertNotNull(actual = items, message = "response body must have an items array")
+            assertTrue(
+                actual = items.isEmpty(),
+                message = "empty scenario × adverse_reaction_keyword must return an empty items array",
+            )
+
+            client.post(urlString = "/__admin/reset")
+        }
+
+    /**
+     * 基本方針 9 シナリオ非依存原則の検証 (Phase 13-10 / Issue #147)。
+     *
+     * `empty` シナリオ (0 件入力) × `precaution_category` で 200 OK + 空 envelope を返すこと。
+     * Issue #147 本文 Red ケース 2 — 本文記載の `PREGNANCY` は `PrecautionPopulationCategory` enum 名 として
+     * 存在しないため、有効な enum 名 `PREGNANT` でリクエストする (`PREGNANCY` を送ると別仕様に従い
+     * HTTP 400 + `INVALID_PRECAUTION_CATEGORY` が返り、Issue 期待の HTTP 200 と矛盾する)。
+     */
+    @Test
+    fun `GET drugs under empty scenario with precaution_category=PREGNANT returns HTTP 200 + items size=0`() =
+        testApplication {
+            application { module() }
+
+            val configResponse = client.post(urlString = "/__admin/configs/drugList") {
+                contentType(type = ContentType.Application.Json)
+                setBody(body = """{"state":"empty"}""")
+            }
+            assertEquals(
+                expected = HttpStatusCode.OK,
+                actual = configResponse.status,
+                message = "Admin API must accept drugList empty scenario override",
+            )
+
+            val response = client.get(urlString = "/drugs?precaution_category=PREGNANT")
+
+            assertEquals(
+                expected = HttpStatusCode.OK,
+                actual = response.status,
+                message = "empty scenario × precaution_category must return 200 OK, not propagate an exception",
+            )
+            val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
+            val totalCount = body["total_count"]?.jsonPrimitive?.content?.toIntOrNull()
+            assertNotNull(actual = totalCount, message = "response body must have a numeric total_count")
+            assertEquals(
+                expected = 0,
+                actual = totalCount,
+                message = "empty scenario × precaution_category must report total_count=0",
+            )
+            val items = body["items"]?.jsonArray
+            assertNotNull(actual = items, message = "response body must have an items array")
+            assertTrue(
+                actual = items.isEmpty(),
+                message = "empty scenario × precaution_category must return an empty items array",
+            )
+
+            client.post(urlString = "/__admin/reset")
         }
 }
