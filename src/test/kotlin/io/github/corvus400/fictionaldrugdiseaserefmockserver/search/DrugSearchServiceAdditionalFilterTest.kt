@@ -4,6 +4,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.Drug
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DosageForm
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DoseUnit
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.FrequencyBand
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.PrecautionPopulationCategory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RouteOfAdministration
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.StorageTemperature
@@ -16,6 +17,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.D
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.IndicationItem
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.NumberedParagraph
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.PackageInfo
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.PrecautionPopulation
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.StorageCondition
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -158,6 +160,43 @@ class DrugSearchServiceAdditionalFilterTest {
         assertEquals(listOf("drug_0001"), result.map { it.id })
     }
 
+    @Test
+    fun `applyAdditionalFilters with precautionCategories=PREGNANT keeps only drugs containing PREGNANT`() {
+        val items = listOf(
+            stubDrug(
+                id = "drug_0001",
+                precautions = listOf(
+                    precautionPopulation(category = PrecautionPopulationCategory.PREGNANT),
+                ),
+            ),
+            stubDrug(
+                id = "drug_0002",
+                precautions = listOf(
+                    precautionPopulation(category = PrecautionPopulationCategory.GERIATRIC),
+                ),
+            ),
+            stubDrug(
+                id = "drug_0003",
+                precautions = listOf(
+                    precautionPopulation(category = PrecautionPopulationCategory.RENAL_IMPAIRMENT),
+                    precautionPopulation(category = PrecautionPopulationCategory.PREGNANT),
+                ),
+            ),
+            stubDrug(id = "drug_0004", precautions = emptyList()),
+        )
+        val result = DrugSearchService.applyAdditionalFilters(
+            items = items,
+            precautionCategories = listOf(PrecautionPopulationCategory.PREGNANT),
+        )
+        assertEquals(listOf("drug_0001", "drug_0003"), result.map { it.id })
+    }
+
+    private fun precautionPopulation(category: PrecautionPopulationCategory): PrecautionPopulation =
+        PrecautionPopulation(
+            category = category,
+            note = "テスト注意文",
+        )
+
     private fun seriousReaction(name: String): AdverseReaction = AdverseReaction(
         name = name,
         frequency = FrequencyBand.UNKNOWN,
@@ -170,6 +209,7 @@ class DrugSearchServiceAdditionalFilterTest {
         id: String,
         serious: List<AdverseReaction> = emptyList(),
         other: AdverseReactionByFrequency = AdverseReactionByFrequency(),
+        precautions: List<PrecautionPopulation> = emptyList(),
     ): Drug =
         Drug(
             id = id,
@@ -195,6 +235,7 @@ class DrugSearchServiceAdditionalFilterTest {
                 serious = serious,
                 other = other,
             ),
+            precautionsForSpecificPopulations = precautions,
             packages = listOf(
                 PackageInfo(
                     size = "100 錠 (10 錠 × 10 PTP)",

@@ -1,6 +1,7 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.search
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.Drug
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.PrecautionPopulationCategory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.allMatchableTexts
 
 /**
@@ -95,17 +96,30 @@ object DrugSearchService {
      * `adverseReactionKeyword` が非 null/非 blank の場合、`adverseReactions.serious[].name`
      * および `adverseReactions.other.over5Percent[]` / `between1And5Percent[]` /
      * `under1Percent[]` / `frequencyUnknown[]` を 1 語の部分一致で絞り込む。複数語 AND は
-     * 本フェーズではスコープ外 (YAGNI)。いずれの引数もデフォルト無指定で素通しになる純関数。
+     * 本フェーズではスコープ外 (YAGNI)。
+     *
+     * `precautionCategories` が非空の場合、`precautionsForSpecificPopulations[].category`
+     * のいずれかが指定カテゴリ集合に含まれる医薬品のみを残す (OR 結合)。クエリ層で 0/1 個に
+     * 解決される単値フィルタ前提だが、本層では集合扱いにして将来の複数値拡張に備える。
+     *
+     * いずれの引数もデフォルト無指定で素通しになる純関数。
      */
     fun applyAdditionalFilters(
         items: List<Drug>,
         adverseReactionKeyword: String? = null,
+        precautionCategories: List<PrecautionPopulationCategory> = emptyList(),
     ): List<Drug> {
-        if (adverseReactionKeyword.isNullOrBlank()) {
-            return items
+        var result = items
+        if (!adverseReactionKeyword.isNullOrBlank()) {
+            result = result.filter { drug ->
+                drug.adverseReactions.allMatchableTexts().any { it.contains(adverseReactionKeyword) }
+            }
         }
-        return items.filter { drug ->
-            drug.adverseReactions.allMatchableTexts().any { it.contains(adverseReactionKeyword) }
+        if (precautionCategories.isNotEmpty()) {
+            result = result.filter { drug ->
+                drug.precautionsForSpecificPopulations.any { it.category in precautionCategories }
+            }
         }
+        return result
     }
 }
