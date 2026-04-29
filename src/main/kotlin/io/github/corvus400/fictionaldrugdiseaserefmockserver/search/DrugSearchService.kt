@@ -87,4 +87,25 @@ object DrugSearchService {
         DrugSortKey.ATC_CODE_ASC -> items.sortedBy { it.atcCode }
         DrugSortKey.THERAPEUTIC_CATEGORY_NAME_ASC -> items.sortedBy { it.therapeuticCategoryName }
     }
+
+    /**
+     * 追加フィルタ — `keyword` / `sort` 後段に適用される副次的な絞り込み群。
+     *
+     * `adverseReactionKeyword` が非 null/非 blank の場合、`adverseReactions.serious[].name`
+     * を 1 語の部分一致で絞り込む。複数語 AND は本フェーズではスコープ外 (YAGNI)。
+     * いずれの引数もデフォルト無指定で素通しになる純関数。
+     */
+    fun applyAdditionalFilters(
+        items: List<Drug>,
+        adverseReactionKeyword: String? = null,
+    ): List<Drug> {
+        if (adverseReactionKeyword.isNullOrBlank()) {
+            return items
+        }
+        return items.filter { drug ->
+            drug.adverseReactions.serious.any { reaction ->
+                reaction.name.contains(adverseReactionKeyword)
+            }
+        }
+    }
 }
