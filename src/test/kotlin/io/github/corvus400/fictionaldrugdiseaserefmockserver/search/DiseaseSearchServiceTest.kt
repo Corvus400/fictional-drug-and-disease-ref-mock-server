@@ -218,4 +218,15 @@ class DiseaseSearchServiceTest {
         id: String,
         icd10Chapter: Icd10Chapter,
     ): Disease = sampleDisease(id = id).copy(icd10Chapter = icd10Chapter)
+
+    @Test
+    fun `applySort output is deterministic across repeated invocations for same input`() {
+        val items =
+            (1..80).map { index ->
+                sampleDisease(id = "disease_%04d".format(index)).copy(nameKana = "ビョウ$index")
+            }
+        val firstInvocation = DiseaseSearchService.applySort(items = items, sort = DiseaseSortKey.NAME_KANA_ASC)
+        val secondInvocation = DiseaseSearchService.applySort(items = items, sort = DiseaseSortKey.NAME_KANA_ASC)
+        assertEquals(firstInvocation.map { it.id }, secondInvocation.map { it.id })
+    }
 }
