@@ -4,10 +4,9 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.blu
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.DiseaseGenerator
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.DiseasePlaceholderDictionary
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.FixmergeNameAdapter
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.DiseaseListResponse
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.DiseaseSummary
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.SymptomInfo
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.toSummary
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -104,14 +103,5 @@ class DiseaseListFixturesTest {
                 placeholderDictionary = DiseasePlaceholderDictionary(),
             )
         }
-
-        fun Disease.toSummary(): DiseaseSummary = DiseaseSummary(
-            id = id,
-            name = name,
-            icd10Chapter = icd10Chapter,
-            medicalDepartment = medicalDepartment,
-            chronicity = chronicity,
-            infectious = infectious,
-        )
     }
 }

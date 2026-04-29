@@ -10,6 +10,8 @@ import kotlinx.serialization.Serializable
  *
  * `DiseaseListResponse.items` 要素および検索結果として使用。詳細フィールドは含めず、
  * 分類軸 (`icd10Chapter` / `chronicity` / `infectious` / `medicalDepartment`) で絞り込み可能。
+ * Phase 12-10b で `nameKana` / `revisedAt` を末尾追加し、ソート結果のクライアント検証や
+ * 一覧画面での読み仮名・改訂日表示に対応する。
  */
 @Serializable
 data class DiseaseSummary(
@@ -19,6 +21,8 @@ data class DiseaseSummary(
     val medicalDepartment: List<MedicalDepartment>,
     val chronicity: Chronicity,
     val infectious: Boolean,
+    val nameKana: String,
+    val revisedAt: String,
 )
 
 /**
@@ -26,6 +30,7 @@ data class DiseaseSummary(
  *
  * Phase 11-10b で `DiseaseSearchService.applyKeyword` (Disease 全体を要求) を Module ハンドラ
  * から呼び出すため、フィルタ後の Disease を一覧 envelope に変換する経路として導入。
+ * Phase 12-10b で `nameKana` / `revisedAt` も Summary に持ち回す経路を追加。
  */
 fun Disease.toSummary(): DiseaseSummary =
     DiseaseSummary(
@@ -35,4 +40,6 @@ fun Disease.toSummary(): DiseaseSummary =
         medicalDepartment = medicalDepartment,
         chronicity = chronicity,
         infectious = infectious,
+        nameKana = nameKana,
+        revisedAt = revisedAt,
     )
