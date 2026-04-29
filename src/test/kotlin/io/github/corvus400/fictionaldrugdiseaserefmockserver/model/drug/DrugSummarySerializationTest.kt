@@ -12,7 +12,7 @@ import kotlin.test.assertTrue
 
 class DrugSummarySerializationTest {
     @Test
-    fun `DrugSummary serializes with exactly 6 snake_case fields`() {
+    fun `DrugSummary serializes with exactly 9 snake_case fields`() {
         val summary = DrugSummary(
             id = "drug_0001",
             brandName = "テスト販売名",
@@ -20,11 +20,14 @@ class DrugSummarySerializationTest {
             therapeuticCategoryName = "経口鎮痛薬",
             regulatoryClass = listOf(RegulatoryClass.PRESCRIPTION_REQUIRED),
             dosageForm = DosageForm.TABLET,
+            brandNameKana = "テストハンバイメイ",
+            atcCode = "A01AA01",
+            revisedAt = "2024-03-01",
         )
         val encoded = AppJson.encodeToString(summary)
         val jsonObject = Json.parseToJsonElement(encoded).jsonObject
 
-        assertEquals(6, jsonObject.size)
+        assertEquals(9, jsonObject.size)
         assertEquals("drug_0001", jsonObject["id"]?.toString()?.trim('"'))
         assertEquals("テスト販売名", jsonObject["brand_name"]?.toString()?.trim('"'))
         assertEquals("テスト一般名", jsonObject["generic_name"]?.toString()?.trim('"'))
