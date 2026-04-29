@@ -8,7 +8,6 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog
  */
 object ScreenMapping {
     private val mapping: Map<String, List<ScreenTag>> = mapOf(
-        "sample" to listOf(ScreenTag.SAMPLE),
         "drugDetail" to listOf(ScreenTag.DRUG),
         "drugList" to listOf(ScreenTag.DRUG),
         "diseaseDetail" to listOf(ScreenTag.DISEASE),

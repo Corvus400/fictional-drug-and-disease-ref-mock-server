@@ -15,7 +15,6 @@ enum class ScreenTag(
     val screenName: String,
     val description: String,
 ) {
-    SAMPLE("サンプル画面", "テンプレート動作例"),
     DRUG("医薬品画面", "医薬品詳細 / 一覧"),
     DISEASE("疾患画面", "疾患詳細 / 一覧"),
 }

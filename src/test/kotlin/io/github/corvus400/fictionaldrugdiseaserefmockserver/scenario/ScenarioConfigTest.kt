@@ -26,7 +26,7 @@ class ScenarioConfigTest {
     @Test
     fun `admin set config with delay and status`() = testApplication {
         application { module() }
-        val setResponse = client.post("/__admin/configs/sample-detail") {
+        val setResponse = client.post("/__admin/configs/drugDetail") {
             contentType(ContentType.Application.Json)
             setBody("""{"state":"ServerError","delay_ms":2000,"status_code":500}""")
         }
@@ -42,7 +42,7 @@ class ScenarioConfigTest {
     @Test
     fun `admin set config with redirect headers`() = testApplication {
         application { module() }
-        val setResponse = client.post("/__admin/configs/sample") {
+        val setResponse = client.post("/__admin/configs/drugList") {
             contentType(ContentType.Application.Json)
             setBody("""{"state":"Redirect","status_code":302,"headers":{"Location":"/dashboard"}}""")
         }

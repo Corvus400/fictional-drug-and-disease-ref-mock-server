@@ -67,7 +67,7 @@ sealed interface ModuleRegistration {
 
 /**
  * X-Mock-Scenario ヘッダ / Admin API オーバーライドに対応するモジュール用の登録エントリ。
- * sample / drug / disease 等の scenarioRoute ベースのモジュールはこちらを使う。
+ * drug / disease 等の scenarioRoute ベースのモジュールはこちらを使う。
  */
 data class ScenarioModuleRegistration(
     override val catalogEntries: List<EndpointEntry>,

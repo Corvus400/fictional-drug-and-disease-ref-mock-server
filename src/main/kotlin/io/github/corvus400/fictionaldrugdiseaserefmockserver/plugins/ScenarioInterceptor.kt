@@ -51,7 +51,7 @@ val ScenarioInterceptorPlugin = createApplicationPlugin(name = "ScenarioIntercep
  *
  * 使用例:
  * ```
- * curl -H "X-Mock-Scenario: empty" http://localhost:8080/api/sample
+ * curl -H "X-Mock-Scenario: empty" http://localhost:8080/drugs
  * ```
  */
 fun Application.configureScenarioInterceptor() {

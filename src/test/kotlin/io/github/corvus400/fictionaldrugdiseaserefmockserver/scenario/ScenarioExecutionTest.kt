@@ -28,17 +28,17 @@ class ScenarioExecutionTest {
     private val json = Json { ignoreUnknownKeys = true }
 
     @Test
-    fun `sample endpoint applies delay`() = testApplication {
+    fun `drugList endpoint applies delay`() = testApplication {
         application { module() }
 
-        val configResponse = client.post("/__admin/configs/sample") {
+        val configResponse = client.post("/__admin/configs/drugList") {
             contentType(ContentType.Application.Json)
             setBody("""{"state":"default","delay_ms":500}""")
         }
         assertEquals(HttpStatusCode.OK, configResponse.status)
 
         val startTime = System.currentTimeMillis()
-        val response = client.get("/api/sample")
+        val response = client.get("/drugs")
         val elapsed = System.currentTimeMillis() - startTime
 
         assertEquals(HttpStatusCode.OK, response.status)
@@ -52,13 +52,13 @@ class ScenarioExecutionTest {
     fun `status code is applied when statusCode is set`() = testApplication {
         application { module() }
 
-        val configResponse = client.post("/__admin/configs/sample") {
+        val configResponse = client.post("/__admin/configs/drugList") {
             contentType(ContentType.Application.Json)
             setBody("""{"state":"default","status_code":500}""")
         }
         assertEquals(HttpStatusCode.OK, configResponse.status)
 
-        val response = client.get("/api/sample")
+        val response = client.get("/drugs")
 
         assertEquals(HttpStatusCode.InternalServerError, response.status)
     }
@@ -67,13 +67,13 @@ class ScenarioExecutionTest {
     fun `custom headers are applied when headers is set`() = testApplication {
         application { module() }
 
-        val configResponse = client.post("/__admin/configs/sample") {
+        val configResponse = client.post("/__admin/configs/drugList") {
             contentType(ContentType.Application.Json)
             setBody("""{"state":"default","headers":{"X-Custom-Header":"custom-value"}}""")
         }
         assertEquals(HttpStatusCode.OK, configResponse.status)
 
-        val response = client.get("/api/sample")
+        val response = client.get("/drugs")
 
         assertEquals(HttpStatusCode.OK, response.status)
         assertEquals("custom-value", response.headers["X-Custom-Header"])
@@ -83,12 +83,12 @@ class ScenarioExecutionTest {
     fun `reset clears override and restores default behavior`() = testApplication {
         application { module() }
 
-        client.post("/__admin/configs/sample") {
+        client.post("/__admin/configs/drugList") {
             contentType(ContentType.Application.Json)
             setBody("""{"state":"default","status_code":500}""")
         }
 
-        val errorResponse = client.get("/api/sample")
+        val errorResponse = client.get("/drugs")
         assertEquals(HttpStatusCode.InternalServerError, errorResponse.status)
 
         val resetResponse = client.post("/__admin/reset")
@@ -96,22 +96,22 @@ class ScenarioExecutionTest {
         val body = json.decodeFromString<JsonObject>(resetResponse.bodyAsText())
         assertTrue(body["success"]?.jsonPrimitive?.boolean == true)
 
-        val normalResponse = client.get("/api/sample")
+        val normalResponse = client.get("/drugs")
         assertEquals(HttpStatusCode.OK, normalResponse.status)
     }
 
     @Test
-    fun `sample endpoint applies delay and status code`() = testApplication {
+    fun `drugList endpoint applies delay and status code`() = testApplication {
         application { module() }
 
-        val configResponse = client.post("/__admin/configs/sample") {
+        val configResponse = client.post("/__admin/configs/drugList") {
             contentType(ContentType.Application.Json)
             setBody("""{"state":"default","delay_ms":300,"status_code":503}""")
         }
         assertEquals(HttpStatusCode.OK, configResponse.status)
 
         val startTime = System.currentTimeMillis()
-        val response = client.get("/api/sample")
+        val response = client.get("/drugs")
         val elapsed = System.currentTimeMillis() - startTime
 
         assertEquals(HttpStatusCode.ServiceUnavailable, response.status)
