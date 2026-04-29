@@ -1,6 +1,5 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator
 
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.DiseaseFixtureProvider
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.blueprint.DrugBlueprintFactory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.FixmergeNameAdapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
@@ -176,7 +175,7 @@ class DrugFixtureCoverageTest {
                 placeholderDictionary =
                 DrugPlaceholderDictionary(
                     nameAdapter = adapter,
-                    diseaseProvider = DiseaseFixtureProvider(all = testDiseaseFixtures()),
+                    diseases = testDiseaseFixtures(),
                 ),
             )
         }

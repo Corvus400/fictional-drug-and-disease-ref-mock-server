@@ -1,6 +1,5 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture
 
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.DiseaseFixtureProvider
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.blueprint.DiseaseBlueprintFactory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.DiseaseGenerator
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.DiseasePlaceholderDictionary
@@ -32,7 +31,7 @@ class DrugDiseaseDisjointnessTest {
         val placeholderDictionary =
             DrugPlaceholderDictionary(
                 nameAdapter = adapter,
-                diseaseProvider = DiseaseFixtureProvider(all = diseases),
+                diseases = diseases,
             )
         val drugs =
             DrugGenerator(adapter = adapter, placeholderDictionary = placeholderDictionary)
