@@ -4,6 +4,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.ErrorR
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.module
 import io.ktor.client.request.get
+import io.ktor.client.request.header
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
@@ -15,6 +16,7 @@ import kotlinx.serialization.serializer
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 class DiseaseModuleSortTest {
     private val json = Json { ignoreUnknownKeys = true }
@@ -78,5 +80,22 @@ class DiseaseModuleSortTest {
         )
         val error = json.decodeFromString<ErrorResponse>(string = response.bodyAsText())
         assertEquals(expected = "INVALID_SORT_KEY", actual = error.code)
+    }
+
+    @Test
+    fun `GET diseases under empty scenario with sort parameter returns empty items and 200`() = testApplication {
+        application { module() }
+
+        val response = client.get("/diseases?sort=name_kana") {
+            header(key = "X-Mock-Scenario", value = "empty")
+        }
+
+        assertEquals(expected = HttpStatusCode.OK, actual = response.status)
+        val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
+        val totalCount = body["total_count"]?.jsonPrimitive?.content?.toIntOrNull()
+        assertEquals(expected = 0, actual = totalCount)
+        val items = body["items"]?.jsonArray
+        assertNotNull(actual = items, message = "response body must have an items array")
+        assertTrue(actual = items.isEmpty())
     }
 }
