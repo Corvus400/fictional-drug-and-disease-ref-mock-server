@@ -188,4 +188,16 @@ class DiseaseSearchServiceTest {
         id: String,
         revisedAt: String,
     ): Disease = sampleDisease(id = id).copy(revisedAt = revisedAt)
+
+    @Test
+    fun `applySort sorts by nameKana ascending when NAME_KANA_ASC is specified`() {
+        val items =
+            listOf(
+                sampleDisease(id = "disease_0001").copy(nameKana = "サンブルビョウ"),
+                sampleDisease(id = "disease_0002").copy(nameKana = "アイウエビョウ"),
+                sampleDisease(id = "disease_0003").copy(nameKana = "カキクケビョウ"),
+            )
+        val sorted = DiseaseSearchService.applySort(items = items, sort = DiseaseSortKey.NAME_KANA_ASC)
+        assertEquals(listOf("disease_0002", "disease_0003", "disease_0001"), sorted.map { it.id })
+    }
 }
