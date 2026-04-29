@@ -9,7 +9,8 @@ import kotlinx.serialization.serializer
  *
  * `Disease.icd10Chapter` フィールドおよび `/diseases?icd10_chapter=<key>` クエリで使用。
  * SerialName は `chapter_i` 〜 `chapter_xxii`、`chapterKey` プロパティで `I` 〜 `XXII` を
- * 取得し、`fromChapterKey` で逆引き可能。
+ * 取得する。`/diseases` クエリの逆引きは `fromSerialName` を用いる (OpenAPI description は
+ * snake_case 表記で例示しているため)。
  */
 @Serializable
 enum class Icd10Chapter {
@@ -118,8 +119,11 @@ enum class Icd10Chapter {
 
     companion object {
         /**
-         * `chapterKey` (ローマ数字) から列挙子を逆引きする。未定義キーは `null`。
+         * `@SerialName` 値 (snake_case `chapter_i` 〜 `chapter_xxii`) から列挙子を逆引きする。
+         * `/diseases?icd10_chapter=<key>` の OpenAPI 仕様 (`Icd10Chapter.serialName` 例示) に追従するため、
+         * `chapterKey` (ローマ数字) ではなく `serialName` で受理する用途で使用する。未定義キーは `null`。
          */
-        fun fromChapterKey(key: String): Icd10Chapter? = entries.firstOrNull { it.chapterKey == key }
+        fun fromSerialName(serialName: String): Icd10Chapter? =
+            entries.firstOrNull { it.serialName == serialName }
     }
 }
