@@ -1,5 +1,6 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.drug
 
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.ErrorResponse
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.DrugListResponse
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.module
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.AppJson
@@ -125,4 +126,15 @@ class DrugModuleTest {
                 message = "sort=brand_name_kana must order items by brandNameKana ascending",
             )
         }
+
+    @Test
+    fun `GET drugs with invalid sort returns 400 with INVALID_SORT_KEY error`() = testApplication {
+        application { module() }
+
+        val response = client.get("/drugs?sort=invalid_key")
+
+        assertEquals(HttpStatusCode.BadRequest, response.status)
+        val error = AppJson.decodeFromString<ErrorResponse>(response.bodyAsText())
+        assertEquals("INVALID_SORT_KEY", error.code)
+    }
 }
