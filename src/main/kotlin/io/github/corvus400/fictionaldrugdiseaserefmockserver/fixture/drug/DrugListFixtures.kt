@@ -10,6 +10,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.Re
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RouteOfAdministration
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.toSummary
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.search.DrugSearchService
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.search.DrugSortKey
 import kotlinx.serialization.serializer
 import kotlin.math.ceil
 
@@ -84,13 +85,15 @@ class DrugListFixtures(
         page: Int,
         pageSize: Int,
         query: DrugListQuery = DrugListQuery(),
+        sortKey: DrugSortKey = DrugSortKey.REVISED_AT_DESC,
     ): DrugListResponse {
         val list = summariesByScenario[scenario] ?: summariesByScenario.values.first()
         val filtered = applyFilters(summaries = list, query = query)
-        val totalCount = filtered.size
+        val sorted = applySort(summaries = filtered, sortKey = sortKey)
+        val totalCount = sorted.size
         val totalPages = if (totalCount == 0) 0 else ceil(totalCount.toDouble() / pageSize.toDouble()).toInt()
         val startIndex = (page - 1) * pageSize
-        val items = if (startIndex >= totalCount) emptyList() else filtered.drop(n = startIndex).take(n = pageSize)
+        val items = if (startIndex >= totalCount) emptyList() else sorted.drop(n = startIndex).take(n = pageSize)
         return DrugListResponse(
             items = items,
             page = page,
@@ -98,6 +101,22 @@ class DrugListFixtures(
             totalPages = totalPages,
             totalCount = totalCount,
         )
+    }
+
+    /**
+     * フィルタ済み summary 列を `sortKey` で並び替えて返す。
+     *
+     * `DrugSearchService.applySort` は `Drug` を入力に取るため、`summary.id` 経由で
+     * `allDrugsById` から `Drug` を引いてからソートし、結果を `toSummary()` で再写像する。
+     * これにより、ソート結果の DrugSummary フィールドは既存と同一インスタンスからの派生となる。
+     */
+    private fun applySort(
+        summaries: List<DrugSummary>,
+        sortKey: DrugSortKey,
+    ): List<DrugSummary> {
+        val drugs = summaries.mapNotNull { summary -> allDrugsById[summary.id] }
+        val sortedDrugs = DrugSearchService.applySort(items = drugs, sort = sortKey)
+        return sortedDrugs.map { drug -> drug.toSummary() }
     }
 
     /**
