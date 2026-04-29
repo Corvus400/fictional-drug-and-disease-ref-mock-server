@@ -217,7 +217,15 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
                 val keywordTarget = DrugKeywordTarget.fromQuery(
                     value = call.request.queryParameters["keyword_target"],
                 )
-                val sortKey = DrugSortKey.fromQuery(raw = call.request.queryParameters["sort"])
+                val sortKey = try {
+                    DrugSortKey.fromQuery(raw = call.request.queryParameters["sort"])
+                } catch (e: IllegalArgumentException) {
+                    call.respond(
+                        status = HttpStatusCode.BadRequest,
+                        message = ErrorResponse(code = "INVALID_SORT_KEY", message = e.message.orEmpty()),
+                    )
+                    return@handle
+                }
                 val resolved = call.resolveScenarioWithOverride(
                     scenarioManager = scenarioManager,
                     endpointName = drugListMetadata.endpointName,
