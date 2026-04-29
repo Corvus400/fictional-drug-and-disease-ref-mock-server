@@ -159,4 +159,21 @@ class DiseaseSearchServiceTest {
         id: String,
         synonyms: List<String>,
     ): Disease = sampleDisease(id = id).copy(synonyms = synonyms)
+
+    @Test
+    fun `applySort returns items sorted by revisedAt descending when REVISED_AT_DESC is specified`() {
+        val items =
+            listOf(
+                diseaseWith(id = "disease_0001", revisedAt = "2026-01-10"),
+                diseaseWith(id = "disease_0002", revisedAt = "2026-03-20"),
+                diseaseWith(id = "disease_0003", revisedAt = "2026-02-01"),
+            )
+        val sorted = DiseaseSearchService.applySort(items = items, sort = DiseaseSortKey.REVISED_AT_DESC)
+        assertEquals(listOf("disease_0002", "disease_0003", "disease_0001"), sorted.map { it.id })
+    }
+
+    private fun diseaseWith(
+        id: String,
+        revisedAt: String,
+    ): Disease = sampleDisease(id = id).copy(revisedAt = revisedAt)
 }
