@@ -68,4 +68,19 @@ object DrugSearchService {
         KeywordMatch.PARTIAL -> field.contains(keyword)
         KeywordMatch.PREFIX -> field.startsWith(keyword)
     }
+
+    /**
+     * `sort` キーに従って `items` を並び替えた新しいリストを返す純関数。
+     * 副作用なし・シナリオ非依存。後続 triangulation で sort key 対応を段階的に拡張する。
+     */
+    fun applySort(
+        items: List<Drug>,
+        sort: DrugSortKey,
+    ): List<Drug> = when (sort) {
+        DrugSortKey.REVISED_AT_DESC -> items.sortedByDescending { it.revisedAt }
+        DrugSortKey.BRAND_NAME_KANA_ASC,
+        DrugSortKey.ATC_CODE_ASC,
+        DrugSortKey.THERAPEUTIC_CATEGORY_NAME_ASC,
+        -> items
+    }
 }
