@@ -97,12 +97,11 @@ object DiseaseSearchService {
     /**
      * 追加フィルタ — `keyword` / `sort` 後段に適用される副次的な絞り込み群。
      *
-     * 本フェーズ (Phase 13-17) までで `symptomKeyword` / `onsetPatterns` /
-     * `examCategories` / `hasPharmacologicalTreatment` を受け付ける。`examCategories` はクエリ層で 0/1 個に
+     * 本フェーズ (Phase 13-18) までで `symptomKeyword` / `onsetPatterns` /
+     * `examCategories` / `hasPharmacologicalTreatment` / `hasSeverityGrading` を受け付ける。`examCategories` はクエリ層で 0/1 個に
      * 解決される単値フィルタ前提だが、本層では `DrugSearchService.applyAdditionalFilters`
      * の `precautionCategories` と同じく集合扱いにして将来の複数値拡張に備える。
-     * 引数無指定時は素通しする純関数。後続フェーズで `hasSeverityGrading` を triangulation で追加する
-     * (issue #74)。
+     * 引数無指定時は素通しする純関数。
      */
     fun applyAdditionalFilters(
         items: List<Disease>,
@@ -110,6 +109,7 @@ object DiseaseSearchService {
         onsetPatterns: List<OnsetPattern> = emptyList(),
         examCategories: List<ExamCategory> = emptyList(),
         hasPharmacologicalTreatment: Boolean? = null,
+        hasSeverityGrading: Boolean? = null,
     ): List<Disease> {
         var result = items
         if (!symptomKeyword.isNullOrBlank()) {
@@ -135,6 +135,17 @@ object DiseaseSearchService {
             false ->
                 result = result.filter { disease ->
                     disease.treatments.pharmacological.isEmpty()
+                }
+            null -> Unit
+        }
+        when (hasSeverityGrading) {
+            true ->
+                result = result.filter { disease ->
+                    disease.severityGrading != null
+                }
+            false ->
+                result = result.filter { disease ->
+                    disease.severityGrading == null
                 }
             null -> Unit
         }
