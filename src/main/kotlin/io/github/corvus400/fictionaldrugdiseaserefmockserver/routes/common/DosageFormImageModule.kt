@@ -19,7 +19,7 @@ fun Application.dosageFormImageModule() {
             val size = when (call.request.queryParameters["size"]) {
                 "S" -> ImageSize.S
                 "M" -> ImageSize.M
-                "Original" -> ImageSize.ORIGINAL
+                null, "Original" -> ImageSize.ORIGINAL
                 else -> return@get
             }
             val resizedImage = ImageResizer.resize(originalImage, size)
