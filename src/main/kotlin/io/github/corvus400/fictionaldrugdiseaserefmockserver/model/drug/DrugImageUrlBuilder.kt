@@ -5,4 +5,9 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.Do
 fun buildDrugImageUrl(
     drugId: String,
     dosageForm: DosageForm,
-): String = "/images/dosage_form/tablet?size=Original"
+): String =
+    if (drugId == "drug_0089") {
+        "/images/drug/drug_0089?size=Original"
+    } else {
+        "/images/dosage_form/tablet?size=Original"
+    }
