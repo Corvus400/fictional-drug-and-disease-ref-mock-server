@@ -12,6 +12,7 @@ import javax.imageio.ImageIO
 import kotlin.math.max
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class DosageFormImageRoutesTest {
     @Test
@@ -42,6 +43,24 @@ class DosageFormImageRoutesTest {
         val medium = decodeImage(client.get("/images/dosage_form/tablet?size=M").bodyAsBytes())
 
         assertEquals(max(original.width, original.height) / 4, max(medium.width, medium.height))
+    }
+
+    @Test
+    fun `GET dosage form image with S renders non-black pixels`() = testApplication {
+        application { module() }
+
+        val small = decodeImage(client.get("/images/dosage_form/tablet?size=S").bodyAsBytes())
+
+        assertTrue(hasVisibleNonBlackPixel(small), "S image should contain at least one visible non-black pixel")
+    }
+
+    @Test
+    fun `GET dosage form image with M renders non-black pixels`() = testApplication {
+        application { module() }
+
+        val medium = decodeImage(client.get("/images/dosage_form/tablet?size=M").bodyAsBytes())
+
+        assertTrue(hasVisibleNonBlackPixel(medium), "M image should contain at least one visible non-black pixel")
     }
 
     @Test
@@ -93,4 +112,14 @@ class DosageFormImageRoutesTest {
     }
 
     private fun decodeImage(bytes: ByteArray) = ImageIO.read(ByteArrayInputStream(bytes))
+
+    private fun hasVisibleNonBlackPixel(image: java.awt.image.BufferedImage): Boolean =
+        (0 until image.height).any { y ->
+            (0 until image.width).any { x ->
+                val argb = image.getRGB(x, y)
+                val alpha = argb ushr 24 and 0xff
+                val rgb = argb and 0x00ffffff
+                alpha > 0 && rgb != 0
+            }
+        }
 }
