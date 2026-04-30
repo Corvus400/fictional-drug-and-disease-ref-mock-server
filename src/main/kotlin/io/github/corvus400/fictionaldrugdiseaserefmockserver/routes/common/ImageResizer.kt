@@ -15,6 +15,8 @@ object ImageResizer {
     ): BufferedImage =
         if (size == ImageSize.S) {
             BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB)
+        } else if (size == ImageSize.M) {
+            BufferedImage(8, 8, BufferedImage.TYPE_INT_RGB)
         } else {
             originalImage
         }
