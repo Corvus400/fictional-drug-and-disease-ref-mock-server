@@ -115,6 +115,18 @@ class DrugSerializationTest {
         assertEquals("/images/drug/drug_0089?size=Original", jsonObject["image_url"]?.toString()?.trim('"'))
     }
 
+    @Test
+    fun `Drug deserialize without image_url evaluates default imageUrl`() {
+        val json = AppJson.encodeToString(minimalDrug()).replace(
+            ""","image_url":"/images/dosage_form/tablet?size=Original"""",
+            "",
+        )
+
+        val drug = AppJson.decodeFromString<Drug>(json)
+
+        assertEquals("/images/dosage_form/tablet?size=Original", drug.imageUrl)
+    }
+
     private fun minimalDrug(id: String = "drug_0001"): Drug =
         Drug(
             id = id,
