@@ -107,9 +107,17 @@ class DrugSerializationTest {
         )
     }
 
-    private fun minimalDrug(): Drug =
+    @Test
+    fun `Drug serializes drug override image_url for drug_0089`() {
+        val drug = minimalDrug(id = "drug_0089")
+        val jsonObject = Json.parseToJsonElement(AppJson.encodeToString(drug)).jsonObject
+
+        assertEquals("/images/drug/drug_0089?size=Original", jsonObject["image_url"]?.toString()?.trim('"'))
+    }
+
+    private fun minimalDrug(id: String = "drug_0001"): Drug =
         Drug(
-            id = "drug_0001",
+            id = id,
             genericName = "テスト一般名",
             brandName = "テスト販売名",
             brandNameKana = "テストハンバイメイ",
