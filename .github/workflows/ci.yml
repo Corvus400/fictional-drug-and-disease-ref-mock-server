@@ -3,9 +3,19 @@ name: CI
 on:
   push:
     branches: [main, develop]
+    paths-ignore:
+      - '**/*.md'
+      - '**/*.sh'
+      - '**/*.yaml'
+      - '**/*.yml'
   pull_request:
     types: [opened, synchronize, reopened]
     branches: [main, develop]
+    paths-ignore:
+      - '**/*.md'
+      - '**/*.sh'
+      - '**/*.yaml'
+      - '**/*.yml'
 
 jobs:
   build-and-test:
