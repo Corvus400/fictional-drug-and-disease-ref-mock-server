@@ -15,9 +15,13 @@ object ImageResizer {
         size: ImageSize,
     ): BufferedImage =
         if (size == ImageSize.S) {
-            val targetWidth = originalImage.width / 8
-            val targetHeight = (targetWidth / (originalImage.width.toDouble() / originalImage.height)).roundToInt()
-            BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB)
+            if (originalImage.width >= originalImage.height) {
+                val targetWidth = originalImage.width / 8
+                val targetHeight = (targetWidth / (originalImage.width.toDouble() / originalImage.height)).roundToInt()
+                BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB)
+            } else {
+                BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB)
+            }
         } else if (size == ImageSize.M) {
             BufferedImage(8, 8, BufferedImage.TYPE_INT_RGB)
         } else {
