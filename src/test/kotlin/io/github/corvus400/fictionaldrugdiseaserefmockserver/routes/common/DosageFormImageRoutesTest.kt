@@ -34,5 +34,15 @@ class DosageFormImageRoutesTest {
         assertEquals(max(original.width, original.height) / 8, max(small.width, small.height))
     }
 
+    @Test
+    fun `GET dosage form image with M returns one quarter of original long edge`() = testApplication {
+        application { module() }
+
+        val original = decodeImage(client.get("/images/dosage_form/tablet?size=Original").bodyAsBytes())
+        val medium = decodeImage(client.get("/images/dosage_form/tablet?size=M").bodyAsBytes())
+
+        assertEquals(max(original.width, original.height) / 4, max(medium.width, medium.height))
+    }
+
     private fun decodeImage(bytes: ByteArray) = ImageIO.read(ByteArrayInputStream(bytes))
 }
