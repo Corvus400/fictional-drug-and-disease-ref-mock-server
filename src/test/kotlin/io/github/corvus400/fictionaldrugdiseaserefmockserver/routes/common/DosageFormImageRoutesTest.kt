@@ -55,5 +55,14 @@ class DosageFormImageRoutesTest {
         assertEquals(explicitOriginal.height, defaultOriginal.height)
     }
 
+    @Test
+    fun `GET unknown dosage form image returns 404`() = testApplication {
+        application { module() }
+
+        val response = client.get("/images/dosage_form/UNKNOWN_FORM")
+
+        assertEquals(HttpStatusCode.NotFound, response.status)
+    }
+
     private fun decodeImage(bytes: ByteArray) = ImageIO.read(ByteArrayInputStream(bytes))
 }
