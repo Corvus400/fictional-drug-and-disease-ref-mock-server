@@ -14,14 +14,14 @@ repos:
         always_run: true
       - id: gradle-detekt-main
         name: detekt main (push gate)
-        entry: ./gradlew detektMain -Pprecommit=true --quiet --configuration-cache
+        entry: scripts/pre-push-detekt-main.sh
         language: system
         stages: [pre-push]
         pass_filenames: false
         always_run: true
       - id: gradle-detekt-test
         name: detekt test (push gate)
-        entry: ./gradlew detektTest -Pprecommit=true --quiet --configuration-cache
+        entry: scripts/pre-push-detekt-test.sh
         language: system
         stages: [pre-push]
         pass_filenames: false
