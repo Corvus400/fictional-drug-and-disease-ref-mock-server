@@ -7,7 +7,7 @@ repos:
     hooks:
       - id: gradle-spotless-check
         name: Spotless check (ratchet from origin/main)
-        entry: ./gradlew spotlessCheck -Pspotless.ratchet=true --quiet --configuration-cache
+        entry: scripts/pre-commit-spotless-check.sh
         language: system
         stages: [pre-commit]
         pass_filenames: false
