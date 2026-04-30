@@ -11,6 +11,7 @@ import java.io.ByteArrayInputStream
 import javax.imageio.ImageIO
 import kotlin.math.max
 import kotlin.test.Test
+import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -75,6 +76,33 @@ class DosageFormImageRoutesTest {
     }
 
     @Test
+    fun `GET dosage form image with Original returns source bytes for indexed PNG`() = testApplication {
+        application { module() }
+
+        val responseBytes = client.get("/images/dosage_form/tablet?size=Original").bodyAsBytes()
+
+        assertContentEquals(resourceBytes("images/dosage_form/tablet.png"), responseBytes)
+    }
+
+    @Test
+    fun `GET dosage form image with Original returns source bytes for RGBA PNG`() = testApplication {
+        application { module() }
+
+        val responseBytes = client.get("/images/dosage_form/capsule?size=Original").bodyAsBytes()
+
+        assertContentEquals(resourceBytes("images/dosage_form/capsule.png"), responseBytes)
+    }
+
+    @Test
+    fun `GET drug override image with Original returns source bytes`() = testApplication {
+        application { module() }
+
+        val responseBytes = client.get("/images/drug/drug_0080?size=Original").bodyAsBytes()
+
+        assertContentEquals(resourceBytes("images/drug/drug_0080.png"), responseBytes)
+    }
+
+    @Test
     fun `GET unknown dosage form image returns 404`() = testApplication {
         application { module() }
 
@@ -112,6 +140,11 @@ class DosageFormImageRoutesTest {
     }
 
     private fun decodeImage(bytes: ByteArray) = ImageIO.read(ByteArrayInputStream(bytes))
+
+    private fun resourceBytes(path: String): ByteArray =
+        requireNotNull(Thread.currentThread().contextClassLoader.getResourceAsStream(path)) {
+            "resource not found: $path"
+        }.use { it.readBytes() }
 
     private fun hasVisibleNonBlackPixel(image: java.awt.image.BufferedImage): Boolean =
         (0 until image.height).any { y ->
