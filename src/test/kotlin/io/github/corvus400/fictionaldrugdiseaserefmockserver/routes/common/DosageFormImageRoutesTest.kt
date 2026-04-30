@@ -64,5 +64,14 @@ class DosageFormImageRoutesTest {
         assertEquals(HttpStatusCode.NotFound, response.status)
     }
 
+    @Test
+    fun `GET dosage form image with invalid size returns 400`() = testApplication {
+        application { module() }
+
+        val response = client.get("/images/dosage_form/tablet?size=invalid")
+
+        assertEquals(HttpStatusCode.BadRequest, response.status)
+    }
+
     private fun decodeImage(bytes: ByteArray) = ImageIO.read(ByteArrayInputStream(bytes))
 }

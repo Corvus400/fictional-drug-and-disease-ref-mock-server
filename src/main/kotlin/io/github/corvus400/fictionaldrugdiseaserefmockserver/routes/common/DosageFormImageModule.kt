@@ -22,7 +22,7 @@ fun Application.dosageFormImageModule() {
                 "S" -> ImageSize.S
                 "M" -> ImageSize.M
                 null, "Original" -> ImageSize.ORIGINAL
-                else -> return@get
+                else -> return@get call.respond(HttpStatusCode.BadRequest)
             }
             val resizedImage = ImageResizer.resize(originalImage, size)
             val bytes = ByteArrayOutputStream().use { output ->
