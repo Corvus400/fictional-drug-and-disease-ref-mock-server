@@ -9,6 +9,8 @@
 - Code style check: `./gradlew spotlessCheck`
 - Code style fix: `./gradlew spotlessApply`
 - Local gate setup: `pre-commit install --hook-type pre-commit --hook-type pre-push`
+- If `core.hooksPath` is set, call `pre-commit run --hook-stage pre-commit` and
+  `pre-commit run --hook-stage pre-push` from the existing global hooks instead.
 - Commit gate: `pre-commit` runs `./gradlew spotlessCheck -Pspotless.ratchet=true`
 - Push gate: `pre-push` runs `./gradlew detektMain` and `./gradlew detektTest`
 - Skip push gate only when necessary: `SKIP=gradle-detekt-main,gradle-detekt-test git push`

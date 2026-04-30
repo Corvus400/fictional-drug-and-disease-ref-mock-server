@@ -104,6 +104,13 @@ brew install pre-commit
 pre-commit install --hook-type pre-commit --hook-type pre-push
 ```
 
+`core.hooksPath` を設定している環境では `pre-commit install` が拒否される。その場合は既存のグローバル hook から以下を呼び出す。
+
+```bash
+pre-commit run --hook-stage pre-commit
+pre-commit run --hook-stage pre-push
+```
+
 - `pre-commit` stage: `./gradlew spotlessCheck -Pspotless.ratchet=true`
 - `pre-push` stage: `./gradlew detektMain` / `./gradlew detektTest`
 - 全件確認: `pre-commit run --all-files`
