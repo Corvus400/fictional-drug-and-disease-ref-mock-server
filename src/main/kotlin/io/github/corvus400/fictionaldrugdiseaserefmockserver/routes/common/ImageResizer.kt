@@ -14,9 +14,10 @@ object ImageResizer {
         originalImage: BufferedImage,
         size: ImageSize,
     ): BufferedImage =
-        if (size == ImageSize.S) {
+        if (size == ImageSize.S || size == ImageSize.M) {
+            val divisor = if (size == ImageSize.S) 8 else 4
             val aspectRatio = originalImage.width.toDouble() / originalImage.height
-            val longEdge = maxOf(originalImage.width, originalImage.height) / 8
+            val longEdge = maxOf(originalImage.width, originalImage.height) / divisor
             val targetWidth = if (originalImage.width >=
                 originalImage.height
             ) {
@@ -32,8 +33,6 @@ object ImageResizer {
                 longEdge
             }
             BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB)
-        } else if (size == ImageSize.M) {
-            BufferedImage(8, 8, BufferedImage.TYPE_INT_RGB)
         } else {
             originalImage
         }
