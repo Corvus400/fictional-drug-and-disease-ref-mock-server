@@ -1,5 +1,6 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.common
 
+import java.awt.RenderingHints
 import java.awt.image.BufferedImage
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -33,7 +34,12 @@ object ImageResizer {
             } else {
                 longEdge
             }
-            BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB)
+            BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_ARGB).also { resizedImage ->
+                val graphics = resizedImage.createGraphics()
+                graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC)
+                graphics.drawImage(originalImage, 0, 0, targetWidth, targetHeight, null)
+                graphics.dispose()
+            }
         } else {
             originalImage
         }
