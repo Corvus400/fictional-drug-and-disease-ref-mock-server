@@ -16,7 +16,11 @@ fun Application.dosageFormImageModule() {
                 .getResourceAsStream("images/dosage_form/$form.png")
                 ?.use { ImageIO.read(it) }
                 ?: return@get
-            val size = if (call.request.queryParameters["size"] == "S") ImageSize.S else ImageSize.ORIGINAL
+            val size = when (call.request.queryParameters["size"]) {
+                "S" -> ImageSize.S
+                "M" -> ImageSize.M
+                else -> ImageSize.ORIGINAL
+            }
             val resizedImage = ImageResizer.resize(originalImage, size)
             val bytes = ByteArrayOutputStream().use { output ->
                 ImageIO.write(resizedImage, "PNG", output)
