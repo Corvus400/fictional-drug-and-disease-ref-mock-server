@@ -8,6 +8,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.config.MockServerCo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.adminRoutes
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.categories.categoriesCatalogEntries
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.categories.categoriesModule
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.common.dosageFormImageModule
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.disease.diseaseCatalogEntries
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.disease.diseaseModule
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.drug.drugCatalogEntries
@@ -58,6 +59,9 @@ fun Application.configureRouting(
             is StatelessModuleRegistration -> module.configure(this)
         }
     }
+
+    // Common Modules（カタログ登録不要のインフラモジュール）
+    dosageFormImageModule()
 
     // 起動時検証: カタログ登録の双方向整合性チェック
     verifyCatalogCoverage()
