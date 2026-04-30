@@ -113,6 +113,7 @@ pre-commit run --hook-stage pre-push
 
 - `pre-commit` stage: `git fetch origin main` 後に `./gradlew spotlessCheck -Pspotless.ratchet=true`
 - `pre-push` stage: `./gradlew detektMain` / `./gradlew detektTest`
+- Markdown・Shell・YAML など対象外ファイルだけの変更では、各 hook は何もせず成功終了する
 - 全件確認: `pre-commit run --all-files`
 - push gate の全件確認: `pre-commit run --hook-stage pre-push --all-files`
 - 一時的に detekt をスキップ: `SKIP=gradle-detekt-main,gradle-detekt-test git push`
