@@ -58,6 +58,14 @@ class ImageResizerTest {
         assertEquals(200, resized.height)
     }
 
+    @Test
+    fun `極小画像の S は 0 を生まず最小 1x1 を返す`() {
+        val resized = ImageResizer.resize(testImage(width = 4, height = 2), ImageSize.S)
+
+        assertEquals(1, resized.width)
+        assertEquals(1, resized.height)
+    }
+
     private fun testImage(
         width: Int,
         height: Int,
