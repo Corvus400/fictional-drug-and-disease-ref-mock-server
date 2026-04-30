@@ -1,0 +1,28 @@
+# CI から lint job を恒久削除した代わりにローカルで担保するゲート。
+# stages 分離: pre-commit = spotless (ratchet で変更ファイルのみ高速 check)
+#              pre-push = detekt (compileKotlin 経由で重いため push 単位で集約)
+# -Pprecommit=true は detekt 公式 pre-commit ガイド推奨の Configuration Cache 再利用 property。
+repos:
+  - repo: local
+    hooks:
+      - id: gradle-spotless-check
+        name: Spotless check (ratchet from origin/main)
+        entry: ./gradlew spotlessCheck -Pspotless.ratchet=true --quiet --configuration-cache
+        language: system
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      - id: gradle-detekt-main
+        name: detekt main (push gate)
+        entry: ./gradlew detektMain -Pprecommit=true --quiet --configuration-cache
+        language: system
+        stages: [pre-push]
+        pass_filenames: false
+        always_run: true
+      - id: gradle-detekt-test
+        name: detekt test (push gate)
+        entry: ./gradlew detektTest -Pprecommit=true --quiet --configuration-cache
+        language: system
+        stages: [pre-push]
+        pass_filenames: false
+        always_run: true
