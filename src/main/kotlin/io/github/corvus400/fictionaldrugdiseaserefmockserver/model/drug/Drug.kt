@@ -69,4 +69,5 @@ data class Drug(
     val revisedAt: String,
     /** 関連疾患 ID リスト — `disease_NNNN` 形式。ダングリング参照禁止 (仕様: linked-bubbling-sun.md 共通モデル節)。 */
     val relatedDiseaseIds: List<String> = emptyList(),
+    val imageUrl: String = buildDrugImageUrl(id, dosageForm),
 )
