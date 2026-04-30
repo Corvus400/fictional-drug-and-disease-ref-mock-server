@@ -5,6 +5,7 @@ import io.ktor.server.application.Application
 import io.ktor.server.response.respondBytes
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
+import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
 import javax.imageio.ImageIO
 
@@ -15,7 +16,7 @@ fun Application.dosageFormImageModule() {
             val originalImage = Thread.currentThread().contextClassLoader
                 .getResourceAsStream("images/dosage_form/$form.png")
                 ?.use { ImageIO.read(it) }
-                ?: return@get
+                ?: BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB)
             val size = when (call.request.queryParameters["size"]) {
                 "S" -> ImageSize.S
                 "M" -> ImageSize.M
