@@ -1,11 +1,12 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.common
 
 import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
+import io.ktor.server.response.respond
 import io.ktor.server.response.respondBytes
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
-import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
 import javax.imageio.ImageIO
 
@@ -16,7 +17,7 @@ fun Application.dosageFormImageModule() {
             val originalImage = Thread.currentThread().contextClassLoader
                 .getResourceAsStream("images/dosage_form/$form.png")
                 ?.use { ImageIO.read(it) }
-                ?: BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB)
+                ?: return@get call.respond(HttpStatusCode.NotFound)
             val size = when (call.request.queryParameters["size"]) {
                 "S" -> ImageSize.S
                 "M" -> ImageSize.M
