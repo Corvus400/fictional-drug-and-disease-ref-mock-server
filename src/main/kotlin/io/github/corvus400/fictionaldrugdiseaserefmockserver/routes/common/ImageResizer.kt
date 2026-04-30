@@ -1,6 +1,7 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.common
 
 import java.awt.image.BufferedImage
+import kotlin.math.max
 import kotlin.math.roundToInt
 
 enum class ImageSize {
@@ -17,18 +18,18 @@ object ImageResizer {
         if (size == ImageSize.S || size == ImageSize.M) {
             val divisor = if (size == ImageSize.S) 8 else 4
             val aspectRatio = originalImage.width.toDouble() / originalImage.height
-            val longEdge = maxOf(originalImage.width, originalImage.height) / divisor
+            val longEdge = max(1, maxOf(originalImage.width, originalImage.height) / divisor)
             val targetWidth = if (originalImage.width >=
                 originalImage.height
             ) {
                 longEdge
             } else {
-                (longEdge * aspectRatio).roundToInt()
+                max(1, (longEdge * aspectRatio).roundToInt())
             }
             val targetHeight = if (originalImage.width >=
                 originalImage.height
             ) {
-                (longEdge / aspectRatio).roundToInt()
+                max(1, (longEdge / aspectRatio).roundToInt())
             } else {
                 longEdge
             }
