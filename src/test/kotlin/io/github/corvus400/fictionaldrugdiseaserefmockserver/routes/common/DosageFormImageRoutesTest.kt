@@ -73,5 +73,15 @@ class DosageFormImageRoutesTest {
         assertEquals(HttpStatusCode.BadRequest, response.status)
     }
 
+    @Test
+    fun `GET drug override image with Original returns PNG`() = testApplication {
+        application { module() }
+
+        val response = client.get("/images/drug/drug_0089?size=Original")
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        assertEquals(ContentType.Image.PNG, response.contentType()?.withoutParameters())
+    }
+
     private fun decodeImage(bytes: ByteArray) = ImageIO.read(ByteArrayInputStream(bytes))
 }
