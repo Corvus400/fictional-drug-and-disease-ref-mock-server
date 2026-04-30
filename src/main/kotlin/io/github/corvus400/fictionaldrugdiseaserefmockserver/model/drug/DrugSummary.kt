@@ -20,7 +20,6 @@ data class DrugSummary(
     val brandNameKana: String,
     val atcCode: String,
     val revisedAt: String,
-    val imageUrl: String = buildDrugImageUrl(id, dosageForm),
 )
 
 fun Drug.toSummary(): DrugSummary =
@@ -34,5 +33,4 @@ fun Drug.toSummary(): DrugSummary =
         brandNameKana = brandNameKana,
         atcCode = atcCode,
         revisedAt = revisedAt,
-        imageUrl = imageUrl,
     )
