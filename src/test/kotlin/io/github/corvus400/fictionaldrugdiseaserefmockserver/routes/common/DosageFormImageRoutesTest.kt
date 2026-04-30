@@ -44,5 +44,16 @@ class DosageFormImageRoutesTest {
         assertEquals(max(original.width, original.height) / 4, max(medium.width, medium.height))
     }
 
+    @Test
+    fun `GET dosage form image without size returns Original`() = testApplication {
+        application { module() }
+
+        val explicitOriginal = decodeImage(client.get("/images/dosage_form/tablet?size=Original").bodyAsBytes())
+        val defaultOriginal = decodeImage(client.get("/images/dosage_form/tablet").bodyAsBytes())
+
+        assertEquals(explicitOriginal.width, defaultOriginal.width)
+        assertEquals(explicitOriginal.height, defaultOriginal.height)
+    }
+
     private fun decodeImage(bytes: ByteArray) = ImageIO.read(ByteArrayInputStream(bytes))
 }
