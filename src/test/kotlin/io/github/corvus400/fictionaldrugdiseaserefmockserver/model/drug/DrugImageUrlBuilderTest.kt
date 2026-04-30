@@ -28,4 +28,12 @@ class DrugImageUrlBuilderTest {
             buildDrugImageUrl(drugId = "drug_0080", dosageForm = DosageForm.LIQUID),
         )
     }
+
+    @Test
+    fun `通常 drug は DosageForm serialName を画像 URL に使う`() {
+        assertEquals(
+            "/images/dosage_form/capsule?size=Original",
+            buildDrugImageUrl(drugId = "drug_0002", dosageForm = DosageForm.CAPSULE),
+        )
+    }
 }
