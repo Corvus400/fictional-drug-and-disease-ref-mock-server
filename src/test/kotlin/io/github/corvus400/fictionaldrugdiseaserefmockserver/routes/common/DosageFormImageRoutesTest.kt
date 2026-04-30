@@ -83,5 +83,14 @@ class DosageFormImageRoutesTest {
         assertEquals(ContentType.Image.PNG, response.contentType()?.withoutParameters())
     }
 
+    @Test
+    fun `GET unknown drug override image returns 404`() = testApplication {
+        application { module() }
+
+        val response = client.get("/images/drug/drug_9999?size=Original")
+
+        assertEquals(HttpStatusCode.NotFound, response.status)
+    }
+
     private fun decodeImage(bytes: ByteArray) = ImageIO.read(ByteArrayInputStream(bytes))
 }
