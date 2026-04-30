@@ -12,5 +12,10 @@ object ImageResizer {
     fun resize(
         originalImage: BufferedImage,
         size: ImageSize,
-    ): BufferedImage = originalImage
+    ): BufferedImage =
+        if (size == ImageSize.S) {
+            BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB)
+        } else {
+            originalImage
+        }
 }
