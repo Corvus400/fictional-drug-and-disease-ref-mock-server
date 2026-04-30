@@ -34,6 +34,14 @@ class ImageResizerTest {
         assertEquals(8, resized.height)
     }
 
+    @Test
+    fun `横長 800x400 画像の S は 100x50 を返す`() {
+        val resized = ImageResizer.resize(testImage(width = 800, height = 400), ImageSize.S)
+
+        assertEquals(100, resized.width)
+        assertEquals(50, resized.height)
+    }
+
     private fun testImage(
         width: Int,
         height: Int,
