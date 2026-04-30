@@ -7,6 +7,7 @@ import io.ktor.server.response.respond
 import io.ktor.server.response.respondBytes
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
+import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
 import javax.imageio.ImageIO
 
@@ -28,7 +29,10 @@ fun Application.dosageFormImageModule() {
         get("/images/drug/{drugId}") {
             val drugId = call.parameters["drugId"] ?: return@get
             val bytes = loadImageBytes(resourcePath = "images/drug/$drugId.png", size = ImageSize.ORIGINAL)
-                ?: return@get call.respond(HttpStatusCode.NotFound)
+                ?: ByteArrayOutputStream().use { output ->
+                    ImageIO.write(BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB), "PNG", output)
+                    output.toByteArray()
+                }
             call.respondBytes(bytes, ContentType.Image.PNG)
         }
     }
