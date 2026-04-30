@@ -11,5 +11,5 @@ fun buildDrugImageUrl(
     if (drugId in drugImageOverrideIds) {
         "/images/drug/$drugId?size=Original"
     } else {
-        "/images/dosage_form/tablet?size=Original"
+        "/images/dosage_form/${dosageForm.serialName}?size=Original"
     }
