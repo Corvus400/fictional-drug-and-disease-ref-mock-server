@@ -5,7 +5,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.Re
 import kotlinx.serialization.Serializable
 
 /**
- * 医薬品一覧サマリ — `/api/drugs` 一覧で 1 件分のカード表示に必要な最小フィールドのみ保持する軽量モデル。
+ * 医薬品一覧サマリ — `/drugs` 一覧で 1 件分のカード表示に必要な最小フィールドのみ保持する軽量モデル。
  *
  * `Drug.toSummary()` 拡張関数で `Drug` から派生。詳細画面で必要な完全なフィールド集合は `Drug` を参照。
  */
@@ -20,6 +20,7 @@ data class DrugSummary(
     val brandNameKana: String,
     val atcCode: String,
     val revisedAt: String,
+    val imageUrl: String = buildDrugImageUrl(id, dosageForm),
 )
 
 fun Drug.toSummary(): DrugSummary =
@@ -33,4 +34,5 @@ fun Drug.toSummary(): DrugSummary =
         brandNameKana = brandNameKana,
         atcCode = atcCode,
         revisedAt = revisedAt,
+        imageUrl = imageUrl,
     )

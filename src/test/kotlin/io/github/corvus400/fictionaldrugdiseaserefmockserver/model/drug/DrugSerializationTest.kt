@@ -15,6 +15,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.N
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.PackageInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.StorageCondition
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.AppJson
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
@@ -35,6 +36,7 @@ class DrugSerializationTest {
         assertEquals("経口鎮痛薬", jsonObject["therapeutic_category_name"]?.toString()?.trim('"'))
         assertEquals("架空製薬株式会社", jsonObject["manufacturer"]?.toString()?.trim('"'))
         assertEquals("2024-03-01", jsonObject["revised_at"]?.toString()?.trim('"'))
+        assertEquals("/images/dosage_form/tablet?size=Original", jsonObject["image_url"]?.toString()?.trim('"'))
     }
 
     @Test
@@ -94,9 +96,9 @@ class DrugSerializationTest {
     }
 
     @Test
-    fun `Drug serializes exactly 37 fields with snake_case keys`() {
+    fun `Drug serializes exactly 38 fields with snake_case keys`() {
         val jsonObject = Json.parseToJsonElement(AppJson.encodeToString(minimalDrug())).jsonObject
-        assertEquals(37, jsonObject.size)
+        assertEquals(38, jsonObject.size)
         val keyCasingViolations = jsonObject.keys.filter { key ->
             key != key.lowercase() || key.contains(Regex("[A-Z]"))
         }
@@ -106,9 +108,29 @@ class DrugSerializationTest {
         )
     }
 
-    private fun minimalDrug(): Drug =
+    @Test
+    fun `Drug serializes drug override image_url for drug_0089`() {
+        val drug = minimalDrug(id = "drug_0089")
+        val jsonObject = Json.parseToJsonElement(AppJson.encodeToString(drug)).jsonObject
+
+        assertEquals("/images/drug/drug_0089?size=Original", jsonObject["image_url"]?.toString()?.trim('"'))
+    }
+
+    @Test
+    fun `Drug deserialize without image_url evaluates default imageUrl`() {
+        val json = AppJson.encodeToString(minimalDrug()).replace(
+            ""","image_url":"/images/dosage_form/tablet?size=Original"""",
+            "",
+        )
+
+        val drug = AppJson.decodeFromString<Drug>(json)
+
+        assertEquals("/images/dosage_form/tablet?size=Original", drug.imageUrl)
+    }
+
+    private fun minimalDrug(id: String = "drug_0001"): Drug =
         Drug(
-            id = "drug_0001",
+            id = id,
             genericName = "テスト一般名",
             brandName = "テスト販売名",
             brandNameKana = "テストハンバイメイ",

@@ -20,7 +20,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.R
 import kotlinx.serialization.Serializable
 
 /**
- * 医薬品エンティティ — 添付文書「新記載要領 26 項目 (令和5年改正)」に準拠した架空医薬品 1 件分のフルモデル (36 プロパティ)。
+ * 医薬品エンティティ — 添付文書「新記載要領 26 項目 (令和5年改正)」に準拠した架空医薬品 1 件分のフルモデル。
  *
  * 詳細画面 (D1〜D19 ブロック) のソース。`regulatoryClass` / `dosageForm` / `routeOfAdministration` / ATC 第 1 階層を
  * 分類軸として、UI ブロック発火条件と一覧フィルタを決定する。
@@ -69,4 +69,5 @@ data class Drug(
     val revisedAt: String,
     /** 関連疾患 ID リスト — `disease_NNNN` 形式。ダングリング参照禁止 (仕様: linked-bubbling-sun.md 共通モデル節)。 */
     val relatedDiseaseIds: List<String> = emptyList(),
+    val imageUrl: String = buildDrugImageUrl(id, dosageForm),
 )
