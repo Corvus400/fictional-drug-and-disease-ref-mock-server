@@ -7,6 +7,7 @@ import io.ktor.server.response.respond
 import io.ktor.server.response.respondBytes
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
+import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import javax.imageio.ImageIO
 
@@ -38,10 +39,13 @@ private fun loadImageBytes(
     resourcePath: String,
     size: ImageSize,
 ): ByteArray? {
-    val originalImage = Thread.currentThread().contextClassLoader
+    val originalBytes = Thread.currentThread().contextClassLoader
         .getResourceAsStream(resourcePath)
-        ?.use { ImageIO.read(it) }
+        ?.use { it.readBytes() }
         ?: return null
+    if (size == ImageSize.ORIGINAL) return originalBytes
+
+    val originalImage = ImageIO.read(ByteArrayInputStream(originalBytes)) ?: return null
     val resizedImage = ImageResizer.resize(originalImage, size)
     return ByteArrayOutputStream().use { output ->
         ImageIO.write(resizedImage, "PNG", output)
