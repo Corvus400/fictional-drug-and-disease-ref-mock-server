@@ -28,7 +28,13 @@ fun Application.dosageFormImageModule() {
 
         get("/images/drug/{drugId}") {
             val drugId = call.parameters["drugId"] ?: return@get
-            val bytes = loadImageBytes(resourcePath = "images/drug/$drugId.png", size = ImageSize.ORIGINAL)
+            val size = when (call.request.queryParameters["size"]) {
+                "S" -> ImageSize.S
+                "M" -> ImageSize.M
+                null, "Original" -> ImageSize.ORIGINAL
+                else -> return@get call.respond(HttpStatusCode.BadRequest)
+            }
+            val bytes = loadImageBytes(resourcePath = "images/drug/$drugId.png", size = size)
                 ?: return@get call.respond(HttpStatusCode.NotFound)
             call.respondBytes(bytes, ContentType.Image.PNG)
         }
