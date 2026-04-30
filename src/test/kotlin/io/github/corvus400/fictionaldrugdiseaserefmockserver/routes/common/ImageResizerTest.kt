@@ -18,6 +18,14 @@ class ImageResizerTest {
         assertEquals(8, resized.height)
     }
 
+    @Test
+    fun `正方形 8x8 画像の S は 1x1 を返す`() {
+        val resized = ImageResizer.resize(testImage(width = 8, height = 8), ImageSize.S)
+
+        assertEquals(1, resized.width)
+        assertEquals(1, resized.height)
+    }
+
     private fun testImage(
         width: Int,
         height: Int,
