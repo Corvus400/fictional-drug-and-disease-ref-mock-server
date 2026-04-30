@@ -8,6 +8,10 @@
 - Test: `./gradlew test`
 - Code style check: `./gradlew spotlessCheck`
 - Code style fix: `./gradlew spotlessApply`
+- Local gate setup: `pre-commit install --hook-type pre-commit --hook-type pre-push`
+- Commit gate: `pre-commit` runs `./gradlew spotlessCheck -Pspotless.ratchet=true`
+- Push gate: `pre-push` runs `./gradlew detektMain` and `./gradlew detektTest`
+- Skip push gate only when necessary: `SKIP=gradle-detekt-main,gradle-detekt-test git push`
 - Fat JAR: `./gradlew buildFatJar` → `build/libs/mock-server-all.jar`
 
 ## Server Start/Stop (Apple Container required)

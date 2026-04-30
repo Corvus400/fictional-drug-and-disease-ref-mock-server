@@ -17,7 +17,8 @@ class DrugListFixturesRevisedAtSpreadTest {
             expected = DrugGenerator.REVISED_AT_SPREAD_DAYS,
             actual = distinct.size,
             message = "Drug 120 fixtures must use SPREAD=90 as designed for #313 " +
-                "(got ${distinct.size} distinct over ${drugs.size}). Tie-break determinism is covered by Phase 12 #118.",
+                "(got ${distinct.size} distinct over ${drugs.size}). " +
+                "Tie-break determinism is covered by Phase 12 #118.",
         )
     }
 }
