@@ -35,6 +35,7 @@ class DrugSerializationTest {
         assertEquals("経口鎮痛薬", jsonObject["therapeutic_category_name"]?.toString()?.trim('"'))
         assertEquals("架空製薬株式会社", jsonObject["manufacturer"]?.toString()?.trim('"'))
         assertEquals("2024-03-01", jsonObject["revised_at"]?.toString()?.trim('"'))
+        assertEquals("/images/dosage_form/tablet?size=Original", jsonObject["image_url"]?.toString()?.trim('"'))
     }
 
     @Test
@@ -94,9 +95,9 @@ class DrugSerializationTest {
     }
 
     @Test
-    fun `Drug serializes exactly 37 fields with snake_case keys`() {
+    fun `Drug serializes exactly 38 fields with snake_case keys`() {
         val jsonObject = Json.parseToJsonElement(AppJson.encodeToString(minimalDrug())).jsonObject
-        assertEquals(37, jsonObject.size)
+        assertEquals(38, jsonObject.size)
         val keyCasingViolations = jsonObject.keys.filter { key ->
             key != key.lowercase() || key.contains(Regex("[A-Z]"))
         }
