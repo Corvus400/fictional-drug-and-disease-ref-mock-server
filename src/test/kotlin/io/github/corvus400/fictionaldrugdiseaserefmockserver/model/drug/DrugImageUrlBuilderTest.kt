@@ -20,4 +20,12 @@ class DrugImageUrlBuilderTest {
             buildDrugImageUrl(drugId = "drug_0089", dosageForm = DosageForm.TABLET),
         )
     }
+
+    @Test
+    fun `drug_0080 は drug override 画像 URL を返す`() {
+        assertEquals(
+            "/images/drug/drug_0080?size=Original",
+            buildDrugImageUrl(drugId = "drug_0080", dosageForm = DosageForm.LIQUID),
+        )
+    }
 }
