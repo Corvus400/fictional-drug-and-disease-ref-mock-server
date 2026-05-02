@@ -24,7 +24,7 @@ class DrugModuleCategoryNameTest {
             application { module() }
 
             val targetCategoryName = "消化器系および代謝"
-            val response = client.get("/drugs?category_name=$targetCategoryName&page_size=100")
+            val response = client.get("/v1/drugs?category_name=$targetCategoryName&page_size=100")
 
             assertEquals(HttpStatusCode.OK, response.status)
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
@@ -57,7 +57,7 @@ class DrugModuleCategoryNameTest {
     fun `GET drugs with no category_name returns default pagination size items`() = testApplication {
         application { module() }
 
-        val response = client.get("/drugs")
+        val response = client.get("/v1/drugs")
 
         assertEquals(HttpStatusCode.OK, response.status)
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
@@ -80,7 +80,7 @@ class DrugModuleCategoryNameTest {
         application { module() }
 
         val targetCategoryName = "消化器系および代謝"
-        val response = client.get("/drugs?category_atc=A&category_name=$targetCategoryName&page_size=100")
+        val response = client.get("/v1/drugs?category_atc=A&category_name=$targetCategoryName&page_size=100")
 
         assertEquals(HttpStatusCode.OK, response.status)
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
@@ -114,7 +114,7 @@ class DrugModuleCategoryNameTest {
         application { module() }
 
         val conflictingCategoryName = "神経系"
-        val response = client.get("/drugs?category_atc=A&category_name=$conflictingCategoryName&page_size=100")
+        val response = client.get("/v1/drugs?category_atc=A&category_name=$conflictingCategoryName&page_size=100")
 
         assertEquals(HttpStatusCode.OK, response.status)
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject

@@ -29,7 +29,7 @@ class DrugModuleAdditionalFilterTest {
             // 「重篤な副作用 2」は serious[].name に count=2 の医薬品のみが保持する文字列。
             // SHORT_LIST_COUNT_RANGE = 1..2 のため fixture 全 120 件のうち count=2 のサブセットのみ一致する。
             val keyword = "%E9%87%8D%E7%AF%A4%E3%81%AA%E5%89%AF%E4%BD%9C%E7%94%A8%202"
-            val response = client.get("/drugs?adverse_reaction_keyword=$keyword&page_size=100")
+            val response = client.get("/v1/drugs?adverse_reaction_keyword=$keyword&page_size=100")
 
             assertEquals(HttpStatusCode.OK, response.status)
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
@@ -53,7 +53,7 @@ class DrugModuleAdditionalFilterTest {
         testApplication {
             application { module() }
 
-            val response = client.get("/drugs?precaution_category=PREGNANT&page_size=100")
+            val response = client.get("/v1/drugs?precaution_category=PREGNANT&page_size=100")
 
             assertEquals(HttpStatusCode.OK, response.status)
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
@@ -80,18 +80,18 @@ class DrugModuleAdditionalFilterTest {
             // 「重篤な副作用 2」は serious[].name に count=2 の医薬品のみが保持する文字列。
             val keyword = "%E9%87%8D%E7%AF%A4%E3%81%AA%E5%89%AF%E4%BD%9C%E7%94%A8%202"
 
-            val keywordOnlyTotal = client.get("/drugs?adverse_reaction_keyword=$keyword&page_size=100")
+            val keywordOnlyTotal = client.get("/v1/drugs?adverse_reaction_keyword=$keyword&page_size=100")
                 .let { json.parseToJsonElement(string = it.bodyAsText()).jsonObject }
                 .let { it["total_count"]?.jsonPrimitive?.content?.toInt() }
             assertNotNull(keywordOnlyTotal, "keyword-only response must include total_count")
 
-            val precautionOnlyTotal = client.get("/drugs?precaution_category=PREGNANT&page_size=100")
+            val precautionOnlyTotal = client.get("/v1/drugs?precaution_category=PREGNANT&page_size=100")
                 .let { json.parseToJsonElement(string = it.bodyAsText()).jsonObject }
                 .let { it["total_count"]?.jsonPrimitive?.content?.toInt() }
             assertNotNull(precautionOnlyTotal, "precaution-only response must include total_count")
 
             val andResponse = client.get(
-                "/drugs?adverse_reaction_keyword=$keyword&precaution_category=PREGNANT&page_size=100",
+                "/v1/drugs?adverse_reaction_keyword=$keyword&precaution_category=PREGNANT&page_size=100",
             )
 
             assertEquals(HttpStatusCode.OK, andResponse.status)
@@ -118,14 +118,14 @@ class DrugModuleAdditionalFilterTest {
             application { module() }
 
             val singlePregnantResponse =
-                client.get("/drugs?precaution_category=PREGNANT&page_size=100")
+                client.get("/v1/drugs?precaution_category=PREGNANT&page_size=100")
             assertEquals(HttpStatusCode.OK, singlePregnantResponse.status)
             val singlePregnantTotal = json.parseToJsonElement(string = singlePregnantResponse.bodyAsText())
                 .jsonObject["total_count"]?.jsonPrimitive?.content?.toInt()
             assertNotNull(singlePregnantTotal, "single-value PREGNANT response must include total_count")
 
             val orResponse =
-                client.get("/drugs?precaution_category=PREGNANT&precaution_category=GERIATRIC&page_size=100")
+                client.get("/v1/drugs?precaution_category=PREGNANT&precaution_category=GERIATRIC&page_size=100")
 
             assertEquals(HttpStatusCode.OK, orResponse.status)
             val orBody = json.parseToJsonElement(string = orResponse.bodyAsText()).jsonObject
@@ -147,7 +147,7 @@ class DrugModuleAdditionalFilterTest {
         testApplication {
             application { module() }
 
-            val response = client.get("/drugs?precaution_category=INVALID")
+            val response = client.get("/v1/drugs?precaution_category=INVALID")
 
             assertEquals(HttpStatusCode.BadRequest, response.status)
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
@@ -182,7 +182,7 @@ class DrugModuleAdditionalFilterTest {
                 message = "Admin API must accept drugList empty scenario override",
             )
 
-            val response = client.get(urlString = "/drugs?adverse_reaction_keyword=X")
+            val response = client.get(urlString = "/v1/drugs?adverse_reaction_keyword=X")
 
             assertEquals(
                 expected = HttpStatusCode.OK,
@@ -230,7 +230,7 @@ class DrugModuleAdditionalFilterTest {
                 message = "Admin API must accept drugList empty scenario override",
             )
 
-            val response = client.get(urlString = "/drugs?precaution_category=PREGNANT")
+            val response = client.get(urlString = "/v1/drugs?precaution_category=PREGNANT")
 
             assertEquals(
                 expected = HttpStatusCode.OK,

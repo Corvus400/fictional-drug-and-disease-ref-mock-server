@@ -32,9 +32,9 @@ class DrugModuleKeywordTest {
             val keywordPrefix = sampleBrandName.take(n = KEYWORD_PREFIX_LENGTH)
             val encodedKeyword = keywordPrefix.encodeURLParameter()
 
-            val totalResponse = client.get(urlString = "/drugs?page_size=100")
+            val totalResponse = client.get(urlString = "/v1/drugs?page_size=100")
             val filteredResponse = client.get(
-                urlString = "/drugs?keyword=$encodedKeyword" +
+                urlString = "/v1/drugs?keyword=$encodedKeyword" +
                     "&keyword_target=brand&keyword_match=partial&page_size=100",
             )
 

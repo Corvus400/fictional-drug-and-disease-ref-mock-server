@@ -30,7 +30,7 @@ class ResponseDisclaimerIntegrationTest {
         val detailBody = json.parseToJsonElement(detailResponse.bodyAsText()).jsonObject
         assertEquals(Disclaimer.SHORT, detailBody["disclaimer"]?.jsonPrimitive?.content)
 
-        val listResponse = client.get("/drugs")
+        val listResponse = client.get("/v1/drugs")
         val listBody = json.parseToJsonElement(listResponse.bodyAsText()).jsonObject
         assertEquals(Disclaimer.SHORT, listBody["disclaimer"]?.jsonPrimitive?.content)
         assertNull(listBody["items"]?.jsonArray?.first()?.jsonObject?.get("disclaimer"))
