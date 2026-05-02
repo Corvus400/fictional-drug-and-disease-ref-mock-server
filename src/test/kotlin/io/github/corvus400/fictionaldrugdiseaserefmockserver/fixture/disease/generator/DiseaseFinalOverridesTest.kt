@@ -76,6 +76,16 @@ class DiseaseFinalOverridesTest {
     }
 
     @Test
+    fun `witch factor syndrome should affect only female patients`() {
+        val disease0079 = generateDiseases().first { it.id == "disease_0079" }
+        val sexRatio = disease0079.epidemiology?.sexRatio
+
+        assertEquals(0, sexRatio?.maleRatio)
+        assertEquals(1, sexRatio?.femaleRatio)
+        assertTrue(sexRatio?.note?.contains("少女") == true)
+    }
+
+    @Test
     fun `insomnia disease should be overridden`() {
         val insomnia = generateDiseases().first { it.id == "disease_0022" }
 
