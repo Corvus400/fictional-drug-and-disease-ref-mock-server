@@ -8,7 +8,9 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.config.MockServerCo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.adminRoutes
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.categories.categoriesCatalogEntries
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.categories.categoriesModule
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.common.dosageFormImageModule
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.common.dosageFormImageCatalogEntries
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.common.dosageFormImageRoute
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.common.drugImageRoute
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.disease.diseaseCatalogEntries
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.disease.diseaseModule
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.drug.drugCatalogEntries
@@ -40,6 +42,10 @@ private val allModules: List<ModuleRegistration> = listOf(
         catalogEntries = categoriesCatalogEntries,
         configure = { categoriesModule() },
     ),
+    StatelessModuleRegistration(
+        catalogEntries = dosageFormImageCatalogEntries,
+        configure = { dosageFormImageRoute() },
+    ),
 )
 
 fun Application.configureRouting(
@@ -60,8 +66,8 @@ fun Application.configureRouting(
         }
     }
 
-    // Common Modules（カタログ登録不要のインフラモジュール）
-    dosageFormImageModule()
+    // Green 2/3: drug image route is documented in the next checkpoint.
+    drugImageRoute()
 
     // 起動時検証: カタログ登録の双方向整合性チェック
     verifyCatalogCoverage()
