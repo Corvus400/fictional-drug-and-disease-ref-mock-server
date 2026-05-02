@@ -69,7 +69,7 @@ class DiseasePlaceholderDictionary(
         const val EXPECTED_KEY_COUNT: Int = 48
 
         init {
-            check(DiseasePlaceholderKey.values().size == EXPECTED_KEY_COUNT) {
+            check(DiseasePlaceholderKey.entries.size == EXPECTED_KEY_COUNT) {
                 "DiseasePlaceholderKey must contain exactly $EXPECTED_KEY_COUNT entries"
             }
         }

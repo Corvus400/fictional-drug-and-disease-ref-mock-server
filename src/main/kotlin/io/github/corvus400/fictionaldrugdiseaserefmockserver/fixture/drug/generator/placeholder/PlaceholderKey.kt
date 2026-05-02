@@ -81,7 +81,7 @@ enum class PlaceholderKey(
     ;
 
     companion object {
-        private val BY_JSON_KEY: Map<String, PlaceholderKey> = values().associateBy { it.jsonKey }
+        private val BY_JSON_KEY: Map<String, PlaceholderKey> = entries.associateBy { it.jsonKey }
 
         fun fromJsonKey(jsonKey: String): PlaceholderKey? = BY_JSON_KEY[jsonKey]
     }

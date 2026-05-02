@@ -15,7 +15,7 @@ class DiseasePlaceholderDictionaryTest {
     fun `DiseasePlaceholderKey enum contains exactly 48 keys`() {
         assertEquals(
             DISEASE_PLACEHOLDER_KEY_COUNT,
-            DiseasePlaceholderKey.values().size,
+            DiseasePlaceholderKey.entries.size,
             "DiseasePlaceholderKey must cover exactly $DISEASE_PLACEHOLDER_KEY_COUNT placeholders " +
                 "extracted from DiseaseParagraphTemplates",
         )
@@ -25,7 +25,7 @@ class DiseasePlaceholderDictionaryTest {
     fun `resolve returns non-blank value for every placeholder key`() {
         val dict = buildDict()
         val context = DiseaseRenderContext(selfName = "架空疾患テスト甲")
-        DiseasePlaceholderKey.values().forEach { key ->
+        DiseasePlaceholderKey.entries.forEach { key ->
             val seed = stableHash(id = "disease_0001:${key.jsonKey}", slot = 0, index = 0)
             val value = dict.resolve(key.jsonKey, seed, context)
             assertTrue(
