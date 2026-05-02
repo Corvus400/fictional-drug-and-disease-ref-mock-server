@@ -119,3 +119,26 @@ inline fun <reified T : Any> RouteConfig.documentListEndpoint(
         }
     }
 }
+
+/**
+ * シナリオ切替を持たない静的レスポンス系ルートに OpenAPI ドキュメントを付ける。
+ *
+ * @param metadata ルートのメタデータ (path/method/endpointName/tag/summary)
+ * @param endpointDescription OpenAPI description 本文
+ * @param okResponseDescription 200 OK レスポンスの説明
+ */
+inline fun <reified T : Any> RouteConfig.documentStatelessEndpoint(
+    metadata: EndpointMetadata,
+    endpointDescription: String,
+    okResponseDescription: String,
+) {
+    this.summary = metadata.summary
+    tags(metadata.tag.tagName)
+    description = endpointDescription
+    response {
+        code(HttpStatusCode.OK) {
+            description = okResponseDescription
+            body<T>()
+        }
+    }
+}
