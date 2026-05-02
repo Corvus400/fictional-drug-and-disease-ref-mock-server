@@ -3,6 +3,7 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.ge
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Chronicity
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.ExamCategory
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.MedicalDepartment
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.OnsetPattern
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.DiagnosticCriteriaInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.Exam
@@ -124,6 +125,7 @@ private fun witchFactorSyndromeOverride(generated: Disease): Disease =
         name = "魔女因子症候群",
         nameKana = "マジョインシショウコウグン",
         nameEnglish = "Witch Factor Syndrome (fictional)",
+        medicalDepartment = listOf(MedicalDepartment.PSYCHIATRY, MedicalDepartment.DERMATOLOGY),
         chronicity = Chronicity.CHRONIC,
         infectious = false,
         synonyms = listOf("魔女化症", "ウィッチファクター症候群"),
