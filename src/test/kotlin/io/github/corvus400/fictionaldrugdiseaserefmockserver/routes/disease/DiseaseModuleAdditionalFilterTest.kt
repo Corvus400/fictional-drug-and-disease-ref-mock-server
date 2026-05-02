@@ -24,7 +24,7 @@ class DiseaseModuleAdditionalFilterTest {
         application { module() }
 
         val keyword = "発熱".encodeURLParameter()
-        val response = client.get(urlString = "/diseases?symptom_keyword=$keyword&page_size=100")
+        val response = client.get(urlString = "/v1/diseases?symptom_keyword=$keyword&page_size=100")
 
         assertEquals(expected = HttpStatusCode.OK, actual = response.status)
         val totalCount = response.totalCount()
@@ -40,7 +40,7 @@ class DiseaseModuleAdditionalFilterTest {
             application { module() }
 
             val keyword = "発熱".encodeURLParameter()
-            val response = client.get(urlString = "/diseases?symptom_keyword=$keyword") {
+            val response = client.get(urlString = "/v1/diseases?symptom_keyword=$keyword") {
                 header(key = "X-Mock-Scenario", value = "empty")
             }
 
@@ -51,9 +51,9 @@ class DiseaseModuleAdditionalFilterTest {
     fun `GET diseases with onset_pattern ACUTE and CHRONIC returns OR-filtered items`() = testApplication {
         application { module() }
 
-        val singleTotal = client.get(urlString = "/diseases?onset_pattern=ACUTE&page_size=100").totalCount()
+        val singleTotal = client.get(urlString = "/v1/diseases?onset_pattern=ACUTE&page_size=100").totalCount()
         val orResponse = client.get(
-            urlString = "/diseases?onset_pattern=ACUTE&onset_pattern=CHRONIC&page_size=100",
+            urlString = "/v1/diseases?onset_pattern=ACUTE&onset_pattern=CHRONIC&page_size=100",
         )
 
         assertEquals(expected = HttpStatusCode.OK, actual = orResponse.status)
@@ -76,7 +76,7 @@ class DiseaseModuleAdditionalFilterTest {
     fun `GET diseases with exam_category IMAGING returns filtered items`() = testApplication {
         application { module() }
 
-        val response = client.get(urlString = "/diseases?exam_category=IMAGING&page_size=100")
+        val response = client.get(urlString = "/v1/diseases?exam_category=IMAGING&page_size=100")
 
         assertEquals(expected = HttpStatusCode.OK, actual = response.status)
         val totalCount = response.totalCount()
@@ -92,7 +92,7 @@ class DiseaseModuleAdditionalFilterTest {
             application { module() }
 
             val response = client.get(
-                urlString = "/diseases?has_pharmacological_treatment=true&page_size=100",
+                urlString = "/v1/diseases?has_pharmacological_treatment=true&page_size=100",
             )
 
             assertEquals(expected = HttpStatusCode.OK, actual = response.status)
@@ -108,7 +108,7 @@ class DiseaseModuleAdditionalFilterTest {
         testApplication {
             application { module() }
 
-            val response = client.get(urlString = "/diseases?has_pharmacological_treatment=true") {
+            val response = client.get(urlString = "/v1/diseases?has_pharmacological_treatment=true") {
                 header(key = "X-Mock-Scenario", value = "empty")
             }
 
@@ -121,10 +121,10 @@ class DiseaseModuleAdditionalFilterTest {
             application { module() }
 
             val falseResponse = client.get(
-                urlString = "/diseases?has_pharmacological_treatment=false&page_size=100",
+                urlString = "/v1/diseases?has_pharmacological_treatment=false&page_size=100",
             )
             val trueTotal = client.get(
-                urlString = "/diseases?has_pharmacological_treatment=true&page_size=100",
+                urlString = "/v1/diseases?has_pharmacological_treatment=true&page_size=100",
             ).totalCount()
 
             assertEquals(expected = HttpStatusCode.OK, actual = falseResponse.status)
@@ -145,7 +145,7 @@ class DiseaseModuleAdditionalFilterTest {
         testApplication {
             application { module() }
 
-            val response = client.get(urlString = "/diseases?has_severity_grading=true&page_size=100")
+            val response = client.get(urlString = "/v1/diseases?has_severity_grading=true&page_size=100")
 
             assertEquals(expected = HttpStatusCode.OK, actual = response.status)
             val totalCount = response.totalCount()
@@ -160,7 +160,7 @@ class DiseaseModuleAdditionalFilterTest {
         testApplication {
             application { module() }
 
-            val response = client.get(urlString = "/diseases?has_severity_grading=true") {
+            val response = client.get(urlString = "/v1/diseases?has_severity_grading=true") {
                 header(key = "X-Mock-Scenario", value = "empty")
             }
 
@@ -174,13 +174,13 @@ class DiseaseModuleAdditionalFilterTest {
 
             val keyword = "発熱".encodeURLParameter()
             val symptomTotal = client.get(
-                urlString = "/diseases?symptom_keyword=$keyword&page_size=100",
+                urlString = "/v1/diseases?symptom_keyword=$keyword&page_size=100",
             ).totalCount()
             val severityTotal = client.get(
-                urlString = "/diseases?has_severity_grading=true&page_size=100",
+                urlString = "/v1/diseases?has_severity_grading=true&page_size=100",
             ).totalCount()
             val andResponse = client.get(
-                urlString = "/diseases?symptom_keyword=$keyword&has_severity_grading=true&page_size=100",
+                urlString = "/v1/diseases?symptom_keyword=$keyword&has_severity_grading=true&page_size=100",
             )
 
             assertEquals(expected = HttpStatusCode.OK, actual = andResponse.status)
@@ -202,7 +202,7 @@ class DiseaseModuleAdditionalFilterTest {
         testApplication {
             application { module() }
 
-            val response = client.get(urlString = "/diseases?onset_pattern=INVALID")
+            val response = client.get(urlString = "/v1/diseases?onset_pattern=INVALID")
 
             assertEquals(expected = HttpStatusCode.BadRequest, actual = response.status)
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
@@ -220,7 +220,7 @@ class DiseaseModuleAdditionalFilterTest {
         testApplication {
             application { module() }
 
-            val response = client.get(urlString = "/diseases?exam_category=INVALID")
+            val response = client.get(urlString = "/v1/diseases?exam_category=INVALID")
 
             assertEquals(expected = HttpStatusCode.BadRequest, actual = response.status)
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject

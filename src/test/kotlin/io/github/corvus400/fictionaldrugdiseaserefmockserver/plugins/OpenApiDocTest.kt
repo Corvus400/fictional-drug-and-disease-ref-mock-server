@@ -160,7 +160,7 @@ class OpenApiDocTest {
     @Test
     fun `disease icd10_chapter parameter has description`() = testApplication {
         application { module() }
-        val description = fetchParameterDescription(path = "/diseases", parameterName = "icd10_chapter")
+        val description = fetchParameterDescription(path = "/v1/diseases", parameterName = "icd10_chapter")
         assertTrue(
             description.isNotEmpty(),
             "icd10_chapter description が空文字列",
@@ -174,7 +174,7 @@ class OpenApiDocTest {
     @Test
     fun `disease department parameter has description`() = testApplication {
         application { module() }
-        val description = fetchParameterDescription(path = "/diseases", parameterName = "department")
+        val description = fetchParameterDescription(path = "/v1/diseases", parameterName = "department")
         assertTrue(
             description.contains("internal_medicine"),
             "department description に英語 SerialName 'internal_medicine' が含まれていない: $description",
@@ -184,7 +184,7 @@ class OpenApiDocTest {
     @Test
     fun `disease chronicity parameter has description`() = testApplication {
         application { module() }
-        val description = fetchParameterDescription(path = "/diseases", parameterName = "chronicity")
+        val description = fetchParameterDescription(path = "/v1/diseases", parameterName = "chronicity")
         assertTrue(
             description.contains("chronic"),
             "chronicity description に英語 SerialName 'chronic' が含まれていない: $description",
@@ -194,7 +194,7 @@ class OpenApiDocTest {
     @Test
     fun `disease infectious parameter has description`() = testApplication {
         application { module() }
-        val description = fetchParameterDescription(path = "/diseases", parameterName = "infectious")
+        val description = fetchParameterDescription(path = "/v1/diseases", parameterName = "infectious")
         assertTrue(
             description.isNotEmpty(),
             "infectious description が空文字列",

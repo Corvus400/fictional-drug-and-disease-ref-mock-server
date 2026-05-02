@@ -167,7 +167,7 @@ class ScenarioExecutionTest {
 
             client.post("/__admin/reset")
 
-            val defaultResponse = client.get("/diseases")
+            val defaultResponse = client.get("/v1/diseases")
             val defaultBody = json.decodeFromString<JsonObject>(defaultResponse.bodyAsText())
             assertEquals(
                 expected = 80,
@@ -180,7 +180,7 @@ class ScenarioExecutionTest {
                 setBody("""{"state":"empty"}""")
             }
 
-            val emptyResponse = client.get("/diseases")
+            val emptyResponse = client.get("/v1/diseases")
             val emptyBody = json.decodeFromString<JsonObject>(emptyResponse.bodyAsText())
             assertEquals(
                 expected = 0,
@@ -190,7 +190,7 @@ class ScenarioExecutionTest {
 
             client.post("/__admin/reset")
 
-            val restoredResponse = client.get("/diseases")
+            val restoredResponse = client.get("/v1/diseases")
             val restoredBody = json.decodeFromString<JsonObject>(restoredResponse.bodyAsText())
             assertEquals(
                 expected = 80,
