@@ -81,14 +81,16 @@ class DrugGenerator(
                 slot = NameSlot.DRUG_MANUFACTURER,
                 offset = 0,
             )
-        return buildDrug(
-            blueprint = blueprint,
-            brand = brand,
-            generic = generic,
-            inactives = inactives,
-            manufacturer = manufacturer,
-            injectionFormIndices = injectionFormIndices,
-        )
+        val generated =
+            buildDrug(
+                blueprint = blueprint,
+                brand = brand,
+                generic = generic,
+                inactives = inactives,
+                manufacturer = manufacturer,
+                injectionFormIndices = injectionFormIndices,
+            )
+        return DRUG_FINAL_OVERRIDES[generated.id]?.invoke(generated) ?: generated
     }
 
     private fun buildDrug(
