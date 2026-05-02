@@ -243,10 +243,13 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
                     ?.takeIf { it.isNotEmpty() }
                 val chapterFilter = chapterParam?.let { Icd10Chapter.fromSerialName(serialName = it) }
                 val rejectChapterFilter = chapterParam != null && chapterFilter == null
-                val departmentFilter = call.request.queryParameters["department"]
-                    ?.let { MedicalDepartment.fromSerialName(key = it) }
+                val departmentParam = call.request.queryParameters["department"]
+                val departmentFilter = departmentParam?.let { MedicalDepartment.fromSerialName(key = it) }
+                val rejectDepartmentFilter = departmentParam != null && departmentFilter == null
                 val chronicityFilter = call.request.queryParameters["chronicity"]
-                val infectiousFilter = call.request.queryParameters["infectious"]?.toBooleanStrictOrNull()
+                val infectiousParam = call.request.queryParameters["infectious"]
+                val infectiousFilter = infectiousParam?.toBooleanStrictOrNull()
+                val rejectInfectiousFilter = infectiousParam != null && infectiousFilter == null
                 val keyword = call.request.queryParameters["keyword"]
                 val symptomKeyword = call.request.queryParameters["symptom_keyword"]
                 val onsetPatterns = try {
@@ -273,10 +276,13 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
                     )
                     return@handle
                 }
-                val hasPharmacologicalTreatment =
-                    call.request.queryParameters["has_pharmacological_treatment"]?.toBooleanStrictOrNull()
-                val hasSeverityGrading =
-                    call.request.queryParameters["has_severity_grading"]?.toBooleanStrictOrNull()
+                val hasPharmacologicalTreatmentParam = call.request.queryParameters["has_pharmacological_treatment"]
+                val hasPharmacologicalTreatment = hasPharmacologicalTreatmentParam?.toBooleanStrictOrNull()
+                val rejectHasPharmacologicalTreatment =
+                    hasPharmacologicalTreatmentParam != null && hasPharmacologicalTreatment == null
+                val hasSeverityGradingParam = call.request.queryParameters["has_severity_grading"]
+                val hasSeverityGrading = hasSeverityGradingParam?.toBooleanStrictOrNull()
+                val rejectHasSeverityGrading = hasSeverityGradingParam != null && hasSeverityGrading == null
                 val keywordMatch = KeywordMatch.fromQuery(value = call.request.queryParameters["keyword_match"])
                 val keywordTarget = DiseaseKeywordTarget.fromQuery(
                     value = call.request.queryParameters["keyword_target"]
@@ -299,28 +305,37 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
                         val diseasesByScenario = diseaseListFixtures.diseasesByScenario
                         val scenarioDiseases = diseasesByScenario[scenario]
                             ?: diseasesByScenario.values.first()
-                        val filtered = applyDiseaseListFilters(
-                            diseases = scenarioDiseases,
-                            chapterFilter = chapterFilter,
-                            rejectChapterFilter = rejectChapterFilter,
-                            departmentFilter = departmentFilter,
-                            chronicitySerialName = chronicityFilter,
-                            infectiousFilter = infectiousFilter,
-                        )
+                        val filtered = if (rejectDepartmentFilter || rejectInfectiousFilter) {
+                            emptyList()
+                        } else {
+                            applyDiseaseListFilters(
+                                diseases = scenarioDiseases,
+                                chapterFilter = chapterFilter,
+                                rejectChapterFilter = rejectChapterFilter,
+                                departmentFilter = departmentFilter,
+                                chronicitySerialName = chronicityFilter,
+                                infectiousFilter = infectiousFilter,
+                            )
+                        }
                         val keywordFiltered = DiseaseSearchService.applyKeyword(
                             items = filtered,
                             keyword = keyword,
                             match = keywordMatch,
                             target = keywordTarget,
                         )
-                        val additionallyFiltered = DiseaseSearchService.applyAdditionalFilters(
-                            items = keywordFiltered,
-                            symptomKeyword = symptomKeyword,
-                            onsetPatterns = onsetPatterns,
-                            examCategories = examCategories,
-                            hasPharmacologicalTreatment = hasPharmacologicalTreatment,
-                            hasSeverityGrading = hasSeverityGrading,
-                        )
+                        val additionallyFiltered =
+                            if (rejectHasPharmacologicalTreatment || rejectHasSeverityGrading) {
+                                emptyList()
+                            } else {
+                                DiseaseSearchService.applyAdditionalFilters(
+                                    items = keywordFiltered,
+                                    symptomKeyword = symptomKeyword,
+                                    onsetPatterns = onsetPatterns,
+                                    examCategories = examCategories,
+                                    hasPharmacologicalTreatment = hasPharmacologicalTreatment,
+                                    hasSeverityGrading = hasSeverityGrading,
+                                )
+                            }
                         val sorted = DiseaseSearchService.applySort(items = additionallyFiltered, sort = sortKey)
                         paginate(
                             summaries = sorted.map { it.toSummary() },

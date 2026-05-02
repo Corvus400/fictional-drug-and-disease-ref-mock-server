@@ -4,6 +4,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.MedicalDepartment
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.module
+import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
@@ -241,6 +242,65 @@ class DiseaseModuleFilterTest {
             expected = 0,
             actual = totalCount,
             message = "total_count must equal 0 when legacy roman key 'I' is provided",
+        )
+    }
+
+    @Test
+    fun `GET diseases with invalid department returns zero results`() = testApplication {
+        application { module() }
+
+        assertZeroResultsForInvalidFilter(
+            client = client,
+            url = "/diseases?department=invalid&page_size=100",
+        )
+    }
+
+    @Test
+    fun `GET diseases with invalid infectious returns zero results`() = testApplication {
+        application { module() }
+
+        assertZeroResultsForInvalidFilter(
+            client = client,
+            url = "/diseases?infectious=invalid&page_size=100",
+        )
+    }
+
+    @Test
+    fun `GET diseases with invalid has_pharmacological_treatment returns zero results`() = testApplication {
+        application { module() }
+
+        assertZeroResultsForInvalidFilter(
+            client = client,
+            url = "/diseases?has_pharmacological_treatment=invalid&page_size=100",
+        )
+    }
+
+    @Test
+    fun `GET diseases with invalid has_severity_grading returns zero results`() = testApplication {
+        application { module() }
+
+        assertZeroResultsForInvalidFilter(
+            client = client,
+            url = "/diseases?has_severity_grading=invalid&page_size=100",
+        )
+    }
+
+    private suspend fun assertZeroResultsForInvalidFilter(client: HttpClient, url: String) {
+        val response = client.get(urlString = url)
+
+        assertEquals(expected = HttpStatusCode.OK, actual = response.status)
+        val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
+        val items = body["items"]?.jsonArray
+        assertNotNull(actual = items, message = "response body must have an items array")
+        val totalCount = body["total_count"]?.jsonPrimitive?.content?.toIntOrNull()
+        assertEquals(
+            expected = 0,
+            actual = totalCount,
+            message = "total_count must equal 0 when invalid filter value is provided: $url",
+        )
+        assertTrue(
+            actual = items.isEmpty(),
+            message = "items must be empty when invalid filter value is provided: $url",
         )
     }
 
