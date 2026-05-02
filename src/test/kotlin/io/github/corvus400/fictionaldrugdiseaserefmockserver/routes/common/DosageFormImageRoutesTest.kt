@@ -17,10 +17,20 @@ import kotlin.test.assertTrue
 
 class DosageFormImageRoutesTest {
     @Test
+    fun `GET v1 dosage form image with Original returns PNG`() = testApplication {
+        application { module() }
+
+        val response = client.get("/v1/images/dosage-forms/tablet?size=Original")
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        assertEquals(ContentType.Image.PNG, response.contentType()?.withoutParameters())
+    }
+
+    @Test
     fun `GET dosage form image with Original returns PNG`() = testApplication {
         application { module() }
 
-        val response = client.get("/images/dosage_form/tablet?size=Original")
+        val response = client.get("/v1/images/dosage-forms/tablet?size=Original")
 
         assertEquals(HttpStatusCode.OK, response.status)
         assertEquals(ContentType.Image.PNG, response.contentType()?.withoutParameters())
@@ -30,8 +40,8 @@ class DosageFormImageRoutesTest {
     fun `GET dosage form image with S returns one eighth of original long edge`() = testApplication {
         application { module() }
 
-        val original = decodeImage(client.get("/images/dosage_form/tablet?size=Original").bodyAsBytes())
-        val small = decodeImage(client.get("/images/dosage_form/tablet?size=S").bodyAsBytes())
+        val original = decodeImage(client.get("/v1/images/dosage-forms/tablet?size=Original").bodyAsBytes())
+        val small = decodeImage(client.get("/v1/images/dosage-forms/tablet?size=S").bodyAsBytes())
 
         assertEquals(max(original.width, original.height) / 8, max(small.width, small.height))
     }
@@ -40,8 +50,8 @@ class DosageFormImageRoutesTest {
     fun `GET dosage form image with M returns one quarter of original long edge`() = testApplication {
         application { module() }
 
-        val original = decodeImage(client.get("/images/dosage_form/tablet?size=Original").bodyAsBytes())
-        val medium = decodeImage(client.get("/images/dosage_form/tablet?size=M").bodyAsBytes())
+        val original = decodeImage(client.get("/v1/images/dosage-forms/tablet?size=Original").bodyAsBytes())
+        val medium = decodeImage(client.get("/v1/images/dosage-forms/tablet?size=M").bodyAsBytes())
 
         assertEquals(max(original.width, original.height) / 4, max(medium.width, medium.height))
     }
@@ -50,7 +60,7 @@ class DosageFormImageRoutesTest {
     fun `GET dosage form image with S renders non-black pixels`() = testApplication {
         application { module() }
 
-        val small = decodeImage(client.get("/images/dosage_form/tablet?size=S").bodyAsBytes())
+        val small = decodeImage(client.get("/v1/images/dosage-forms/tablet?size=S").bodyAsBytes())
 
         assertTrue(hasVisibleNonBlackPixel(small), "S image should contain at least one visible non-black pixel")
     }
@@ -59,7 +69,7 @@ class DosageFormImageRoutesTest {
     fun `GET dosage form image with M renders non-black pixels`() = testApplication {
         application { module() }
 
-        val medium = decodeImage(client.get("/images/dosage_form/tablet?size=M").bodyAsBytes())
+        val medium = decodeImage(client.get("/v1/images/dosage-forms/tablet?size=M").bodyAsBytes())
 
         assertTrue(hasVisibleNonBlackPixel(medium), "M image should contain at least one visible non-black pixel")
     }
@@ -68,8 +78,8 @@ class DosageFormImageRoutesTest {
     fun `GET dosage form image without size returns Original`() = testApplication {
         application { module() }
 
-        val explicitOriginal = decodeImage(client.get("/images/dosage_form/tablet?size=Original").bodyAsBytes())
-        val defaultOriginal = decodeImage(client.get("/images/dosage_form/tablet").bodyAsBytes())
+        val explicitOriginal = decodeImage(client.get("/v1/images/dosage-forms/tablet?size=Original").bodyAsBytes())
+        val defaultOriginal = decodeImage(client.get("/v1/images/dosage-forms/tablet").bodyAsBytes())
 
         assertEquals(explicitOriginal.width, defaultOriginal.width)
         assertEquals(explicitOriginal.height, defaultOriginal.height)
@@ -79,7 +89,7 @@ class DosageFormImageRoutesTest {
     fun `GET dosage form image with Original returns source bytes for indexed PNG`() = testApplication {
         application { module() }
 
-        val responseBytes = client.get("/images/dosage_form/tablet?size=Original").bodyAsBytes()
+        val responseBytes = client.get("/v1/images/dosage-forms/tablet?size=Original").bodyAsBytes()
 
         assertContentEquals(resourceBytes("images/dosage_form/tablet.png"), responseBytes)
     }
@@ -88,7 +98,7 @@ class DosageFormImageRoutesTest {
     fun `GET dosage form image with Original returns source bytes for RGBA PNG`() = testApplication {
         application { module() }
 
-        val responseBytes = client.get("/images/dosage_form/capsule?size=Original").bodyAsBytes()
+        val responseBytes = client.get("/v1/images/dosage-forms/capsule?size=Original").bodyAsBytes()
 
         assertContentEquals(resourceBytes("images/dosage_form/capsule.png"), responseBytes)
     }
@@ -106,7 +116,7 @@ class DosageFormImageRoutesTest {
     fun `GET unknown dosage form image returns 404`() = testApplication {
         application { module() }
 
-        val response = client.get("/images/dosage_form/UNKNOWN_FORM")
+        val response = client.get("/v1/images/dosage-forms/UNKNOWN_FORM")
 
         assertEquals(HttpStatusCode.NotFound, response.status)
     }
@@ -115,7 +125,7 @@ class DosageFormImageRoutesTest {
     fun `GET dosage form image with invalid size returns 400`() = testApplication {
         application { module() }
 
-        val response = client.get("/images/dosage_form/tablet?size=invalid")
+        val response = client.get("/v1/images/dosage-forms/tablet?size=invalid")
 
         assertEquals(HttpStatusCode.BadRequest, response.status)
     }
