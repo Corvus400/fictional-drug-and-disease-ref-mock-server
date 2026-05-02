@@ -290,7 +290,13 @@ private fun witchFactorSyndromeOverride(generated: Disease): Disease =
         "魔女化進行は不可逆性が強く、完全魔女化後はなれはてへ移行する。" +
             "ただし大魔女顕現による魔女因子喪失で進行中の魔女化が解除される可能性が示唆され、" +
             "トレデキム曝露に対する致死的脆弱性を伴う (架空)",
-        prevention = listOf("魔女因子曝露の回避 (架空)", "活性化兆候の早期隔離 (架空)"),
+        prevention =
+        listOf(
+            "強いストレス・トラウマ刺激の回避 (架空)",
+            "悪意・不信感の拡散抑制 (架空)",
+            "全国検査による魔女因子高値の早期発見 (架空)",
+            "15 歳以前の精神安定環境の維持 (架空)",
+        ),
         relatedDrugIds = listOf("drug_0080"),
         relatedDiseaseIds = emptyList(),
     )
