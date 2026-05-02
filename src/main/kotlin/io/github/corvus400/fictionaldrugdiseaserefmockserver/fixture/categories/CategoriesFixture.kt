@@ -20,12 +20,13 @@ class CategoriesFixture(
         atc = TherapeuticCategory.entries.map { category ->
             AtcEntry(code = category.atcInitial.toString(), label = category.displayName)
         },
-        therapeuticCategories = drugs.map { drug ->
-            val category = drug.therapeuticCategoryName.toTherapeuticCategory()
-            TherapeuticCategoryEntry(
-                id = category.categoryId,
-                label = category.displayName,
-            )
+        therapeuticCategories = drugs.mapNotNull { drug ->
+            drug.therapeuticCategoryName.toTherapeuticCategory()?.let { category ->
+                TherapeuticCategoryEntry(
+                    id = category.categoryId,
+                    label = category.displayName,
+                )
+            }
         }.distinctBy { entry -> entry.id },
         routeOfAdministration = enumSerialNames<RouteOfAdministration>(),
         dosageForm = enumSerialNames<DosageForm>(),
@@ -61,9 +62,8 @@ class CategoriesFixture(
             }
         }
 
-        private fun String.toTherapeuticCategory(): TherapeuticCategory =
+        private fun String.toTherapeuticCategory(): TherapeuticCategory? =
             TherapeuticCategory.fromDisplayName(displayName = this)
-                ?: error("unknown therapeutic category name '$this'")
 
         /**
          * ICD-10 章別の標準コード範囲。WHO ICD-10 の章コード仕様に揃える。
