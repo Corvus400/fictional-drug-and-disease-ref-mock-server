@@ -32,7 +32,7 @@ class DrugSummarySerializationTest {
         assertEquals("テスト販売名", jsonObject["brand_name"]?.toString()?.trim('"'))
         assertEquals("テスト一般名", jsonObject["generic_name"]?.toString()?.trim('"'))
         assertEquals("経口鎮痛薬", jsonObject["therapeutic_category_name"]?.toString()?.trim('"'))
-        assertEquals("/images/dosage_form/tablet?size=Original", jsonObject["image_url"]?.toString()?.trim('"'))
+        assertEquals("/v1/images/dosage-forms/tablet?size=Original", jsonObject["image_url"]?.toString()?.trim('"'))
         assertTrue(encoded.contains(""""regulatory_class":["prescription_required"]"""))
         assertTrue(encoded.contains(""""dosage_form":"tablet""""))
 

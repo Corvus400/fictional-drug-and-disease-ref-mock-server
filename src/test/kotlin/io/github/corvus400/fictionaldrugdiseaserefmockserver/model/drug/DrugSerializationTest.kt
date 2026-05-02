@@ -35,7 +35,7 @@ class DrugSerializationTest {
         assertEquals("経口鎮痛薬", jsonObject["therapeutic_category_name"]?.toString()?.trim('"'))
         assertEquals("架空製薬株式会社", jsonObject["manufacturer"]?.toString()?.trim('"'))
         assertEquals("2024-03-01", jsonObject["revised_at"]?.toString()?.trim('"'))
-        assertEquals("/images/dosage_form/tablet?size=Original", jsonObject["image_url"]?.toString()?.trim('"'))
+        assertEquals("/v1/images/dosage-forms/tablet?size=Original", jsonObject["image_url"]?.toString()?.trim('"'))
     }
 
     @Test
@@ -118,13 +118,13 @@ class DrugSerializationTest {
     @Test
     fun `Drug deserialize without image_url evaluates default imageUrl`() {
         val json = AppJson.encodeToString(minimalDrug()).replace(
-            ""","image_url":"/images/dosage_form/tablet?size=Original"""",
+            ""","image_url":"/v1/images/dosage-forms/tablet?size=Original"""",
             "",
         )
 
         val drug = AppJson.decodeFromString<Drug>(json)
 
-        assertEquals("/images/dosage_form/tablet?size=Original", drug.imageUrl)
+        assertEquals("/v1/images/dosage-forms/tablet?size=Original", drug.imageUrl)
     }
 
     private fun minimalDrug(id: String = "drug_0001"): Drug =
