@@ -178,8 +178,10 @@ private fun witchFactorSyndromeOverride(generated: Disease): Disease =
             ),
             associatedSymptoms =
             listOf(
-                "魔女因子反応の増強 (架空)",
-                "外傷治癒の異常促進 (架空)",
+                "妄想・排他性 (架空)",
+                "魔法能力の暴走的増幅 (架空)",
+                "獣性化した発声 (架空)",
+                "なれはて化 (架空)",
             ),
             onsetPattern = OnsetPattern.SUBACUTE,
         ),

@@ -113,6 +113,13 @@ class DiseaseFinalOverridesTest {
     }
 
     @Test
+    fun `witch factor syndrome associated symptoms should include witch husk transformation`() {
+        val disease0079 = generateDiseases().first { it.id == "disease_0079" }
+
+        assertTrue(disease0079.symptoms.associatedSymptoms.any { it.contains("なれはて") })
+    }
+
+    @Test
     fun `insomnia disease should be overridden`() {
         val insomnia = generateDiseases().first { it.id == "disease_0022" }
 
