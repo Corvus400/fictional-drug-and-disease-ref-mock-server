@@ -19,6 +19,103 @@ internal val DISEASE_FINAL_OVERRIDES: Map<String, (Disease) -> Disease> =
 private fun insomniaOverride(generated: Disease): Disease =
     generated.copy(
         name = "不眠症",
+        nameKana = "フミンショウ",
+        nameEnglish = "Insomnia (fictional)",
+        chronicity = Chronicity.CHRONIC,
+        infectious = false,
+        synonyms = listOf("睡眠障害（不眠型）", "インソムニア"),
+        summary = "入眠困難、中途覚醒、早朝覚醒又は睡眠の質低下が持続し、日中機能障害を伴う睡眠障害 (架空)",
+        etiology = "心理的要因、ストレス、生活習慣、身体疾患及び睡眠環境の乱れが複合して発症する (架空)",
+        symptoms =
+        SymptomInfo(
+            mainSymptoms =
+            listOf(
+                "入眠困難 (架空)",
+                "中途覚醒 (架空)",
+                "早朝覚醒 (架空)",
+                "睡眠の質低下による日中機能障害 (架空)",
+            ),
+            associatedSymptoms =
+            listOf(
+                "日中の眠気 (架空)",
+                "集中力低下 (架空)",
+                "易刺激性 (架空)",
+            ),
+            onsetPattern = OnsetPattern.CHRONIC,
+        ),
+        diagnosticCriteria =
+        DiagnosticCriteriaInfo(
+            required =
+            listOf(
+                "入眠困難、中途覚醒又は早朝覚醒が週 3 晩以上みられる (架空)",
+                "症状が 3 ヶ月以上持続し日中機能障害を伴う (架空)",
+            ),
+            supporting =
+            listOf(
+                "睡眠機会が十分にあるにもかかわらず睡眠困難が持続する (架空)",
+                "薬物、身体疾患又は他の睡眠障害だけでは説明できない (架空)",
+            ),
+            notes = "DSM-5 及び ICD-10 の不眠症診断基準を参考にした架空 fixture である (架空)",
+        ),
+        requiredExams =
+        listOf(
+            Exam(
+                name = "睡眠歴問診",
+                category = ExamCategory.INTERVIEW,
+                typicalFinding = "睡眠時間、入眠潜時、中途覚醒及び日中機能障害を聴取する (架空)",
+            ),
+            Exam(
+                name = "睡眠質問票",
+                category = ExamCategory.INTERVIEW,
+                typicalFinding = "睡眠の質低下と生活への支障を評価する (架空)",
+                referenceRange = "支障なし (架空)",
+            ),
+            Exam(
+                name = "睡眠日誌",
+                category = ExamCategory.PHYSIOLOGICAL,
+                typicalFinding = "就床時刻、覚醒回数、睡眠効率の低下を確認する (架空)",
+            ),
+        ),
+        differentialDiagnoses =
+        listOf(
+            "睡眠時無呼吸症候群 (架空)",
+            "むずむず脚症候群 (架空)",
+            "うつ病 (架空)",
+        ),
+        complications =
+        listOf(
+            "日中の認知機能低下 (架空)",
+            "事故リスク増大 (架空)",
+            "心血管疾患リスク増大 (架空)",
+        ),
+        treatments =
+        TreatmentInfo(
+            nonPharmacological =
+            listOf(
+                TreatmentSection(
+                    heading = "睡眠衛生指導",
+                    items = listOf("就床時刻の固定 (架空)", "カフェイン摂取制限 (架空)", "寝室環境の調整 (架空)"),
+                    description = "睡眠を妨げる生活習慣と環境要因を整える (架空)",
+                ),
+                TreatmentSection(
+                    heading = "認知行動療法",
+                    items = listOf("刺激制御法 (架空)", "睡眠制限法 (架空)", "認知再構成 (架空)"),
+                    description = "不眠を維持する認知と行動パターンを修正する (架空)",
+                ),
+                TreatmentSection(
+                    heading = "環境調整",
+                    items = listOf("光環境調整 (架空)", "騒音対策 (架空)", "就寝前スクリーン制限 (架空)"),
+                    description = "睡眠の質を妨げる外的刺激を減らす (架空)",
+                ),
+            ),
+        ),
+        prognosis = "適切な睡眠衛生指導と認知行動療法で改善が見込まれるが、長期化すると慢性化する (架空)",
+        prevention =
+        listOf(
+            "規則的な睡眠覚醒リズムの維持 (架空)",
+            "就寝前の刺激物と強い光の回避 (架空)",
+            "ストレス管理と適度な運動 (架空)",
+        ),
     )
 
 private fun witchFactorSyndromeOverride(generated: Disease): Disease =
