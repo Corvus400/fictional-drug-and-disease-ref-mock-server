@@ -120,6 +120,15 @@ class DiseaseFinalOverridesTest {
     }
 
     @Test
+    fun `witch factor syndrome required criteria should reference screening and witch factor positivity`() {
+        val disease0079 = generateDiseases().first { it.id == "disease_0079" }
+        val requiredText = disease0079.diagnosticCriteria.required.joinToString()
+
+        assertTrue(requiredText.contains("全国検査"))
+        assertTrue(requiredText.contains("魔女因子高値"))
+    }
+
+    @Test
     fun `insomnia disease should be overridden`() {
         val insomnia = generateDiseases().first { it.id == "disease_0022" }
 
