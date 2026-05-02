@@ -5,10 +5,12 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.ExamCategory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.MedicalDepartment
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.OnsetPattern
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.PrevalenceUnit
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.DiagnosticCriteriaInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.EpidemiologyInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.Exam
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.OnsetAgeRange
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.Prevalence
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.SexDistribution
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.SymptomInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.TreatmentInfo
@@ -135,6 +137,13 @@ private fun witchFactorSyndromeOverride(generated: Disease): Disease =
         summary = "魔女因子の活性化により不死性獲得と肉体・精神の不可逆変質を来す症候群 (架空)",
         epidemiology =
         EpidemiologyInfo(
+            prevalence =
+            Prevalence(
+                rate = null,
+                denominator = null,
+                unit = PrevalenceUnit.PER_POPULATION,
+                label = "少女人口の極小比率に魔女因子高値を検出 (架空)",
+            ),
             onsetAgeRange =
             OnsetAgeRange(
                 minAgeYears = 15,
@@ -146,6 +155,14 @@ private fun witchFactorSyndromeOverride(generated: Disease): Disease =
                 maleRatio = 0,
                 femaleRatio = 1,
                 note = "患者は全員少女 (架空)",
+            ),
+            riskFactors =
+            listOf(
+                "強いストレス (架空)",
+                "精神衰弱 (架空)",
+                "トラウマ刺激 (架空)",
+                "悪意・不信感 (架空)",
+                "処刑等の急性苦痛 (架空)",
             ),
         ),
         etiology = "魔女因子の暴走的活性化と外部干渉により発症する (架空)",

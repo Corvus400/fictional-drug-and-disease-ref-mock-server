@@ -86,6 +86,15 @@ class DiseaseFinalOverridesTest {
     }
 
     @Test
+    fun `witch factor syndrome should list stress and trauma as risk factors`() {
+        val disease0079 = generateDiseases().first { it.id == "disease_0079" }
+        val riskFactors = disease0079.epidemiology?.riskFactors.orEmpty()
+
+        assertTrue(riskFactors.any { it.contains("ストレス") })
+        assertTrue(riskFactors.any { it.contains("トラウマ") })
+    }
+
+    @Test
     fun `insomnia disease should be overridden`() {
         val insomnia = generateDiseases().first { it.id == "disease_0022" }
 
