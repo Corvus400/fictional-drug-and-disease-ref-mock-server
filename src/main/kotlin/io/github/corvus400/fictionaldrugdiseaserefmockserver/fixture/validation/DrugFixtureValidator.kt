@@ -70,7 +70,7 @@ object DrugFixtureValidator {
                 message = "contraindications size >= 1 required",
             )
         }
-        if (drug.indications.isEmpty()) {
+        if (drug.indications.isEmpty() && !allowsNoTherapeuticIndication(drug = drug)) {
             violations += FixtureViolation(
                 entityType = ENTITY_TYPE,
                 entityId = drug.id,
@@ -180,6 +180,11 @@ object DrugFixtureValidator {
 
     private fun isChronicPrescription(drug: Drug): Boolean =
         drug.atcCode.firstOrNull() in CHRONIC_ATC_LETTERS
+
+    private fun allowsNoTherapeuticIndication(drug: Drug): Boolean =
+        drug.id in NO_THERAPEUTIC_INDICATION_DRUG_IDS
+
+    private val NO_THERAPEUTIC_INDICATION_DRUG_IDS: Set<String> = setOf("drug_0080")
 
     private val CHRONIC_ATC_LETTERS: Set<Char?> = setOf('A', 'C')
 
