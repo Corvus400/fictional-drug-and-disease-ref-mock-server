@@ -112,7 +112,7 @@ class DrugSerializationTest {
         val drug = minimalDrug(id = "drug_0089")
         val jsonObject = Json.parseToJsonElement(AppJson.encodeToString(drug)).jsonObject
 
-        assertEquals("/images/drug/drug_0089?size=Original", jsonObject["image_url"]?.toString()?.trim('"'))
+        assertEquals("/v1/images/drugs/drug_0089?size=Original", jsonObject["image_url"]?.toString()?.trim('"'))
     }
 
     @Test

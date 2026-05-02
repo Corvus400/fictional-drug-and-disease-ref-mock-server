@@ -26,7 +26,7 @@ fun Application.dosageFormImageModule() {
             call.respondBytes(bytes, ContentType.Image.PNG)
         }
 
-        get("/images/drug/{drugId}") {
+        get("/v1/images/drugs/{drugId}") {
             val drugId = call.parameters["drugId"] ?: return@get
             val size = when (call.request.queryParameters["size"]) {
                 "S" -> ImageSize.S
