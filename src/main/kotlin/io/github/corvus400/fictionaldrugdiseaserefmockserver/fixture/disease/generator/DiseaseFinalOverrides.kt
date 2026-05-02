@@ -6,7 +6,9 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.MedicalDepartment
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.OnsetPattern
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.DiagnosticCriteriaInfo
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.EpidemiologyInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.Exam
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.OnsetAgeRange
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.SymptomInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.TreatmentInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.TreatmentSection
@@ -130,6 +132,15 @@ private fun witchFactorSyndromeOverride(generated: Disease): Disease =
         infectious = false,
         synonyms = listOf("魔女化症", "ウィッチファクター症候群"),
         summary = "魔女因子の活性化により不死性獲得と肉体・精神の不可逆変質を来す症候群 (架空)",
+        epidemiology =
+        EpidemiologyInfo(
+            onsetAgeRange =
+            OnsetAgeRange(
+                minAgeYears = 15,
+                maxAgeYears = null,
+                label = "15 歳以降に急性魔女化リスクが急増 (架空)",
+            ),
+        ),
         etiology = "魔女因子の暴走的活性化と外部干渉により発症する (架空)",
         symptoms =
         SymptomInfo(
