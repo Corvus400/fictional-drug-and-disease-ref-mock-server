@@ -53,13 +53,15 @@ class DiseaseGenerator(
                 offset = offset,
             )
         }
-        return buildDisease(
-            blueprint = blueprint,
-            name = name,
-            synonyms = synonyms,
-            differentials = differentials,
-            complications = complications,
-        )
+        val generated =
+            buildDisease(
+                blueprint = blueprint,
+                name = name,
+                synonyms = synonyms,
+                differentials = differentials,
+                complications = complications,
+            )
+        return DISEASE_FINAL_OVERRIDES[generated.id]?.invoke(generated) ?: generated
     }
 
     fun generate(blueprints: List<DiseaseBlueprint>): List<Disease> {
