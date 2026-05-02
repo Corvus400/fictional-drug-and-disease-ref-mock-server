@@ -6,6 +6,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.validation.
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Chronicity
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.MedicalDepartment
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.OnsetPattern
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -102,6 +103,13 @@ class DiseaseFinalOverridesTest {
         assertTrue(mainSymptoms.size >= 5)
         assertTrue(mainSymptoms.any { it.contains("殺人衝動") })
         assertTrue(mainSymptoms.any { it.contains("爪") })
+    }
+
+    @Test
+    fun `witch factor syndrome should be classified as subacute onset`() {
+        val disease0079 = generateDiseases().first { it.id == "disease_0079" }
+
+        assertEquals(OnsetPattern.SUBACUTE, disease0079.symptoms.onsetPattern)
     }
 
     @Test
