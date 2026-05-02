@@ -270,8 +270,18 @@ private fun witchFactorSyndromeOverride(generated: Disease): Disease =
             nonPharmacological =
             listOf(
                 TreatmentSection(
-                    heading = "隔離管理",
-                    items = listOf("魔女因子反応の監視", "外部刺激の制限"),
+                    heading = "ストレス軽減・精神安定",
+                    items = listOf("強いストレスの遮断 (架空)", "楽しく過ごせる環境調整 (架空)", "悪意・不信感の低減 (架空)"),
+                    description = "精神負荷による魔女因子活性化を抑えることを目的とする (架空)",
+                ),
+                TreatmentSection(
+                    heading = "魔女因子除去仮説",
+                    items = listOf("残留魔女因子の除去仮説 (架空)", "大魔女顕現による因子還元の観察 (架空)"),
+                    description = "確立治療ではなく、因子喪失で進行中の魔女化が解除される可能性に基づく (架空)",
+                ),
+                TreatmentSection(
+                    heading = "封じ込め管理",
+                    items = listOf("外部刺激の制限 (架空)", "冷凍封じ込め (架空)", "魔女殺し魔法による処置検討 (架空)"),
                     description = "安全確保を優先し、治療ではなく封じ込めを目的とする (架空)",
                 ),
             ),
