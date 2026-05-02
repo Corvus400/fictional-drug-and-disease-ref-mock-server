@@ -26,7 +26,7 @@ class DrugModuleTest {
     fun `GET drugs drug_0001 returns 200 OK with populated fixmerge name fields`() = testApplication {
         application { module() }
 
-        val response = client.get("/drugs/drug_0001")
+        val response = client.get("/v1/drugs/drug_0001")
 
         assertEquals(HttpStatusCode.OK, response.status)
         val body = json.decodeFromString<JsonObject>(response.bodyAsText())

@@ -28,10 +28,25 @@ class DrugModuleDetailTest {
     private val json = Json { ignoreUnknownKeys = true }
 
     @Test
+    fun `GET v1 drugs drug_0001 returns 200 with matching Drug id`() = testApplication {
+        application { module() }
+
+        val response = client.get("/v1/drugs/drug_0001")
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
+        assertEquals(
+            expected = "drug_0001",
+            actual = body["id"]?.jsonPrimitive?.content,
+            message = "GET /v1/drugs/{id} must return the drug fixture matching the path id",
+        )
+    }
+
+    @Test
     fun `GET drugs drug_0001 default scenario returns 200 with all 39 Drug fields`() = testApplication {
         application { module() }
 
-        val response = client.get("/drugs/drug_0001")
+        val response = client.get("/v1/drugs/drug_0001")
 
         assertEquals(HttpStatusCode.OK, response.status)
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
@@ -63,7 +78,7 @@ class DrugModuleDetailTest {
             )
 
             val elapsed = measureTime {
-                val response = client.get("/drugs/drug_0001")
+                val response = client.get("/v1/drugs/drug_0001")
                 assertEquals(
                     expected = HttpStatusCode.OK,
                     actual = response.status,
@@ -78,7 +93,7 @@ class DrugModuleDetailTest {
             }
             assertTrue(
                 actual = elapsed.inWholeMilliseconds >= 500,
-                message = "/drugs/{id} must honor Admin API delayMs=500 (observed=${elapsed.inWholeMilliseconds}ms)",
+                message = "/v1/drugs/{id} must honor Admin API delayMs=500 (observed=${elapsed.inWholeMilliseconds}ms)",
             )
         }
 
@@ -97,11 +112,11 @@ class DrugModuleDetailTest {
                 message = "Admin API must accept drugDetail statusCode override",
             )
 
-            val response = client.get("/drugs/drug_0001")
+            val response = client.get("/v1/drugs/drug_0001")
             assertEquals(
                 expected = HttpStatusCode.InternalServerError,
                 actual = response.status,
-                message = "statusCode=500 override must flip GET /drugs/{id} to 500 Internal Server Error",
+                message = "statusCode=500 override must flip GET /v1/drugs/{id} to 500 Internal Server Error",
             )
         }
 
@@ -109,12 +124,12 @@ class DrugModuleDetailTest {
     fun `GET drugs drug_9999 unknown id returns 404 with ErrorResponse code NOT_FOUND`() = testApplication {
         application { module() }
 
-        val response = client.get("/drugs/drug_9999")
+        val response = client.get("/v1/drugs/drug_9999")
 
         assertEquals(
             expected = HttpStatusCode.NotFound,
             actual = response.status,
-            message = "GET /drugs/drug_9999 must return 404 when the id has no matching fixture",
+            message = "GET /v1/drugs/drug_9999 must return 404 when the id has no matching fixture",
         )
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
         assertEquals(
@@ -144,12 +159,12 @@ class DrugModuleDetailTest {
                 message = "Admin API must accept drugDetail status_code=404 override",
             )
 
-            val response = client.get("/drugs/drug_0001")
+            val response = client.get("/v1/drugs/drug_0001")
 
             assertEquals(
                 expected = HttpStatusCode.NotFound,
                 actual = response.status,
-                message = "status_code=404 override must flip GET /drugs/drug_0001 to 404 even for an existing id",
+                message = "status_code=404 override must flip GET /v1/drugs/drug_0001 to 404 even for an existing id",
             )
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
             assertEquals(

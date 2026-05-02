@@ -23,7 +23,7 @@ class DrugModuleKeywordTest {
         testApplication {
             application { module() }
 
-            val sampleBrandName = client.get(urlString = "/drugs/drug_0001").extractBrandName()
+            val sampleBrandName = client.get(urlString = "/v1/drugs/drug_0001").extractBrandName()
             assertTrue(
                 actual = sampleBrandName.length >= KEYWORD_PREFIX_LENGTH,
                 message = "drug_0001 brand_name must be at least $KEYWORD_PREFIX_LENGTH chars to take prefix " +

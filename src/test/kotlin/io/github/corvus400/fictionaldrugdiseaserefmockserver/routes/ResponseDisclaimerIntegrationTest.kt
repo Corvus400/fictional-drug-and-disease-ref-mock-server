@@ -22,7 +22,7 @@ class ResponseDisclaimerIntegrationTest {
     fun `drug responses carry disclaimer in headers and non-summary bodies`() = testApplication {
         application { module() }
 
-        val detailResponse = client.get("/drugs/drug_0001")
+        val detailResponse = client.get("/v1/drugs/drug_0001")
 
         assertEquals(HttpStatusCode.OK, detailResponse.status)
         assertEquals("true", detailResponse.headers["X-Fictional-Data"])

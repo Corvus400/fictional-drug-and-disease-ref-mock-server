@@ -40,7 +40,7 @@ class DrugModuleFilterTest {
         items.forEach { item ->
             val id = item.jsonObject["id"]?.jsonPrimitive?.content
             assertNotNull(id, "item must expose id")
-            val detailResponse = client.get("/drugs/$id")
+            val detailResponse = client.get("/v1/drugs/$id")
             assertEquals(HttpStatusCode.OK, detailResponse.status, "detail GET must succeed for id=$id")
             val detail = json.parseToJsonElement(string = detailResponse.bodyAsText()).jsonObject
             val atcCode = detail["atc_code"]?.jsonPrimitive?.content
@@ -111,7 +111,7 @@ class DrugModuleFilterTest {
         items.forEach { item ->
             val id = item.jsonObject["id"]?.jsonPrimitive?.content
             assertNotNull(id, "item must expose id")
-            val detailResponse = client.get("/drugs/$id")
+            val detailResponse = client.get("/v1/drugs/$id")
             assertEquals(HttpStatusCode.OK, detailResponse.status, "detail GET must succeed for id=$id")
             val detail = json.parseToJsonElement(string = detailResponse.bodyAsText()).jsonObject
             val routeValue = detail["route_of_administration"]?.jsonPrimitive?.content
@@ -146,7 +146,7 @@ class DrugModuleFilterTest {
         items.forEach { item ->
             val id = item.jsonObject["id"]?.jsonPrimitive?.content
             assertNotNull(id, "item must expose id")
-            val detailResponse = client.get("/drugs/$id")
+            val detailResponse = client.get("/v1/drugs/$id")
             assertEquals(HttpStatusCode.OK, detailResponse.status, "detail GET must succeed for id=$id")
             val detail = json.parseToJsonElement(string = detailResponse.bodyAsText()).jsonObject
             val dosageFormValue = detail["dosage_form"]?.jsonPrimitive?.content
@@ -189,7 +189,7 @@ class DrugModuleFilterTest {
         items.forEach { item ->
             val id = item.jsonObject["id"]?.jsonPrimitive?.content
             assertNotNull(id, "item must expose id")
-            val detailResponse = client.get("/drugs/$id")
+            val detailResponse = client.get("/v1/drugs/$id")
             assertEquals(HttpStatusCode.OK, detailResponse.status, "detail GET must succeed for id=$id")
             val detail = json.parseToJsonElement(string = detailResponse.bodyAsText()).jsonObject
             val atcCode = detail["atc_code"]?.jsonPrimitive?.content
