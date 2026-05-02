@@ -157,4 +157,5 @@ private fun tredecimFinalOverride(generated: Drug): Drug =
         ),
         manufacturer = "魔女因子研究所",
         revisedAt = IsoDateFormatter.formatDate(date = LocalDate.of(2026, 5, 1)),
+        relatedDiseaseIds = listOf("disease_0079"),
     )

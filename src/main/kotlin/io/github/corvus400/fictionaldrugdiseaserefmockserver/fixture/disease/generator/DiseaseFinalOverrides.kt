@@ -93,4 +93,5 @@ private fun witchFactorSyndromeOverride(generated: Disease): Disease =
         ),
         prognosis = "発症後の変質は不可逆で予後不良とされ、トレデキムへの脆弱性を伴う (架空)",
         prevention = listOf("魔女因子曝露の回避 (架空)", "活性化兆候の早期隔離 (架空)"),
+        relatedDrugIds = listOf("drug_0080"),
     )

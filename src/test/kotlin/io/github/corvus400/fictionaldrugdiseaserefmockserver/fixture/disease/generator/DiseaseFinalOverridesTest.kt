@@ -43,6 +43,13 @@ class DiseaseFinalOverridesTest {
         assertNotEquals("魔女因子症候群", disease0078.name)
     }
 
+    @Test
+    fun `witch factor syndrome disease should reference drug_0080 only`() {
+        val disease0079 = generateDiseases().first { it.id == "disease_0079" }
+
+        assertEquals(listOf("drug_0080"), disease0079.relatedDrugIds)
+    }
+
     private fun generateDiseases(): List<Disease> =
         DiseaseGenerator(
             adapter = FixmergeNameAdapter(),
