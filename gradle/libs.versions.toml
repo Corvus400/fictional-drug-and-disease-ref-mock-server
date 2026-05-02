@@ -6,7 +6,7 @@ ktlint = "1.3.0" # Used via libs.versions.ktlint.get() in build.gradle.kts
 spotless = "8.4.0"
 detekt = "2.0.0-alpha.3"
 ktor-openapi-tools = "5.4.0"
-jsoup = "1.18.3"
+jsoup = "1.22.2"
 
 [libraries]
 ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
