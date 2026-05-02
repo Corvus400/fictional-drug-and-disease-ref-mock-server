@@ -8,7 +8,7 @@ class DrugImageUrlBuilderTest {
     @Test
     fun `通常 drug は dosage form 画像 URL を返す`() {
         assertEquals(
-            "/images/dosage_form/tablet?size=Original",
+            "/v1/images/dosage-forms/tablet?size=Original",
             buildDrugImageUrl(drugId = "drug_0001", dosageForm = DosageForm.TABLET),
         )
     }
@@ -32,7 +32,7 @@ class DrugImageUrlBuilderTest {
     @Test
     fun `通常 drug は DosageForm serialName を画像 URL に使う`() {
         assertEquals(
-            "/images/dosage_form/capsule?size=Original",
+            "/v1/images/dosage-forms/capsule?size=Original",
             buildDrugImageUrl(drugId = "drug_0002", dosageForm = DosageForm.CAPSULE),
         )
     }

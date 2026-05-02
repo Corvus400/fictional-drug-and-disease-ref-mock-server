@@ -13,7 +13,7 @@ import javax.imageio.ImageIO
 
 fun Application.dosageFormImageModule() {
     routing {
-        get("/images/dosage_form/{form}") {
+        get("/v1/images/dosage-forms/{form}") {
             val form = call.parameters["form"] ?: return@get
             val size = when (call.request.queryParameters["size"]) {
                 "S" -> ImageSize.S

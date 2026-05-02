@@ -39,6 +39,7 @@ private fun String.startsWithKnownRoutePrefix(): Boolean =
         "/v1/drugs",
         "/v1/diseases",
         "/v1/categories",
+        "/v1/images",
         "/drugs",
         "/diseases",
         "/categories",
