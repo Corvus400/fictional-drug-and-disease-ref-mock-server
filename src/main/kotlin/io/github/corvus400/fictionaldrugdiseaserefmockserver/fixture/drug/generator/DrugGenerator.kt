@@ -14,6 +14,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.Drug
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DosageForm
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DoseUnit
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RouteOfAdministration
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.TherapeuticCategory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.CompositionInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.Dose
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.PhysicochemicalInfo
@@ -264,23 +265,8 @@ class DrugGenerator(
         }
 
     private fun therapeuticCategoryNameOf(atcFirstLetter: Char): String =
-        when (atcFirstLetter) {
-            'A' -> "消化器系および代謝"
-            'B' -> "血液および造血器"
-            'C' -> "循環器系"
-            'D' -> "皮膚科用"
-            'G' -> "泌尿生殖器系およびホルモン製剤"
-            'H' -> "全身性ホルモン製剤"
-            'J' -> "感染症治療薬"
-            'L' -> "抗腫瘍剤および免疫調節剤"
-            'M' -> "筋骨格系"
-            'N' -> "神経系"
-            'P' -> "抗寄生虫剤"
-            'R' -> "呼吸器系"
-            'S' -> "感覚器"
-            'V' -> "その他"
-            else -> error("unsupported ATC first letter '$atcFirstLetter'")
-        }
+        TherapeuticCategory.fromAtcInitial(initial = atcFirstLetter)?.displayName
+            ?: error("unsupported ATC first letter '$atcFirstLetter'")
 
     companion object {
         private const val INACTIVE_INGREDIENT_COUNT: Int = 3

@@ -10,19 +10,21 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.Drug
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DosageForm
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RouteOfAdministration
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.TherapeuticCategory
 import kotlinx.serialization.serializer
 
 class CategoriesFixture(
     private val drugs: List<Drug>,
 ) {
     fun build(): CategoriesResponse = CategoriesResponse(
-        atc = ATC_ANATOMICAL_GROUPS.map { group ->
-            AtcEntry(code = group.firstLetter, label = group.therapeuticName)
+        atc = TherapeuticCategory.entries.map { category ->
+            AtcEntry(code = category.atcInitial.toString(), label = category.displayName)
         },
         therapeuticCategories = drugs.map { drug ->
+            val category = drug.therapeuticCategoryName.toTherapeuticCategory()
             TherapeuticCategoryEntry(
-                id = drug.therapeuticCategoryName.toCategoryId(),
-                label = drug.therapeuticCategoryName,
+                id = category.categoryId,
+                label = category.displayName,
             )
         }.distinctBy { entry -> entry.id },
         routeOfAdministration = enumSerialNames<RouteOfAdministration>(),
@@ -59,49 +61,8 @@ class CategoriesFixture(
             }
         }
 
-        /**
-         * ATC 第 1 階層 (解剖学的グループ) の単一情報源。
-         * 14 グループ (A,B,C,D,G,H,J,L,M,N,P,R,S,V) ごとに以下を集約する:
-         *   - firstLetter: ATC コード先頭 1 文字 (`AtcEntry.code` / `/drugs?atc=` クエリ)
-         *   - therapeuticName: 日本語治療領域名 (`AtcEntry.label` / `Drug.therapeuticCategoryName`)
-         *   - slug: ASCII URL-safe id (`TherapeuticCategoryEntry.id`)
-         */
-        private data class AtcAnatomicalGroup(
-            val firstLetter: String,
-            val therapeuticName: String,
-            val slug: String,
-        )
-
-        private val ATC_ANATOMICAL_GROUPS: List<AtcAnatomicalGroup> = listOf(
-            AtcAnatomicalGroup(firstLetter = "A", therapeuticName = "消化器系および代謝", slug = "alimentary_metabolism"),
-            AtcAnatomicalGroup(firstLetter = "B", therapeuticName = "血液および造血器", slug = "blood"),
-            AtcAnatomicalGroup(firstLetter = "C", therapeuticName = "循環器系", slug = "cardiovascular"),
-            AtcAnatomicalGroup(firstLetter = "D", therapeuticName = "皮膚科用", slug = "dermatologicals"),
-            AtcAnatomicalGroup(
-                firstLetter = "G",
-                therapeuticName = "泌尿生殖器系およびホルモン製剤",
-                slug = "genito_urinary_hormones",
-            ),
-            AtcAnatomicalGroup(firstLetter = "H", therapeuticName = "全身性ホルモン製剤", slug = "systemic_hormones"),
-            AtcAnatomicalGroup(firstLetter = "J", therapeuticName = "感染症治療薬", slug = "antiinfectives"),
-            AtcAnatomicalGroup(
-                firstLetter = "L",
-                therapeuticName = "抗腫瘍剤および免疫調節剤",
-                slug = "antineoplastic_immunomodulators",
-            ),
-            AtcAnatomicalGroup(firstLetter = "M", therapeuticName = "筋骨格系", slug = "musculo_skeletal"),
-            AtcAnatomicalGroup(firstLetter = "N", therapeuticName = "神経系", slug = "nervous"),
-            AtcAnatomicalGroup(firstLetter = "P", therapeuticName = "抗寄生虫剤", slug = "antiparasitic"),
-            AtcAnatomicalGroup(firstLetter = "R", therapeuticName = "呼吸器系", slug = "respiratory"),
-            AtcAnatomicalGroup(firstLetter = "S", therapeuticName = "感覚器", slug = "sensory"),
-            AtcAnatomicalGroup(firstLetter = "V", therapeuticName = "その他", slug = "various"),
-        )
-
-        private val SLUG_BY_THERAPEUTIC_NAME: Map<String, String> =
-            ATC_ANATOMICAL_GROUPS.associate { group -> group.therapeuticName to group.slug }
-
-        private fun String.toCategoryId(): String =
-            SLUG_BY_THERAPEUTIC_NAME[this]
+        private fun String.toTherapeuticCategory(): TherapeuticCategory =
+            TherapeuticCategory.fromDisplayName(displayName = this)
                 ?: error("unknown therapeutic category name '$this'")
 
         /**
