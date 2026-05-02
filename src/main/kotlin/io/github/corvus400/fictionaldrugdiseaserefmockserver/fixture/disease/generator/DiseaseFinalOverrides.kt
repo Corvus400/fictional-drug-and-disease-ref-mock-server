@@ -11,7 +11,15 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.neste
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.TreatmentSection
 
 internal val DISEASE_FINAL_OVERRIDES: Map<String, (Disease) -> Disease> =
-    mapOf("disease_0079" to ::witchFactorSyndromeOverride)
+    mapOf(
+        "disease_0079" to ::witchFactorSyndromeOverride,
+        "disease_0022" to ::insomniaOverride,
+    )
+
+private fun insomniaOverride(generated: Disease): Disease =
+    generated.copy(
+        name = "不眠症",
+    )
 
 private fun witchFactorSyndromeOverride(generated: Disease): Disease =
     generated.copy(

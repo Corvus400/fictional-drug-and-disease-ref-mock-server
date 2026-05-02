@@ -50,6 +50,13 @@ class DiseaseFinalOverridesTest {
         assertEquals(listOf("drug_0080"), disease0079.relatedDrugIds)
     }
 
+    @Test
+    fun `insomnia disease should be overridden`() {
+        val insomnia = generateDiseases().first { it.id == "disease_0022" }
+
+        assertEquals("不眠症", insomnia.name)
+    }
+
     private fun generateDiseases(): List<Disease> =
         DiseaseGenerator(
             adapter = FixmergeNameAdapter(),
