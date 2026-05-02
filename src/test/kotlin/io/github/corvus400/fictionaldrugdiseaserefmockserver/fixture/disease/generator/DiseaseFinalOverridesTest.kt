@@ -139,6 +139,14 @@ class DiseaseFinalOverridesTest {
     }
 
     @Test
+    fun `witch factor syndrome should grade five progression stages ending in witch husk`() {
+        val disease0079 = generateDiseases().first { it.id == "disease_0079" }
+        val gradeLabels = disease0079.severityGrading?.grades.orEmpty().map { it.label }
+
+        assertEquals(listOf("潜伏・保因", "活性化", "魔女化進行", "完全魔女化", "なれはて"), gradeLabels)
+    }
+
+    @Test
     fun `insomnia disease should be overridden`() {
         val insomnia = generateDiseases().first { it.id == "disease_0022" }
 
