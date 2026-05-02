@@ -184,6 +184,15 @@ class DiseaseFinalOverridesTest {
     }
 
     @Test
+    fun `witch factor syndrome prevention should target stress avoidance and pre 15 mental stability`() {
+        val disease0079 = generateDiseases().first { it.id == "disease_0079" }
+        val preventionText = disease0079.prevention.joinToString()
+
+        assertTrue(preventionText.contains("ストレス"))
+        assertTrue(preventionText.contains("15 歳"))
+    }
+
+    @Test
     fun `insomnia disease should be overridden`() {
         val insomnia = generateDiseases().first { it.id == "disease_0022" }
 
