@@ -1,6 +1,7 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.PrecautionPopulationCategory
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.TherapeuticCategory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.search.DrugKeywordTarget
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.search.KeywordMatch
 
@@ -16,7 +17,7 @@ data class DrugListQuery(
     val regulatoryClassSerialName: String? = null,
     val routeOfAdministrationSerialName: String? = null,
     val dosageFormSerialName: String? = null,
-    val categoryName: String? = null,
+    val therapeuticCategory: TherapeuticCategory? = null,
     val keyword: String? = null,
     val keywordMatch: KeywordMatch = KeywordMatch.PARTIAL,
     val keywordTarget: DrugKeywordTarget = DrugKeywordTarget.BOTH,
