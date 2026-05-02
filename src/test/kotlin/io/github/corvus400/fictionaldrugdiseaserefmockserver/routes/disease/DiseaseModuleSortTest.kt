@@ -25,7 +25,7 @@ class DiseaseModuleSortTest {
     fun `GET diseases with sort name_kana returns items ordered by nameKana ascending`() = testApplication {
         application { module() }
 
-        val response = client.get("/diseases?sort=name_kana&page_size=100")
+        val response = client.get("/v1/diseases?sort=name_kana&page_size=100")
 
         assertEquals(expected = HttpStatusCode.OK, actual = response.status)
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
@@ -44,7 +44,7 @@ class DiseaseModuleSortTest {
         testApplication {
             application { module() }
 
-            val response = client.get("/diseases?sort=icd10_chapter&page_size=100")
+            val response = client.get("/v1/diseases?sort=icd10_chapter&page_size=100")
 
             assertEquals(expected = HttpStatusCode.OK, actual = response.status)
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
@@ -71,7 +71,7 @@ class DiseaseModuleSortTest {
     fun `GET diseases with invalid sort returns 400 with INVALID_SORT_KEY error`() = testApplication {
         application { module() }
 
-        val response = client.get("/diseases?sort=invalid_key")
+        val response = client.get("/v1/diseases?sort=invalid_key")
 
         assertEquals(
             expected = HttpStatusCode.BadRequest,
@@ -86,7 +86,7 @@ class DiseaseModuleSortTest {
     fun `GET diseases under empty scenario with sort parameter returns empty items and 200`() = testApplication {
         application { module() }
 
-        val response = client.get("/diseases?sort=name_kana") {
+        val response = client.get("/v1/diseases?sort=name_kana") {
             header(key = "X-Mock-Scenario", value = "empty")
         }
 

@@ -28,7 +28,7 @@ class DiseaseModuleFilterTest {
         testApplication {
             application { module() }
 
-            val response = client.get(urlString = "/diseases?icd10_chapter=chapter_i")
+            val response = client.get(urlString = "/v1/diseases?icd10_chapter=chapter_i")
 
             assertEquals(expected = HttpStatusCode.OK, actual = response.status)
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
@@ -61,7 +61,7 @@ class DiseaseModuleFilterTest {
         testApplication {
             application { module() }
 
-            val response = client.get(urlString = "/diseases?icd10_chapter=chapter_ii")
+            val response = client.get(urlString = "/v1/diseases?icd10_chapter=chapter_ii")
 
             assertEquals(expected = HttpStatusCode.OK, actual = response.status)
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
@@ -98,7 +98,7 @@ class DiseaseModuleFilterTest {
             val expectedSerialName = MedicalDepartment.PSYCHIATRY.declaredSerialName()
             val encodedDepartment = expectedSerialName.encodeURLParameter()
             val response = client.get(
-                urlString = "/diseases?department=$encodedDepartment&page_size=100",
+                urlString = "/v1/diseases?department=$encodedDepartment&page_size=100",
             )
 
             assertEquals(expected = HttpStatusCode.OK, actual = response.status)
@@ -132,7 +132,7 @@ class DiseaseModuleFilterTest {
         val expectedSerialName = Chronicity.ACUTE.declaredSerialName()
         val encodedChronicity = expectedSerialName.encodeURLParameter()
         val response = client.get(
-            urlString = "/diseases?chronicity=$encodedChronicity&page_size=100",
+            urlString = "/v1/diseases?chronicity=$encodedChronicity&page_size=100",
         )
 
         assertEquals(expected = HttpStatusCode.OK, actual = response.status)
@@ -158,7 +158,7 @@ class DiseaseModuleFilterTest {
     fun `GET diseases with infectious=true returns items whose infectious == true`() = testApplication {
         application { module() }
 
-        val response = client.get(urlString = "/diseases?infectious=true&page_size=100")
+        val response = client.get(urlString = "/v1/diseases?infectious=true&page_size=100")
 
         assertEquals(expected = HttpStatusCode.OK, actual = response.status)
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
@@ -185,7 +185,7 @@ class DiseaseModuleFilterTest {
             application { module() }
 
             val response = client.get(
-                urlString = "/diseases?icd10_chapter=chapter_i&infectious=true&page_size=100",
+                urlString = "/v1/diseases?icd10_chapter=chapter_i&infectious=true&page_size=100",
             )
 
             assertEquals(expected = HttpStatusCode.OK, actual = response.status)
@@ -226,7 +226,7 @@ class DiseaseModuleFilterTest {
     fun `GET diseases with legacy roman icd10_chapter=I returns total_count zero`() = testApplication {
         application { module() }
 
-        val response = client.get(urlString = "/diseases?icd10_chapter=I&page_size=100")
+        val response = client.get(urlString = "/v1/diseases?icd10_chapter=I&page_size=100")
 
         assertEquals(expected = HttpStatusCode.OK, actual = response.status)
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
@@ -251,7 +251,7 @@ class DiseaseModuleFilterTest {
 
         assertZeroResultsForInvalidFilter(
             client = client,
-            url = "/diseases?department=invalid&page_size=100",
+            url = "/v1/diseases?department=invalid&page_size=100",
         )
     }
 
@@ -261,7 +261,7 @@ class DiseaseModuleFilterTest {
 
         assertZeroResultsForInvalidFilter(
             client = client,
-            url = "/diseases?infectious=invalid&page_size=100",
+            url = "/v1/diseases?infectious=invalid&page_size=100",
         )
     }
 
@@ -271,7 +271,7 @@ class DiseaseModuleFilterTest {
 
         assertZeroResultsForInvalidFilter(
             client = client,
-            url = "/diseases?has_pharmacological_treatment=invalid&page_size=100",
+            url = "/v1/diseases?has_pharmacological_treatment=invalid&page_size=100",
         )
     }
 
@@ -281,7 +281,7 @@ class DiseaseModuleFilterTest {
 
         assertZeroResultsForInvalidFilter(
             client = client,
-            url = "/diseases?has_severity_grading=invalid&page_size=100",
+            url = "/v1/diseases?has_severity_grading=invalid&page_size=100",
         )
     }
 

@@ -21,7 +21,7 @@ class DiseaseModulePaginationTest {
         testApplication {
             application { module() }
 
-            val response = client.get("/diseases?page=1&page_size=20")
+            val response = client.get("/v1/diseases?page=1&page_size=20")
 
             assertEquals(HttpStatusCode.OK, response.status)
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
@@ -51,7 +51,7 @@ class DiseaseModulePaginationTest {
         testApplication {
             application { module() }
 
-            val response = client.get("/diseases?page=4&page_size=20")
+            val response = client.get("/v1/diseases?page=4&page_size=20")
 
             assertEquals(HttpStatusCode.OK, response.status)
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
@@ -75,7 +75,7 @@ class DiseaseModulePaginationTest {
         testApplication {
             application { module() }
 
-            val response = client.get("/diseases")
+            val response = client.get("/v1/diseases")
 
             assertEquals(HttpStatusCode.OK, response.status)
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
@@ -111,7 +111,7 @@ class DiseaseModulePaginationTest {
         testApplication {
             application { module() }
 
-            val response = client.get("/diseases?page_size=1000")
+            val response = client.get("/v1/diseases?page_size=1000")
 
             assertEquals(HttpStatusCode.OK, response.status)
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject

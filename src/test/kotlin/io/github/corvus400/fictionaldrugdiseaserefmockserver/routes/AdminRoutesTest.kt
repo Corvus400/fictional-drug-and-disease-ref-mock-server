@@ -88,7 +88,7 @@ class AdminRoutesTest {
         }
         assertEquals(HttpStatusCode.OK, overrideResponse.status)
 
-        val listResponse = client.get("/diseases")
+        val listResponse = client.get("/v1/diseases")
         assertEquals(HttpStatusCode.OK, listResponse.status)
         val body = json.decodeFromString<JsonObject>(listResponse.bodyAsText())
         val items = body["items"]?.jsonArray
