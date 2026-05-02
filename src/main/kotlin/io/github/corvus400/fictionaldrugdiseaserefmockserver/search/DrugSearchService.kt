@@ -66,9 +66,13 @@ object DrugSearchService {
         field: String,
         keyword: String,
         match: KeywordMatch,
-    ): Boolean = when (match) {
-        KeywordMatch.PARTIAL -> field.contains(keyword)
-        KeywordMatch.PREFIX -> field.startsWith(keyword)
+    ): Boolean {
+        val normalizedField = searchNormalize(value = field)
+        val normalizedKeyword = searchNormalize(value = keyword)
+        return when (match) {
+            KeywordMatch.PARTIAL -> normalizedField.contains(other = normalizedKeyword, ignoreCase = true)
+            KeywordMatch.PREFIX -> normalizedField.startsWith(prefix = normalizedKeyword, ignoreCase = true)
+        }
     }
 
     /**

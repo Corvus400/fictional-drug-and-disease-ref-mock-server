@@ -8,11 +8,7 @@ object DiseaseSearchService {
     /**
      * `keyword` を `target` に対応するフィールド集合に適用してフィルタする。
      *
-     * ## 大文字小文字の扱い
-     * 内部で `String.contains` / `String.startsWith` を使用しており Kotlin 既定の **case-sensitive** で比較する。
-     * `target=NAME_ENGLISH` でも英語の大文字小文字を区別する (例: `keyword="hyper"` は
-     * `nameEnglish="Hypertension"` にヒットしない)。アプリ仕様での明示要件が無いため
-     * 既定挙動を採用 (要件確定時は後続 issue で再検討)。
+     * 比較前に NFKC とかな正規化を行い、大文字小文字を区別せずに照合する。
      */
     fun applyKeyword(
         items: List<Disease>,
@@ -69,11 +65,14 @@ object DiseaseSearchService {
         field: String,
         keyword: String,
         match: KeywordMatch,
-    ): Boolean =
-        when (match) {
-            KeywordMatch.PARTIAL -> field.contains(keyword)
-            KeywordMatch.PREFIX -> field.startsWith(keyword)
+    ): Boolean {
+        val normalizedField = searchNormalize(value = field)
+        val normalizedKeyword = searchNormalize(value = keyword)
+        return when (match) {
+            KeywordMatch.PARTIAL -> normalizedField.contains(other = normalizedKeyword, ignoreCase = true)
+            KeywordMatch.PREFIX -> normalizedField.startsWith(prefix = normalizedKeyword, ignoreCase = true)
         }
+    }
 
     /**
      * `sort` キーに従って `items` を並び替える純関数。
