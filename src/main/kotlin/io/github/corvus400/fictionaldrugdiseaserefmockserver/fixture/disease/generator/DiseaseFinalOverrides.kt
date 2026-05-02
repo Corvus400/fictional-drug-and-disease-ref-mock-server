@@ -255,8 +255,8 @@ private fun witchFactorSyndromeOverride(generated: Disease): Disease =
         ),
         differentialDiagnoses =
         listOf(
-            "急性薬物中毒 (架空)",
-            "不死性獲得を伴わない魔力過敏症 (架空)",
+            "原初の魔女 (作中別種族, 不老不死だが因子由来でない) (架空)",
+            "なれはて (進行終末像、自我喪失で人間魔女と段階的に区別) (架空)",
         ),
         complications =
         listOf(

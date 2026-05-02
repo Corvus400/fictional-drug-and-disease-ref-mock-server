@@ -147,6 +147,16 @@ class DiseaseFinalOverridesTest {
     }
 
     @Test
+    fun `witch factor syndrome should be differentiated from primal witch and witch husk endpoint`() {
+        val disease0079 = generateDiseases().first { it.id == "disease_0079" }
+        val differentialText = disease0079.differentialDiagnoses.joinToString()
+
+        assertEquals(2, disease0079.differentialDiagnoses.size)
+        assertTrue(differentialText.contains("原初の魔女"))
+        assertTrue(differentialText.contains("なれはて"))
+    }
+
+    @Test
     fun `insomnia disease should be overridden`() {
         val insomnia = generateDiseases().first { it.id == "disease_0022" }
 
