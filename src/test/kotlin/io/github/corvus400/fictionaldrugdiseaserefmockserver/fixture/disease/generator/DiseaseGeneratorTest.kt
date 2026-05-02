@@ -334,8 +334,9 @@ class DiseaseGeneratorTest {
         // 章別の非 empty 検証は同ファイルの CHAPTER_IV 専用テストで担保されている。
         assertTrue(disease.prevention.isNotEmpty(), "prevention empty for ${disease.id}")
         assertTrue(disease.relatedDrugIds.isNotEmpty(), "relatedDrugIds empty for ${disease.id}")
+        // disease_0079 は作中ロア上の対応関連疾患がないため、final override で明示的に空リストへ固定する。
         assertTrue(
-            disease.relatedDiseaseIds.isNotEmpty(),
+            disease.relatedDiseaseIds.isNotEmpty() || disease.id == "disease_0079",
             "relatedDiseaseIds empty for ${disease.id}",
         )
     }
