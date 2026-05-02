@@ -5,6 +5,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.Fixm
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.validation.DiseaseFixtureValidator
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Chronicity
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.MedicalDepartment
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -55,6 +56,16 @@ class DiseaseFinalOverridesTest {
         val disease0079 = generateDiseases().first { it.id == "disease_0079" }
 
         assertEquals(emptyList(), disease0079.relatedDiseaseIds)
+    }
+
+    @Test
+    fun `witch factor syndrome should be assigned to psychiatry and dermatology`() {
+        val disease0079 = generateDiseases().first { it.id == "disease_0079" }
+
+        assertEquals(
+            listOf(MedicalDepartment.PSYCHIATRY, MedicalDepartment.DERMATOLOGY),
+            disease0079.medicalDepartment,
+        )
     }
 
     @Test
