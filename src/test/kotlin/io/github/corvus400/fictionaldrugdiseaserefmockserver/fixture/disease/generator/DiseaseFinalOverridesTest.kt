@@ -69,6 +69,13 @@ class DiseaseFinalOverridesTest {
     }
 
     @Test
+    fun `witch factor syndrome should onset at 15 years or later`() {
+        val disease0079 = generateDiseases().first { it.id == "disease_0079" }
+
+        assertEquals(15, disease0079.epidemiology?.onsetAgeRange?.minAgeYears)
+    }
+
+    @Test
     fun `insomnia disease should be overridden`() {
         val insomnia = generateDiseases().first { it.id == "disease_0022" }
 
