@@ -41,10 +41,11 @@ class DiseaseModuleKeywordTest {
     fun `GET diseases with non-matching keyword returns total_count 0 instead of full set`() = testApplication {
         application { module() }
 
-        val total = client.get(urlString = "/diseases?page_size=100").totalCount()
+        val total = client.get(urlString = "/v1/diseases?page_size=100").totalCount()
         val filtered =
             client.get(
-                urlString = "/diseases?keyword=zzznotexistzzz&keyword_target=name&keyword_match=partial&page_size=100",
+                urlString = "/v1/diseases?keyword=zzznotexistzzz" +
+                    "&keyword_target=name&keyword_match=partial&page_size=100",
             ).totalCount()
 
         assertTrue(
@@ -70,7 +71,7 @@ class DiseaseModuleKeywordTest {
     fun `GET diseases with unknown X-Mock-Scenario falls back to default and returns full set`() = testApplication {
         application { module() }
 
-        val response = client.get(urlString = "/diseases?page_size=100") {
+        val response = client.get(urlString = "/v1/diseases?page_size=100") {
             headers {
                 append(name = "X-Mock-Scenario", value = "nonexistent-scenario-key")
             }
@@ -117,7 +118,7 @@ class DiseaseModuleKeywordTest {
             setBody(body = """{"state": "default"}""")
         }
 
-        val unfilteredCount = client.get(urlString = "/diseases?page_size=100").totalCount()
+        val unfilteredCount = client.get(urlString = "/v1/diseases?page_size=100").totalCount()
         assertEquals(
             expected = DEFAULT_TOTAL_COUNT,
             actual = unfilteredCount,
@@ -127,7 +128,7 @@ class DiseaseModuleKeywordTest {
         val keyword = knownDiseaseKeyword(client = client)
         val encodedKeyword = URLEncoder.encode(keyword, Charsets.UTF_8)
         val response = client.get(
-            urlString = "/diseases?keyword=$encodedKeyword" +
+            urlString = "/v1/diseases?keyword=$encodedKeyword" +
                 "&keyword_target=name&keyword_match=partial&page_size=100",
         )
         assertEquals(expected = HttpStatusCode.OK, actual = response.status)
@@ -160,7 +161,7 @@ class DiseaseModuleKeywordTest {
         }
 
         val response = client.get(
-            urlString = "/diseases?keyword=whatever&keyword_target=name&keyword_match=partial",
+            urlString = "/v1/diseases?keyword=whatever&keyword_target=name&keyword_match=partial",
         )
         assertEquals(expected = HttpStatusCode.OK, actual = response.status)
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
@@ -189,7 +190,7 @@ class DiseaseModuleKeywordTest {
      * 疾患を必ずヒットさせるため `total_count >= 1` を保証する。
      */
     private suspend fun knownDiseaseKeyword(client: HttpClient): String {
-        val response = client.get(urlString = "/diseases?page_size=1")
+        val response = client.get(urlString = "/v1/diseases?page_size=1")
         assertEquals(expected = HttpStatusCode.OK, actual = response.status)
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
         val firstName = body["items"]

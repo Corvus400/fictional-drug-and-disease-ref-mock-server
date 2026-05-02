@@ -20,6 +20,16 @@ class DiseaseModuleTest {
     private val json = Json { ignoreUnknownKeys = true }
 
     @Test
+    fun `GET v1 diseases returns 200 OK with disease array`() = testApplication {
+        application { module() }
+
+        val response = client.get("/v1/diseases")
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        assertTrue(response.bodyAsText().contains("disease_0001"))
+    }
+
+    @Test
     fun `GET diseases disease_0001 returns 200 OK with populated fixmerge name fields`() = testApplication {
         application { module() }
 
@@ -42,7 +52,7 @@ class DiseaseModuleTest {
     fun `GET diseases returns 200 OK with disease array`() = testApplication {
         application { module() }
 
-        val response = client.get("/diseases")
+        val response = client.get("/v1/diseases")
 
         assertEquals(HttpStatusCode.OK, response.status)
         assertTrue(response.bodyAsText().contains("disease_0001"))
@@ -53,7 +63,7 @@ class DiseaseModuleTest {
         testApplication {
             application { module() }
 
-            val response = client.get("/diseases")
+            val response = client.get("/v1/diseases")
 
             assertEquals(HttpStatusCode.OK, response.status)
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
@@ -89,7 +99,7 @@ class DiseaseModuleTest {
     fun `GET diseases with X-Mock-Scenario empty returns envelope with zero items`() = testApplication {
         application { module() }
 
-        val response = client.get("/diseases") {
+        val response = client.get("/v1/diseases") {
             headers {
                 append(name = "X-Mock-Scenario", value = "empty")
             }
