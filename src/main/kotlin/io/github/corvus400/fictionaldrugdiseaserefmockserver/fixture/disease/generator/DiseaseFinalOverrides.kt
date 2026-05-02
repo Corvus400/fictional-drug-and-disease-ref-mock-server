@@ -205,7 +205,7 @@ private fun witchFactorSyndromeOverride(generated: Disease): Disease =
             Exam(
                 name = "魔女因子問診",
                 category = ExamCategory.INTERVIEW,
-                typicalFinding = "不死性獲得と精神変容の経過を聴取する (架空)",
+                typicalFinding = "ストレス曝露歴・精神症状・身体異形所見の経過を聴取する (架空)",
             ),
             Exam(
                 name = "魔女因子血中反応",
@@ -214,9 +214,9 @@ private fun witchFactorSyndromeOverride(generated: Disease): Disease =
                 referenceRange = "陰性 (架空)",
             ),
             Exam(
-                name = "因子結晶化画像検査",
+                name = "身体魔女化所見観察",
                 category = ExamCategory.IMAGING,
-                typicalFinding = "眼球および創部周辺の結晶化兆候 (架空)",
+                typicalFinding = "爪の異常伸長と顔面皮膚亀裂を認める (架空)",
             ),
         ),
         differentialDiagnoses =
