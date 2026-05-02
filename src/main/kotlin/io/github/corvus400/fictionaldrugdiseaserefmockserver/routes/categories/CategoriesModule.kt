@@ -7,9 +7,9 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog.toEntry
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.categories.CategoriesFixture
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.CategoriesResponse
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.ApiTag
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.documentStatelessEndpoint
 import io.github.smiley4.ktoropenapi.get
 import io.ktor.http.HttpMethod
-import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.plugins.di.dependencies
 import io.ktor.server.response.respond
@@ -73,15 +73,11 @@ fun Application.categoriesModule() {
     val cachedResponse = categoriesFixture.build()
     routing {
         get("/v1/categories", {
-            summary = categoriesMetadata.summary
-            description = categoriesScenarios.first().description
-            tags(categoriesMetadata.tag.tagName)
-            response {
-                code(HttpStatusCode.OK) {
-                    description = "7 カテゴリのメタデータ"
-                    body<CategoriesResponse>()
-                }
-            }
+            documentStatelessEndpoint<CategoriesResponse>(
+                metadata = categoriesMetadata,
+                endpointDescription = categoriesScenarios.first().description,
+                okResponseDescription = "7 カテゴリのメタデータ",
+            )
         }) {
             call.respond(message = cachedResponse)
         }
