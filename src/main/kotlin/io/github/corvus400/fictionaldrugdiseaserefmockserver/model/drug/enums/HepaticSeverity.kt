@@ -2,7 +2,6 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.serializer
 
 /**
  * 肝機能障害重症度 — 用法用量の肝機能別調整に用いる重症度区分 Enum (全 3 種: 軽度/中等度/重度)。

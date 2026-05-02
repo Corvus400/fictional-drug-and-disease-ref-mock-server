@@ -11,7 +11,6 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disea
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Chronicity
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.ExamCategory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals

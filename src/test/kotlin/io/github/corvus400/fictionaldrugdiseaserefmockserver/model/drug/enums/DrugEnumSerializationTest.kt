@@ -1,7 +1,6 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.AppJson
-import kotlinx.serialization.encodeToString
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

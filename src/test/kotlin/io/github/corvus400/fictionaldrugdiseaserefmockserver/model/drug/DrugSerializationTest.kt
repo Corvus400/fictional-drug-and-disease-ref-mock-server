@@ -15,7 +15,6 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.N
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.PackageInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.StorageCondition
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.AppJson
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlin.test.Test
