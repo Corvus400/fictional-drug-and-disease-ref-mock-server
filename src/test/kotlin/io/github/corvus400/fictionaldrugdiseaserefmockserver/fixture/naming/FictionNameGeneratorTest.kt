@@ -48,6 +48,14 @@ class FictionNameGeneratorTest {
                     actual = ForbiddenNames.contains(name = name.kanji),
                     message = "kanji '${name.kanji}' is in blacklist (id=$id slot=$slot)",
                 )
+                assertFalse(
+                    actual = ForbiddenNames.containsClassSuffix(name = name.kana),
+                    message = "kana '${name.kana}' ends with drug class suffix (id=$id slot=$slot)",
+                )
+                assertFalse(
+                    actual = ForbiddenNames.containsClassSuffix(name = name.kanji),
+                    message = "kanji '${name.kanji}' ends with drug class suffix (id=$id slot=$slot)",
+                )
             }
         }
     }

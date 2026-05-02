@@ -1,5 +1,6 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.catalog
 
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.config.Disclaimer
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.ApiTag
 
 object CatalogHtmlRenderer {
@@ -516,6 +517,15 @@ main {
 .catalog-overview strong { color: var(--text); font-weight: 600; }
 .catalog-overview a { color: var(--accent); text-decoration: underline; }
 .catalog-overview a:hover { text-decoration: none; }
+.disclaimer-banner {
+  margin: 0 0 0.75rem 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid #DC2626;
+  border-radius: var(--radius);
+  background: #FEF2F2;
+  color: #7F1D1D;
+  font-weight: 600;
+}
 
 /* No results */
 .no-results {
@@ -571,12 +581,16 @@ main {
     @Suppress("SameReturnValue")
     private fun renderCatalogOverview(): String = """
 <div class="catalog-overview">
+  ${renderDisclaimerBanner()}
   <p>Mock Server が対応する画面・エンドポイント・シナリオ・Fixture の概要を一覧表示します。</p>
   <p><strong>Swagger UI / ReDoc との違い:</strong> Swagger UI と ReDoc はリクエスト/レスポンスの API 仕様（パラメータ・型・ステータスコード）を提供します。本カタログは「どの画面でどのモックシナリオが利用可能か」「各 Fixture がどのようなデータを返すか」を俯瞰するためのものです。</p>
   <p>テスト計画の策定やシナリオ切替の参照に利用してください。
     <a href="/swagger">Swagger UI</a> ・ <a href="/redoc">ReDoc</a> も併せてご確認ください。</p>
 </div>
 """
+
+    private fun renderDisclaimerBanner(): String =
+        """<div class="disclaimer-banner">${escapeHtml(Disclaimer.SHORT)}</div>"""
 
     /** テンプレートレンダリングメソッド。引数なしで定数HTMLを返す設計 */
     @Suppress("SameReturnValue")

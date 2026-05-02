@@ -1,0 +1,14 @@
+# Drug class suffixes that can imply real therapeutic classes.
+スタチン
+プリル
+サルタン
+シリン
+マイシン
+ニブ
+マブ
+ピン
+ザン
+ピル
+バスタチン
+セフ
+フィブラート

@@ -64,9 +64,9 @@ class DiseaseSerializationTest {
     }
 
     @Test
-    fun `Disease serializes exactly 24 fields with snake_case keys`() {
+    fun `Disease serializes exactly 25 fields with snake_case keys`() {
         val jsonObject = Json.parseToJsonElement(AppJson.encodeToString(minimalDisease())).jsonObject
-        assertEquals(24, jsonObject.size)
+        assertEquals(25, jsonObject.size)
         val keyCasingViolations = jsonObject.keys.filter { key ->
             key != key.lowercase() || key.contains(Regex("[A-Z]"))
         }

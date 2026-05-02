@@ -1,5 +1,6 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug
 
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.config.Disclaimer
 import kotlinx.serialization.Serializable
 
 /**
@@ -14,4 +15,5 @@ data class DrugListResponse(
     val pageSize: Int,
     val totalPages: Int,
     val totalCount: Int,
+    val disclaimer: String = Disclaimer.SHORT,
 )

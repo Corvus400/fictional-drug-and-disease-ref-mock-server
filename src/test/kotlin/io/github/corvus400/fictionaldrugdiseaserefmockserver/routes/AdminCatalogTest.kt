@@ -132,6 +132,19 @@ class AdminCatalogTest {
     }
 
     @Test
+    fun `catalog contains disclaimer banner`() = testApplication {
+        application { module() }
+
+        val html = client.get("/__admin/catalog").bodyAsText()
+        val doc = Jsoup.parse(html)
+
+        val banner = doc.select(".disclaimer-banner")
+        assertEquals(1, banner.size, "Should have disclaimer banner")
+        assertTrue(banner.text().contains("FICTIONAL DATA"))
+        assertTrue(banner.text().contains("架空データ"))
+    }
+
+    @Test
     fun `catalog scenario table header uses Fixture Description`() = testApplication {
         application { module() }
 

@@ -2,6 +2,7 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming
 
 private const val PMDA_RESOURCE_PATH: String = "/fixture/forbidden-names-pmda.txt"
 private const val ICD10_RESOURCE_PATH: String = "/fixture/forbidden-names-icd10.txt"
+private const val CLASS_SUFFIX_RESOURCE_PATH: String = "/fixture/forbidden-class-suffixes.txt"
 private const val COMMENT_PREFIX: String = "#"
 
 /**
@@ -16,10 +17,13 @@ private const val COMMENT_PREFIX: String = "#"
 object ForbiddenNames {
     private val pmdaList: Set<String> by lazy { loadResource(path = PMDA_RESOURCE_PATH) }
     private val icd10List: Set<String> by lazy { loadResource(path = ICD10_RESOURCE_PATH) }
+    private val classSuffixList: Set<String> by lazy { loadResource(path = CLASS_SUFFIX_RESOURCE_PATH) }
 
     val all: Set<String> by lazy { pmdaList + icd10List }
 
     fun contains(name: String): Boolean = all.contains(name)
+
+    fun containsClassSuffix(name: String): Boolean = classSuffixList.any { suffix -> name.endsWith(suffix) }
 
     private fun loadResource(path: String): Set<String> {
         val stream = requireNotNull(this::class.java.getResourceAsStream(path)) {

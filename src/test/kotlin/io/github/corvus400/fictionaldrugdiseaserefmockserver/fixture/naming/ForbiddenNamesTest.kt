@@ -21,6 +21,12 @@ class ForbiddenNamesTest {
     }
 
     @Test
+    fun `containsClassSuffix rejects drug class suffixes`() {
+        assertTrue(ForbiddenNames.containsClassSuffix("ロサスタチン"))
+        assertFalse(ForbiddenNames.containsClassSuffix("カイクン"))
+    }
+
+    @Test
     fun `all set contains at least 60 entries (30 PMDA plus 30 ICD-10)`() {
         assertTrue(ForbiddenNames.all.size >= 60)
     }
