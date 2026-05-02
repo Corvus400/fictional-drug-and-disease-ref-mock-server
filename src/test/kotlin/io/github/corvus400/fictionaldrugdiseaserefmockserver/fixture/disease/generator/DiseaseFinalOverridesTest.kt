@@ -57,6 +57,27 @@ class DiseaseFinalOverridesTest {
         assertEquals("不眠症", insomnia.name)
     }
 
+    @Test
+    fun `insomnia disease should reflect insomnia clinical details`() {
+        val insomnia = generateDiseases().first { it.id == "disease_0022" }
+
+        assertEquals("フミンショウ", insomnia.nameKana)
+        assertEquals("Insomnia (fictional)", insomnia.nameEnglish)
+        assertTrue(insomnia.summary.contains("睡眠"))
+        assertTrue(insomnia.symptoms.mainSymptoms.size >= 2)
+        assertTrue(insomnia.requiredExams.isNotEmpty())
+        assertEquals(Chronicity.CHRONIC, insomnia.chronicity)
+        assertEquals(false, insomnia.infectious)
+        assertTrue(insomnia.summary.endsWith("(架空)"))
+    }
+
+    @Test
+    fun `insomnia disease should pass DiseaseFixtureValidator`() {
+        val diseases = generateDiseases()
+
+        assertTrue(DiseaseFixtureValidator.validate(diseases = diseases).isEmpty())
+    }
+
     private fun generateDiseases(): List<Disease> =
         DiseaseGenerator(
             adapter = FixmergeNameAdapter(),
