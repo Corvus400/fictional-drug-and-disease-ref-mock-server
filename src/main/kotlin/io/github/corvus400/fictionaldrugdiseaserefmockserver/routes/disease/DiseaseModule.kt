@@ -9,8 +9,6 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.Dis
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.DiseaseListFixtures
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.ErrorResponse
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.DiseaseListResponse
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.DiseaseSummary
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Chronicity
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.ExamCategory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
@@ -35,7 +33,6 @@ import io.ktor.server.application.Application
 import io.ktor.server.plugins.di.dependencies
 import io.ktor.server.response.respond
 import io.ktor.server.routing.routing
-import kotlin.math.ceil
 
 private val diseaseDetailMetadata = EndpointMetadata(
     path = "/diseases/{id}",
@@ -337,7 +334,7 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
                                 )
                             }
                         val sorted = DiseaseSearchService.applySort(items = additionallyFiltered, sort = sortKey)
-                        paginate(
+                        diseaseListFixtures.resolve(
                             summaries = sorted.map { it.toSummary() },
                             page = page,
                             pageSize = pageSize,
@@ -388,26 +385,4 @@ private fun applyDiseaseListFilters(
         result = result.filter { it.infectious == infectiousFilter }
     }
     return result
-}
-
-private fun paginate(
-    summaries: List<DiseaseSummary>,
-    page: Int,
-    pageSize: Int,
-): DiseaseListResponse {
-    val totalCount = summaries.size
-    val totalPages = if (totalCount == 0) 0 else ceil(totalCount.toDouble() / pageSize.toDouble()).toInt()
-    val startIndex = (page - 1) * pageSize
-    val items = if (startIndex >= totalCount) {
-        emptyList()
-    } else {
-        summaries.drop(n = startIndex).take(n = pageSize)
-    }
-    return DiseaseListResponse(
-        items = items,
-        page = page,
-        pageSize = pageSize,
-        totalPages = totalPages,
-        totalCount = totalCount,
-    )
 }

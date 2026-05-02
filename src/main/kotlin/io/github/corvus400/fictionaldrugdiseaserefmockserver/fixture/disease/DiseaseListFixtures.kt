@@ -62,10 +62,17 @@ class DiseaseListFixtures(
      */
     fun resolve(scenario: String, page: Int, pageSize: Int): DiseaseListResponse {
         val list = summariesByScenario[scenario] ?: summariesByScenario.values.first()
-        val totalCount = list.size
+        return resolve(summaries = list, page = page, pageSize = pageSize)
+    }
+
+    /**
+     * フィルタ・ソート済み summary 列を `page` / `pageSize` でスライスした `DiseaseListResponse` を返す。
+     */
+    fun resolve(summaries: List<DiseaseSummary>, page: Int, pageSize: Int): DiseaseListResponse {
+        val totalCount = summaries.size
         val totalPages = if (totalCount == 0) 0 else ceil(totalCount.toDouble() / pageSize.toDouble()).toInt()
         val startIndex = (page - 1) * pageSize
-        val items = if (startIndex >= totalCount) emptyList() else list.drop(n = startIndex).take(n = pageSize)
+        val items = if (startIndex >= totalCount) emptyList() else summaries.drop(n = startIndex).take(n = pageSize)
         return DiseaseListResponse(
             items = items,
             page = page,
