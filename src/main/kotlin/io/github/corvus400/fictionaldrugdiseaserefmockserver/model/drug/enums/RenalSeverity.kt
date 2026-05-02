@@ -2,7 +2,6 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.serializer
 
 /**
  * 腎機能障害重症度 — クレアチニンクリアランス (CrCl) に基づく腎機能区分 Enum (全 5 種)。

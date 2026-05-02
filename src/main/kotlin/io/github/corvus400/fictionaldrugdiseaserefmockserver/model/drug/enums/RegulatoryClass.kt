@@ -2,7 +2,6 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.serializer
 
 /**
  * 規制区分 — 医薬品の薬事規制上の分類 Enum。詳細画面先頭バッジと警告色強調を決定する分類軸 (全 11 種、複数値可)。

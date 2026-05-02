@@ -1,7 +1,6 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
