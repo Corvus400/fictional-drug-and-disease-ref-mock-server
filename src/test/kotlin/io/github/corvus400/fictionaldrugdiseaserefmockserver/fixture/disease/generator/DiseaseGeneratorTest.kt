@@ -139,9 +139,9 @@ class DiseaseGeneratorTest {
         }
     }
 
-    // Red-1: 全 24 フィールド populated (sample blueprint + 80 件全件)
+    // Red-1: 全 25 フィールド populated (sample blueprint + 80 件全件)
     @Test
-    fun `generate returns a Disease with all 24 top-level fields populated (non-null and non-empty)`() {
+    fun `generate returns a Disease with all 25 top-level fields populated (non-null and non-empty)`() {
         val disease = generator.generate(blueprint = sampleBlueprint)
         assertAllFieldsPopulated(disease = disease)
 
@@ -305,6 +305,7 @@ class DiseaseGeneratorTest {
         assertTrue(disease.summary.isNotBlank(), "summary blank for ${disease.id}")
         assertTrue(disease.etiology.isNotBlank(), "etiology blank for ${disease.id}")
         assertTrue(disease.revisedAt.isNotBlank(), "revisedAt blank for ${disease.id}")
+        assertTrue(disease.disclaimer.isNotBlank(), "disclaimer blank for ${disease.id}")
         assertTrue(
             disease.symptoms.mainSymptoms.isNotEmpty(),
             "mainSymptoms empty for ${disease.id}",

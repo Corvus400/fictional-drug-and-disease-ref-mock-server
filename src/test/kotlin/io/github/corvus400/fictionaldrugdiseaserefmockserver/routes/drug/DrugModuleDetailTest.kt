@@ -28,7 +28,7 @@ class DrugModuleDetailTest {
     private val json = Json { ignoreUnknownKeys = true }
 
     @Test
-    fun `GET drugs drug_0001 default scenario returns 200 with all 38 Drug fields`() = testApplication {
+    fun `GET drugs drug_0001 default scenario returns 200 with all 39 Drug fields`() = testApplication {
         application { module() }
 
         val response = client.get("/drugs/drug_0001")
@@ -41,9 +41,9 @@ class DrugModuleDetailTest {
             message = "default scenario must return the drug fixture matching the path id",
         )
         assertEquals(
-            expected = 38,
+            expected = 39,
             actual = body.keys.size,
-            message = "default scenario must expose all 38 Drug fields (encodeDefaults=true)",
+            message = "default scenario must expose all 39 Drug fields (encodeDefaults=true)",
         )
     }
 

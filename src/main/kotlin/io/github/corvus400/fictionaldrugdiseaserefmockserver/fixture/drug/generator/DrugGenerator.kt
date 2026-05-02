@@ -178,11 +178,13 @@ class DrugGenerator(
                 genericNameEnglish = generic.latin,
                 molecularFormula = DEFAULT_MOLECULAR_FORMULA,
                 description =
-                blueprint.textOverride?.originalSubstanceDescription
-                    ?: DosageFormAppearance.pickOriginalSubstanceDescription(
-                        form = blueprint.dosageForm,
-                        drugId = drugId,
-                    ),
+                ensureFictionalMarker(
+                    blueprint.textOverride?.originalSubstanceDescription
+                        ?: DosageFormAppearance.pickOriginalSubstanceDescription(
+                            form = blueprint.dosageForm,
+                            drugId = drugId,
+                        ),
+                ),
             ),
             handlingPrecautions =
             DrugMetaBuilders.buildHandlingPrecautions(id = drugId, dict = placeholderDictionary),
@@ -236,8 +238,11 @@ class DrugGenerator(
 
     private fun buildAtcCode(blueprint: DrugBlueprint): String {
         val suffix = (blueprint.index % ATC_CODE_SUFFIX_MOD).toString().padStart(length = 2, padChar = '0')
-        return "${blueprint.atcFirstLetter}01AA$suffix"
+        return "${blueprint.atcFirstLetter}$ATC_FICTIONAL_NAMESPACE$suffix"
     }
+
+    private fun ensureFictionalMarker(value: String): String =
+        if (value.contains("(架空)")) value else "$value (架空)"
 
     private fun routeOf(form: DosageForm): RouteOfAdministration =
         when (form) {
@@ -280,6 +285,7 @@ class DrugGenerator(
     companion object {
         private const val INACTIVE_INGREDIENT_COUNT: Int = 3
         private const val DRUG_ID_PAD_LENGTH: Int = 4
+        private const val ATC_FICTIONAL_NAMESPACE: String = "99ZZ"
         private const val ATC_CODE_SUFFIX_MOD: Int = 100
         private const val STANDARD_DOSE_AMOUNT: Double = 10.0
         private const val MANUFACTURER_SUFFIX: String = "製薬"

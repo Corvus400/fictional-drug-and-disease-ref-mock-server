@@ -2,6 +2,17 @@
 
 架空医薬品・疾病 データを返す Flutter/iOS/Android アプリ開発用のシナリオベース Mock Server。
 
+## DISCLAIMER
+
+これは架空の医薬品・疾患データを返すモックサーバーです。
+内容は実在の医薬品・疾患・治療法を表すものではなく、
+医療判断・診療・自己判断に使用してはなりません。
+This server returns FICTIONAL drug and disease data.
+DO NOT use for medical decisions or clinical practice.
+医療判断に使用してはなりません。
+
+詳細は [DISCLAIMER.md](DISCLAIMER.md) を参照してください。
+
 ## クイックスタート
 
 1. 初回セットアップ:

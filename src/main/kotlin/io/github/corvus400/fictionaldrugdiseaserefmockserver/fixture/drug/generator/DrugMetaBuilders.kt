@@ -156,17 +156,12 @@ internal object DrugMetaBuilders {
     }
 
     fun buildYjCode(id: String): String {
-        val firstSeed = stableHash(id = id, slot = DrugFieldSlot.YJ_CODE.ordinal, index = 0)
-        val secondSeed = stableHash(id = id, slot = DrugFieldSlot.YJ_CODE.ordinal, index = 1)
-        val firstDigits =
-            ValueRangeGenerator.pickInRange(seed = firstSeed, range = YJ_DIGIT_RANGE_6)
+        val suffixSeed = stableHash(id = id, slot = DrugFieldSlot.YJ_CODE.ordinal, index = 0)
+        val suffix =
+            ValueRangeGenerator.pickInRange(seed = suffixSeed, range = YJ_SUFFIX_RANGE)
                 .toString()
-                .padStart(length = YJ_FIRST_DIGITS, padChar = '0')
-        val secondDigits =
-            ValueRangeGenerator.pickInRange(seed = secondSeed, range = YJ_DIGIT_RANGE_6)
-                .toString()
-                .padStart(length = YJ_FIRST_DIGITS, padChar = '0')
-        return firstDigits + secondDigits
+                .padStart(length = YJ_SUFFIX_LENGTH, padChar = '0')
+        return YJ_FICTIONAL_PREFIX + suffix
     }
 
     fun buildPackages(
@@ -242,9 +237,10 @@ internal object DrugMetaBuilders {
     private val REFERENCE_RANGE: IntRange = 1..3
     private val RELATED_DISEASE_RANGE: IntRange = 1..2
     private val DISEASE_INDEX_RANGE: IntRange = 0..79
-    private val YJ_DIGIT_RANGE_6: IntRange = 0..999_999
+    private val YJ_SUFFIX_RANGE: IntRange = 0..999_999_999
     private val EXPIRATION_RANGE: IntRange = 24..60
 
-    private const val YJ_FIRST_DIGITS: Int = 6
+    private const val YJ_FICTIONAL_PREFIX: String = "999"
+    private const val YJ_SUFFIX_LENGTH: Int = 9
     private const val ID_PAD_LENGTH: Int = 4
 }

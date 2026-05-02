@@ -1,5 +1,6 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver
 
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.config.Disclaimer
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.config.MockServerConfig
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.di.configureDependencies
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
@@ -42,6 +43,7 @@ fun Application.module() {
     // Plugins
     configureSerialization()
     configureLogging()
+    environment.log.warn(Disclaimer.FULL_JA_EN)
     configureStatusPages()
     configureScenarioInterceptor()
     configureOpenAPI()

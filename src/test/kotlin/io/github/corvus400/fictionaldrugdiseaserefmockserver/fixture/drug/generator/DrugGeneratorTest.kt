@@ -155,7 +155,33 @@ class DrugGeneratorTest {
     }
 
     @Test
-    fun `generate returns a Drug with all 37 top-level fields populated (non-null and non-empty)`() {
+    fun `generate uses fictional ATC 99ZZ namespace for the full inventory`() {
+        val drugs = buildFreshGenerator().generate(blueprints = DrugBlueprintFactory.build())
+
+        drugs.forEach { drug ->
+            assertTrue(
+                drug.atcCode.matches(Regex("^[A-V]99ZZ\\d{2}$")),
+                "atcCode must use fictional 99ZZ namespace: ${drug.id}=${drug.atcCode}",
+            )
+            assertFalse(drug.atcCode.contains("01AA"), "atcCode must not use real 01AA namespace")
+        }
+    }
+
+    @Test
+    fun `generate uses fictional YJ 999 prefix for the full inventory`() {
+        val drugs = buildFreshGenerator().generate(blueprints = DrugBlueprintFactory.build())
+
+        drugs.forEach { drug ->
+            val yjCode = assertNotNull(drug.yjCode, "yjCode null for ${drug.id}")
+            assertTrue(
+                yjCode.matches(Regex("^999\\d{9}$")),
+                "yjCode must be 12 digits with fictional 999 prefix: ${drug.id}=$yjCode",
+            )
+        }
+    }
+
+    @Test
+    fun `generate returns a Drug with all 38 top-level fields populated (non-null and non-empty)`() {
         val drug = generator.generate(blueprint = sampleBlueprint)
 
         // 9 文字列フィールド: 非 blank
@@ -169,6 +195,7 @@ class DrugGeneratorTest {
         assertTrue(drug.therapeuticCategoryName.isNotBlank(), "therapeuticCategoryName blank")
         assertTrue(drug.manufacturer.isNotBlank(), "manufacturer blank")
         assertTrue(drug.revisedAt.isNotBlank(), "revisedAt blank")
+        assertTrue(drug.disclaimer.isNotBlank(), "disclaimer blank")
 
         // 10 非 null 構造フィールド
         assertNotNull(drug.dosageForm, "dosageForm null")
@@ -369,7 +396,7 @@ class DrugGeneratorTest {
                     DosageFormAppearance.pickOriginalSubstanceDescription(
                         form = drug.dosageForm,
                         drugId = drug.id,
-                    )
+                    ) + " (架空)"
                 val info = assertNotNull(drug.physicochemicalProperties)
                 assertEquals(
                     expected = expected,
@@ -423,9 +450,9 @@ class DrugGeneratorTest {
         )
         val physicochemical = assertNotNull(tredecim.physicochemicalProperties)
         assertEquals(
-            expected = "無色澄明の液体である。",
+            expected = "無色澄明の液体である。 (架空)",
             actual = physicochemical.description,
-            message = "drug_0080 description must equal '無色澄明の液体である。'",
+            message = "drug_0080 description must equal overridden fictional marker text",
         )
     }
 

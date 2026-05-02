@@ -1,5 +1,6 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common
 
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.config.Disclaimer
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.AppJson
 import kotlinx.serialization.encodeToString
 import kotlin.test.Test
@@ -10,7 +11,10 @@ class ErrorResponseSerializationTest {
     fun `ErrorResponse serializes code message details to snake_case JSON`() {
         val error = ErrorResponse(code = "NOT_FOUND", message = "Resource not found", details = null)
         val json = AppJson.encodeToString(error)
-        assertEquals("""{"code":"NOT_FOUND","message":"Resource not found","details":null}""", json)
+        assertEquals(
+            """{"code":"NOT_FOUND","message":"Resource not found","details":null,"disclaimer":"${Disclaimer.SHORT}"}""",
+            json,
+        )
     }
 
     @Test
@@ -18,7 +22,8 @@ class ErrorResponseSerializationTest {
         val error = ErrorResponse(code = "VALIDATION", message = "Invalid", details = "id must not be blank")
         val json = AppJson.encodeToString(error)
         assertEquals(
-            """{"code":"VALIDATION","message":"Invalid","details":"id must not be blank"}""",
+            """{"code":"VALIDATION","message":"Invalid","details":"id must not be blank",""" +
+                """"disclaimer":"${Disclaimer.SHORT}"}""",
             json,
         )
     }
