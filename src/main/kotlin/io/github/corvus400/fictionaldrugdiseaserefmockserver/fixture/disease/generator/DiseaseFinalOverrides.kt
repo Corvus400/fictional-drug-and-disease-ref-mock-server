@@ -189,11 +189,13 @@ private fun witchFactorSyndromeOverride(generated: Disease): Disease =
         DiagnosticCriteriaInfo(
             required =
             listOf(
-                "魔女因子活性化の持続を認める (架空)",
-                "通常治癒過程を逸脱した再生反応を認める (架空)",
+                "全国検査で魔女因子高値陽性 (架空)",
+                "精神変容 (殺人衝動・妄想・凶暴化) を認める (架空)",
             ),
             supporting =
             listOf(
+                "爪の異常伸長を認める (架空)",
+                "皮膚亀裂・身体異形化を認める (架空)",
                 "トレデキム曝露に対する特異的脆弱性を認める (架空)",
             ),
             notes = "現実の診断基準ではなく架空 fixture の分類である (架空)",
