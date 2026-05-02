@@ -9,8 +9,10 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.DiagnosticCriteriaInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.EpidemiologyInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.Exam
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.Grade
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.OnsetAgeRange
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.Prevalence
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.SeverityInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.SexDistribution
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.SymptomInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.TreatmentInfo
@@ -217,6 +219,38 @@ private fun witchFactorSyndromeOverride(generated: Disease): Disease =
                 name = "身体魔女化所見観察",
                 category = ExamCategory.IMAGING,
                 typicalFinding = "爪の異常伸長と顔面皮膚亀裂を認める (架空)",
+            ),
+        ),
+        severityGrading =
+        SeverityInfo(
+            gradingSystem = "魔女因子病態進行段階 (作中分類, 架空)",
+            grades =
+            listOf(
+                Grade(
+                    label = "潜伏・保因",
+                    criteria = "魔女因子を保有し全国検査で高値検出されるが、完全な魔女化には至らない (架空)",
+                    recommendedAction = "全国検査による経過観察 (架空)",
+                ),
+                Grade(
+                    label = "活性化",
+                    criteria = "強いストレス・精神衰弱・トラウマ刺激で殺人衝動、妄想、凶暴化が進む (架空)",
+                    recommendedAction = "精神安定環境への移行とトラウマ刺激の遮断 (架空)",
+                ),
+                Grade(
+                    label = "魔女化進行",
+                    criteria = "精神が魔女化し爪伸長、皮膚亀裂、身体異形化、激痛、魔法増幅を認める (架空)",
+                    recommendedAction = "封じ込め管理と外部刺激制限 (架空)",
+                ),
+                Grade(
+                    label = "完全魔女化",
+                    criteria = "不死性・再生性・魔力増大が発現し、魔女因子由来の脆弱性を伴う (架空)",
+                    recommendedAction = "魔女殺し魔法による処置または冷凍封じ込め (架空)",
+                ),
+                Grade(
+                    label = "なれはて",
+                    criteria = "魔女因子が魂を食い尽くし、自我・魂を失った抜け殻となる (架空)",
+                    recommendedAction = "冷凍保存による管理 (架空)",
+                ),
             ),
         ),
         differentialDiagnoses =
