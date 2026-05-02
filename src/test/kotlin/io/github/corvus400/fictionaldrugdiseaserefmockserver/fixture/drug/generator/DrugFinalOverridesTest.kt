@@ -5,6 +5,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.gen
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.DiseasePlaceholderDictionary
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.blueprint.DrugBlueprintFactory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.FixmergeNameAdapter
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.Drug
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -74,7 +75,29 @@ class DrugFinalOverridesTest {
         assertTrue(drug0089.pharmacology?.mechanism.orEmpty().endsWith("(架空)"))
     }
 
+    @Test
+    fun `drug_0089 should reference insomnia disease`() {
+        val drug0089 = generateDrugs().first { it.id == "drug_0089" }
+
+        assertEquals(listOf("disease_0022"), drug0089.relatedDiseaseIds)
+    }
+
+    @Test
+    fun `drug_0089 and insomnia should bidirectionally cross-reference`() {
+        val (diseases, drugs) = generateDiseaseAndDrugFixtures()
+        val drug0089 = drugs.first { it.id == "drug_0089" }
+        val insomnia = diseases.first { it.id == "disease_0022" }
+
+        assertTrue("disease_0022" in drug0089.relatedDiseaseIds)
+        assertTrue("drug_0089" in insomnia.relatedDrugIds)
+    }
+
     private fun generateDrugs(): List<Drug> {
+        val (_, drugs) = generateDiseaseAndDrugFixtures()
+        return drugs
+    }
+
+    private fun generateDiseaseAndDrugFixtures(): Pair<List<Disease>, List<Drug>> {
         val adapter = FixmergeNameAdapter()
         val diseases =
             DiseaseGenerator(
@@ -82,7 +105,9 @@ class DrugFinalOverridesTest {
                 placeholderDictionary = DiseasePlaceholderDictionary(),
             ).generate(blueprints = DiseaseBlueprintFactory.build())
         val drugDictionary = DrugPlaceholderDictionary(nameAdapter = adapter, diseases = diseases)
-        return DrugGenerator(adapter = adapter, placeholderDictionary = drugDictionary)
-            .generate(blueprints = DrugBlueprintFactory.build())
+        val drugs =
+            DrugGenerator(adapter = adapter, placeholderDictionary = drugDictionary)
+                .generate(blueprints = DrugBlueprintFactory.build())
+        return diseases to drugs
     }
 }

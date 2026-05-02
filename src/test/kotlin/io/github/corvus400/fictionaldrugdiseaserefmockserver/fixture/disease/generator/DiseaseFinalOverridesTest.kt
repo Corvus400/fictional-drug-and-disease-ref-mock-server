@@ -78,6 +78,13 @@ class DiseaseFinalOverridesTest {
         assertTrue(DiseaseFixtureValidator.validate(diseases = diseases).isEmpty())
     }
 
+    @Test
+    fun `insomnia disease should reference drug_0089`() {
+        val insomnia = generateDiseases().first { it.id == "disease_0022" }
+
+        assertEquals(listOf("drug_0089"), insomnia.relatedDrugIds)
+    }
+
     private fun generateDiseases(): List<Disease> =
         DiseaseGenerator(
             adapter = FixmergeNameAdapter(),
