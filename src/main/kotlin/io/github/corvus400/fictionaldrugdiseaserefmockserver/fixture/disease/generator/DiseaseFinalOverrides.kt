@@ -181,7 +181,7 @@ private fun witchFactorSyndromeOverride(generated: Disease): Disease =
                 "魔女因子反応の増強 (架空)",
                 "外傷治癒の異常促進 (架空)",
             ),
-            onsetPattern = OnsetPattern.CHRONIC,
+            onsetPattern = OnsetPattern.SUBACUTE,
         ),
         diagnosticCriteria =
         DiagnosticCriteriaInfo(
