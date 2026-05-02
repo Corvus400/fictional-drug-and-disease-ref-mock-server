@@ -117,6 +117,17 @@ class OpenApiDocTest {
     }
 
     @Test
+    fun `info description contains fictional data disclaimer`() = testApplication {
+        application { module() }
+        val response = client.get("/openapi.json")
+        val spec = json.decodeFromString<JsonObject>(response.bodyAsText())
+        val description = spec["info"]?.jsonObject?.get("description")?.jsonPrimitive?.content.orEmpty()
+
+        assertTrue(description.contains("FICTIONAL DATA"))
+        assertTrue(description.contains("架空データ"))
+    }
+
+    @Test
     fun `drug regulatory_class description contains english SerialName via interpolation`() = testApplication {
         application { module() }
         val description = fetchParameterDescription(path = "/drugs", parameterName = "regulatory_class")

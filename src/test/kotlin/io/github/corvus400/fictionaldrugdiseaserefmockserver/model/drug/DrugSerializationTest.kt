@@ -95,9 +95,9 @@ class DrugSerializationTest {
     }
 
     @Test
-    fun `Drug serializes exactly 38 fields with snake_case keys`() {
+    fun `Drug serializes exactly 39 fields with snake_case keys`() {
         val jsonObject = Json.parseToJsonElement(AppJson.encodeToString(minimalDrug())).jsonObject
-        assertEquals(38, jsonObject.size)
+        assertEquals(39, jsonObject.size)
         val keyCasingViolations = jsonObject.keys.filter { key ->
             key != key.lowercase() || key.contains(Regex("[A-Z]"))
         }

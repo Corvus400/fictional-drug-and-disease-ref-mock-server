@@ -1,5 +1,6 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins
 
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.config.Disclaimer
 import io.github.smiley4.ktoropenapi.OpenApi
 import io.github.smiley4.ktoropenapi.config.ExampleEncoder
 import io.github.smiley4.ktoropenapi.config.SchemaGenerator
@@ -74,6 +75,10 @@ private fun buildApiDescription(): String {
         "- **${apiTag.tagName}**: ${apiTag.description}"
     }
     return """
+        |${Disclaimer.SHORT}
+        |
+        |${Disclaimer.FULL_JA_EN}
+        |
         |架空医薬品・疾病 Mock Server は、Flutter/iOS/Androidアプリ開発用のシナリオベースモックサーバーです。
         |
         |## APIカテゴリ

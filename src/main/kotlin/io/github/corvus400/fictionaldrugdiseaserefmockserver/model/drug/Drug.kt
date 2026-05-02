@@ -1,5 +1,6 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug
 
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.config.Disclaimer
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DosageForm
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RouteOfAdministration
@@ -70,4 +71,5 @@ data class Drug(
     /** 関連疾患 ID リスト — `disease_NNNN` 形式。ダングリング参照禁止 (仕様: linked-bubbling-sun.md 共通モデル節)。 */
     val relatedDiseaseIds: List<String> = emptyList(),
     val imageUrl: String = buildDrugImageUrl(id, dosageForm),
+    val disclaimer: String = Disclaimer.SHORT,
 )

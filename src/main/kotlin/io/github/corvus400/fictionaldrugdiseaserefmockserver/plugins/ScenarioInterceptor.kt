@@ -1,5 +1,6 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins
 
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.config.Disclaimer
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.scenario.ScenarioManager
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
@@ -40,6 +41,9 @@ val ScenarioInterceptorPlugin = createApplicationPlugin(name = "ScenarioIntercep
         if (scenarioHeader != null) {
             call.attributes.put(ScenarioHeaderKey, scenarioHeader)
         }
+    }
+    onCallRespond { call, _ ->
+        call.appendDisclaimerHeaders()
     }
 }
 
@@ -130,4 +134,9 @@ suspend inline fun <reified T : Any> ApplicationCall.respondWithScenarioAndOverr
         val merged = JsonObject(fixtureJson.toMutableMap().apply { putAll(fieldOverrides) })
         respond(resolved.status, merged)
     }
+}
+
+fun ApplicationCall.appendDisclaimerHeaders() {
+    response.headers.append("X-Fictional-Data", "true")
+    response.headers.append("X-Disclaimer", Disclaimer.SHORT)
 }

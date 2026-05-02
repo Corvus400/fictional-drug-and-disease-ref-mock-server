@@ -18,9 +18,9 @@ enum class ApiTag(
     val tagName: String,
     val description: String,
 ) {
-    DRUG("Drug", "医薬品リファレンスAPI"),
-    DISEASE("Disease", "疾患リファレンスAPI"),
-    CATEGORIES("Categories", "カテゴリメタデータAPI"),
+    DRUG("Drug", "医薬品リファレンスAPI (架空データ)"),
+    DISEASE("Disease", "疾患リファレンスAPI (架空データ)"),
+    CATEGORIES("Categories", "カテゴリメタデータAPI (架空データ)"),
     ADMIN("Admin", "Mock Server管理API（シナリオ切替・状態リセット）"),
     SYSTEM("System", "ヘルスチェック等システムAPI"),
 }

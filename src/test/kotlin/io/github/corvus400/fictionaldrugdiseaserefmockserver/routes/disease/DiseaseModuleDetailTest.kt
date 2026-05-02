@@ -20,7 +20,7 @@ class DiseaseModuleDetailTest {
     private val json = Json { ignoreUnknownKeys = true }
 
     @Test
-    fun `GET diseases disease_0001 returns 200 with exactly 24 snake_case fields`() = testApplication {
+    fun `GET diseases disease_0001 returns 200 with exactly 25 snake_case fields`() = testApplication {
         application { module() }
 
         val response = client.get(urlString = "/diseases/disease_0001")
@@ -37,9 +37,9 @@ class DiseaseModuleDetailTest {
             message = "GET /diseases/disease_0001 body[id] must equal disease_0001",
         )
         assertEquals(
-            expected = 24,
+            expected = 25,
             actual = body.size,
-            message = "Disease detail envelope must expose exactly 24 snake_case fields, got keys=${body.keys}",
+            message = "Disease detail envelope must expose exactly 25 snake_case fields, got keys=${body.keys}",
         )
     }
 

@@ -1,5 +1,6 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease
 
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.config.Disclaimer
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Chronicity
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.MedicalDepartment
@@ -47,4 +48,5 @@ data class Disease(
     val relatedDiseaseIds: List<String> = emptyList(),
     /** 最終改訂日 (`YYYY-MM-DD` 形式の固定文字列)。`IsoDateFormatter` が生成する ISO 8601 日付。 */
     val revisedAt: String,
+    val disclaimer: String = Disclaimer.SHORT,
 )

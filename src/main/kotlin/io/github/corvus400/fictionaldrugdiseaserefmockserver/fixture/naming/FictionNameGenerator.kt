@@ -46,7 +46,11 @@ object FictionNameGenerator {
             val seed = stableHash(id = id, slot = slot.ordinal, index = retry)
             val kana = KanaAssembler.assemble(seed = seed, pattern = pattern)
             val kanji = KanjiAtejiRules.toAteji(kana = kana, seed = seed)
-            val isBlacklisted = ForbiddenNames.contains(kana) || ForbiddenNames.contains(kanji)
+            val isBlacklisted =
+                ForbiddenNames.contains(kana) ||
+                    ForbiddenNames.contains(kanji) ||
+                    ForbiddenNames.containsClassSuffix(kana) ||
+                    ForbiddenNames.containsClassSuffix(kanji)
             val isAlreadyUsed = kana in usedKana || kanji in usedKanji
             if (isBlacklisted || isAlreadyUsed) {
                 continue
