@@ -20,21 +20,36 @@ class DiseaseModuleDetailTest {
     private val json = Json { ignoreUnknownKeys = true }
 
     @Test
+    fun `GET v1 diseases disease_0001 returns 200 with matching Disease id`() = testApplication {
+        application { module() }
+
+        val response = client.get(urlString = "/v1/diseases/disease_0001")
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
+        assertEquals(
+            expected = "disease_0001",
+            actual = body["id"]?.jsonPrimitive?.content,
+            message = "GET /v1/diseases/{id} must return the disease fixture matching the path id",
+        )
+    }
+
+    @Test
     fun `GET diseases disease_0001 returns 200 with exactly 25 snake_case fields`() = testApplication {
         application { module() }
 
-        val response = client.get(urlString = "/diseases/disease_0001")
+        val response = client.get(urlString = "/v1/diseases/disease_0001")
 
         assertEquals(
             expected = HttpStatusCode.OK,
             actual = response.status,
-            message = "GET /diseases/disease_0001 must return 200 OK",
+            message = "GET /v1/diseases/disease_0001 must return 200 OK",
         )
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
         assertEquals(
             expected = "disease_0001",
             actual = body["id"]?.jsonPrimitive?.content,
-            message = "GET /diseases/disease_0001 body[id] must equal disease_0001",
+            message = "GET /v1/diseases/disease_0001 body[id] must equal disease_0001",
         )
         assertEquals(
             expected = 25,
@@ -58,13 +73,13 @@ class DiseaseModuleDetailTest {
         )
 
         val startTime = System.currentTimeMillis()
-        val response = client.get(urlString = "/diseases/disease_0001")
+        val response = client.get(urlString = "/v1/diseases/disease_0001")
         val elapsedMs = System.currentTimeMillis() - startTime
 
         assertEquals(
             expected = HttpStatusCode.OK,
             actual = response.status,
-            message = "GET /diseases/disease_0001 must remain 200 OK when only delay_ms is overridden",
+            message = "GET /v1/diseases/disease_0001 must remain 200 OK when only delay_ms is overridden",
         )
         assertTrue(
             actual = elapsedMs >= 500,
@@ -86,12 +101,12 @@ class DiseaseModuleDetailTest {
             message = "POST /__admin/configs/diseaseDetail must return 200 OK",
         )
 
-        val response = client.get(urlString = "/diseases/disease_0001")
+        val response = client.get(urlString = "/v1/diseases/disease_0001")
 
         assertEquals(
             expected = HttpStatusCode.InternalServerError,
             actual = response.status,
-            message = "GET /diseases/disease_0001 must honor diseaseDetail status_code=500 override",
+            message = "GET /v1/diseases/disease_0001 must honor diseaseDetail status_code=500 override",
         )
     }
 
@@ -110,12 +125,12 @@ class DiseaseModuleDetailTest {
                 message = "POST /__admin/configs/diseaseDetail must return 200 OK for status_code=404 override",
             )
 
-            val response = client.get(urlString = "/diseases/disease_0001")
+            val response = client.get(urlString = "/v1/diseases/disease_0001")
 
             assertEquals(
                 expected = HttpStatusCode.NotFound,
                 actual = response.status,
-                message = "diseaseDetail status_code=404 override must flip GET /diseases/disease_0001 to 404",
+                message = "diseaseDetail status_code=404 override must flip GET /v1/diseases/disease_0001 to 404",
             )
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
             assertEquals(
@@ -135,12 +150,12 @@ class DiseaseModuleDetailTest {
     fun `GET diseases unknown id returns 404 with ErrorResponse NOT_FOUND body`() = testApplication {
         application { module() }
 
-        val response = client.get(urlString = "/diseases/disease_9999")
+        val response = client.get(urlString = "/v1/diseases/disease_9999")
 
         assertEquals(
             expected = HttpStatusCode.NotFound,
             actual = response.status,
-            message = "GET /diseases/disease_9999 must return 404 Not Found for an unregistered id",
+            message = "GET /v1/diseases/disease_9999 must return 404 Not Found for an unregistered id",
         )
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
         assertEquals(
