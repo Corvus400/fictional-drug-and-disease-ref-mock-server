@@ -25,6 +25,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.search.DiseaseKeywo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.search.DiseaseSearchService
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.search.DiseaseSortKey
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.search.KeywordMatch
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.search.SearchDefaults
 import io.github.smiley4.ktoropenapi.get
 import io.github.smiley4.ktoropenapi.route
 import io.ktor.http.HttpMethod
@@ -65,7 +66,7 @@ private val diseaseListScenarios: List<ScenarioMeta> = listOf(
     ScenarioMeta(
         name = "default",
         title = "デフォルト (80件)",
-        description = "全 80 件のフィクスマージ語ベース疾患を page_size=${DiseaseListFixtures.DEFAULT_PAGE_SIZE} " +
+        description = "全 80 件のフィクスマージ語ベース疾患を page_size=${SearchDefaults.DEFAULT_PAGE_SIZE} " +
             "でページング",
     ),
     ScenarioMeta(name = "empty", title = "空レスポンス", description = "0 件の疾患一覧"),
@@ -137,8 +138,8 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
                     summary = diseaseListMetadata.summary,
                     endpointDescription = "起動時に生成された疾患 Fixture 一覧を envelope 形式で返す。" +
                         "X-Mock-Scenario ヘッダで `default` (80 件) / `empty` (0 件) を切り替え可能。" +
-                        " `page` (1-origin) / `page_size` (既定 ${DiseaseListFixtures.DEFAULT_PAGE_SIZE}, " +
-                        "上限 ${DiseaseListFixtures.MAX_PAGE_SIZE}) でページング可能。",
+                        " `page` (1-origin) / `page_size` (既定 ${SearchDefaults.DEFAULT_PAGE_SIZE}, " +
+                        "上限 ${SearchDefaults.MAX_PAGE_SIZE}) でページング可能。",
                     tag = diseaseListMetadata.tag,
                     fixtureProvider = diseaseListFixtures,
                     additionalRequestDoc = {
@@ -149,7 +150,7 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
                             }
                             queryParameter<Int>("page_size") {
                                 description = "1 ページの件数 (既定 " +
-                                    "${DiseaseListFixtures.DEFAULT_PAGE_SIZE}, 上限 ${DiseaseListFixtures.MAX_PAGE_SIZE})"
+                                    "${SearchDefaults.DEFAULT_PAGE_SIZE}, 上限 ${SearchDefaults.MAX_PAGE_SIZE})"
                                 required = false
                             }
                             queryParameter<String>("icd10_chapter") {
@@ -234,8 +235,8 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
                 val page = call.request.queryParameters["page"]?.toIntOrNull() ?: 1
                 val pageSize = (
                     call.request.queryParameters["page_size"]?.toIntOrNull()
-                        ?: DiseaseListFixtures.DEFAULT_PAGE_SIZE
-                    ).coerceAtMost(maximumValue = DiseaseListFixtures.MAX_PAGE_SIZE)
+                        ?: SearchDefaults.DEFAULT_PAGE_SIZE
+                    ).coerceAtMost(maximumValue = SearchDefaults.MAX_PAGE_SIZE)
                 val chapterParam = call.request.queryParameters["icd10_chapter"]
                     ?.takeIf { it.isNotEmpty() }
                 val chapterFilter = chapterParam?.let { Icd10Chapter.fromSerialName(serialName = it) }
