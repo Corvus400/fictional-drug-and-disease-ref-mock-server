@@ -174,6 +174,16 @@ class DiseaseFinalOverridesTest {
     }
 
     @Test
+    fun `witch factor syndrome prognosis should describe irreversibility tempered by witch factor depletion`() {
+        val disease0079 = generateDiseases().first { it.id == "disease_0079" }
+        val prognosis = disease0079.prognosis.orEmpty()
+
+        assertTrue(prognosis.contains("不可逆"))
+        assertTrue(prognosis.contains("大魔女顕現"))
+        assertTrue(prognosis.contains("魔女因子喪失"))
+    }
+
+    @Test
     fun `insomnia disease should be overridden`() {
         val insomnia = generateDiseases().first { it.id == "disease_0022" }
 
