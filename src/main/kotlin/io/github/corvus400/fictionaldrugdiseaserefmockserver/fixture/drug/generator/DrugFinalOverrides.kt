@@ -265,6 +265,7 @@ private fun arisaSleepAidFinalOverride(generated: Drug): Drug =
             NumberedParagraph(order = 1, content = "向精神薬として投与日数及び服薬管理に注意すること (架空)"),
         ),
         manufacturer = "不明",
+        relatedDiseaseIds = listOf("disease_0022"),
     )
 
 private fun tredecimFinalOverride(generated: Drug): Drug =

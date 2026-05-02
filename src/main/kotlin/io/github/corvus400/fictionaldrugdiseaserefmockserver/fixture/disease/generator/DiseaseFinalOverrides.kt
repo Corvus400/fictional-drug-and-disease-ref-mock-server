@@ -116,6 +116,7 @@ private fun insomniaOverride(generated: Disease): Disease =
             "就寝前の刺激物と強い光の回避 (架空)",
             "ストレス管理と適度な運動 (架空)",
         ),
+        relatedDrugIds = listOf("drug_0089"),
     )
 
 private fun witchFactorSyndromeOverride(generated: Disease): Disease =
