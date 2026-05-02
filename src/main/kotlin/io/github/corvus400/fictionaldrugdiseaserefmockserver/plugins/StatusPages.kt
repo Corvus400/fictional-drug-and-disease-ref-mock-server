@@ -35,6 +35,6 @@ fun Application.configureStatusPages() {
 }
 
 private fun String.startsWithKnownRoutePrefix(): Boolean =
-    listOf("/drugs", "/diseases", "/categories", "/__admin", "/health").any { prefix ->
+    listOf("/v1/drugs", "/drugs", "/diseases", "/categories", "/__admin", "/health").any { prefix ->
         startsWith(prefix)
     }

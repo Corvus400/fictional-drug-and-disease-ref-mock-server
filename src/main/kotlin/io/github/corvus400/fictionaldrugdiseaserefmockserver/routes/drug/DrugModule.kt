@@ -34,7 +34,7 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.routing
 
 private val drugDetailMetadata = EndpointMetadata(
-    path = "/drugs/{id}",
+    path = "/v1/drugs/{id}",
     method = HttpMethod.Get,
     endpointName = "drugDetail",
     tag = ApiTag.DRUG,
@@ -80,7 +80,7 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
     val drugListFixtures: DrugListFixtures by dependencies
     val drugDetailFixtures: DrugDetailFixtures by dependencies
     routing {
-        get("/drugs/{id}", {
+        get("/v1/drugs/{id}", {
             documentIdDetailEndpoint(
                 metadata = drugDetailMetadata,
                 endpointDescription = "`id` で指定した医薬品詳細 Fixture を返す。",
