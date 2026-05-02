@@ -27,6 +27,16 @@ class DosageFormImageRoutesTest {
     }
 
     @Test
+    fun `GET v1 drug override image with Original returns PNG`() = testApplication {
+        application { module() }
+
+        val response = client.get("/v1/images/drugs/drug_0089?size=Original")
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        assertEquals(ContentType.Image.PNG, response.contentType()?.withoutParameters())
+    }
+
+    @Test
     fun `GET dosage form image with Original returns PNG`() = testApplication {
         application { module() }
 
@@ -107,7 +117,7 @@ class DosageFormImageRoutesTest {
     fun `GET drug override image with Original returns source bytes`() = testApplication {
         application { module() }
 
-        val responseBytes = client.get("/images/drug/drug_0080?size=Original").bodyAsBytes()
+        val responseBytes = client.get("/v1/images/drugs/drug_0080?size=Original").bodyAsBytes()
 
         assertContentEquals(resourceBytes("images/drug/drug_0080.png"), responseBytes)
     }
@@ -134,7 +144,7 @@ class DosageFormImageRoutesTest {
     fun `GET drug override image with Original returns PNG`() = testApplication {
         application { module() }
 
-        val response = client.get("/images/drug/drug_0089?size=Original")
+        val response = client.get("/v1/images/drugs/drug_0089?size=Original")
 
         assertEquals(HttpStatusCode.OK, response.status)
         assertEquals(ContentType.Image.PNG, response.contentType()?.withoutParameters())
@@ -144,8 +154,8 @@ class DosageFormImageRoutesTest {
     fun `GET drug override image with S returns one eighth of original long edge`() = testApplication {
         application { module() }
 
-        val original = decodeImage(client.get("/images/drug/drug_0080?size=Original").bodyAsBytes())
-        val small = decodeImage(client.get("/images/drug/drug_0080?size=S").bodyAsBytes())
+        val original = decodeImage(client.get("/v1/images/drugs/drug_0080?size=Original").bodyAsBytes())
+        val small = decodeImage(client.get("/v1/images/drugs/drug_0080?size=S").bodyAsBytes())
 
         assertEquals(max(original.width, original.height) / 8, max(small.width, small.height))
     }
@@ -154,8 +164,8 @@ class DosageFormImageRoutesTest {
     fun `GET drug override image with M returns one quarter of original long edge`() = testApplication {
         application { module() }
 
-        val original = decodeImage(client.get("/images/drug/drug_0080?size=Original").bodyAsBytes())
-        val medium = decodeImage(client.get("/images/drug/drug_0080?size=M").bodyAsBytes())
+        val original = decodeImage(client.get("/v1/images/drugs/drug_0080?size=Original").bodyAsBytes())
+        val medium = decodeImage(client.get("/v1/images/drugs/drug_0080?size=M").bodyAsBytes())
 
         assertEquals(max(original.width, original.height) / 4, max(medium.width, medium.height))
     }
@@ -164,7 +174,7 @@ class DosageFormImageRoutesTest {
     fun `GET drug override image with Original returns full size`() = testApplication {
         application { module() }
 
-        val original = decodeImage(client.get("/images/drug/drug_0080?size=Original").bodyAsBytes())
+        val original = decodeImage(client.get("/v1/images/drugs/drug_0080?size=Original").bodyAsBytes())
 
         assertEquals(512, original.width)
         assertEquals(768, original.height)
@@ -174,7 +184,7 @@ class DosageFormImageRoutesTest {
     fun `GET unknown drug override image returns 404`() = testApplication {
         application { module() }
 
-        val response = client.get("/images/drug/drug_9999?size=Original")
+        val response = client.get("/v1/images/drugs/drug_9999?size=Original")
 
         assertEquals(HttpStatusCode.NotFound, response.status)
     }
