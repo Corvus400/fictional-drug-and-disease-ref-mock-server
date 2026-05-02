@@ -166,6 +166,14 @@ class DiseaseFinalOverridesTest {
     }
 
     @Test
+    fun `witch factor syndrome treatment should offer three non pharmacological strategies`() {
+        val disease0079 = generateDiseases().first { it.id == "disease_0079" }
+        val headings = disease0079.treatments.nonPharmacological.map { it.heading }
+
+        assertEquals(listOf("ストレス軽減・精神安定", "魔女因子除去仮説", "封じ込め管理"), headings)
+    }
+
+    @Test
     fun `insomnia disease should be overridden`() {
         val insomnia = generateDiseases().first { it.id == "disease_0022" }
 
