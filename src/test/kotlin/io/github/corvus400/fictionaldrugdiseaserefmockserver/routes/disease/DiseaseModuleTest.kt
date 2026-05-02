@@ -23,7 +23,7 @@ class DiseaseModuleTest {
     fun `GET diseases disease_0001 returns 200 OK with populated fixmerge name fields`() = testApplication {
         application { module() }
 
-        val response = client.get("/diseases/disease_0001")
+        val response = client.get("/v1/diseases/disease_0001")
 
         assertEquals(HttpStatusCode.OK, response.status)
         val body = json.decodeFromString<JsonObject>(response.bodyAsText())
