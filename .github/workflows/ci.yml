@@ -7,7 +7,6 @@ on:
       - '**/*.md'
       - '**/*.sh'
       - '**/*.yaml'
-      - '**/*.yml'
   pull_request:
     types: [opened, synchronize, reopened]
     branches: [main, develop]
@@ -15,7 +14,6 @@ on:
       - '**/*.md'
       - '**/*.sh'
       - '**/*.yaml'
-      - '**/*.yml'
 
 jobs:
   build-and-test:
@@ -30,5 +28,7 @@ jobs:
           distribution: 'temurin'
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-provider: basic
       - name: Test and assemble
         run: ./gradlew test assemble
