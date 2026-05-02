@@ -10,6 +10,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.categories.c
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.categories.categoriesModule
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.common.dosageFormImageCatalogEntries
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.common.dosageFormImageRoute
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.common.drugImageCatalogEntries
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.common.drugImageRoute
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.disease.diseaseCatalogEntries
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.disease.diseaseModule
@@ -46,6 +47,10 @@ private val allModules: List<ModuleRegistration> = listOf(
         catalogEntries = dosageFormImageCatalogEntries,
         configure = { dosageFormImageRoute() },
     ),
+    StatelessModuleRegistration(
+        catalogEntries = drugImageCatalogEntries,
+        configure = { drugImageRoute() },
+    ),
 )
 
 fun Application.configureRouting(
@@ -65,9 +70,6 @@ fun Application.configureRouting(
             is StatelessModuleRegistration -> module.configure(this)
         }
     }
-
-    // Green 2/3: drug image route is documented in the next checkpoint.
-    drugImageRoute()
 
     // 起動時検証: カタログ登録の双方向整合性チェック
     verifyCatalogCoverage()

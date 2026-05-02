@@ -39,6 +39,27 @@ val dosageFormImageCatalogEntries: List<EndpointEntry> = listOf(
     dosageFormImageMetadata.toEntry(scenarios = dosageFormImageScenarios),
 )
 
+private val drugImageMetadata = EndpointMetadata(
+    path = "/v1/images/drugs/{drugId}",
+    method = HttpMethod.Get,
+    endpointName = "drugImage",
+    tag = ApiTag.DRUG,
+    summary = "医薬品画像を取得する",
+)
+
+private val drugImageScenarios: List<ScenarioMeta> = listOf(
+    ScenarioMeta(
+        name = "default",
+        title = "デフォルト",
+        description = "drug_0080 と drug_0089 の 2 件のみ実在。それ以外は 404 で返却し、" +
+            "フロント側で剤形画像にフォールバックする運用",
+    ),
+)
+
+val drugImageCatalogEntries: List<EndpointEntry> = listOf(
+    drugImageMetadata.toEntry(scenarios = drugImageScenarios),
+)
+
 fun Application.dosageFormImageRoute() {
     routing {
         get("/v1/images/dosage-forms/{form}", {
@@ -85,7 +106,34 @@ fun Application.dosageFormImageRoute() {
 
 fun Application.drugImageRoute() {
     routing {
-        get("/v1/images/drugs/{drugId}") {
+        get("/v1/images/drugs/{drugId}", {
+            summary = drugImageMetadata.summary
+            description = drugImageScenarios.first().description
+            tags(drugImageMetadata.tag.tagName)
+            request {
+                pathParameter<String>("drugId") {
+                    description = "医薬品 ID (例: drug_0080, drug_0089)"
+                }
+                queryParameter<String>("size") {
+                    description = "S|M|Original (省略時 Original)"
+                    required = false
+                }
+            }
+            response {
+                code(HttpStatusCode.OK) {
+                    description = "指定 drugId の PNG 画像"
+                    body<ByteArray> {
+                        mediaTypes(ContentType.Image.PNG)
+                    }
+                }
+                code(HttpStatusCode.NotFound) {
+                    description = "指定 drugId の画像が存在しない"
+                }
+                code(HttpStatusCode.BadRequest) {
+                    description = "size に S/M/Original 以外を指定"
+                }
+            }
+        }) {
             val drugId = call.parameters["drugId"] ?: return@get
             val size = when (call.request.queryParameters["size"]) {
                 "S" -> ImageSize.S
