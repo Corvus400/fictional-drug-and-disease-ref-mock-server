@@ -6,6 +6,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disea
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.DiseaseListResponse
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.DiseaseSummary
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.toSummary
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.search.SearchDefaults
 import kotlin.math.ceil
 
 /**
@@ -83,7 +84,7 @@ class DiseaseListFixtures(
     }
 
     override val scenarios: Map<String, DiseaseListResponse> = summariesByScenario.keys.associateWith { scenario ->
-        resolve(scenario = scenario, page = 1, pageSize = DEFAULT_PAGE_SIZE)
+        resolve(scenario = scenario, page = 1, pageSize = SearchDefaults.DEFAULT_PAGE_SIZE)
     }
 
     override val scenarioTitles: Map<String, String> = mapOf(
@@ -93,9 +94,4 @@ class DiseaseListFixtures(
 
     override fun describeFixture(fixture: DiseaseListResponse): String =
         "items=${fixture.items.size} of ${fixture.totalCount}"
-
-    companion object {
-        const val DEFAULT_PAGE_SIZE: Int = 20
-        const val MAX_PAGE_SIZE: Int = 100
-    }
 }

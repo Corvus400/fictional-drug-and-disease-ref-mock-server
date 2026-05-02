@@ -23,6 +23,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.scenario.ScenarioMa
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.search.DrugKeywordTarget
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.search.DrugSortKey
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.search.KeywordMatch
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.search.SearchDefaults
 import io.github.smiley4.ktoropenapi.get
 import io.github.smiley4.ktoropenapi.route
 import io.ktor.http.HttpMethod
@@ -63,7 +64,7 @@ private val drugListScenarios: List<ScenarioMeta> = listOf(
     ScenarioMeta(
         name = "default",
         title = "デフォルト (120件)",
-        description = "全 120 件のフィクスマージ語ベース医薬品を page_size=${DrugListFixtures.DEFAULT_PAGE_SIZE} " +
+        description = "全 120 件のフィクスマージ語ベース医薬品を page_size=${SearchDefaults.DEFAULT_PAGE_SIZE} " +
             "でページング",
     ),
     ScenarioMeta(name = "empty", title = "空レスポンス", description = "0 件の医薬品一覧"),
@@ -131,8 +132,8 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
                     summary = drugListMetadata.summary,
                     endpointDescription = "起動時に生成された医薬品 Fixture 一覧を envelope 形式で返す。" +
                         "X-Mock-Scenario ヘッダで `default` (120 件) / `empty` (0 件) を切り替え可能。" +
-                        " `page` (1-origin) / `page_size` (既定 ${DrugListFixtures.DEFAULT_PAGE_SIZE}, " +
-                        "上限 ${DrugListFixtures.MAX_PAGE_SIZE}) でページング可能。",
+                        " `page` (1-origin) / `page_size` (既定 ${SearchDefaults.DEFAULT_PAGE_SIZE}, " +
+                        "上限 ${SearchDefaults.MAX_PAGE_SIZE}) でページング可能。",
                     tag = drugListMetadata.tag,
                     fixtureProvider = drugListFixtures,
                     additionalRequestDoc = {
@@ -143,7 +144,7 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
                             }
                             queryParameter<Int>("page_size") {
                                 description = "1 ページの件数 (既定 " +
-                                    "${DrugListFixtures.DEFAULT_PAGE_SIZE}, 上限 ${DrugListFixtures.MAX_PAGE_SIZE})"
+                                    "${SearchDefaults.DEFAULT_PAGE_SIZE}, 上限 ${SearchDefaults.MAX_PAGE_SIZE})"
                                 required = false
                             }
                             queryParameter<String>("category_atc") {
@@ -220,8 +221,8 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
                 val page = call.request.queryParameters["page"]?.toIntOrNull() ?: 1
                 val pageSize = (
                     call.request.queryParameters["page_size"]?.toIntOrNull()
-                        ?: DrugListFixtures.DEFAULT_PAGE_SIZE
-                    ).coerceAtMost(maximumValue = DrugListFixtures.MAX_PAGE_SIZE)
+                        ?: SearchDefaults.DEFAULT_PAGE_SIZE
+                    ).coerceAtMost(maximumValue = SearchDefaults.MAX_PAGE_SIZE)
                 val atcPrefix = call.request.queryParameters["category_atc"]
                 val regulatoryClass = call.request.queryParameters["regulatory_class"]
                 val route = call.request.queryParameters["route"]
