@@ -20,7 +20,7 @@ class DrugModulePaginationTest {
     fun `GET drugs page=1 page_size=20 returns items_size=20 total_pages=6 total_count=120`() = testApplication {
         application { module() }
 
-        val response = client.get("/drugs?page=1&page_size=20")
+        val response = client.get("/v1/drugs?page=1&page_size=20")
 
         assertEquals(HttpStatusCode.OK, response.status)
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
@@ -43,7 +43,7 @@ class DrugModulePaginationTest {
     fun `GET drugs page=2 page_size=50 returns items_size=50 page=2 total_pages=3`() = testApplication {
         application { module() }
 
-        val response = client.get("/drugs?page=2&page_size=50")
+        val response = client.get("/v1/drugs?page=2&page_size=50")
 
         assertEquals(HttpStatusCode.OK, response.status)
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
@@ -66,7 +66,7 @@ class DrugModulePaginationTest {
     fun `GET drugs page_size=1000 is clamped to 100 items and total_pages=2`() = testApplication {
         application { module() }
 
-        val response = client.get("/drugs?page_size=1000")
+        val response = client.get("/v1/drugs?page_size=1000")
 
         assertEquals(HttpStatusCode.OK, response.status)
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject

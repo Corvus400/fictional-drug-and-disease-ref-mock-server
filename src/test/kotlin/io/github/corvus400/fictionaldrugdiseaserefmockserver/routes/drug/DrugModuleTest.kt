@@ -23,6 +23,16 @@ class DrugModuleTest {
     private val json = Json { ignoreUnknownKeys = true }
 
     @Test
+    fun `GET v1 drugs returns 200 OK with drug array`() = testApplication {
+        application { module() }
+
+        val response = client.get("/v1/drugs")
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        assertTrue(response.bodyAsText().contains("drug_0001"))
+    }
+
+    @Test
     fun `GET drugs drug_0001 returns 200 OK with populated fixmerge name fields`() = testApplication {
         application { module() }
 
@@ -45,7 +55,7 @@ class DrugModuleTest {
     fun `GET drugs returns 200 OK with drug array`() = testApplication {
         application { module() }
 
-        val response = client.get("/drugs")
+        val response = client.get("/v1/drugs")
 
         assertEquals(HttpStatusCode.OK, response.status)
         assertTrue(response.bodyAsText().contains("drug_0001"))
@@ -56,7 +66,7 @@ class DrugModuleTest {
         testApplication {
             application { module() }
 
-            val response = client.get("/drugs")
+            val response = client.get("/v1/drugs")
 
             assertEquals(HttpStatusCode.OK, response.status)
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
@@ -94,7 +104,7 @@ class DrugModuleTest {
     fun `GET drugs with X-Mock-Scenario empty returns envelope with zero items`() = testApplication {
         application { module() }
 
-        val response = client.get("/drugs") {
+        val response = client.get("/v1/drugs") {
             headers {
                 append(name = "X-Mock-Scenario", value = "empty")
             }
@@ -115,7 +125,7 @@ class DrugModuleTest {
     fun `GET drugs under empty scenario with sort parameter returns empty items and 200`() = testApplication {
         application { module() }
 
-        val response = client.get("/drugs?sort=brand_name_kana") {
+        val response = client.get("/v1/drugs?sort=brand_name_kana") {
             headers {
                 append(name = "X-Mock-Scenario", value = "empty")
             }
@@ -132,7 +142,7 @@ class DrugModuleTest {
         testApplication {
             application { module() }
 
-            val response = client.get("/drugs?sort=brand_name_kana&page_size=100")
+            val response = client.get("/v1/drugs?sort=brand_name_kana&page_size=100")
 
             assertEquals(HttpStatusCode.OK, response.status)
             val body = AppJson.decodeFromString<DrugListResponse>(response.bodyAsText())
@@ -148,7 +158,7 @@ class DrugModuleTest {
     fun `GET drugs with invalid sort returns 400 with INVALID_SORT_KEY error`() = testApplication {
         application { module() }
 
-        val response = client.get("/drugs?sort=invalid_key")
+        val response = client.get("/v1/drugs?sort=invalid_key")
 
         assertEquals(HttpStatusCode.BadRequest, response.status)
         val error = AppJson.decodeFromString<ErrorResponse>(response.bodyAsText())
