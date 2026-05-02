@@ -24,7 +24,7 @@ class DrugPlaceholderDictionaryTest {
     fun `PlaceholderKey enum contains exactly 64 keys`() {
         assertEquals(
             PLACEHOLDER_KEY_COUNT,
-            PlaceholderKey.values().size,
+            PlaceholderKey.entries.size,
             "PlaceholderKey must cover exactly $PLACEHOLDER_KEY_COUNT placeholders " +
                 "extracted from DrugParagraphTemplates",
         )
@@ -33,7 +33,7 @@ class DrugPlaceholderDictionaryTest {
     @Test
     fun `resolve returns non-blank value for every placeholder key`() {
         val dict = buildDict()
-        PlaceholderKey.values().forEach { key ->
+        PlaceholderKey.entries.forEach { key ->
             val seed = stableHash(id = "drug_0001", slot = 0, index = 0)
             val value = dict.resolve(key.jsonKey, seed)
             assertTrue(
@@ -48,7 +48,7 @@ class DrugPlaceholderDictionaryTest {
     fun `resolve delegates every category-A key to MedicalVocabularyDictionary`() {
         val dict = buildDict()
         val seed = stableHash(id = "drug_0001", slot = 0, index = 0)
-        PlaceholderKey.values()
+        PlaceholderKey.entries
             .filter { it.category == PlaceholderCategory.A_MEDICAL_VOCABULARY }
             .forEach { key ->
                 assertEquals(
@@ -80,7 +80,7 @@ class DrugPlaceholderDictionaryTest {
     fun `resolve delegates every category-D key to NumericPlaceholderRanges`() {
         val dict = buildDict()
         val seed = stableHash(id = "drug_0001", slot = 0, index = 0)
-        PlaceholderKey.values()
+        PlaceholderKey.entries
             .filter { it.category == PlaceholderCategory.D_NUMERIC_RANGE }
             .forEach { key ->
                 assertEquals(

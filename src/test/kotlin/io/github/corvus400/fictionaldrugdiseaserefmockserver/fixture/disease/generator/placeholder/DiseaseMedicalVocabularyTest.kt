@@ -51,7 +51,7 @@ class DiseaseMedicalVocabularyTest {
     }
 
     private fun categoryAKeys(): List<String> =
-        DiseasePlaceholderKey.values()
+        DiseasePlaceholderKey.entries
             .filter { it.category == DiseasePlaceholderCategory.A_MEDICAL_VOCABULARY }
             .map { it.jsonKey }
 }

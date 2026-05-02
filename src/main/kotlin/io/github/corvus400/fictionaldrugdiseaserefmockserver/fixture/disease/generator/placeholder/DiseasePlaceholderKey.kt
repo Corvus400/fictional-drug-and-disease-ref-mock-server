@@ -75,7 +75,7 @@ enum class DiseasePlaceholderKey(
     ;
 
     companion object {
-        private val BY_JSON_KEY: Map<String, DiseasePlaceholderKey> = values().associateBy { it.jsonKey }
+        private val BY_JSON_KEY: Map<String, DiseasePlaceholderKey> = entries.associateBy { it.jsonKey }
 
         fun fromJsonKey(jsonKey: String): DiseasePlaceholderKey? = BY_JSON_KEY[jsonKey]
     }
