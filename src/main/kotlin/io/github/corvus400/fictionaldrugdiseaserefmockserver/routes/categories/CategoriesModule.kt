@@ -14,7 +14,7 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 
 private val categoriesMetadata = EndpointMetadata(
-    path = "/categories",
+    path = "/v1/categories",
     method = HttpMethod.Get,
     endpointName = "categories",
     tag = ApiTag.CATEGORIES,
@@ -70,7 +70,7 @@ fun Application.categoriesModule() {
     val categoriesFixture: CategoriesFixture by dependencies
     val cachedResponse = categoriesFixture.build()
     routing {
-        get("/categories") {
+        get("/v1/categories") {
             call.respond(message = cachedResponse)
         }
     }
