@@ -68,6 +68,15 @@ class CategoriesModuleTest {
     private val json = Json { ignoreUnknownKeys = true }
 
     @Test
+    fun `GET v1 categories returns HTTP 200`() = testApplication {
+        application { module() }
+
+        val response = client.get("/v1/categories")
+
+        assertEquals(HttpStatusCode.OK, response.status)
+    }
+
+    @Test
     fun `GET categories returns HTTP 200`() = categoriesEndpointTest { response ->
         assertEquals(HttpStatusCode.OK, response.status)
     }
@@ -314,14 +323,14 @@ class CategoriesModuleTest {
     @Test
     fun `GET categories under X-Mock-Scenario empty returns IDENTICAL response`() = testApplication {
         application { module() }
-        val defaultBody = client.get(urlString = "/categories").bodyAsText()
-        val emptyBody = client.get(urlString = "/categories") {
+        val defaultBody = client.get(urlString = "/v1/categories").bodyAsText()
+        val emptyBody = client.get(urlString = "/v1/categories") {
             header(key = "X-Mock-Scenario", value = "empty")
         }.bodyAsText()
         assertEquals(
             expected = defaultBody,
             actual = emptyBody,
-            message = "/categories must return a body bit-identical to the default response when " +
+            message = "/v1/categories must return a body bit-identical to the default response when " +
                 "the X-Mock-Scenario header is set to 'empty' (scenario-independent metadata endpoint)",
         )
     }
@@ -337,7 +346,7 @@ class CategoriesModuleTest {
     @Test
     fun `POST __admin configs drugList empty then GET categories still returns full 7 lists`() = testApplication {
         application { module() }
-        val before = client.get(urlString = "/categories").bodyAsText()
+        val before = client.get(urlString = "/v1/categories").bodyAsText()
         val adminResponse = client.post(urlString = "/__admin/configs/drugList") {
             contentType(type = ContentType.Application.Json)
             setBody(body = """{"state":"empty"}""")
@@ -347,11 +356,11 @@ class CategoriesModuleTest {
             actual = adminResponse.status,
             message = "sanity: Admin override POST itself must succeed before evaluating /categories invariance",
         )
-        val after = client.get(urlString = "/categories").bodyAsText()
+        val after = client.get(urlString = "/v1/categories").bodyAsText()
         assertEquals(
             expected = before,
             actual = after,
-            message = "/categories must return a body bit-identical to the pre-override response after " +
+            message = "/v1/categories must return a body bit-identical to the pre-override response after " +
                 "POST /__admin/configs/drugList {state:empty}; /categories must not depend on drug list scenario",
         )
     }
@@ -368,7 +377,7 @@ class CategoriesModuleTest {
         block: suspend ApplicationTestBuilder.(HttpResponse) -> Unit,
     ) = testApplication {
         application { module() }
-        val response = client.get("/categories")
+        val response = client.get("/v1/categories")
         block(response)
     }
 }
