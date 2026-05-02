@@ -129,6 +129,16 @@ class DiseaseFinalOverridesTest {
     }
 
     @Test
+    fun `witch factor syndrome imaging exam should observe physical witch transformation findings`() {
+        val disease0079 = generateDiseases().first { it.id == "disease_0079" }
+        val imagingExam = disease0079.requiredExams[2]
+
+        assertEquals("身体魔女化所見観察", imagingExam.name)
+        assertEquals("爪", imagingExam.typicalFinding.substringBefore("の異常伸長"))
+        assertTrue(imagingExam.typicalFinding.contains("皮膚亀裂"))
+    }
+
+    @Test
     fun `insomnia disease should be overridden`() {
         val insomnia = generateDiseases().first { it.id == "disease_0022" }
 
