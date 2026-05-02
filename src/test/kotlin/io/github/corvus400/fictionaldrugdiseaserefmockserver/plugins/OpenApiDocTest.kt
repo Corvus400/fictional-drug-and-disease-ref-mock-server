@@ -75,6 +75,30 @@ class OpenApiDocTest {
     }
 
     @Test
+    fun `endpoints have non-empty openapi metadata`() = testApplication {
+        application { module() }
+        val response = client.get("/openapi.json")
+        val spec = json.decodeFromString<JsonObject>(response.bodyAsText())
+        val paths = spec["paths"]?.jsonObject ?: JsonObject(emptyMap())
+
+        val endpoints = listOf(
+            OpenApiMetadataExpectation(path = "/v1/categories", requiresParameters = false),
+            OpenApiMetadataExpectation(path = "/v1/images/dosage-forms/{form}", requiresParameters = true),
+            OpenApiMetadataExpectation(path = "/v1/images/drugs/{drugId}", requiresParameters = true),
+        )
+
+        val failures = endpoints.flatMap { expectation ->
+            val operation = paths[expectation.path]?.jsonObject?.get("get")?.jsonObject
+            expectation.metadataFailures(operation)
+        }
+
+        assertTrue(
+            failures.isEmpty(),
+            "OpenAPI metadata が不足しているエンドポイントがあります:\n${failures.joinToString(separator = "\n")}",
+        )
+    }
+
+    @Test
     fun `swagger ui is accessible`() = testApplication {
         application { module() }
         val response = client.get("/swagger")
@@ -224,5 +248,34 @@ class OpenApiDocTest {
             message = "$path の OpenAPI parameters に '$parameterName' が見つからない",
         )
         return parameter.jsonObject["description"]?.jsonPrimitive?.content.orEmpty()
+    }
+
+    private data class OpenApiMetadataExpectation(
+        val path: String,
+        val requiresParameters: Boolean,
+    ) {
+        fun metadataFailures(operation: JsonObject?): List<String> = buildList {
+            if (operation == null) {
+                add("$path: GET operation が存在しない")
+                return@buildList
+            }
+
+            val description = operation["description"]?.jsonPrimitive?.content.orEmpty()
+            if (description.isBlank()) {
+                add("$path: description が空")
+            }
+
+            val responses = operation["responses"]?.jsonObject.orEmpty()
+            if (responses.isEmpty()) {
+                add("$path: responses が空")
+            }
+
+            if (requiresParameters) {
+                val parameters = operation["parameters"]?.jsonArray.orEmpty()
+                if (parameters.isEmpty()) {
+                    add("$path: parameters が空")
+                }
+            }
+        }
     }
 }
