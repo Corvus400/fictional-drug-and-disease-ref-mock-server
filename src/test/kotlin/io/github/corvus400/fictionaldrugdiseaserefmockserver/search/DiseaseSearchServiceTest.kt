@@ -41,6 +41,23 @@ class DiseaseSearchServiceTest {
     }
 
     @Test
+    fun `applyKeyword normalizes hiragana keyword to match katakana disease kana`() {
+        val items =
+            listOf(
+                disease(id = "disease_0001", name = "高血圧症", nameKana = "コウケツアツショウ"),
+                disease(id = "disease_0002", name = "糖尿病", nameKana = "トウニョウビョウ"),
+            )
+        val result =
+            DiseaseSearchService.applyKeyword(
+                items = items,
+                keyword = "こうけつ",
+                match = KeywordMatch.PARTIAL,
+                target = DiseaseKeywordTarget.NAME,
+            )
+        assertEquals(listOf("disease_0001"), result.map { it.id })
+    }
+
+    @Test
     fun `applyKeyword with target NAME_ENGLISH matches nameEnglish contains`() {
         val items =
             listOf(
@@ -51,6 +68,40 @@ class DiseaseSearchServiceTest {
             DiseaseSearchService.applyKeyword(
                 items = items,
                 keyword = "Hyper",
+                match = KeywordMatch.PARTIAL,
+                target = DiseaseKeywordTarget.NAME_ENGLISH,
+            )
+        assertEquals(listOf("disease_0001"), result.map { it.id })
+    }
+
+    @Test
+    fun `applyKeyword matches latin disease keyword regardless of case`() {
+        val items =
+            listOf(
+                disease(id = "disease_0001", nameEnglish = "Hypertension"),
+                disease(id = "disease_0002", nameEnglish = "Diabetes mellitus"),
+            )
+        val result =
+            DiseaseSearchService.applyKeyword(
+                items = items,
+                keyword = "hyper",
+                match = KeywordMatch.PARTIAL,
+                target = DiseaseKeywordTarget.NAME_ENGLISH,
+            )
+        assertEquals(listOf("disease_0001"), result.map { it.id })
+    }
+
+    @Test
+    fun `applyKeyword normalizes fullwidth latin disease keyword before matching`() {
+        val items =
+            listOf(
+                disease(id = "disease_0001", nameEnglish = "Hypertension"),
+                disease(id = "disease_0002", nameEnglish = "Diabetes mellitus"),
+            )
+        val result =
+            DiseaseSearchService.applyKeyword(
+                items = items,
+                keyword = "ＨＹＰＥＲ",
                 match = KeywordMatch.PARTIAL,
                 target = DiseaseKeywordTarget.NAME_ENGLISH,
             )
