@@ -2,7 +2,6 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.serializer
 
 /**
  * 投与経路 — 医薬品の投与経路を表す Enum。用法用量 UI の表現形式と適用上の注意の要否を決定する分類軸 (全 8 種)。

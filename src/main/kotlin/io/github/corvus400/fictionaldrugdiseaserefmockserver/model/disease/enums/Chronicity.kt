@@ -2,7 +2,6 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enum
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.serializer
 
 /**
  * 慢性度区分: 疾患の経過パターンを表す enum (4 値)。

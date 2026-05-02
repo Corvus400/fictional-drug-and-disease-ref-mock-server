@@ -2,7 +2,6 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.serializer
 
 /**
  * 特定背景患者カテゴリ — 添付文書 9 項「特定の背景を有する患者に関する注意」の小区分 Enum (全 8 種)。

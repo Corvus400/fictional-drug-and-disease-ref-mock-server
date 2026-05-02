@@ -2,7 +2,6 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enum
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.serializer
 
 /**
  * 発症パターン区分: `SymptomInfo.onsetPattern` で用いる 5 値の enum。

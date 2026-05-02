@@ -2,7 +2,6 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.serializer
 
 /**
  * 剤形 — 医薬品の物理的形態を表す Enum。組成・性状の表示構造を決定する分類軸 (全 13 種)。

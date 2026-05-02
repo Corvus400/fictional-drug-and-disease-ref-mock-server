@@ -2,7 +2,6 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.serializer
 
 /**
  * 保管温度区分 — 医薬品包装の保管温度を表す Enum (全 3 種: 室温/冷所 (2-8 ℃)/冷凍 (-20 ℃ 以下))。

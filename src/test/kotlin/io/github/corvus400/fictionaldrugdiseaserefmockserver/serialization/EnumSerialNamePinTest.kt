@@ -16,8 +16,6 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.Re
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RouteOfAdministration
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.StorageTemperature
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.AppJson
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
