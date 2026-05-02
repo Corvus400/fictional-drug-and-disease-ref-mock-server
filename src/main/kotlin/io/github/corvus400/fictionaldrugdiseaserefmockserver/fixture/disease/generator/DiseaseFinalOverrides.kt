@@ -134,7 +134,7 @@ private fun witchFactorSyndromeOverride(generated: Disease): Disease =
         chronicity = Chronicity.CHRONIC,
         infectious = false,
         synonyms = listOf("魔女化症", "ウィッチファクター症候群"),
-        summary = "魔女因子の活性化により不死性獲得と肉体・精神の不可逆変質を来す症候群 (架空)",
+        summary = "魔女因子の活性化により精神変容、肉体異形化、不死性獲得を経てなれはて化に至る進行性呪性疾患 (架空)",
         epidemiology =
         EpidemiologyInfo(
             prevalence =
@@ -165,14 +165,16 @@ private fun witchFactorSyndromeOverride(generated: Disease): Disease =
                 "処刑等の急性苦痛 (架空)",
             ),
         ),
-        etiology = "魔女因子の暴走的活性化と外部干渉により発症する (架空)",
+        etiology = "大魔女が自らの存在・魂を変換して放った魔女因子が少女に潜伏し、強いストレス・トラウマ刺激・悪意の影響で活性化して魔女化が進行する (架空)",
         symptoms =
         SymptomInfo(
             mainSymptoms =
             listOf(
-                "不死性の獲得 (架空)",
-                "肉体変質 (架空)",
-                "精神変容 (架空)",
+                "殺人衝動・凶暴化 (架空)",
+                "爪の異常伸長 (架空)",
+                "顔面皮膚亀裂と身体異形化 (架空)",
+                "全身の激痛 (架空)",
+                "不死性・再生性の獲得 (架空)",
             ),
             associatedSymptoms =
             listOf(
