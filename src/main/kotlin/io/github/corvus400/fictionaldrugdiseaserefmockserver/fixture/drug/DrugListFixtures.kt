@@ -74,9 +74,9 @@ class DrugListFixtures(
      * (Phase 9-9a)。`dosageFormSerialName` を非 null で渡すと、
      * `Drug.dosageForm` の `@SerialName` 値が指定値
      * (例: `DosageForm.TABLET.serialName` = `tablet`) に一致するものに絞り込む
-     * (Phase 9-10a)。`DrugListQuery.categoryName` を非 null で渡すと、
-     * `DrugSummary.therapeuticCategoryName` が指定値 (例: `消化器系および代謝`) に完全一致する
-     * ものに絞り込む (Phase 10-1b)。`DrugListQuery.keyword` を非 null かつ非空白で渡すと、
+     * (Phase 9-10a)。`DrugListQuery.therapeuticCategory` を非 null で渡すと、
+     * `DrugSummary.therapeuticCategoryName` が enum の `displayName` に完全一致するものに絞り込む。
+     * `DrugListQuery.keyword` を非 null かつ非空白で渡すと、
      * `keywordMatch` (PARTIAL/PREFIX) と `keywordTarget` (GENERIC/BRAND/BOTH) に従って
      * `DrugSearchService.applyKeyword` で絞り込む (Phase 11-10a)。複数指定時は AND 結合。
      * `DrugListQuery.adverseReactionKeyword` を非 null かつ非空白で渡すと、
@@ -177,10 +177,10 @@ class DrugListFixtures(
                 }
             }
         }
-        val categoryName = query.categoryName
-        if (categoryName != null) {
+        val therapeuticCategory = query.therapeuticCategory
+        if (therapeuticCategory != null) {
             filtered = filtered.filter { summary ->
-                summary.therapeuticCategoryName == categoryName
+                summary.therapeuticCategoryName == therapeuticCategory.displayName
             }
         }
         val keyword = query.keyword

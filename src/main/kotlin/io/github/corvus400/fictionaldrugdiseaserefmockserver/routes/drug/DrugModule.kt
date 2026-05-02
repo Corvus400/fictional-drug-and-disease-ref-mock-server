@@ -14,6 +14,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.Do
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.PrecautionPopulationCategory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RouteOfAdministration
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.TherapeuticCategory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.ApiTag
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.documentIdDetailEndpoint
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.documentScenarioEndpoint
@@ -169,9 +170,12 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
                                     "指定時は `dosage_form` が一致するものに絞り込み"
                                 required = false
                             }
-                            queryParameter<String>("category_name") {
-                                description = "薬効カテゴリ名 (例: `消化器系および代謝`)。" +
-                                    "指定時は `therapeutic_category_name` が完全一致するものに絞り込み"
+                            queryParameter<String>("therapeutic_category") {
+                                description = "薬効カテゴリ (`TherapeuticCategory` の enum 名 " +
+                                    "(例: `${TherapeuticCategory.ALIMENTARY_METABOLISM.name}` / " +
+                                    "`${TherapeuticCategory.NERVOUS_SYSTEM.name}`))。" +
+                                    "未知の値は HTTP 400 + " +
+                                    "`ErrorResponse(code=\"INVALID_THERAPEUTIC_CATEGORY\")` を返す。"
                                 required = false
                             }
                             queryParameter<String>("keyword") {
@@ -227,7 +231,19 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
                 val regulatoryClass = call.request.queryParameters["regulatory_class"]
                 val route = call.request.queryParameters["route"]
                 val dosageForm = call.request.queryParameters["dosage_form"]
-                val categoryName = call.request.queryParameters["category_name"]
+                val therapeuticCategory = try {
+                    call.request.queryParameters["therapeutic_category"]
+                        ?.let { raw -> TherapeuticCategory.fromQueryOrThrow(raw = raw) }
+                } catch (e: IllegalArgumentException) {
+                    call.respond(
+                        status = HttpStatusCode.BadRequest,
+                        message = ErrorResponse(
+                            code = "INVALID_THERAPEUTIC_CATEGORY",
+                            message = e.message.orEmpty(),
+                        ),
+                    )
+                    return@handle
+                }
                 val keyword = call.request.queryParameters["keyword"]
                 val keywordMatch = KeywordMatch.fromQuery(
                     value = call.request.queryParameters["keyword_match"],
@@ -274,7 +290,7 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
                                 regulatoryClassSerialName = regulatoryClass,
                                 routeOfAdministrationSerialName = route,
                                 dosageFormSerialName = dosageForm,
-                                categoryName = categoryName,
+                                therapeuticCategory = therapeuticCategory,
                                 keyword = keyword,
                                 keywordMatch = keywordMatch,
                                 keywordTarget = keywordTarget,
