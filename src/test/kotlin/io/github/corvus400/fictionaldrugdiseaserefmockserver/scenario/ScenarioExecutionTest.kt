@@ -38,7 +38,7 @@ class ScenarioExecutionTest {
         assertEquals(HttpStatusCode.OK, configResponse.status)
 
         val startTime = System.currentTimeMillis()
-        val response = client.get("/drugs")
+        val response = client.get("/v1/drugs")
         val elapsed = System.currentTimeMillis() - startTime
 
         assertEquals(HttpStatusCode.OK, response.status)
@@ -58,7 +58,7 @@ class ScenarioExecutionTest {
         }
         assertEquals(HttpStatusCode.OK, configResponse.status)
 
-        val response = client.get("/drugs")
+        val response = client.get("/v1/drugs")
 
         assertEquals(HttpStatusCode.InternalServerError, response.status)
     }
@@ -73,7 +73,7 @@ class ScenarioExecutionTest {
         }
         assertEquals(HttpStatusCode.OK, configResponse.status)
 
-        val response = client.get("/drugs")
+        val response = client.get("/v1/drugs")
 
         assertEquals(HttpStatusCode.OK, response.status)
         assertEquals("custom-value", response.headers["X-Custom-Header"])
@@ -88,7 +88,7 @@ class ScenarioExecutionTest {
             setBody("""{"state":"default","status_code":500}""")
         }
 
-        val errorResponse = client.get("/drugs")
+        val errorResponse = client.get("/v1/drugs")
         assertEquals(HttpStatusCode.InternalServerError, errorResponse.status)
 
         val resetResponse = client.post("/__admin/reset")
@@ -96,7 +96,7 @@ class ScenarioExecutionTest {
         val body = json.decodeFromString<JsonObject>(resetResponse.bodyAsText())
         assertTrue(body["success"]?.jsonPrimitive?.boolean == true)
 
-        val normalResponse = client.get("/drugs")
+        val normalResponse = client.get("/v1/drugs")
         assertEquals(HttpStatusCode.OK, normalResponse.status)
     }
 
@@ -111,7 +111,7 @@ class ScenarioExecutionTest {
         assertEquals(HttpStatusCode.OK, configResponse.status)
 
         val startTime = System.currentTimeMillis()
-        val response = client.get("/drugs")
+        val response = client.get("/v1/drugs")
         val elapsed = System.currentTimeMillis() - startTime
 
         assertEquals(HttpStatusCode.ServiceUnavailable, response.status)
@@ -128,7 +128,7 @@ class ScenarioExecutionTest {
 
             client.post("/__admin/reset")
 
-            val defaultResponse = client.get("/drugs")
+            val defaultResponse = client.get("/v1/drugs")
             val defaultBody = json.decodeFromString<JsonObject>(defaultResponse.bodyAsText())
             assertEquals(
                 expected = 120,
@@ -141,7 +141,7 @@ class ScenarioExecutionTest {
                 setBody("""{"state":"empty"}""")
             }
 
-            val emptyResponse = client.get("/drugs")
+            val emptyResponse = client.get("/v1/drugs")
             val emptyBody = json.decodeFromString<JsonObject>(emptyResponse.bodyAsText())
             assertEquals(
                 expected = 0,
@@ -151,7 +151,7 @@ class ScenarioExecutionTest {
 
             client.post("/__admin/reset")
 
-            val restoredResponse = client.get("/drugs")
+            val restoredResponse = client.get("/v1/drugs")
             val restoredBody = json.decodeFromString<JsonObject>(restoredResponse.bodyAsText())
             assertEquals(
                 expected = 120,

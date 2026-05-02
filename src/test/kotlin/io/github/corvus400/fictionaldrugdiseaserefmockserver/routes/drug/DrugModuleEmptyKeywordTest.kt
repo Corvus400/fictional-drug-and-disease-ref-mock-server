@@ -49,7 +49,7 @@ class DrugModuleEmptyKeywordTest {
         )
 
         val response = client.get(
-            urlString = "/drugs?keyword=whatever&keyword_target=both&keyword_match=partial",
+            urlString = "/v1/drugs?keyword=whatever&keyword_target=both&keyword_match=partial",
         )
 
         assertEquals(

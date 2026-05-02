@@ -130,7 +130,7 @@ class OpenApiDocTest {
     @Test
     fun `drug regulatory_class description contains english SerialName via interpolation`() = testApplication {
         application { module() }
-        val description = fetchParameterDescription(path = "/drugs", parameterName = "regulatory_class")
+        val description = fetchParameterDescription(path = "/v1/drugs", parameterName = "regulatory_class")
         assertTrue(
             description.contains("prescription_required"),
             "regulatory_class description に英語 SerialName 'prescription_required' が含まれていない: $description",
@@ -140,7 +140,7 @@ class OpenApiDocTest {
     @Test
     fun `drug route description contains english SerialName via interpolation`() = testApplication {
         application { module() }
-        val description = fetchParameterDescription(path = "/drugs", parameterName = "route")
+        val description = fetchParameterDescription(path = "/v1/drugs", parameterName = "route")
         assertTrue(
             description.contains("oral"),
             "route description に英語 SerialName 'oral' が含まれていない: $description",
@@ -150,7 +150,7 @@ class OpenApiDocTest {
     @Test
     fun `drug dosage_form description contains english SerialName via interpolation`() = testApplication {
         application { module() }
-        val description = fetchParameterDescription(path = "/drugs", parameterName = "dosage_form")
+        val description = fetchParameterDescription(path = "/v1/drugs", parameterName = "dosage_form")
         assertTrue(
             description.contains("tablet"),
             "dosage_form description に英語 SerialName 'tablet' が含まれていない: $description",

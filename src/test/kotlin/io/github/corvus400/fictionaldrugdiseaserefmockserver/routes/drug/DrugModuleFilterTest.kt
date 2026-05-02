@@ -21,7 +21,7 @@ class DrugModuleFilterTest {
     fun `GET drugs category_atc=A returns total_count=20 with all items atc_code starting with A`() = testApplication {
         application { module() }
 
-        val response = client.get("/drugs?category_atc=A&page_size=100")
+        val response = client.get("/v1/drugs?category_atc=A&page_size=100")
 
         assertEquals(HttpStatusCode.OK, response.status)
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
@@ -57,7 +57,7 @@ class DrugModuleFilterTest {
         testApplication {
             application { module() }
 
-            val response = client.get("/drugs?regulatory_class=prescription_required&page_size=100")
+            val response = client.get("/v1/drugs?regulatory_class=prescription_required&page_size=100")
 
             assertEquals(HttpStatusCode.OK, response.status)
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
@@ -92,7 +92,7 @@ class DrugModuleFilterTest {
     fun `GET drugs route= returns items whose routeOfAdministration serial name equals value`() = testApplication {
         application { module() }
 
-        val response = client.get("/drugs?route=oral&page_size=100")
+        val response = client.get("/v1/drugs?route=oral&page_size=100")
 
         assertEquals(HttpStatusCode.OK, response.status)
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
@@ -127,7 +127,7 @@ class DrugModuleFilterTest {
     fun `GET drugs dosage_form= returns items whose dosageForm serial name equals value`() = testApplication {
         application { module() }
 
-        val response = client.get("/drugs?dosage_form=tablet&page_size=100")
+        val response = client.get("/v1/drugs?dosage_form=tablet&page_size=100")
 
         assertEquals(HttpStatusCode.OK, response.status)
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
@@ -164,9 +164,9 @@ class DrugModuleFilterTest {
     fun `GET drugs category_atc=A and dosage_form=tablet returns intersection AND filter`() = testApplication {
         application { module() }
 
-        val atcOnly = client.get("/drugs?category_atc=A&page_size=100")
-        val formOnly = client.get("/drugs?dosage_form=tablet&page_size=100")
-        val intersection = client.get("/drugs?category_atc=A&dosage_form=tablet&page_size=100")
+        val atcOnly = client.get("/v1/drugs?category_atc=A&page_size=100")
+        val formOnly = client.get("/v1/drugs?dosage_form=tablet&page_size=100")
+        val intersection = client.get("/v1/drugs?category_atc=A&dosage_form=tablet&page_size=100")
 
         assertEquals(HttpStatusCode.OK, intersection.status)
         val atcBody = json.parseToJsonElement(string = atcOnly.bodyAsText()).jsonObject

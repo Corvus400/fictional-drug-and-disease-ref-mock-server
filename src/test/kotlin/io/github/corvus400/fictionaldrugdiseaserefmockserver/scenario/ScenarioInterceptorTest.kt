@@ -34,7 +34,7 @@ class ScenarioInterceptorTest {
         }
         assertEquals(HttpStatusCode.OK, adminResponse.status)
 
-        val response = client.get("/drugs") {
+        val response = client.get("/v1/drugs") {
             header("X-Mock-Scenario", "empty")
         }
 
@@ -63,7 +63,7 @@ class ScenarioInterceptorTest {
         }
         assertEquals(HttpStatusCode.OK, adminResponse.status)
 
-        val response = client.get("/drugs")
+        val response = client.get("/v1/drugs")
 
         assertEquals(HttpStatusCode.OK, response.status)
         val body = json.decodeFromString<JsonObject>(response.bodyAsText())
@@ -82,7 +82,7 @@ class ScenarioInterceptorTest {
 
         client.post("/__admin/reset")
 
-        val response = client.get("/drugs")
+        val response = client.get("/v1/drugs")
 
         assertEquals(HttpStatusCode.OK, response.status)
         val body = json.decodeFromString<JsonObject>(response.bodyAsText())

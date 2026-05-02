@@ -57,7 +57,7 @@ class AdminRoutesTest {
         }
         assertEquals(HttpStatusCode.OK, overrideResponse.status)
 
-        val listResponse = client.get("/drugs")
+        val listResponse = client.get("/v1/drugs")
         assertEquals(HttpStatusCode.OK, listResponse.status)
         val body = json.decodeFromString<JsonObject>(listResponse.bodyAsText())
         val items = body["items"]?.jsonArray
@@ -118,14 +118,14 @@ class AdminRoutesTest {
             setBody("""{"state": "empty"}""")
         }
 
-        val emptyResponse = client.get("/drugs")
+        val emptyResponse = client.get("/v1/drugs")
         val emptyBody = json.decodeFromString<JsonObject>(emptyResponse.bodyAsText())
         assertEquals(0, emptyBody["total_count"]?.jsonPrimitive?.int)
 
         val resetResponse = client.post("/__admin/reset")
         assertEquals(HttpStatusCode.OK, resetResponse.status)
 
-        val restoredResponse = client.get("/drugs")
+        val restoredResponse = client.get("/v1/drugs")
         val restoredBody = json.decodeFromString<JsonObject>(restoredResponse.bodyAsText())
         assertEquals(
             expected = 120,

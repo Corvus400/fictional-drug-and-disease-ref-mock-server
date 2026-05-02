@@ -42,7 +42,7 @@ private val drugDetailMetadata = EndpointMetadata(
 )
 
 private val drugListMetadata = EndpointMetadata(
-    path = "/drugs",
+    path = "/v1/drugs",
     method = HttpMethod.Get,
     endpointName = "drugList",
     tag = ApiTag.DRUG,

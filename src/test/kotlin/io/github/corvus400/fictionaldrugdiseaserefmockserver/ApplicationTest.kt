@@ -55,7 +55,7 @@ class ApplicationTest {
         testApplication {
             application { module() }
 
-            val response = client.get("/drugs")
+            val response = client.get("/v1/drugs")
             assertEquals(HttpStatusCode.OK, response.status)
         }
 
