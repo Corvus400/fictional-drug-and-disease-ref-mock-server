@@ -139,6 +139,36 @@ class DrugSearchServiceKeywordTest {
         assertEquals(listOf("drug_0001"), result.map { it.id })
     }
 
+    @Test
+    fun `applyKeyword matches latin keyword regardless of case`() {
+        val items = listOf(
+            stubDrug(id = "drug_0001", genericName = "aspirin"),
+            stubDrug(id = "drug_0002", genericName = "ibuprofen"),
+        )
+        val result = DrugSearchService.applyKeyword(
+            items = items,
+            keyword = "ASPIRIN",
+            match = KeywordMatch.PARTIAL,
+            target = DrugKeywordTarget.GENERIC,
+        )
+        assertEquals(listOf("drug_0001"), result.map { it.id })
+    }
+
+    @Test
+    fun `applyKeyword normalizes fullwidth latin keyword before matching`() {
+        val items = listOf(
+            stubDrug(id = "drug_0001", genericName = "aspirin"),
+            stubDrug(id = "drug_0002", genericName = "ibuprofen"),
+        )
+        val result = DrugSearchService.applyKeyword(
+            items = items,
+            keyword = "ＡＳＰＩＲＩＮ",
+            match = KeywordMatch.PARTIAL,
+            target = DrugKeywordTarget.GENERIC,
+        )
+        assertEquals(listOf("drug_0001"), result.map { it.id })
+    }
+
     private fun sampleDrugs(n: Int): List<Drug> = (1..n).map { index ->
         stubDrug(id = "drug_%04d".format(index))
     }
