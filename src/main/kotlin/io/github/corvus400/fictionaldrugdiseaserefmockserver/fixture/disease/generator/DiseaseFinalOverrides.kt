@@ -260,8 +260,10 @@ private fun witchFactorSyndromeOverride(generated: Disease): Disease =
         ),
         complications =
         listOf(
-            "不可逆的精神変容 (架空)",
-            "外傷治癒異常 (架空)",
+            "完全魔女化 (不死性・再生性) (架空)",
+            "なれはて化 (自我・魂喪失) (架空)",
+            "魔法能力の暴走的増幅 (架空)",
+            "外傷治癒の異常促進 (架空)",
         ),
         treatments =
         TreatmentInfo(
