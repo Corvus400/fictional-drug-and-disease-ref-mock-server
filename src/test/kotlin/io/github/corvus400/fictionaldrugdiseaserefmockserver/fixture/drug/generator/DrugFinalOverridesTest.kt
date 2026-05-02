@@ -50,6 +50,13 @@ class DrugFinalOverridesTest {
         assertEquals(listOf("disease_0079"), drug0080.relatedDiseaseIds)
     }
 
+    @Test
+    fun `drug_0089 should be overridden by DRUG_FINAL_OVERRIDES`() {
+        val drug0089 = generateDrugs().first { it.id == "drug_0089" }
+
+        assertTrue(drug0089.composition.appearance.contains("青色"))
+    }
+
     private fun generateDrugs(): List<Drug> {
         val adapter = FixmergeNameAdapter()
         val diseases =
