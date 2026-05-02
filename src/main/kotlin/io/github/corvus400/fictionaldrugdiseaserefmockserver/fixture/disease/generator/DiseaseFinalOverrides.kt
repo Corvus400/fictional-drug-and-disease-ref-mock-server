@@ -9,6 +9,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.neste
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.EpidemiologyInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.Exam
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.OnsetAgeRange
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.SexDistribution
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.SymptomInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.TreatmentInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.TreatmentSection
@@ -139,6 +140,12 @@ private fun witchFactorSyndromeOverride(generated: Disease): Disease =
                 minAgeYears = 15,
                 maxAgeYears = null,
                 label = "15 歳以降に急性魔女化リスクが急増 (架空)",
+            ),
+            sexRatio =
+            SexDistribution(
+                maleRatio = 0,
+                femaleRatio = 1,
+                note = "患者は全員少女 (架空)",
             ),
         ),
         etiology = "魔女因子の暴走的活性化と外部干渉により発症する (架空)",
