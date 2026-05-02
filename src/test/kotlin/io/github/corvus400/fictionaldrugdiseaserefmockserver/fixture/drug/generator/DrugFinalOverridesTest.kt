@@ -57,6 +57,23 @@ class DrugFinalOverridesTest {
         assertTrue(drug0089.composition.appearance.contains("青色"))
     }
 
+    @Test
+    fun `drug_0089 should reflect arisa sleep aid narrative details`() {
+        val drug0089 = generateDrugs().first { it.id == "drug_0089" }
+
+        assertTrue(drug0089.indications.any { indication -> indication.content.contains("不眠症") })
+        assertTrue(drug0089.overdose?.symptoms.orEmpty().contains("昏睡"))
+        assertTrue(drug0089.overdose?.management.orEmpty().contains("24"))
+        assertTrue(drug0089.pharmacology?.mechanism.orEmpty().contains("GABA"))
+        assertTrue(drug0089.composition.appearance.contains("蝶"))
+        assertEquals("不明", drug0089.manufacturer)
+        assertTrue(drug0089.packages.isNotEmpty())
+        assertTrue(drug0089.packages[0].size.contains("mL"))
+        assertTrue(drug0089.handlingPrecautions.any { precaution -> precaution.content.contains("ラベル") })
+        assertTrue(drug0089.physicochemicalProperties?.description?.contains("青色") == true)
+        assertTrue(drug0089.pharmacology?.mechanism.orEmpty().endsWith("(架空)"))
+    }
+
     private fun generateDrugs(): List<Drug> {
         val adapter = FixmergeNameAdapter()
         val diseases =
