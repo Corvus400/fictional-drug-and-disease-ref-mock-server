@@ -51,6 +51,13 @@ class DiseaseFinalOverridesTest {
     }
 
     @Test
+    fun `witch factor syndrome should have no related diseases`() {
+        val disease0079 = generateDiseases().first { it.id == "disease_0079" }
+
+        assertEquals(emptyList(), disease0079.relatedDiseaseIds)
+    }
+
+    @Test
     fun `insomnia disease should be overridden`() {
         val insomnia = generateDiseases().first { it.id == "disease_0022" }
 
