@@ -11,6 +11,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.Ro
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.toSummary
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.search.DrugSearchService
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.search.DrugSortKey
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.search.SearchDefaults
 import kotlinx.serialization.serializer
 import kotlin.math.ceil
 
@@ -210,7 +211,7 @@ class DrugListFixtures(
     }
 
     override val scenarios: Map<String, DrugListResponse> = summariesByScenario.keys.associateWith { scenario ->
-        resolve(scenario = scenario, page = 1, pageSize = DEFAULT_PAGE_SIZE)
+        resolve(scenario = scenario, page = 1, pageSize = SearchDefaults.DEFAULT_PAGE_SIZE)
     }
 
     override val scenarioTitles: Map<String, String> = mapOf(
@@ -222,9 +223,6 @@ class DrugListFixtures(
         "items=${fixture.items.size} of ${fixture.totalCount}"
 
     companion object {
-        const val DEFAULT_PAGE_SIZE: Int = 20
-        const val MAX_PAGE_SIZE: Int = 100
-
         /**
          * `RegulatoryClass` の `@SerialName` 値 → enum 定数の索引。
          *

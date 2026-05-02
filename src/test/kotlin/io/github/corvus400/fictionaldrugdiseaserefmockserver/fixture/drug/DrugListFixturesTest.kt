@@ -6,6 +6,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.DrugList
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.toSummary
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.search.DrugSearchService
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.search.DrugSortKey
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.search.SearchDefaults
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -29,7 +30,7 @@ class DrugListFixturesTest {
 
         val fixtures = DrugListFixtures(drugs = drugs)
 
-        val expectedPageSize = DrugListFixtures.DEFAULT_PAGE_SIZE
+        val expectedPageSize = SearchDefaults.DEFAULT_PAGE_SIZE
         val sortedDrugs = DrugSearchService.applySort(items = drugs, sort = DrugSortKey.REVISED_AT_DESC)
         val expectedItems = sortedDrugs.map { drug -> drug.toSummary() }.take(n = expectedPageSize)
         val expectedTotalPages = (drugs.size + expectedPageSize - 1) / expectedPageSize
@@ -57,7 +58,7 @@ class DrugListFixturesTest {
             expected = DrugListResponse(
                 items = emptyList(),
                 page = 1,
-                pageSize = DrugListFixtures.DEFAULT_PAGE_SIZE,
+                pageSize = SearchDefaults.DEFAULT_PAGE_SIZE,
                 totalPages = 0,
                 totalCount = 0,
             ),
@@ -71,7 +72,7 @@ class DrugListFixturesTest {
         val drugs = buildFreshGenerator().generate(blueprints = DrugBlueprintFactory.build())
         val fixtures = DrugListFixtures(drugs = drugs)
 
-        val firstPageSize = DrugListFixtures.DEFAULT_PAGE_SIZE.coerceAtMost(drugs.size)
+        val firstPageSize = SearchDefaults.DEFAULT_PAGE_SIZE.coerceAtMost(drugs.size)
         assertEquals(
             expected = "items=$firstPageSize of ${drugs.size}",
             actual = fixtures.describeFixture(fixture = fixtures.getByScenario(scenario = "default")),

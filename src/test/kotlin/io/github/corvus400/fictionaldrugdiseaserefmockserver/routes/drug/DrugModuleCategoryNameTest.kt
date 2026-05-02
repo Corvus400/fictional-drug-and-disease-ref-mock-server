@@ -1,7 +1,7 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.drug
 
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.DrugListFixtures
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.module
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.search.SearchDefaults
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
@@ -64,7 +64,7 @@ class DrugModuleCategoryNameTest {
         val items = body["items"]?.jsonArray
         assertNotNull(items, "response must include items array")
         assertEquals(
-            expected = DrugListFixtures.DEFAULT_PAGE_SIZE,
+            expected = SearchDefaults.DEFAULT_PAGE_SIZE,
             actual = items.size,
             message = "items.size must equal DEFAULT_PAGE_SIZE when no filter is applied",
         )
