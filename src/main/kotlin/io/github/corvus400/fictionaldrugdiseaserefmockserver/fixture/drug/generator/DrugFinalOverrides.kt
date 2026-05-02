@@ -21,7 +21,18 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.S
 import java.time.LocalDate
 
 internal val DRUG_FINAL_OVERRIDES: Map<String, (Drug) -> Drug> =
-    mapOf("drug_0080" to ::tredecimFinalOverride)
+    mapOf(
+        "drug_0080" to ::tredecimFinalOverride,
+        "drug_0089" to ::arisaSleepAidFinalOverride,
+    )
+
+private fun arisaSleepAidFinalOverride(generated: Drug): Drug =
+    generated.copy(
+        composition =
+        generated.composition.copy(
+            appearance = "青色澄明の液体を充填した透明ガラスバイアル (蓋に蝶のエンボス加工付、白色ラベル) (架空)",
+        ),
+    )
 
 private fun tredecimFinalOverride(generated: Drug): Drug =
     generated.copy(
