@@ -9,7 +9,7 @@ fun buildDrugImageUrl(
     dosageForm: DosageForm,
 ): String =
     if (drugId in drugImageOverrideIds) {
-        "/images/drug/$drugId?size=Original"
+        "/v1/images/drugs/$drugId?size=Original"
     } else {
         "/v1/images/dosage-forms/${dosageForm.serialName}?size=Original"
     }
