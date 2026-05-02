@@ -95,6 +95,16 @@ class DiseaseFinalOverridesTest {
     }
 
     @Test
+    fun `witch factor syndrome should manifest at least five witch-specific main symptoms`() {
+        val disease0079 = generateDiseases().first { it.id == "disease_0079" }
+        val mainSymptoms = disease0079.symptoms.mainSymptoms
+
+        assertTrue(mainSymptoms.size >= 5)
+        assertTrue(mainSymptoms.any { it.contains("殺人衝動") })
+        assertTrue(mainSymptoms.any { it.contains("爪") })
+    }
+
+    @Test
     fun `insomnia disease should be overridden`() {
         val insomnia = generateDiseases().first { it.id == "disease_0022" }
 
