@@ -2,6 +2,7 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.validation
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.InfectionRouteRiskFactors
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Chronicity
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.ExamCategory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
 
@@ -245,6 +246,16 @@ object DiseaseFixtureValidator {
                         entityId = disease.id,
                         field = "requiredExams",
                         message = "CHAPTER_IX disease must include at least one IMAGING exam",
+                    ),
+                )
+            }
+            if (disease.chronicity == Chronicity.ACUTE && disease.treatments.acutePhaseProtocol.isEmpty()) {
+                add(
+                    FixtureViolation(
+                        entityType = ENTITY_TYPE,
+                        entityId = disease.id,
+                        field = "treatments.acutePhaseProtocol",
+                        message = "CHAPTER_IX acute disease must have at least 1 acutePhaseProtocol step",
                     ),
                 )
             }
