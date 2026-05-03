@@ -164,16 +164,6 @@ object DiseaseFixtureValidator {
 
     private fun chapterFiveViolations(disease: Disease): List<FixtureViolation> {
         return buildList {
-            if (disease.diagnosticCriteria.required.isEmpty()) {
-                add(
-                    FixtureViolation(
-                        entityType = ENTITY_TYPE,
-                        entityId = disease.id,
-                        field = "diagnosticCriteria.required",
-                        message = "CHAPTER_V disease must have diagnosticCriteria.required populated",
-                    ),
-                )
-            }
             if (disease.symptoms.mainSymptoms.size < MIN_CHAPTER_V_MAIN_SYMPTOMS) {
                 add(
                     FixtureViolation(
@@ -277,6 +267,16 @@ object DiseaseFixtureValidator {
                         entityId = disease.id,
                         field = "requiredExams",
                         message = "requiredExams must have at least 1 entry",
+                    ),
+                )
+            }
+            if (disease.diagnosticCriteria.required.isEmpty()) {
+                add(
+                    FixtureViolation(
+                        entityType = ENTITY_TYPE,
+                        entityId = disease.id,
+                        field = "diagnosticCriteria.required",
+                        message = "diagnosticCriteria.required must have at least 1 entry",
                     ),
                 )
             }

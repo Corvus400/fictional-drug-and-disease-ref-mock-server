@@ -183,6 +183,31 @@ class DiseaseFixtureValidatorTest {
     }
 
     @Test
+    fun `validate detects diagnosticCriteria required empty violation on a non-CHAPTER_V disease`() {
+        val original = fullInventory.first { disease ->
+            disease.icd10Chapter != Icd10Chapter.CHAPTER_V
+        }
+        val injected = original.copy(
+            diagnosticCriteria = original.diagnosticCriteria.copy(required = emptyList()),
+        )
+        val diseases = fullInventory.map { disease ->
+            if (disease.id == original.id) injected else disease
+        }
+
+        val violations = DiseaseFixtureValidator.validate(diseases = diseases)
+
+        assertContainsFixtureViolation(
+            violations = violations,
+            expected = FixtureViolation(
+                entityType = ENTITY_TYPE_DISEASE,
+                entityId = original.id,
+                field = "diagnosticCriteria.required",
+                message = "diagnosticCriteria.required must have at least 1 entry",
+            ),
+        )
+    }
+
+    @Test
     fun `validate detects medicalDepartment empty violation on an injected disease`() {
         val original = fullInventory.first()
         val injected = original.copy(medicalDepartment = emptyList())
