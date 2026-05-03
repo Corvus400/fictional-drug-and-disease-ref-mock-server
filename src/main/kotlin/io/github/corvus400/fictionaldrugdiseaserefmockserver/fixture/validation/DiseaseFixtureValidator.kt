@@ -69,7 +69,7 @@ object DiseaseFixtureValidator {
     }
 
     private fun conditionalFieldViolationsFor(disease: Disease): List<FixtureViolation> {
-        return when (disease.icd10Chapter) {
+        val chapterViolations = when (disease.icd10Chapter) {
             Icd10Chapter.CHAPTER_I -> chapterOneViolations(disease = disease)
             Icd10Chapter.CHAPTER_II -> chapterTwoViolations(disease = disease)
             Icd10Chapter.CHAPTER_IV -> chapterFourViolations(disease = disease)
@@ -94,6 +94,22 @@ object DiseaseFixtureValidator {
             Icd10Chapter.CHAPTER_XXII,
             -> emptyList()
         }
+        return preventionViolations(disease = disease) + chapterViolations
+    }
+
+    private fun preventionViolations(disease: Disease): List<FixtureViolation> {
+        val hasRiskFactors = disease.epidemiology?.riskFactors?.isNotEmpty() == true
+        if ((disease.infectious || hasRiskFactors) && disease.prevention.isEmpty()) {
+            return listOf(
+                FixtureViolation(
+                    entityType = ENTITY_TYPE,
+                    entityId = disease.id,
+                    field = "prevention",
+                    message = "infectious=true or non-empty riskFactors requires prevention size >= 1",
+                ),
+            )
+        }
+        return emptyList()
     }
 
     private fun chapterOneViolations(disease: Disease): List<FixtureViolation> {
