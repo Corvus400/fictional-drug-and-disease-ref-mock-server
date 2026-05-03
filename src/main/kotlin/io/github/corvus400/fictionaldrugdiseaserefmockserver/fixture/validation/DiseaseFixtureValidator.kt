@@ -134,6 +134,16 @@ object DiseaseFixtureValidator {
                     ),
                 )
             }
+            if (disease.symptoms.onsetPattern == null) {
+                add(
+                    FixtureViolation(
+                        entityType = ENTITY_TYPE,
+                        entityId = disease.id,
+                        field = "symptoms.onsetPattern",
+                        message = "CHAPTER_I disease must have non-null onsetPattern",
+                    ),
+                )
+            }
         }
     }
 

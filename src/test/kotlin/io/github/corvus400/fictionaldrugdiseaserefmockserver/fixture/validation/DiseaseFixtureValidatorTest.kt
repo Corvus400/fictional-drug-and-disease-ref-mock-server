@@ -171,6 +171,31 @@ class DiseaseFixtureValidatorTest {
     }
 
     @Test
+    fun `validate detects CHAPTER_I missing onsetPattern violation on an injected disease`() {
+        val original = fullInventory.first { disease ->
+            disease.icd10Chapter == Icd10Chapter.CHAPTER_I
+        }
+        val injected = original.copy(
+            symptoms = original.symptoms.copy(onsetPattern = null),
+        )
+        val diseases = fullInventory.map { disease ->
+            if (disease.id == original.id) injected else disease
+        }
+
+        val violations = DiseaseFixtureValidator.validate(diseases = diseases)
+
+        assertContainsFixtureViolation(
+            violations = violations,
+            expected = FixtureViolation(
+                entityType = ENTITY_TYPE_DISEASE,
+                entityId = original.id,
+                field = "symptoms.onsetPattern",
+                message = "CHAPTER_I disease must have non-null onsetPattern",
+            ),
+        )
+    }
+
+    @Test
     fun `validate detects empty prevention violation on an infectious disease`() {
         val original = fullInventory.first { disease ->
             disease.infectious && disease.prevention.isNotEmpty()
