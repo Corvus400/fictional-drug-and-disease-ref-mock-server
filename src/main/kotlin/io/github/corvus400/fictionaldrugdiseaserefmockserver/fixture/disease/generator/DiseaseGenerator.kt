@@ -139,7 +139,10 @@ class DiseaseGenerator(
                 context = context,
             ),
             prevention = DiseaseNestedBuilders.buildPrevention(id = diseaseId),
-            relatedDrugIds = DiseaseNestedBuilders.buildRelatedDrugIds(id = diseaseId),
+            relatedDrugIds = DiseaseNestedBuilders.buildRelatedDrugIds(
+                id = diseaseId,
+                chapter = blueprint.icd10Chapter,
+            ),
             relatedDiseaseIds = DiseaseNestedBuilders.buildRelatedDiseaseIds(
                 id = diseaseId,
                 selfIndex = blueprint.index,

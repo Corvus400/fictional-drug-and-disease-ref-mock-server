@@ -1,7 +1,9 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.validation
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.Drug
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass
 
 /**
  * drug↔disease カタログ間の **edge 違反** (存在しない ID への dangling 参照) を表す。
@@ -53,6 +55,9 @@ object CrossReferenceValidator {
             validTargetIds = diseaseIds,
             sourceType = TYPE_DISEASE,
             targetType = TYPE_DISEASE,
+        ) + collectChapterFiveWithoutPsychotropicDrug(
+            drugs = drugs,
+            diseases = diseases,
         )
     }
 
@@ -77,6 +82,44 @@ object CrossReferenceValidator {
                 }
         }
 
+    private fun collectChapterFiveWithoutPsychotropicDrug(
+        drugs: List<Drug>,
+        diseases: List<Disease>,
+    ): List<CrossRefViolation> {
+        val psychotropicDrugIds =
+            drugs
+                .filter { drug ->
+                    drug.regulatoryClass.any { regulatoryClass ->
+                        regulatoryClass in PSYCHOTROPIC_CLASSES
+                    }
+                }
+                .map { drug -> drug.id }
+                .toSet()
+        return diseases
+            .filter { disease -> disease.icd10Chapter == Icd10Chapter.CHAPTER_V }
+            .filter { disease ->
+                disease.relatedDrugIds.none { relatedDrugId ->
+                    relatedDrugId in psychotropicDrugIds
+                }
+            }
+            .map { disease ->
+                CrossRefViolation(
+                    sourceType = TYPE_DISEASE,
+                    sourceId = disease.id,
+                    targetType = TYPE_DRUG,
+                    danglingTargetId = REQUIRED_PSYCHOTROPIC_DRUG,
+                )
+            }
+    }
+
     private const val TYPE_DRUG = "drug"
     private const val TYPE_DISEASE = "disease"
+    private const val REQUIRED_PSYCHOTROPIC_DRUG = "psychotropic_drug"
+
+    private val PSYCHOTROPIC_CLASSES: Set<RegulatoryClass> =
+        setOf(
+            RegulatoryClass.PSYCHOTROPIC_1,
+            RegulatoryClass.PSYCHOTROPIC_2,
+            RegulatoryClass.PSYCHOTROPIC_3,
+        )
 }
