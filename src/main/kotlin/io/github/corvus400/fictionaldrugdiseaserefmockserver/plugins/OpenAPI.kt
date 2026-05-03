@@ -29,7 +29,7 @@ fun Application.configureOpenAPI() {
 
     install(OpenApi) {
         info {
-            title = "Mock Server API"
+            title = "架空医薬品・疾病 データ Mock Server API"
             version = "1.0.0"
             description = buildApiDescription()
         }
