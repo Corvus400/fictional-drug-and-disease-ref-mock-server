@@ -6,6 +6,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.gen
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.FixmergeNameAdapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.EpidemiologyInfo
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -165,6 +166,55 @@ class DiseaseFixtureValidatorTest {
                 entityId = original.id,
                 field = "infectious",
                 message = "CHAPTER_I disease must have infectious=true",
+            ),
+        )
+    }
+
+    @Test
+    fun `validate detects empty prevention violation on an infectious disease`() {
+        val original = fullInventory.first { disease ->
+            disease.infectious && disease.prevention.isNotEmpty()
+        }
+        val injected = original.copy(prevention = emptyList())
+        val diseases = fullInventory.map { disease ->
+            if (disease.id == original.id) injected else disease
+        }
+
+        val violations = DiseaseFixtureValidator.validate(diseases = diseases)
+
+        assertContainsFixtureViolation(
+            violations = violations,
+            expected = FixtureViolation(
+                entityType = ENTITY_TYPE_DISEASE,
+                entityId = original.id,
+                field = "prevention",
+                message = "infectious=true or non-empty riskFactors requires prevention size >= 1",
+            ),
+        )
+    }
+
+    @Test
+    fun `validate detects empty prevention violation on a disease with risk factors`() {
+        val original = fullInventory.first { disease ->
+            !disease.infectious
+        }
+        val injected = original.copy(
+            epidemiology = EpidemiologyInfo(riskFactors = listOf("生活習慣")),
+            prevention = emptyList(),
+        )
+        val diseases = fullInventory.map { disease ->
+            if (disease.id == original.id) injected else disease
+        }
+
+        val violations = DiseaseFixtureValidator.validate(diseases = diseases)
+
+        assertContainsFixtureViolation(
+            violations = violations,
+            expected = FixtureViolation(
+                entityType = ENTITY_TYPE_DISEASE,
+                entityId = original.id,
+                field = "prevention",
+                message = "infectious=true or non-empty riskFactors requires prevention size >= 1",
             ),
         )
     }
