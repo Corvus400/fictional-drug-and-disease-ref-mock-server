@@ -44,7 +44,7 @@ object CatalogHtmlRenderer {
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#FAFAF7" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#12141C" media="(prefers-color-scheme: dark)">
-<title>対応画面・シナリオ・Fixture概要カタログ - xxx Mock Server</title>
+<title>対応画面・シナリオ・Fixture概要カタログ - 架空医薬品・疾病 データ Mock Server</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -559,7 +559,7 @@ main {
   <div class="header-inner">
     <div class="header-title">
       <h1>対応画面・シナリオ・Fixture概要カタログ</h1>
-      <span class="subtitle">xxx Mock Server</span>
+      <span class="subtitle">架空医薬品・疾病 データ Mock Server</span>
     </div>
     <div class="stats">
       <span><span class="stat-value">$totalEndpoints</span> endpoints</span>
