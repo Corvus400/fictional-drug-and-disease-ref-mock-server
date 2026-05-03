@@ -70,6 +70,14 @@ object DrugFixtureValidator {
                 message = "contraindications size >= 1 required",
             )
         }
+        if (drug.regulatoryClass.isEmpty()) {
+            violations += FixtureViolation(
+                entityType = ENTITY_TYPE,
+                entityId = drug.id,
+                field = "regulatoryClass",
+                message = "regulatoryClass size >= 1 required (use ORDINARY for common OTC)",
+            )
+        }
         if (drug.indications.isEmpty() && !allowsNoTherapeuticIndication(drug = drug)) {
             violations += FixtureViolation(
                 entityType = ENTITY_TYPE,
