@@ -205,6 +205,31 @@ internal object DrugClinicalBuilders {
         id: String,
         dict: DrugPlaceholderDictionary,
     ): List<PrecautionPopulation> {
+        return buildPrecautionPopulationCategories(id = id).mapIndexed { index, category ->
+            val noteSeed =
+                stableHash(
+                    id = id,
+                    slot = DrugFieldSlot.PRECAUTION_POPULATION_NOTE.ordinal,
+                    index = index + 1,
+                )
+            PrecautionPopulation(
+                category = category,
+                note =
+                dict.renderField(
+                    field = ParagraphField.PRECAUTION_POPULATION_NOTE,
+                    seed = noteSeed,
+                ),
+            )
+        }
+    }
+
+    fun hasPregnancyContraindication(id: String): Boolean =
+        id in FINAL_OVERRIDE_PREGNANCY_CONTRAINDICATED_DRUG_IDS ||
+            buildPrecautionPopulationCategories(id = id).any { category ->
+                category == PrecautionPopulationCategory.PREGNANT
+            }
+
+    private fun buildPrecautionPopulationCategories(id: String): List<PrecautionPopulationCategory> {
         val countSeed =
             stableHash(id = id, slot = DrugFieldSlot.PRECAUTION_POPULATION_CATEGORY.ordinal, index = 0)
         val count = ValueRangeGenerator.pickCount(seed = countSeed, range = SHORT_LIST_COUNT_RANGE)
@@ -216,20 +241,7 @@ internal object DrugClinicalBuilders {
                     slot = DrugFieldSlot.PRECAUTION_POPULATION_CATEGORY.ordinal,
                     index = offset + 1,
                 )
-            val noteSeed =
-                stableHash(
-                    id = id,
-                    slot = DrugFieldSlot.PRECAUTION_POPULATION_NOTE.ordinal,
-                    index = offset + 1,
-                )
-            PrecautionPopulation(
-                category = ValueRangeGenerator.pickOne(seed = categorySeed, candidates = categories),
-                note =
-                dict.renderField(
-                    field = ParagraphField.PRECAUTION_POPULATION_NOTE,
-                    seed = noteSeed,
-                ),
-            )
+            ValueRangeGenerator.pickOne(seed = categorySeed, candidates = categories)
         }
     }
 
@@ -414,6 +426,7 @@ internal object DrugClinicalBuilders {
     private val CONTRAINDICATION_COUNT_RANGE: IntRange = 1..2
     private val INDICATION_COUNT_RANGE: IntRange = 1..2
     private val SHORT_LIST_COUNT_RANGE: IntRange = 1..2
+    private val FINAL_OVERRIDE_PREGNANCY_CONTRAINDICATED_DRUG_IDS: Set<String> = setOf("drug_0089")
 
     private data class RenalRangeSpec(val minMlPerMin: Int?, val maxMlPerMin: Int?, val label: String)
 

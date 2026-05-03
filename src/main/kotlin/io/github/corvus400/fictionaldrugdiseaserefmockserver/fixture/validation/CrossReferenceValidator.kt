@@ -3,6 +3,7 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.validation
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.Drug
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.PrecautionPopulationCategory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass
 
 /**
@@ -58,6 +59,9 @@ object CrossReferenceValidator {
         ) + collectChapterFiveWithoutPsychotropicDrug(
             drugs = drugs,
             diseases = diseases,
+        ) + collectChapterFifteenWithPregnancyContraindicatedDrug(
+            drugs = drugs,
+            diseases = diseases,
         )
     }
 
@@ -109,6 +113,35 @@ object CrossReferenceValidator {
                     targetType = TYPE_DRUG,
                     danglingTargetId = REQUIRED_PSYCHOTROPIC_DRUG,
                 )
+            }
+    }
+
+    private fun collectChapterFifteenWithPregnancyContraindicatedDrug(
+        drugs: List<Drug>,
+        diseases: List<Disease>,
+    ): List<CrossRefViolation> {
+        val pregnancyContraindicatedDrugIds =
+            drugs
+                .filter { drug ->
+                    drug.precautionsForSpecificPopulations.any { precaution ->
+                        precaution.category == PrecautionPopulationCategory.PREGNANT
+                    }
+                }
+                .map { drug -> drug.id }
+                .toSet()
+        return diseases
+            .filter { disease -> disease.icd10Chapter == Icd10Chapter.CHAPTER_XV }
+            .flatMap { disease ->
+                disease.relatedDrugIds
+                    .filter { drugId -> drugId in pregnancyContraindicatedDrugIds }
+                    .map { drugId ->
+                        CrossRefViolation(
+                            sourceType = TYPE_DISEASE,
+                            sourceId = disease.id,
+                            targetType = TYPE_DRUG,
+                            danglingTargetId = drugId,
+                        )
+                    }
             }
     }
 
