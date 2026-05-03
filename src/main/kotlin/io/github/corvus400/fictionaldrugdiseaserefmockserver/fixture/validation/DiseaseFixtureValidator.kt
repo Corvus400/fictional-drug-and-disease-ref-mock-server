@@ -1,5 +1,6 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.validation
 
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.InfectionRouteRiskFactors
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.ExamCategory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
@@ -131,6 +132,27 @@ object DiseaseFixtureValidator {
                         entityId = disease.id,
                         field = "epidemiology",
                         message = "CHAPTER_I disease must have epidemiology populated",
+                    ),
+                )
+            }
+            val riskFactors = disease.epidemiology?.riskFactors.orEmpty()
+            if (riskFactors.isEmpty()) {
+                add(
+                    FixtureViolation(
+                        entityType = ENTITY_TYPE,
+                        entityId = disease.id,
+                        field = "epidemiology.riskFactors",
+                        message = "CHAPTER_I disease must have non-empty riskFactors",
+                    ),
+                )
+            }
+            if (riskFactors.isNotEmpty() && riskFactors.none(InfectionRouteRiskFactors::containsKeyword)) {
+                add(
+                    FixtureViolation(
+                        entityType = ENTITY_TYPE,
+                        entityId = disease.id,
+                        field = "epidemiology.riskFactors",
+                        message = "CHAPTER_I disease riskFactors must include an infection route keyword",
                     ),
                 )
             }

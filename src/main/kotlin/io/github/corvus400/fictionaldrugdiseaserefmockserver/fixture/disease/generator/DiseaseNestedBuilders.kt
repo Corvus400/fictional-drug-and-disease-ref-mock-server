@@ -1,6 +1,7 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.common.ValueRangeGenerator
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.InfectionRouteRiskFactors
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.placeholder.DiseaseRenderContext
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.stableHash
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.ExamCategory
@@ -404,11 +405,18 @@ internal object DiseaseNestedBuilders {
             )
             ValueRangeGenerator.pickOne(seed = seed, candidates = RISK_FACTOR_VOCAB)
         }
+        val chapterRiskFactors = if (chapter == Icd10Chapter.CHAPTER_I &&
+            riskFactors.none(InfectionRouteRiskFactors::containsKeyword)
+        ) {
+            listOf(InfectionRouteRiskFactors.DEFAULT_CHAPTER_I_RISK_FACTOR) + riskFactors.drop(n = 1)
+        } else {
+            riskFactors
+        }
         return EpidemiologyInfo(
             prevalence = prevalence,
             onsetAgeRange = onsetAgeRange,
             sexRatio = sexRatio,
-            riskFactors = riskFactors,
+            riskFactors = chapterRiskFactors,
         )
     }
 

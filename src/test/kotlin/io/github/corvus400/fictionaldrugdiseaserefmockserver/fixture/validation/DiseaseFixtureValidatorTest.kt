@@ -196,6 +196,56 @@ class DiseaseFixtureValidatorTest {
     }
 
     @Test
+    fun `validate detects CHAPTER_I empty riskFactors violation on an injected disease`() {
+        val original = fullInventory.first { disease ->
+            disease.icd10Chapter == Icd10Chapter.CHAPTER_I
+        }
+        val injected = original.copy(
+            epidemiology = original.epidemiology?.copy(riskFactors = emptyList()),
+        )
+        val diseases = fullInventory.map { disease ->
+            if (disease.id == original.id) injected else disease
+        }
+
+        val violations = DiseaseFixtureValidator.validate(diseases = diseases)
+
+        assertContainsFixtureViolation(
+            violations = violations,
+            expected = FixtureViolation(
+                entityType = ENTITY_TYPE_DISEASE,
+                entityId = original.id,
+                field = "epidemiology.riskFactors",
+                message = "CHAPTER_I disease must have non-empty riskFactors",
+            ),
+        )
+    }
+
+    @Test
+    fun `validate detects CHAPTER_I riskFactors without infection route keyword violation on an injected disease`() {
+        val original = fullInventory.first { disease ->
+            disease.icd10Chapter == Icd10Chapter.CHAPTER_I
+        }
+        val injected = original.copy(
+            epidemiology = original.epidemiology?.copy(riskFactors = listOf("家族歴", "喫煙")),
+        )
+        val diseases = fullInventory.map { disease ->
+            if (disease.id == original.id) injected else disease
+        }
+
+        val violations = DiseaseFixtureValidator.validate(diseases = diseases)
+
+        assertContainsFixtureViolation(
+            violations = violations,
+            expected = FixtureViolation(
+                entityType = ENTITY_TYPE_DISEASE,
+                entityId = original.id,
+                field = "epidemiology.riskFactors",
+                message = "CHAPTER_I disease riskFactors must include an infection route keyword",
+            ),
+        )
+    }
+
+    @Test
     fun `validate detects empty prevention violation on an infectious disease`() {
         val original = fullInventory.first { disease ->
             disease.infectious && disease.prevention.isNotEmpty()
