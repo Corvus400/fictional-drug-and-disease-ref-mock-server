@@ -3,6 +3,7 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.ge
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.common.ValueRangeGenerator
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.InfectionRouteRiskFactors
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.placeholder.DiseaseRenderContext
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.DrugClinicalBuilders
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.stableHash
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.ExamCategory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
@@ -424,6 +425,16 @@ internal object DiseaseNestedBuilders {
         id: String,
         chapter: Icd10Chapter,
     ): List<String> {
+        fun avoidPregnancyContraindicatedDrug(drugId: String): String {
+            val drugIndex = drugId.removePrefix(prefix = "drug_").toInt()
+            val drugCount = DRUG_INDEX_RANGE.last - DRUG_INDEX_RANGE.first + 1
+            return generateSequence(seed = drugIndex) { index ->
+                ((index + 1) % drugCount) + DRUG_INDEX_RANGE.first
+            }
+                .map { index -> "drug_${index.toString().padStart(length = ID_PAD_LENGTH, padChar = '0')}" }
+                .first { candidate -> !DrugClinicalBuilders.hasPregnancyContraindication(id = candidate) }
+        }
+
         val countSeed = stableHash(id = id, slot = DiseaseFieldSlot.RELATED_DRUG_COUNT.ordinal, index = 0)
         val count = ValueRangeGenerator.pickCount(seed = countSeed, range = RELATED_DRUG_RANGE)
         val generatedIds = (0 until count).map { offset ->
@@ -437,6 +448,10 @@ internal object DiseaseNestedBuilders {
         }
         return if (chapter == Icd10Chapter.CHAPTER_V) {
             (listOf(CHAPTER_V_PSYCHOTROPIC_DRUG_ID) + generatedIds).distinct()
+        } else if (chapter == Icd10Chapter.CHAPTER_XV) {
+            generatedIds
+                .map { drugId -> avoidPregnancyContraindicatedDrug(drugId = drugId) }
+                .distinct()
         } else {
             generatedIds.distinct()
         }
