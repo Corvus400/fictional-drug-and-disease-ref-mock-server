@@ -100,12 +100,29 @@ object DrugFixtureValidator {
     private fun conditionalFieldViolations(drug: Drug): List<FixtureViolation> {
         val violations = mutableListOf<FixtureViolation>()
         if (isInjection(drug = drug)) {
-            if (drug.pharmacokinetics == null) {
+            val pk = drug.pharmacokinetics
+            if (pk == null) {
                 violations += FixtureViolation(
                     entityType = ENTITY_TYPE,
                     entityId = drug.id,
                     field = "pharmacokinetics",
                     message = "injection requires non-null pharmacokinetics",
+                )
+            }
+            if (pk != null && pk.bloodConcentration == null) {
+                violations += FixtureViolation(
+                    entityType = ENTITY_TYPE,
+                    entityId = drug.id,
+                    field = "pharmacokinetics.bloodConcentration",
+                    message = "injection requires non-null pharmacokinetics.bloodConcentration",
+                )
+            }
+            if (pk != null && pk.metabolism == null && pk.excretion == null) {
+                violations += FixtureViolation(
+                    entityType = ENTITY_TYPE,
+                    entityId = drug.id,
+                    field = "pharmacokinetics.metabolism|excretion",
+                    message = "injection requires at least one of pharmacokinetics.metabolism or .excretion",
                 )
             }
             if (drug.administrationPrecautions.isEmpty()) {
