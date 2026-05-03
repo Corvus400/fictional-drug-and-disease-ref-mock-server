@@ -5,6 +5,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.gen
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.DiseasePlaceholderDictionary
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.FixmergeNameAdapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Chronicity
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.EpidemiologyInfo
 import kotlin.test.Test
@@ -116,6 +117,32 @@ class DiseaseFixtureValidatorTest {
                 entityId = original.id,
                 field = "severityGrading",
                 message = "CHAPTER_II disease must have severityGrading populated",
+            ),
+        )
+    }
+
+    @Test
+    fun `validate detects CHAPTER_IX acute disease missing acutePhaseProtocol violation on an injected disease`() {
+        val original = fullInventory.first { disease ->
+            disease.icd10Chapter == Icd10Chapter.CHAPTER_IX
+        }
+        val injected = original.copy(
+            chronicity = Chronicity.ACUTE,
+            treatments = original.treatments.copy(acutePhaseProtocol = emptyList()),
+        )
+        val diseases = fullInventory.map { disease ->
+            if (disease.id == original.id) injected else disease
+        }
+
+        val violations = DiseaseFixtureValidator.validate(diseases = diseases)
+
+        assertContainsFixtureViolation(
+            violations = violations,
+            expected = FixtureViolation(
+                entityType = ENTITY_TYPE_DISEASE,
+                entityId = original.id,
+                field = "treatments.acutePhaseProtocol",
+                message = "CHAPTER_IX acute disease must have at least 1 acutePhaseProtocol step",
             ),
         )
     }
