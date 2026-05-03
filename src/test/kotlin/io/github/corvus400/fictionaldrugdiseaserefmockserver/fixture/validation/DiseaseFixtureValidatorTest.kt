@@ -120,6 +120,33 @@ class DiseaseFixtureValidatorTest {
     }
 
     @Test
+    fun `validate detects severityGrading grades fewer-than-two violation on an injected disease`() {
+        val original = fullInventory.first { disease ->
+            disease.severityGrading != null
+        }
+        val injected = original.copy(
+            severityGrading = original.severityGrading?.copy(
+                grades = original.severityGrading.grades.take(n = 1),
+            ),
+        )
+        val diseases = fullInventory.map { disease ->
+            if (disease.id == original.id) injected else disease
+        }
+
+        val violations = DiseaseFixtureValidator.validate(diseases = diseases)
+
+        assertContainsFixtureViolation(
+            violations = violations,
+            expected = FixtureViolation(
+                entityType = ENTITY_TYPE_DISEASE,
+                entityId = original.id,
+                field = "severityGrading.grades",
+                message = "severityGrading.grades must have at least 2 entries when severityGrading is non-null",
+            ),
+        )
+    }
+
+    @Test
     fun `validate detects CHAPTER_I non-infectious violation on an injected disease`() {
         val original = fullInventory.first { disease ->
             disease.icd10Chapter == Icd10Chapter.CHAPTER_I
