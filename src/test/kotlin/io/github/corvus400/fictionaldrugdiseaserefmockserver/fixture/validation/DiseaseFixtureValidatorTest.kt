@@ -182,6 +182,25 @@ class DiseaseFixtureValidatorTest {
         )
     }
 
+    @Test
+    fun `validate detects medicalDepartment empty violation on an injected disease`() {
+        val original = fullInventory.first()
+        val injected = original.copy(medicalDepartment = emptyList())
+        val diseases = listOf(injected) + fullInventory.drop(n = 1)
+
+        val violations = DiseaseFixtureValidator.validate(diseases = diseases)
+
+        assertContainsFixtureViolation(
+            violations = violations,
+            expected = FixtureViolation(
+                entityType = ENTITY_TYPE_DISEASE,
+                entityId = original.id,
+                field = "medicalDepartment",
+                message = "medicalDepartment must have at least 1 entry",
+            ),
+        )
+    }
+
     private fun generateFullInventory(): List<Disease> {
         val generator = DiseaseGenerator(
             adapter = FixmergeNameAdapter(),
