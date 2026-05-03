@@ -10,6 +10,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.Fixm
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.Drug
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.PrecautionPopulationCategory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -139,6 +140,41 @@ class CrossReferenceValidatorTest {
                     sourceId = corruptedDisease.id,
                     targetType = "drug",
                     danglingTargetId = "psychotropic_drug",
+                ),
+            ),
+            actual = violations,
+        )
+    }
+
+    @Test
+    fun `validate detects CHAPTER_XV disease referencing pregnancy-contraindicated drug`() {
+        val diseases = generateAllDiseases()
+        val drugs = generateAllDrugs(diseases = diseases)
+        val pregnancyContraindicatedDrug = drugs.first { drug ->
+            drug.precautionsForSpecificPopulations.any { precaution ->
+                precaution.category == PrecautionPopulationCategory.PREGNANT
+            }
+        }
+        val chapterFifteenDisease = diseases.first { disease -> disease.icd10Chapter == Icd10Chapter.CHAPTER_XV }
+        val corruptedDisease = chapterFifteenDisease.copy(relatedDrugIds = listOf(pregnancyContraindicatedDrug.id))
+        val diseasesWithCorruption =
+            diseases.map { disease ->
+                if (disease.id == corruptedDisease.id) corruptedDisease else disease
+            }
+
+        val violations =
+            CrossReferenceValidator.validate(
+                drugs = drugs,
+                diseases = diseasesWithCorruption,
+            )
+
+        assertEquals(
+            expected = listOf(
+                CrossRefViolation(
+                    sourceType = "disease",
+                    sourceId = corruptedDisease.id,
+                    targetType = "drug",
+                    danglingTargetId = pregnancyContraindicatedDrug.id,
                 ),
             ),
             actual = violations,
