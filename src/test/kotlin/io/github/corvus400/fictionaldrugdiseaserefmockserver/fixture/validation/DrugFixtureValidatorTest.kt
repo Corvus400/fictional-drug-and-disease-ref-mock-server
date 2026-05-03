@@ -13,6 +13,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.neste
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.TreatmentInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DosageForm
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.PharmacokineticsInfo
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -111,6 +112,67 @@ class DrugFixtureValidatorTest {
                 entityId = injection.id,
                 field = "administrationPrecautions",
                 message = "injection requires administrationPrecautions size >= 1",
+            ),
+        )
+    }
+
+    @Test
+    fun `validate reports an injection violation when pharmacokinetics bloodConcentration is missing`() {
+        val drugs = buildFreshGenerator().generate(blueprints = DrugBlueprintFactory.build())
+        val injection = drugs.first { drug -> drug.dosageForm == DosageForm.INJECTION_FORM }
+        val corrupted = injection.copy(
+            pharmacokinetics = PharmacokineticsInfo(
+                bloodConcentration = null,
+                metabolism = "テスト用の代謝情報です。",
+            ),
+        )
+        val withCorrupted = drugs.map { drug -> if (drug.id == injection.id) corrupted else drug }
+
+        val violations = DrugFixtureValidator.validate(drugs = withCorrupted)
+
+        assertEquals(
+            expected = 1,
+            actual = violations.size,
+            message = "expected exactly 1 violation but got $violations",
+        )
+        assertContainsFixtureViolation(
+            violations = violations,
+            expected = FixtureViolation(
+                entityType = ENTITY_TYPE_DRUG,
+                entityId = injection.id,
+                field = "pharmacokinetics.bloodConcentration",
+                message = "injection requires non-null pharmacokinetics.bloodConcentration",
+            ),
+        )
+    }
+
+    @Test
+    fun `validate reports an injection violation when pharmacokinetics has neither metabolism nor excretion`() {
+        val drugs = buildFreshGenerator().generate(blueprints = DrugBlueprintFactory.build())
+        val injection = drugs.first { drug -> drug.dosageForm == DosageForm.INJECTION_FORM }
+        val corrupted = injection.copy(
+            pharmacokinetics = PharmacokineticsInfo(
+                bloodConcentration = "テスト用の血中濃度推移です。",
+                metabolism = null,
+                excretion = null,
+            ),
+        )
+        val withCorrupted = drugs.map { drug -> if (drug.id == injection.id) corrupted else drug }
+
+        val violations = DrugFixtureValidator.validate(drugs = withCorrupted)
+
+        assertEquals(
+            expected = 1,
+            actual = violations.size,
+            message = "expected exactly 1 violation but got $violations",
+        )
+        assertContainsFixtureViolation(
+            violations = violations,
+            expected = FixtureViolation(
+                entityType = ENTITY_TYPE_DRUG,
+                entityId = injection.id,
+                field = "pharmacokinetics.metabolism|excretion",
+                message = "injection requires at least one of pharmacokinetics.metabolism or .excretion",
             ),
         )
     }
