@@ -280,6 +280,16 @@ object DiseaseFixtureValidator {
                     ),
                 )
             }
+            if (disease.medicalDepartment.isEmpty()) {
+                add(
+                    FixtureViolation(
+                        entityType = ENTITY_TYPE,
+                        entityId = disease.id,
+                        field = "medicalDepartment",
+                        message = "medicalDepartment must have at least 1 entry",
+                    ),
+                )
+            }
         }
     }
 
