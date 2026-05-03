@@ -55,6 +55,30 @@ class DrugFixtureValidatorTest {
     }
 
     @Test
+    fun `validate reports a size violation when regulatoryClass is empty`() {
+        val drugs = buildFreshGenerator().generate(blueprints = DrugBlueprintFactory.build())
+        val corrupted = drugs.first().copy(regulatoryClass = emptyList())
+        val withCorrupted = listOf(corrupted) + drugs.drop(n = 1)
+
+        val violations = DrugFixtureValidator.validate(drugs = withCorrupted)
+
+        assertEquals(
+            expected = 1,
+            actual = violations.size,
+            message = "expected exactly 1 violation but got $violations",
+        )
+        assertContainsFixtureViolation(
+            violations = violations,
+            expected = FixtureViolation(
+                entityType = ENTITY_TYPE_DRUG,
+                entityId = corrupted.id,
+                field = "regulatoryClass",
+                message = "regulatoryClass size >= 1 required (use ORDINARY for common OTC)",
+            ),
+        )
+    }
+
+    @Test
     fun `validate reports injection violations for missing pharmacokinetics and admPrecautions`() {
         val drugs = buildFreshGenerator().generate(blueprints = DrugBlueprintFactory.build())
         val injection = drugs.first { drug -> drug.dosageForm == DosageForm.INJECTION_FORM }
