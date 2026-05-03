@@ -241,6 +241,7 @@ object DiseaseFixtureValidator {
     }
 
     private const val MIN_CHAPTER_V_MAIN_SYMPTOMS: Int = 3
+    private const val MIN_SEVERITY_GRADING_GRADES: Int = 2
     private const val DISEASE_ID_PAD_LENGTH: Int = 4
     private val DISEASE_ID_PATTERN: Regex = Regex(pattern = """^disease_(\d{4})$""")
 
@@ -287,6 +288,18 @@ object DiseaseFixtureValidator {
                         entityId = disease.id,
                         field = "medicalDepartment",
                         message = "medicalDepartment must have at least 1 entry",
+                    ),
+                )
+            }
+            val severityGrading = disease.severityGrading
+            if (severityGrading != null && severityGrading.grades.size < MIN_SEVERITY_GRADING_GRADES) {
+                add(
+                    FixtureViolation(
+                        entityType = ENTITY_TYPE,
+                        entityId = disease.id,
+                        field = "severityGrading.grades",
+                        message = "severityGrading.grades must have at least " +
+                            "$MIN_SEVERITY_GRADING_GRADES entries when severityGrading is non-null",
                     ),
                 )
             }
