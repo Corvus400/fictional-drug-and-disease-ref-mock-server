@@ -420,10 +420,13 @@ internal object DiseaseNestedBuilders {
         )
     }
 
-    fun buildRelatedDrugIds(id: String): List<String> {
+    fun buildRelatedDrugIds(
+        id: String,
+        chapter: Icd10Chapter,
+    ): List<String> {
         val countSeed = stableHash(id = id, slot = DiseaseFieldSlot.RELATED_DRUG_COUNT.ordinal, index = 0)
         val count = ValueRangeGenerator.pickCount(seed = countSeed, range = RELATED_DRUG_RANGE)
-        return (0 until count).map { offset ->
+        val generatedIds = (0 until count).map { offset ->
             val indexSeed = stableHash(
                 id = id,
                 slot = DiseaseFieldSlot.RELATED_DRUG_INDEX.ordinal,
@@ -431,7 +434,12 @@ internal object DiseaseNestedBuilders {
             )
             val drugIndex = ValueRangeGenerator.pickInRange(seed = indexSeed, range = DRUG_INDEX_RANGE)
             "drug_${drugIndex.toString().padStart(length = ID_PAD_LENGTH, padChar = '0')}"
-        }.distinct()
+        }
+        return if (chapter == Icd10Chapter.CHAPTER_V) {
+            (listOf(CHAPTER_V_PSYCHOTROPIC_DRUG_ID) + generatedIds).distinct()
+        } else {
+            generatedIds.distinct()
+        }
     }
 
     fun buildRelatedDiseaseIds(
@@ -581,6 +589,7 @@ internal object DiseaseNestedBuilders {
     private val DISEASE_INDEX_RANGE: IntRange = 0..79
 
     private const val ID_PAD_LENGTH: Int = 4
+    private const val CHAPTER_V_PSYCHOTROPIC_DRUG_ID: String = "drug_0089"
     private const val ONSET_AGE_SPAN: Int = 10
     private const val DENOMINATOR_PER_BIRTH: Int = 1_000
     private const val DENOMINATOR_PER_PATIENT: Int = 100
