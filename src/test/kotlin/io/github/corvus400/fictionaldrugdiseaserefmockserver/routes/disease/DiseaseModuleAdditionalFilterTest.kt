@@ -222,14 +222,19 @@ class DiseaseModuleAdditionalFilterTest {
 
             val response = client.get(urlString = "/v1/diseases?exam_category=INVALID")
 
-            assertEquals(expected = HttpStatusCode.BadRequest, actual = response.status)
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
-            assertEquals(expected = "INVALID_EXAM_CATEGORY", actual = body["code"]?.jsonPrimitive?.content)
             val message = body["message"]?.jsonPrimitive?.content
-            assertNotNull(actual = message, message = "ErrorResponse must include message")
-            assertTrue(
-                actual = message.contains(other = "INVALID"),
-                message = "ErrorResponse message=$message must mention rejected value INVALID",
+            assertEquals(
+                expected = ErrorSnapshot(
+                    status = HttpStatusCode.BadRequest,
+                    code = "INVALID_EXAM_CATEGORY",
+                    messageMentionsInvalid = true,
+                ),
+                actual = ErrorSnapshot(
+                    status = response.status,
+                    code = body["code"]?.jsonPrimitive?.content,
+                    messageMentionsInvalid = message?.contains(other = "INVALID") == true,
+                ),
             )
         }
 
@@ -241,13 +246,29 @@ class DiseaseModuleAdditionalFilterTest {
     }
 
     private suspend fun assertOkEmptyItems(response: io.ktor.client.statement.HttpResponse) {
-        assertEquals(expected = HttpStatusCode.OK, actual = response.status)
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
-        assertEquals(expected = 0, actual = body["total_count"]?.jsonPrimitive?.content?.toIntOrNull())
         val items = body["items"]?.jsonArray
-        assertNotNull(actual = items, message = "response body must include items array")
-        assertEquals(expected = 0, actual = items.size)
+        assertEquals(
+            expected = EmptyEnvelopeSnapshot(status = HttpStatusCode.OK, totalCount = 0, itemsSize = 0),
+            actual = EmptyEnvelopeSnapshot(
+                status = response.status,
+                totalCount = body["total_count"]?.jsonPrimitive?.content?.toIntOrNull(),
+                itemsSize = items?.size,
+            ),
+        )
     }
+
+    private data class EmptyEnvelopeSnapshot(
+        val status: HttpStatusCode,
+        val totalCount: Int?,
+        val itemsSize: Int?,
+    )
+
+    private data class ErrorSnapshot(
+        val status: HttpStatusCode,
+        val code: String?,
+        val messageMentionsInvalid: Boolean,
+    )
 
     private companion object {
         const val DEFAULT_DISEASE_COUNT = 80

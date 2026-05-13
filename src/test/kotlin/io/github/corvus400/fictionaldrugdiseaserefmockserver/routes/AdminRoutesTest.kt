@@ -27,10 +27,14 @@ class AdminRoutesTest {
         application { module() }
 
         val response = client.get("/health")
-
-        assertEquals(HttpStatusCode.OK, response.status)
         val body = json.decodeFromString<JsonObject>(response.bodyAsText())
-        assertEquals("ok", body["status"]?.jsonPrimitive?.content)
+        assertEquals(
+            expected = StatusSnapshot(status = HttpStatusCode.OK, bodyStatus = "ok"),
+            actual = StatusSnapshot(
+                status = response.status,
+                bodyStatus = body["status"]?.jsonPrimitive?.content,
+            ),
+        )
     }
 
     @Test
@@ -55,22 +59,23 @@ class AdminRoutesTest {
             contentType(ContentType.Application.Json)
             setBody("""{"state": "empty"}""")
         }
-        assertEquals(HttpStatusCode.OK, overrideResponse.status)
 
         val listResponse = client.get("/v1/drugs")
-        assertEquals(HttpStatusCode.OK, listResponse.status)
         val body = json.decodeFromString<JsonObject>(listResponse.bodyAsText())
         val items = body["items"]?.jsonArray
-        assertNotNull(items)
         assertEquals(
-            expected = 0,
-            actual = items.size,
-            message = "drugList を empty オーバーライド後の /drugs items は 0 件である必要がある",
-        )
-        assertEquals(
-            expected = 0,
-            actual = body["total_count"]?.jsonPrimitive?.int,
-            message = "drugList を empty オーバーライド後の /drugs total_count は 0 である必要がある",
+            expected = EmptyOverrideSnapshot(
+                overrideStatus = HttpStatusCode.OK,
+                listStatus = HttpStatusCode.OK,
+                itemsSize = 0,
+                totalCount = 0,
+            ),
+            actual = EmptyOverrideSnapshot(
+                overrideStatus = overrideResponse.status,
+                listStatus = listResponse.status,
+                itemsSize = items?.size,
+                totalCount = body["total_count"]?.jsonPrimitive?.int,
+            ),
         )
 
         client.post("/__admin/reset")
@@ -86,22 +91,23 @@ class AdminRoutesTest {
             contentType(ContentType.Application.Json)
             setBody("""{"state": "empty"}""")
         }
-        assertEquals(HttpStatusCode.OK, overrideResponse.status)
 
         val listResponse = client.get("/v1/diseases")
-        assertEquals(HttpStatusCode.OK, listResponse.status)
         val body = json.decodeFromString<JsonObject>(listResponse.bodyAsText())
         val items = body["items"]?.jsonArray
-        assertNotNull(items)
         assertEquals(
-            expected = 0,
-            actual = items.size,
-            message = "diseaseList を empty オーバーライド後の /diseases items は 0 件である必要がある",
-        )
-        assertEquals(
-            expected = 0,
-            actual = body["total_count"]?.jsonPrimitive?.int,
-            message = "diseaseList を empty オーバーライド後の /diseases total_count は 0 である必要がある",
+            expected = EmptyOverrideSnapshot(
+                overrideStatus = HttpStatusCode.OK,
+                listStatus = HttpStatusCode.OK,
+                itemsSize = 0,
+                totalCount = 0,
+            ),
+            actual = EmptyOverrideSnapshot(
+                overrideStatus = overrideResponse.status,
+                listStatus = listResponse.status,
+                itemsSize = items?.size,
+                totalCount = body["total_count"]?.jsonPrimitive?.int,
+            ),
         )
 
         client.post("/__admin/reset")
@@ -120,17 +126,22 @@ class AdminRoutesTest {
 
         val emptyResponse = client.get("/v1/drugs")
         val emptyBody = json.decodeFromString<JsonObject>(emptyResponse.bodyAsText())
-        assertEquals(0, emptyBody["total_count"]?.jsonPrimitive?.int)
 
         val resetResponse = client.post("/__admin/reset")
-        assertEquals(HttpStatusCode.OK, resetResponse.status)
 
         val restoredResponse = client.get("/v1/drugs")
         val restoredBody = json.decodeFromString<JsonObject>(restoredResponse.bodyAsText())
         assertEquals(
-            expected = 120,
-            actual = restoredBody["total_count"]?.jsonPrimitive?.int,
-            message = "Admin reset 後の /drugs default シナリオ total_count は 120 に戻る必要がある",
+            expected = ResetSnapshot(
+                emptyTotalCount = 0,
+                resetStatus = HttpStatusCode.OK,
+                restoredTotalCount = 120,
+            ),
+            actual = ResetSnapshot(
+                emptyTotalCount = emptyBody["total_count"]?.jsonPrimitive?.int,
+                resetStatus = resetResponse.status,
+                restoredTotalCount = restoredBody["total_count"]?.jsonPrimitive?.int,
+            ),
         )
     }
 
@@ -157,4 +168,22 @@ class AdminRoutesTest {
 
         client.post("/__admin/reset")
     }
+
+    private data class StatusSnapshot(
+        val status: HttpStatusCode,
+        val bodyStatus: String?,
+    )
+
+    private data class EmptyOverrideSnapshot(
+        val overrideStatus: HttpStatusCode,
+        val listStatus: HttpStatusCode,
+        val itemsSize: Int?,
+        val totalCount: Int?,
+    )
+
+    private data class ResetSnapshot(
+        val emptyTotalCount: Int?,
+        val resetStatus: HttpStatusCode,
+        val restoredTotalCount: Int?,
+    )
 }

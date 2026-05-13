@@ -11,7 +11,6 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.Forb
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.Drug
 import kotlin.test.Test
-import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class LegalComplianceInvariantTest {
@@ -19,21 +18,40 @@ class LegalComplianceInvariantTest {
     fun `generated fixtures satisfy public release legal compliance invariants`() {
         val (drugs, diseases) = generateFixtures()
 
-        drugs.forEach { drug ->
-            assertTrue(drug.atcCode.matches(Regex("^[A-V]99ZZ\\d{2}$")), "invalid ATC: ${drug.id}")
-            assertTrue(drug.yjCode.orEmpty().matches(Regex("^999\\d{9}$")), "invalid YJ: ${drug.id}")
-            assertFalse(ForbiddenNames.containsClassSuffix(drug.brandName), "brand suffix: ${drug.id}")
-            assertFalse(ForbiddenNames.containsClassSuffix(drug.genericName), "generic suffix: ${drug.id}")
-            drug.fictionalMarkedTexts().forEach { text ->
-                assertTrue(text.contains("(架空)"), "drug text lacks marker: ${drug.id}: $text")
+        val violations = buildList {
+            drugs.forEach { drug ->
+                if (!drug.atcCode.matches(Regex("^[A-V]99ZZ\\d{2}$"))) {
+                    add("invalid ATC: ${drug.id}=${drug.atcCode}")
+                }
+                if (!drug.yjCode.orEmpty().matches(Regex("^999\\d{9}$"))) {
+                    add("invalid YJ: ${drug.id}=${drug.yjCode}")
+                }
+                if (ForbiddenNames.containsClassSuffix(drug.brandName)) {
+                    add("brand suffix: ${drug.id}=${drug.brandName}")
+                }
+                if (ForbiddenNames.containsClassSuffix(drug.genericName)) {
+                    add("generic suffix: ${drug.id}=${drug.genericName}")
+                }
+                drug.fictionalMarkedTexts().forEach { text ->
+                    if (!text.contains("(架空)")) {
+                        add("drug text lacks marker: ${drug.id}: $text")
+                    }
+                }
+            }
+
+            diseases.forEach { disease ->
+                disease.fictionalMarkedTexts().forEach { text ->
+                    if (!text.contains("(架空)")) {
+                        add("disease text lacks marker: ${disease.id}: $text")
+                    }
+                }
             }
         }
 
-        diseases.forEach { disease ->
-            disease.fictionalMarkedTexts().forEach { text ->
-                assertTrue(text.contains("(架空)"), "disease text lacks marker: ${disease.id}: $text")
-            }
-        }
+        assertTrue(
+            actual = violations.isEmpty(),
+            message = "Public release legal compliance violations:\n" + violations.joinToString("\n"),
+        )
     }
 
     private fun generateFixtures(): Pair<List<Drug>, List<Disease>> {

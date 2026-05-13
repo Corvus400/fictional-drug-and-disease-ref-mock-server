@@ -163,20 +163,15 @@ class DiseaseModuleKeywordTest {
         val response = client.get(
             urlString = "/v1/diseases?keyword=whatever&keyword_target=name&keyword_match=partial",
         )
-        assertEquals(expected = HttpStatusCode.OK, actual = response.status)
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
         val totalCount = body["total_count"]?.jsonPrimitive?.content?.toIntOrNull()
-        assertNotNull(actual = totalCount, message = "response body must have a numeric total_count")
         assertEquals(
-            expected = 0,
-            actual = totalCount,
-            message = "empty scenario × keyword must yield total_count=0 (got $totalCount)",
-        )
-        val items = body["items"]?.jsonArray
-        assertNotNull(actual = items, message = "response body must have items array")
-        assertTrue(
-            actual = items.isEmpty(),
-            message = "empty scenario × keyword must yield empty items array (got size=${items.size})",
+            expected = EmptyEnvelopeSnapshot(status = HttpStatusCode.OK, totalCount = 0, itemsSize = 0),
+            actual = EmptyEnvelopeSnapshot(
+                status = response.status,
+                totalCount = totalCount,
+                itemsSize = body["items"]?.jsonArray?.size,
+            ),
         )
 
         client.post(urlString = "/__admin/reset")
@@ -220,4 +215,10 @@ class DiseaseModuleKeywordTest {
         private const val MIN_FILTERED_COUNT: Int = 2
         private const val DEFAULT_TOTAL_COUNT: Int = 80
     }
+
+    private data class EmptyEnvelopeSnapshot(
+        val status: HttpStatusCode,
+        val totalCount: Int?,
+        val itemsSize: Int?,
+    )
 }
