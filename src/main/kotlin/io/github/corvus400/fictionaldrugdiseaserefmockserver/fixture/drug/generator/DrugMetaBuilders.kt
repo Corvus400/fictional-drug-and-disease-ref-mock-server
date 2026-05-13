@@ -1,9 +1,12 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator
 
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.common.AtcIcd10Mapping
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.common.ValueRangeGenerator
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.stableHash
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DosageForm
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.StorageTemperature
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.TherapeuticCategory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.ClinicalResultSection
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.NumberedParagraph
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.PackageInfo
@@ -139,9 +142,31 @@ internal object DrugMetaBuilders {
         )
     }
 
-    fun buildRelatedDiseaseIds(id: String): List<String> {
+    fun buildRelatedDiseaseIds(
+        id: String,
+        therapeuticCategory: TherapeuticCategory,
+        diseaseFixtures: List<Disease>,
+    ): List<String> {
         val countSeed = stableHash(id = id, slot = DrugFieldSlot.RELATED_DISEASE.ordinal, index = 0)
         val count = ValueRangeGenerator.pickCount(seed = countSeed, range = RELATED_DISEASE_RANGE)
+        val candidateDiseaseIds =
+            pickFromCategoryFilteredDiseases(
+                therapeuticCategory = therapeuticCategory,
+                diseaseFixtures = diseaseFixtures,
+            ).ifEmpty { diseaseFixtures.map { disease -> disease.id } }
+        if (candidateDiseaseIds.isNotEmpty()) {
+            return (0 until count).map { offset ->
+                val indexSeed =
+                    stableHash(
+                        id = id,
+                        slot = DrugFieldSlot.RELATED_DISEASE.ordinal,
+                        index = offset + 1,
+                    )
+                val diseaseIndex =
+                    ValueRangeGenerator.pickInRange(seed = indexSeed, range = candidateDiseaseIds.indices)
+                candidateDiseaseIds[diseaseIndex]
+            }.distinct()
+        }
         return (0 until count).map { offset ->
             val indexSeed =
                 stableHash(
@@ -153,6 +178,16 @@ internal object DrugMetaBuilders {
                 ValueRangeGenerator.pickInRange(seed = indexSeed, range = DISEASE_INDEX_RANGE)
             "disease_${diseaseIndex.toString().padStart(length = ID_PAD_LENGTH, padChar = '0')}"
         }.distinct()
+    }
+
+    private fun pickFromCategoryFilteredDiseases(
+        therapeuticCategory: TherapeuticCategory,
+        diseaseFixtures: List<Disease>,
+    ): List<String> {
+        val chapters = AtcIcd10Mapping.chaptersFor(category = therapeuticCategory).toSet()
+        return diseaseFixtures
+            .filter { disease -> disease.icd10Chapter in chapters }
+            .map { disease -> disease.id }
     }
 
     fun buildYjCode(id: String): String {
