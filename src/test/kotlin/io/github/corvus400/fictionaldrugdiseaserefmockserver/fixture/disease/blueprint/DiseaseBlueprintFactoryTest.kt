@@ -43,12 +43,19 @@ class DiseaseBlueprintFactoryTest {
         assertEquals(
             expected,
             distribution,
-            "contract assertion failed"
+            "DiseaseBlueprintFactory must preserve the exact ICD-10 chapter distribution",
         )
+    }
+
+    @Test
+    fun `factory distribution covers all 22 ICD-10 chapters`() {
+        val blueprints = DiseaseBlueprintFactory.build()
+        val distribution = blueprints.groupBy { it.icd10Chapter }.mapValues { it.value.size }
+
         assertEquals(
             22,
             distribution.keys.size,
-            "contract assertion failed"
+            "DiseaseBlueprintFactory distribution must include all 22 ICD-10 chapters",
         )
     }
 

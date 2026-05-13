@@ -10,17 +10,17 @@ class DiseaseSortKeyFromQueryTest {
         assertEquals(
             DiseaseSortKey.REVISED_AT_DESC,
             DiseaseSortKey.fromQuery("-revised_at"),
-            "contract assertion failed"
+            "fromQuery must map -revised_at to REVISED_AT_DESC",
         )
         assertEquals(
             DiseaseSortKey.NAME_KANA_ASC,
             DiseaseSortKey.fromQuery("name_kana"),
-            "contract assertion failed"
+            "fromQuery must map name_kana to NAME_KANA_ASC",
         )
         assertEquals(
             DiseaseSortKey.ICD10_CHAPTER_ASC,
             DiseaseSortKey.fromQuery("icd10_chapter"),
-            "contract assertion failed"
+            "fromQuery must map icd10_chapter to ICD10_CHAPTER_ASC",
         )
     }
 

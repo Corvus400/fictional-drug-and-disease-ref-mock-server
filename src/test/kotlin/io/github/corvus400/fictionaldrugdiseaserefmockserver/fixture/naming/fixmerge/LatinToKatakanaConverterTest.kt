@@ -19,16 +19,16 @@ class LatinToKatakanaConverterTest {
         val second = converter.convert(input = "WAirTell")
         assertTrue(
             first.isNotBlank(),
-            "contract assertion failed"
+            "first conversion result must be non-blank before determinism comparison",
         )
         assertTrue(
             second.isNotBlank(),
-            "contract assertion failed"
+            "second conversion result must be non-blank before determinism comparison",
         )
         kotlin.test.assertEquals(
             expected = first,
             actual = second,
-            "contract assertion failed"
+            "LatinToKatakanaConverter must return the same katakana for the same input",
         )
     }
 }

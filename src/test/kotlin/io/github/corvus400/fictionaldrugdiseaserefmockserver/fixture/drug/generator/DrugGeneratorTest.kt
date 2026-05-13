@@ -109,7 +109,10 @@ class DrugGeneratorTest {
     @Test
     fun `physicochemicalProperties genericNameEnglish pairs with genericName via same coined name`() {
         val drug = generator.generate(blueprint = sampleBlueprint)
-        val physicochemical = assertNotNull(drug.physicochemicalProperties)
+        val physicochemical = assertNotNull(
+            actual = drug.physicochemicalProperties,
+            message = "generated drug must include physicochemicalProperties",
+        )
         assertTrue(
             physicochemical.genericNameEnglish.isNotBlank(),
             "genericNameEnglish is blank",
@@ -338,7 +341,10 @@ class DrugGeneratorTest {
         val uniqueDescriptions: Set<String> =
             drugs
                 .map { drug ->
-                    val info = assertNotNull(drug.physicochemicalProperties)
+                    val info = assertNotNull(
+                        actual = drug.physicochemicalProperties,
+                        message = "${drug.id} must include physicochemicalProperties",
+                    )
                     info.description
                 }
                 .toSet()
@@ -377,7 +383,10 @@ class DrugGeneratorTest {
                         form = drug.dosageForm,
                         drugId = drug.id,
                     ) + " (架空)"
-                val info = assertNotNull(drug.physicochemicalProperties)
+                val info = assertNotNull(
+                    actual = drug.physicochemicalProperties,
+                    message = "${drug.id} must include physicochemicalProperties",
+                )
                 assertEquals(
                     expected = expected,
                     actual = info.description,
@@ -406,7 +415,10 @@ class DrugGeneratorTest {
             actual = tredecim.brandNameKana,
             message = "drug_0080 brand_name_kana must equal 'トレデキム'",
         )
-        val physicochemical = assertNotNull(tredecim.physicochemicalProperties)
+        val physicochemical = assertNotNull(
+            actual = tredecim.physicochemicalProperties,
+            message = "drug_0080 must include physicochemicalProperties for generic_name_english override",
+        )
         assertEquals(
             expected = "tredecim",
             actual = physicochemical.genericNameEnglish,
@@ -428,7 +440,10 @@ class DrugGeneratorTest {
             message = "drug_0080 appearance must contain '「13」', got " +
                 "'${tredecim.composition.appearance}'",
         )
-        val physicochemical = assertNotNull(tredecim.physicochemicalProperties)
+        val physicochemical = assertNotNull(
+            actual = tredecim.physicochemicalProperties,
+            message = "drug_0080 must include physicochemicalProperties for description override",
+        )
         assertEquals(
             expected = "無色澄明の液体である。 (架空)",
             actual = physicochemical.description,

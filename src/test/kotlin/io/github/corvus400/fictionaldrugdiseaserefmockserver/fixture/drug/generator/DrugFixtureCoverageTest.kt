@@ -100,11 +100,11 @@ class DrugFixtureCoverageTest {
 
         assertTrue(
             RegulatoryClass.STIMULANT_PRECURSOR in drug87.regulatoryClass,
-            "contract assertion failed"
+            "drug_0087 must include STIMULANT_PRECURSOR",
         )
         assertTrue(
             RegulatoryClass.PRESCRIPTION_REQUIRED in drug87.regulatoryClass,
-            "contract assertion failed"
+            "drug_0087 must keep PRESCRIPTION_REQUIRED alongside STIMULANT_PRECURSOR",
         )
     }
 
