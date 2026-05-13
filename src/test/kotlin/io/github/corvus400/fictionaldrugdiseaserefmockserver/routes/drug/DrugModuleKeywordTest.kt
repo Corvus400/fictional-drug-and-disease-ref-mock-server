@@ -12,8 +12,6 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
 
 class DrugModuleKeywordTest {
     private val json = Json { ignoreUnknownKeys = true }
@@ -23,8 +21,8 @@ class DrugModuleKeywordTest {
         testApplication {
             application { module() }
 
-            val sampleBrandName = client.get(urlString = "/v1/drugs/drug_0001").extractBrandName()
-            val keywordPrefix = sampleBrandName.take(n = KEYWORD_PREFIX_LENGTH)
+            val brandNameSnapshot = client.get(urlString = "/v1/drugs/drug_0001").brandNameSnapshot()
+            val keywordPrefix = brandNameSnapshot.brandName.orEmpty().take(n = KEYWORD_PREFIX_LENGTH)
             val encodedKeyword = keywordPrefix.encodeURLParameter()
 
             val totalResponse = client.get(urlString = "/v1/drugs?page_size=100")
@@ -38,17 +36,21 @@ class DrugModuleKeywordTest {
             assertEquals(
                 expected = KeywordFilterSnapshot(
                     brandNameLongEnough = true,
+                    detailStatus = HttpStatusCode.OK,
                     totalStatus = HttpStatusCode.OK,
                     filteredStatus = HttpStatusCode.OK,
                     total = DEFAULT_TOTAL_COUNT,
                     filteredIsNonTrivialSubset = true,
                 ),
                 actual = KeywordFilterSnapshot(
-                    brandNameLongEnough = sampleBrandName.length >= KEYWORD_PREFIX_LENGTH,
+                    brandNameLongEnough = brandNameSnapshot.brandName.orEmpty().length >= KEYWORD_PREFIX_LENGTH,
+                    detailStatus = brandNameSnapshot.status,
                     totalStatus = totalResponse.status,
                     filteredStatus = filteredResponse.status,
                     total = total,
-                    filteredIsNonTrivialSubset = filtered in MIN_FILTERED_COUNT until total,
+                    filteredIsNonTrivialSubset = total?.let { totalCount ->
+                        filtered?.let { filteredCount -> filteredCount in MIN_FILTERED_COUNT until totalCount }
+                    } == true,
                 ),
                 message = "fixture-derived keyword prefix must filter default $DEFAULT_TOTAL_COUNT to a non-trivial " +
                     "subset that contains drug_0001 plus at least one other drug " +
@@ -78,25 +80,28 @@ class DrugModuleKeywordTest {
 
     private data class KeywordFilterSnapshot(
         val brandNameLongEnough: Boolean,
+        val detailStatus: HttpStatusCode,
         val totalStatus: HttpStatusCode,
         val filteredStatus: HttpStatusCode,
-        val total: Int,
+        val total: Int?,
         val filteredIsNonTrivialSubset: Boolean,
     )
 
-    private suspend fun HttpResponse.totalCount(): Int {
+    private data class BrandNameSnapshot(
+        val status: HttpStatusCode,
+        val brandName: String?,
+    )
+
+    private suspend fun HttpResponse.totalCount(): Int? {
         val body = json.parseToJsonElement(string = bodyAsText()).jsonObject
-        val totalCount = body["total_count"]?.jsonPrimitive?.content?.toInt()
-        assertNotNull(actual = totalCount, message = "response must include total_count")
-        return totalCount
+        return body["total_count"]?.jsonPrimitive?.content?.toIntOrNull()
     }
 
-    private suspend fun HttpResponse.extractBrandName(): String {
-        assertEquals(expected = HttpStatusCode.OK, actual = status)
+    private suspend fun HttpResponse.brandNameSnapshot(): BrandNameSnapshot {
         val body = json.parseToJsonElement(string = bodyAsText()).jsonObject
-        val brandName = body["brand_name"]?.jsonPrimitive?.content
-        assertNotNull(actual = brandName, message = "drug detail must expose brand_name to derive keyword")
-        assertTrue(actual = brandName.isNotBlank(), message = "brand_name must be non-blank to be a usable keyword")
-        return brandName
+        return BrandNameSnapshot(
+            status = status,
+            brandName = body["brand_name"]?.jsonPrimitive?.content,
+        )
     }
 }

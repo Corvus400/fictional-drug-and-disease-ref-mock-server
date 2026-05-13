@@ -19,8 +19,6 @@ import kotlinx.serialization.json.jsonPrimitive
 import java.net.URLEncoder
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
 
 /**
  * Phase 11-10b の Red 駆動テスト: `/diseases` ハンドラに `keyword` / `keyword_match` /
@@ -41,17 +39,28 @@ class DiseaseModuleKeywordTest {
     fun `GET diseases with non-matching keyword returns total_count 0 instead of full set`() = testApplication {
         application { module() }
 
-        val total = client.get(urlString = "/v1/diseases?page_size=100").totalCount()
+        val total = client.get(urlString = "/v1/diseases?page_size=100").totalCountSnapshot()
         val filtered =
             client.get(
                 urlString = "/v1/diseases?keyword=zzznotexistzzz" +
                     "&keyword_target=name&keyword_match=partial&page_size=100",
-            ).totalCount()
+            ).totalCountSnapshot()
 
         assertEquals(
-            expected = NonMatchingKeywordSnapshot(defaultScenarioPopulated = true, filteredCount = 0),
-            actual = NonMatchingKeywordSnapshot(defaultScenarioPopulated = total > 0, filteredCount = filtered),
-            message = "non-matching keyword must filter total to 0 (filtered=$filtered total=$total)",
+            expected = NonMatchingKeywordSnapshot(
+                defaultStatus = HttpStatusCode.OK,
+                filteredStatus = HttpStatusCode.OK,
+                defaultScenarioPopulated = true,
+                filteredCount = 0,
+            ),
+            actual = NonMatchingKeywordSnapshot(
+                defaultStatus = total.status,
+                filteredStatus = filtered.status,
+                defaultScenarioPopulated = total.totalCount?.let { it > 0 } == true,
+                filteredCount = filtered.totalCount,
+            ),
+            message = "non-matching keyword must filter total to 0 " +
+                "(filtered=${filtered.totalCount} total=${total.totalCount})",
         )
     }
 
@@ -73,12 +82,12 @@ class DiseaseModuleKeywordTest {
             }
         }
 
-        val total = response.totalCount()
+        val total = response.totalCountSnapshot()
         assertEquals(
-            expected = 80,
-            actual = total,
+            expected = ScenarioFallbackSnapshot(responseStatus = HttpStatusCode.OK, totalCount = 80),
+            actual = ScenarioFallbackSnapshot(responseStatus = total.status, totalCount = total.totalCount),
             message = "unknown X-Mock-Scenario must fall back to default (80 items), " +
-                "not return empty (got total=$total)",
+                "not return empty (got total=${total.totalCount})",
         )
     }
 
@@ -87,7 +96,7 @@ class DiseaseModuleKeywordTest {
      * 実在 keyword でのヒット件数が `MIN_FILTERED_COUNT until DEFAULT_TOTAL_COUNT`
      * の範囲で正しく返ることを確認する。
      *
-     * keyword は `knownDiseaseKeyword()` 経由で default シナリオ先頭エントリの `name`
+     * keyword は `knownDiseaseKeywordSnapshot()` 経由で default シナリオ先頭エントリの `name`
      * 先頭 [KEYWORD_PREFIX_LENGTH] 文字から動的に派生させる (SSOT)。fixmerge レキシコン
      * 由来で fixture 名は起動時生成のためハードコードに耐えない。
      *
@@ -114,28 +123,38 @@ class DiseaseModuleKeywordTest {
             setBody(body = """{"state": "default"}""")
         }
 
-        val unfilteredCount = client.get(urlString = "/v1/diseases?page_size=100").totalCount()
-        val keyword = knownDiseaseKeyword(client = client)
-        val encodedKeyword = URLEncoder.encode(keyword, Charsets.UTF_8)
+        val unfilteredCount = client.get(urlString = "/v1/diseases?page_size=100").totalCountSnapshot()
+        val keyword = knownDiseaseKeywordSnapshot(client = client)
+        val encodedKeyword = URLEncoder.encode(keyword.keyword.orEmpty(), Charsets.UTF_8)
         val response = client.get(
             urlString = "/v1/diseases?keyword=$encodedKeyword" +
                 "&keyword_target=name&keyword_match=partial&page_size=100",
         )
-        val filteredCount = response.totalCount()
+        val filteredCount = response.totalCountSnapshot()
 
         assertEquals(
             expected = PositiveKeywordSnapshot(
+                unfilteredStatus = HttpStatusCode.OK,
                 unfilteredCount = DEFAULT_TOTAL_COUNT,
+                keywordSourceStatus = HttpStatusCode.OK,
+                keywordSourceHasName = true,
+                keywordSourceKeywordNonEmpty = true,
                 responseStatus = HttpStatusCode.OK,
                 filteredCountInRange = true,
             ),
             actual = PositiveKeywordSnapshot(
-                unfilteredCount = unfilteredCount,
-                responseStatus = response.status,
-                filteredCountInRange = filteredCount in MIN_FILTERED_COUNT until DEFAULT_TOTAL_COUNT,
+                unfilteredStatus = unfilteredCount.status,
+                unfilteredCount = unfilteredCount.totalCount,
+                keywordSourceStatus = keyword.status,
+                keywordSourceHasName = keyword.firstName != null,
+                keywordSourceKeywordNonEmpty = keyword.keyword?.isNotEmpty() == true,
+                responseStatus = filteredCount.status,
+                filteredCountInRange = filteredCount.totalCount?.let {
+                    it in MIN_FILTERED_COUNT until DEFAULT_TOTAL_COUNT
+                } == true,
             ),
-            message = "keyword=$keyword must filter default scenario count to " +
-                "$MIN_FILTERED_COUNT until $DEFAULT_TOTAL_COUNT (got $filteredCount)",
+            message = "keyword=${keyword.keyword} must filter default scenario count to " +
+                "$MIN_FILTERED_COUNT until $DEFAULT_TOTAL_COUNT (got ${filteredCount.totalCount})",
         )
 
         client.post(urlString = "/__admin/reset")
@@ -183,30 +202,25 @@ class DiseaseModuleKeywordTest {
      * 文字を抜粋する。`keyword_target=name` + `keyword_match=partial` 検索が抽出元の
      * 疾患を必ずヒットさせるため `total_count >= 1` を保証する。
      */
-    private suspend fun knownDiseaseKeyword(client: HttpClient): String {
+    private suspend fun knownDiseaseKeywordSnapshot(client: HttpClient): KeywordSourceSnapshot {
         val response = client.get(urlString = "/v1/diseases?page_size=1")
-        assertEquals(expected = HttpStatusCode.OK, actual = response.status)
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
         val firstName = body["items"]
             ?.jsonArray
             ?.firstOrNull()
             ?.jsonObject?.get(key = "name")
             ?.jsonPrimitive?.content
-        assertNotNull(actual = firstName, message = "default scenario must have at least one disease item")
-        val keyword = firstName.take(n = KEYWORD_PREFIX_LENGTH)
-        assertTrue(
-            actual = keyword.isNotEmpty(),
-            message = "first disease name must be non-empty (got '$firstName')",
+        return KeywordSourceSnapshot(
+            status = response.status,
+            firstName = firstName,
+            keyword = firstName?.take(n = KEYWORD_PREFIX_LENGTH),
         )
-        return keyword
     }
 
-    private suspend fun HttpResponse.totalCount(): Int {
-        assertEquals(expected = HttpStatusCode.OK, actual = status)
+    private suspend fun HttpResponse.totalCountSnapshot(): TotalCountSnapshot {
         val body = json.parseToJsonElement(string = bodyAsText()).jsonObject
         val totalCount = body["total_count"]?.jsonPrimitive?.content?.toIntOrNull()
-        assertNotNull(actual = totalCount, message = "response body must have a numeric total_count")
-        return totalCount
+        return TotalCountSnapshot(status = status, totalCount = totalCount)
     }
 
     companion object {
@@ -222,13 +236,35 @@ class DiseaseModuleKeywordTest {
     )
 
     private data class NonMatchingKeywordSnapshot(
+        val defaultStatus: HttpStatusCode,
+        val filteredStatus: HttpStatusCode,
         val defaultScenarioPopulated: Boolean,
-        val filteredCount: Int,
+        val filteredCount: Int?,
     )
 
     private data class PositiveKeywordSnapshot(
-        val unfilteredCount: Int,
+        val unfilteredStatus: HttpStatusCode,
+        val unfilteredCount: Int?,
+        val keywordSourceStatus: HttpStatusCode,
+        val keywordSourceHasName: Boolean,
+        val keywordSourceKeywordNonEmpty: Boolean,
         val responseStatus: HttpStatusCode,
         val filteredCountInRange: Boolean,
+    )
+
+    private data class ScenarioFallbackSnapshot(
+        val responseStatus: HttpStatusCode,
+        val totalCount: Int?,
+    )
+
+    private data class KeywordSourceSnapshot(
+        val status: HttpStatusCode,
+        val firstName: String?,
+        val keyword: String?,
+    )
+
+    private data class TotalCountSnapshot(
+        val status: HttpStatusCode,
+        val totalCount: Int?,
     )
 }
