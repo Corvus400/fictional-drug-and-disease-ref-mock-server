@@ -37,6 +37,7 @@ object DiseaseMedicalVocabulary {
         if (chapter != null) {
             EtiologyVocabulary.resolveOrNull(key = key, chapter = chapter, seed = seed)?.let { return it }
             DiagnosticVocabulary.resolveOrNull(key = key, chapter = chapter, seed = seed)?.let { return it }
+            TreatmentVocabulary.resolveOrNull(key = key, chapter = chapter, seed = seed)?.let { return it }
         }
         if (key in SYMPTOM_KEYS) {
             if (chapter != null) {
