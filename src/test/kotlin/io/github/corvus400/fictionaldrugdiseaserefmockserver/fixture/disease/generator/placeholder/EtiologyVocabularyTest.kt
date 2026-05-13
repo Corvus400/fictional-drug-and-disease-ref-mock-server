@@ -51,7 +51,7 @@ class EtiologyVocabularyTest {
     @Test
     fun `disease context resolves overview keys from chapter vocabulary`() {
         EtiologyVocabulary.keys.forEach { key ->
-            val entries = EtiologyVocabulary.entriesFor(key = key, chapter = Icd10Chapter.CHAPTER_X) ?: emptyList()
+            val entries = EtiologyVocabulary.entriesFor(key = key, chapter = Icd10Chapter.CHAPTER_X).orEmpty()
             val resolved =
                 DiseaseMedicalVocabulary.resolve(
                     key = key,
@@ -75,7 +75,7 @@ class EtiologyVocabularyTest {
 
         assertFalse(
             actual =
-            resolved in (EtiologyVocabulary.entriesFor("etiologyCategory", Icd10Chapter.CHAPTER_X) ?: emptyList())
+            resolved in EtiologyVocabulary.entriesFor("etiologyCategory", Icd10Chapter.CHAPTER_X).orEmpty()
         )
     }
 

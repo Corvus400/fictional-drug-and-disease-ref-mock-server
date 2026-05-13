@@ -29,7 +29,7 @@ class SeverityVocabularyTest {
     @Test
     fun `disease context resolves severity keys from chapter vocabulary`() {
         SeverityVocabulary.keys.forEach { key ->
-            val entries = SeverityVocabulary.entriesFor(key = key, chapter = Icd10Chapter.CHAPTER_XIII) ?: emptyList()
+            val entries = SeverityVocabulary.entriesFor(key = key, chapter = Icd10Chapter.CHAPTER_XIII).orEmpty()
             val resolved =
                 DiseaseMedicalVocabulary.resolve(
                     key = key,

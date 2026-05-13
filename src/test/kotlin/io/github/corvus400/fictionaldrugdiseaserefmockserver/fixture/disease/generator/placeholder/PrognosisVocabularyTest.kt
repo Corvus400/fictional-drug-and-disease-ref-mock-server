@@ -49,7 +49,7 @@ class PrognosisVocabularyTest {
     @Test
     fun `disease context resolves prognosis keys from chapter vocabulary`() {
         PrognosisVocabulary.keys.forEach { key ->
-            val entries = PrognosisVocabulary.entriesFor(key = key, chapter = Icd10Chapter.CHAPTER_IX) ?: emptyList()
+            val entries = PrognosisVocabulary.entriesFor(key = key, chapter = Icd10Chapter.CHAPTER_IX).orEmpty()
             val resolved =
                 DiseaseMedicalVocabulary.resolve(
                     key = key,
