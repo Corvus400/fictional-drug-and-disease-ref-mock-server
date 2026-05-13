@@ -53,8 +53,16 @@ class DiseasePlaceholderDictionaryTest {
         val dict = buildDict()
         val first = dict.resolve("disease", seed = 0L, context = DiseaseRenderContext(selfName = "A"))
         val second = dict.resolve("disease", seed = 0L, context = DiseaseRenderContext(selfName = "B"))
-        assertEquals("A", first)
-        assertEquals("B", second)
+        assertEquals(
+            "A",
+            first,
+            "contract assertion failed"
+        )
+        assertEquals(
+            "B",
+            second,
+            "contract assertion failed"
+        )
     }
 
     @Test

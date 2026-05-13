@@ -49,8 +49,16 @@ class DrugFinalOverridesTest {
         val drugs = generateDrugs()
         val drug0079 = drugs.first { it.id == "drug_0079" }
 
-        assertNotEquals("対魔女兵器 (架空分類)", drug0079.therapeuticCategoryName)
-        assertNotEquals("魔女因子研究所", drug0079.manufacturer)
+        assertNotEquals(
+            "対魔女兵器 (架空分類)",
+            drug0079.therapeuticCategoryName,
+            "contract assertion failed"
+        )
+        assertNotEquals(
+            "魔女因子研究所",
+            drug0079.manufacturer,
+            "contract assertion failed"
+        )
     }
 
     @Test

@@ -43,10 +43,17 @@ class AdminRoutesTest {
 
         val response = client.get("/__admin/configs")
 
-        assertEquals(HttpStatusCode.OK, response.status)
+        assertEquals(
+            HttpStatusCode.OK,
+            response.status,
+            "contract assertion failed"
+        )
         val body = json.decodeFromString<JsonObject>(response.bodyAsText())
         // 初期状態では空のオブジェクトまたは設定されたオーバーライドが返る
-        assertNotNull(body)
+        assertNotNull(
+            body,
+            "contract assertion failed"
+        )
     }
 
     @Test

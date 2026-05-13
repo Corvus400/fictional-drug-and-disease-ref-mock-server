@@ -8,11 +8,19 @@ class DiseaseCountryMappingTest {
     @Test
     fun `all 22 ICD10 chapters map by ordinal modulo 14`() {
         val countries = Country.entries
-        assertEquals(14, countries.size)
+        assertEquals(
+            14,
+            countries.size,
+            "contract assertion failed"
+        )
         for (chapter in Icd10Chapter.entries) {
             val expected = countries[chapter.ordinal % countries.size]
             val actual = DiseaseCountryMapping.of(chapter = chapter)
-            assertEquals(expected, actual, "chapter=$chapter (ordinal=${chapter.ordinal})")
+            assertEquals(
+                expected,
+                actual,
+                "chapter=$chapter (ordinal=${chapter.ordinal})"
+            )
         }
     }
 

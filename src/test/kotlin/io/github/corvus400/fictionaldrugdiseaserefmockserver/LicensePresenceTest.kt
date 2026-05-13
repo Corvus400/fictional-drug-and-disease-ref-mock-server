@@ -10,7 +10,13 @@ class LicensePresenceTest {
     fun `repository has MIT LICENSE`() {
         val licensePath = Path.of("LICENSE")
 
-        assertTrue(Files.exists(licensePath), "LICENSE must exist")
-        assertTrue(Files.readString(licensePath).contains("MIT License"))
+        assertTrue(
+            Files.exists(licensePath),
+            "LICENSE must exist"
+        )
+        assertTrue(
+            Files.readString(licensePath).contains("MIT License"),
+            "contract assertion failed"
+        )
     }
 }

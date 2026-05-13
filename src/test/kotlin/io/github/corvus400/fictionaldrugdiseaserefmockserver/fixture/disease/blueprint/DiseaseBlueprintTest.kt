@@ -18,12 +18,36 @@ class DiseaseBlueprintTest {
                 isMentalDisorder = false,
                 isRareDisease = false,
             )
-        assertEquals(0, blueprint.index)
-        assertEquals(Icd10Chapter.CHAPTER_I, blueprint.icd10Chapter)
-        assertEquals(Chronicity.ACUTE, blueprint.chronicity)
-        assertEquals(true, blueprint.isInfectious)
-        assertEquals(false, blueprint.isMentalDisorder)
-        assertEquals(false, blueprint.isRareDisease)
+        assertEquals(
+            0,
+            blueprint.index,
+            "contract assertion failed"
+        )
+        assertEquals(
+            Icd10Chapter.CHAPTER_I,
+            blueprint.icd10Chapter,
+            "contract assertion failed"
+        )
+        assertEquals(
+            Chronicity.ACUTE,
+            blueprint.chronicity,
+            "contract assertion failed"
+        )
+        assertEquals(
+            true,
+            blueprint.isInfectious,
+            "contract assertion failed"
+        )
+        assertEquals(
+            false,
+            blueprint.isMentalDisorder,
+            "contract assertion failed"
+        )
+        assertEquals(
+            false,
+            blueprint.isRareDisease,
+            "contract assertion failed"
+        )
     }
 
     @Test

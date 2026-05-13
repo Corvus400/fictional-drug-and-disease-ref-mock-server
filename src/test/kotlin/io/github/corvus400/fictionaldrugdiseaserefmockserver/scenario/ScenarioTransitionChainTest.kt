@@ -21,8 +21,16 @@ class ScenarioTransitionChainTest {
             scenarios = listOf("first", "second", "third"),
         )
         val advanced = chain.advance()
-        assertEquals("second", advanced.currentScenario)
-        assertEquals(1, advanced.currentIndex)
+        assertEquals(
+            "second",
+            advanced.currentScenario,
+            "contract assertion failed"
+        )
+        assertEquals(
+            1,
+            advanced.currentIndex,
+            "contract assertion failed"
+        )
     }
 
     @Test
@@ -31,8 +39,16 @@ class ScenarioTransitionChainTest {
             scenarios = listOf("first", "second", "third"),
         )
         val advanced = chain.advance().advance()
-        assertEquals("third", advanced.currentScenario)
-        assertEquals(2, advanced.currentIndex)
+        assertEquals(
+            "third",
+            advanced.currentScenario,
+            "contract assertion failed"
+        )
+        assertEquals(
+            2,
+            advanced.currentIndex,
+            "contract assertion failed"
+        )
     }
 
     @Test
@@ -41,8 +57,16 @@ class ScenarioTransitionChainTest {
             scenarios = listOf("first", "second"),
         )
         val advanced = chain.advance().advance().advance()
-        assertEquals("second", advanced.currentScenario)
-        assertEquals(1, advanced.currentIndex)
+        assertEquals(
+            "second",
+            advanced.currentScenario,
+            "contract assertion failed"
+        )
+        assertEquals(
+            1,
+            advanced.currentIndex,
+            "contract assertion failed"
+        )
     }
 
     @Test
@@ -50,8 +74,14 @@ class ScenarioTransitionChainTest {
         val chain = ScenarioTransitionChain(
             scenarios = listOf("first", "second", "third"),
         )
-        assertFalse(chain.isAtEnd)
-        assertFalse(chain.advance().isAtEnd)
+        assertFalse(
+            chain.isAtEnd,
+            "contract assertion failed"
+        )
+        assertFalse(
+            chain.advance().isAtEnd,
+            "contract assertion failed"
+        )
     }
 
     @Test
@@ -68,12 +98,26 @@ class ScenarioTransitionChainTest {
         val chain = ScenarioTransitionChain(
             scenarios = listOf("only"),
         )
-        assertEquals("only", chain.currentScenario)
-        assertTrue(chain.isAtEnd)
+        assertEquals(
+            "only",
+            chain.currentScenario,
+            "contract assertion failed"
+        )
+        assertTrue(
+            chain.isAtEnd,
+            "contract assertion failed"
+        )
 
         val advanced = chain.advance()
-        assertEquals("only", advanced.currentScenario)
-        assertTrue(advanced.isAtEnd)
+        assertEquals(
+            "only",
+            advanced.currentScenario,
+            "contract assertion failed"
+        )
+        assertTrue(
+            advanced.isAtEnd,
+            "contract assertion failed"
+        )
     }
 
     @Test
@@ -82,9 +126,25 @@ class ScenarioTransitionChainTest {
             scenarios = listOf("first", "second"),
         )
         val advanced = chain.advance()
-        assertEquals("first", chain.currentScenario)
-        assertEquals(0, chain.currentIndex)
-        assertEquals("second", advanced.currentScenario)
-        assertEquals(1, advanced.currentIndex)
+        assertEquals(
+            "first",
+            chain.currentScenario,
+            "contract assertion failed"
+        )
+        assertEquals(
+            0,
+            chain.currentIndex,
+            "contract assertion failed"
+        )
+        assertEquals(
+            "second",
+            advanced.currentScenario,
+            "contract assertion failed"
+        )
+        assertEquals(
+            1,
+            advanced.currentIndex,
+            "contract assertion failed"
+        )
     }
 }

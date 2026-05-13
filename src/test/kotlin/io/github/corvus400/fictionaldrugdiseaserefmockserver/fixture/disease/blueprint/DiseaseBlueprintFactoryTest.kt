@@ -40,8 +40,16 @@ class DiseaseBlueprintFactoryTest {
                 Icd10Chapter.CHAPTER_XXI to 1,
                 Icd10Chapter.CHAPTER_XXII to 1,
             )
-        assertEquals(expected, distribution)
-        assertEquals(22, distribution.keys.size)
+        assertEquals(
+            expected,
+            distribution,
+            "contract assertion failed"
+        )
+        assertEquals(
+            22,
+            distribution.keys.size,
+            "contract assertion failed"
+        )
     }
 
     @Test

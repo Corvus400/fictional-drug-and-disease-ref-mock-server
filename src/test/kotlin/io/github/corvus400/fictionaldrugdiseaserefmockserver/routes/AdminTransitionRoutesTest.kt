@@ -47,12 +47,22 @@ class AdminTransitionRoutesTest {
             )
         }
 
-        assertEquals(HttpStatusCode.OK, response.status)
+        assertEquals(
+            HttpStatusCode.OK,
+            response.status,
+            "contract assertion failed"
+        )
 
         val getResponse = client.get("/__admin/transitions")
         val body = json.decodeFromString<JsonObject>(getResponse.bodyAsText())
-        assertTrue(body.containsKey("drugList"))
-        assertTrue(body.containsKey("diseaseList"))
+        assertTrue(
+            body.containsKey("drugList"),
+            "contract assertion failed"
+        )
+        assertTrue(
+            body.containsKey("diseaseList"),
+            "contract assertion failed"
+        )
 
         client.post("/__admin/reset")
     }

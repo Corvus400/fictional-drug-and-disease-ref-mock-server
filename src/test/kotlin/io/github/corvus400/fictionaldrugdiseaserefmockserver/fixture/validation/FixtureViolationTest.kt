@@ -20,8 +20,16 @@ class FixtureViolationTest {
             message = "size >= 1",
         )
 
-        assertEquals(expected = first, actual = second)
-        assertEquals(expected = first.hashCode(), actual = second.hashCode())
+        assertEquals(
+            expected = first,
+            actual = second,
+            "contract assertion failed"
+        )
+        assertEquals(
+            expected = first.hashCode(),
+            actual = second.hashCode(),
+            "contract assertion failed"
+        )
     }
 
     @Test
@@ -35,10 +43,30 @@ class FixtureViolationTest {
 
         val copied = original.copy(entityType = "disease", entityId = "disease_0001")
 
-        assertEquals(expected = "disease", actual = copied.entityType)
-        assertEquals(expected = "disease_0001", actual = copied.entityId)
-        assertEquals(expected = original.field, actual = copied.field)
-        assertEquals(expected = original.message, actual = copied.message)
-        assertNotEquals(illegal = original, actual = copied)
+        assertEquals(
+            expected = "disease",
+            actual = copied.entityType,
+            "contract assertion failed"
+        )
+        assertEquals(
+            expected = "disease_0001",
+            actual = copied.entityId,
+            "contract assertion failed"
+        )
+        assertEquals(
+            expected = original.field,
+            actual = copied.field,
+            "contract assertion failed"
+        )
+        assertEquals(
+            expected = original.message,
+            actual = copied.message,
+            "contract assertion failed"
+        )
+        assertNotEquals(
+            illegal = original,
+            actual = copied,
+            "contract assertion failed"
+        )
     }
 }

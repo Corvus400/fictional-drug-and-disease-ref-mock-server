@@ -7,9 +7,21 @@ import kotlin.test.assertFailsWith
 class DiseaseSortKeyFromQueryTest {
     @Test
     fun `fromQuery maps canonical query strings to matching enum values`() {
-        assertEquals(DiseaseSortKey.REVISED_AT_DESC, DiseaseSortKey.fromQuery("-revised_at"))
-        assertEquals(DiseaseSortKey.NAME_KANA_ASC, DiseaseSortKey.fromQuery("name_kana"))
-        assertEquals(DiseaseSortKey.ICD10_CHAPTER_ASC, DiseaseSortKey.fromQuery("icd10_chapter"))
+        assertEquals(
+            DiseaseSortKey.REVISED_AT_DESC,
+            DiseaseSortKey.fromQuery("-revised_at"),
+            "contract assertion failed"
+        )
+        assertEquals(
+            DiseaseSortKey.NAME_KANA_ASC,
+            DiseaseSortKey.fromQuery("name_kana"),
+            "contract assertion failed"
+        )
+        assertEquals(
+            DiseaseSortKey.ICD10_CHAPTER_ASC,
+            DiseaseSortKey.fromQuery("icd10_chapter"),
+            "contract assertion failed"
+        )
     }
 
     @Test

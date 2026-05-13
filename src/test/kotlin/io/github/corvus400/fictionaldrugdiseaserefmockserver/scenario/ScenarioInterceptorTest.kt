@@ -32,16 +32,27 @@ class ScenarioInterceptorTest {
             contentType(ContentType.Application.Json)
             setBody("""{"state": "default"}""")
         }
-        assertEquals(HttpStatusCode.OK, adminResponse.status)
+        assertEquals(
+            HttpStatusCode.OK,
+            adminResponse.status,
+            "contract assertion failed"
+        )
 
         val response = client.get("/v1/drugs") {
             header("X-Mock-Scenario", "empty")
         }
 
-        assertEquals(HttpStatusCode.OK, response.status)
+        assertEquals(
+            HttpStatusCode.OK,
+            response.status,
+            "contract assertion failed"
+        )
         val body = json.decodeFromString<JsonObject>(response.bodyAsText())
         val items = body["items"]?.jsonArray
-        assertNotNull(items)
+        assertNotNull(
+            items,
+            "contract assertion failed"
+        )
         assertEquals(
             expected = 0,
             actual = items.size,
@@ -61,11 +72,19 @@ class ScenarioInterceptorTest {
             contentType(ContentType.Application.Json)
             setBody("""{"state": "empty"}""")
         }
-        assertEquals(HttpStatusCode.OK, adminResponse.status)
+        assertEquals(
+            HttpStatusCode.OK,
+            adminResponse.status,
+            "contract assertion failed"
+        )
 
         val response = client.get("/v1/drugs")
 
-        assertEquals(HttpStatusCode.OK, response.status)
+        assertEquals(
+            HttpStatusCode.OK,
+            response.status,
+            "contract assertion failed"
+        )
         val body = json.decodeFromString<JsonObject>(response.bodyAsText())
         assertEquals(
             expected = 0,

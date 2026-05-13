@@ -128,9 +128,17 @@ class DrugGeneratorTest {
             sampleBlueprint.copy(index = 2, atcFirstLetter = 'N'),
         )
         val drugs = generator.generate(blueprints = blueprints)
-        assertEquals(3, drugs.size)
+        assertEquals(
+            3,
+            drugs.size,
+            "contract assertion failed"
+        )
         for ((i, drug) in drugs.withIndex()) {
-            assertEquals("drug_${i.toString().padStart(4, '0')}", drug.id)
+            assertEquals(
+                "drug_${i.toString().padStart(4, '0')}",
+                drug.id,
+                "contract assertion failed"
+            )
         }
     }
 
@@ -153,13 +161,36 @@ class DrugGeneratorTest {
         val blueprints = DrugBlueprintFactory.build()
         val first = buildFreshGenerator().generate(blueprints = blueprints)
         val second = buildFreshGenerator().generate(blueprints = blueprints)
-        assertEquals(blueprints.size, first.size)
-        assertEquals(first, second)
-        assertEquals(first.size, first.map { it.id }.toSet().size, "drug ids are not unique")
+        assertEquals(
+            blueprints.size,
+            first.size,
+            "contract assertion failed"
+        )
+        assertEquals(
+            first,
+            second,
+            "contract assertion failed"
+        )
+        assertEquals(
+            first.size,
+            first.map {
+                it.id
+            }.toSet().size,
+            "drug ids are not unique"
+        )
         for (drug in first) {
-            assertTrue(drug.brandName.isNotBlank(), "brandName blank for ${drug.id}")
-            assertTrue(drug.genericName.isNotBlank(), "genericName blank for ${drug.id}")
-            assertTrue(drug.manufacturer.isNotBlank(), "manufacturer blank for ${drug.id}")
+            assertTrue(
+                drug.brandName.isNotBlank(),
+                "brandName blank for ${drug.id}"
+            )
+            assertTrue(
+                drug.genericName.isNotBlank(),
+                "genericName blank for ${drug.id}"
+            )
+            assertTrue(
+                drug.manufacturer.isNotBlank(),
+                "manufacturer blank for ${drug.id}"
+            )
         }
     }
 
@@ -207,8 +238,15 @@ class DrugGeneratorTest {
             DrugBlueprintFactory.build().first { it.dosageForm == DosageForm.INJECTION_FORM }
         val drug = generator.generate(blueprint = injectionBlueprint)
 
-        assertEquals(RouteOfAdministration.INJECTION_ROUTE, drug.routeOfAdministration)
-        assertNotNull(drug.pharmacokinetics, "pharmacokinetics must be non-null for injection")
+        assertEquals(
+            RouteOfAdministration.INJECTION_ROUTE,
+            drug.routeOfAdministration,
+            "contract assertion failed"
+        )
+        assertNotNull(
+            drug.pharmacokinetics,
+            "pharmacokinetics must be non-null for injection"
+        )
         assertTrue(
             drug.administrationPrecautions.isNotEmpty(),
             "administrationPrecautions must be non-empty for injection",
