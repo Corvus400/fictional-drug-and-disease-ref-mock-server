@@ -41,6 +41,10 @@ class ClinicalSeedBucketCoherenceTest {
         val (diseases, _) = generateFixtures()
         val severityLabels =
             diseases.flatMap { disease -> disease.severityGrading?.grades.orEmpty().map { grade -> grade.label } }
+        val severityActions =
+            diseases.flatMap { disease ->
+                disease.severityGrading?.grades.orEmpty().mapNotNull { grade -> grade.recommendedAction }
+            }
         val treatmentCategories =
             diseases.flatMap { disease ->
                 disease.treatments.pharmacological.map { treatment -> treatment.drugCategory }
@@ -55,6 +59,12 @@ class ClinicalSeedBucketCoherenceTest {
             }
 
         assertEquals(expected = null, actual = severityLabels.firstOrNull { label -> NUMBERED_GRADE.matches(label) })
+        assertEquals(
+            expected = null,
+            actual = severityActions.firstOrNull { action ->
+                NUMBERED_GRADE.containsMatchIn(action)
+            }
+        )
         assertEquals(
             expected = null,
             actual = treatmentCategories.firstOrNull { category ->
