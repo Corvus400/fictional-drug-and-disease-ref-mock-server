@@ -25,17 +25,31 @@ class DiseaseFinalOverridesTest {
         val diseases = generateDiseases()
         val disease0079 = diseases.first { it.id == "disease_0079" }
 
-        assertEquals("マジョインシショウコウグン", disease0079.nameKana)
-        assertTrue(disease0079.nameEnglish?.contains("Witch Factor") == true)
-        assertTrue(disease0079.synonyms.any { synonym -> synonym.contains("魔女化症") })
-        assertTrue(disease0079.summary.contains("魔女因子"))
-        assertEquals(false, disease0079.infectious)
-        assertEquals(Chronicity.CHRONIC, disease0079.chronicity)
-        assertTrue(disease0079.symptoms.mainSymptoms.size >= 3)
-        assertTrue(disease0079.requiredExams.isNotEmpty())
-        assertTrue(disease0079.prognosis?.contains("不可逆") == true)
-        assertTrue(disease0079.summary.endsWith("(架空)"))
-        assertTrue(DiseaseFixtureValidator.validate(diseases = diseases).isEmpty())
+        val violations = listOfNotNull(
+            "nameKana must be マジョインシショウコウグン but was ${disease0079.nameKana}"
+                .takeUnless { disease0079.nameKana == "マジョインシショウコウグン" },
+            "nameEnglish must contain Witch Factor".takeUnless {
+                disease0079.nameEnglish?.contains("Witch Factor") == true
+            },
+            "synonyms must contain 魔女化症"
+                .takeUnless { disease0079.synonyms.any { synonym -> synonym.contains("魔女化症") } },
+            "summary must contain 魔女因子".takeUnless { disease0079.summary.contains("魔女因子") },
+            "infectious must be false".takeUnless { !disease0079.infectious },
+            "chronicity must be CHRONIC but was ${disease0079.chronicity}"
+                .takeUnless { disease0079.chronicity == Chronicity.CHRONIC },
+            "mainSymptoms size must be >= 3 but was ${disease0079.symptoms.mainSymptoms.size}"
+                .takeUnless { disease0079.symptoms.mainSymptoms.size >= 3 },
+            "requiredExams must be non-empty".takeUnless { disease0079.requiredExams.isNotEmpty() },
+            "prognosis must contain 不可逆".takeUnless { disease0079.prognosis?.contains("不可逆") == true },
+            "summary must end with (架空)".takeUnless { disease0079.summary.endsWith("(架空)") },
+            "DiseaseFixtureValidator must pass but got ${DiseaseFixtureValidator.validate(diseases = diseases)}"
+                .takeUnless { DiseaseFixtureValidator.validate(diseases = diseases).isEmpty() },
+        )
+
+        assertTrue(
+            actual = violations.isEmpty(),
+            message = "disease_0079 narrative violations: $violations",
+        )
     }
 
     @Test
@@ -80,29 +94,47 @@ class DiseaseFinalOverridesTest {
     fun `witch factor syndrome should affect only female patients`() {
         val disease0079 = generateDiseases().first { it.id == "disease_0079" }
         val sexRatio = disease0079.epidemiology?.sexRatio
+        val actual = mapOf(
+            "maleRatio" to sexRatio?.maleRatio,
+            "femaleRatio" to sexRatio?.femaleRatio,
+            "noteContains少女" to (sexRatio?.note?.contains("少女") == true),
+        )
 
-        assertEquals(0, sexRatio?.maleRatio)
-        assertEquals(1, sexRatio?.femaleRatio)
-        assertTrue(sexRatio?.note?.contains("少女") == true)
+        assertEquals(
+            expected = mapOf("maleRatio" to 0, "femaleRatio" to 1, "noteContains少女" to true),
+            actual = actual,
+        )
     }
 
     @Test
     fun `witch factor syndrome should list stress and trauma as risk factors`() {
         val disease0079 = generateDiseases().first { it.id == "disease_0079" }
         val riskFactors = disease0079.epidemiology?.riskFactors.orEmpty()
+        val actual = mapOf(
+            "contains stress" to riskFactors.any { it.contains("ストレス") },
+            "contains trauma" to riskFactors.any { it.contains("トラウマ") },
+        )
 
-        assertTrue(riskFactors.any { it.contains("ストレス") })
-        assertTrue(riskFactors.any { it.contains("トラウマ") })
+        assertEquals(
+            expected = actual.keys.associateWith { true },
+            actual = actual,
+        )
     }
 
     @Test
     fun `witch factor syndrome should manifest at least five witch-specific main symptoms`() {
         val disease0079 = generateDiseases().first { it.id == "disease_0079" }
         val mainSymptoms = disease0079.symptoms.mainSymptoms
+        val actual = mapOf(
+            "sizeAtLeast5" to (mainSymptoms.size >= 5),
+            "contains殺人衝動" to mainSymptoms.any { it.contains("殺人衝動") },
+            "contains爪" to mainSymptoms.any { it.contains("爪") },
+        )
 
-        assertTrue(mainSymptoms.size >= 5)
-        assertTrue(mainSymptoms.any { it.contains("殺人衝動") })
-        assertTrue(mainSymptoms.any { it.contains("爪") })
+        assertEquals(
+            expected = actual.keys.associateWith { true },
+            actual = actual,
+        )
     }
 
     @Test
@@ -132,10 +164,20 @@ class DiseaseFinalOverridesTest {
     fun `witch factor syndrome imaging exam should observe physical witch transformation findings`() {
         val disease0079 = generateDiseases().first { it.id == "disease_0079" }
         val imagingExam = disease0079.requiredExams[2]
+        val actual = mapOf(
+            "name" to imagingExam.name,
+            "typicalFindingPrefix" to imagingExam.typicalFinding.substringBefore("の異常伸長"),
+            "typicalFindingContainsSkinCrack" to imagingExam.typicalFinding.contains("皮膚亀裂"),
+        )
 
-        assertEquals("身体魔女化所見観察", imagingExam.name)
-        assertEquals("爪", imagingExam.typicalFinding.substringBefore("の異常伸長"))
-        assertTrue(imagingExam.typicalFinding.contains("皮膚亀裂"))
+        assertEquals(
+            expected = mapOf(
+                "name" to "身体魔女化所見観察",
+                "typicalFindingPrefix" to "爪",
+                "typicalFindingContainsSkinCrack" to true,
+            ),
+            actual = actual,
+        )
     }
 
     @Test
@@ -150,19 +192,31 @@ class DiseaseFinalOverridesTest {
     fun `witch factor syndrome should be differentiated from primal witch and witch husk endpoint`() {
         val disease0079 = generateDiseases().first { it.id == "disease_0079" }
         val differentialText = disease0079.differentialDiagnoses.joinToString()
+        val actual = mapOf(
+            "size" to disease0079.differentialDiagnoses.size,
+            "containsPrimalWitch" to differentialText.contains("原初の魔女"),
+            "containsWitchHusk" to differentialText.contains("なれはて"),
+        )
 
-        assertEquals(2, disease0079.differentialDiagnoses.size)
-        assertTrue(differentialText.contains("原初の魔女"))
-        assertTrue(differentialText.contains("なれはて"))
+        assertEquals(
+            expected = mapOf("size" to 2, "containsPrimalWitch" to true, "containsWitchHusk" to true),
+            actual = actual,
+        )
     }
 
     @Test
     fun `witch factor syndrome complications should include full witch transformation and witch husk`() {
         val disease0079 = generateDiseases().first { it.id == "disease_0079" }
         val complicationsText = disease0079.complications.joinToString()
+        val actual = mapOf(
+            "containsFullWitchTransformation" to complicationsText.contains("完全魔女化"),
+            "containsWitchHusk" to complicationsText.contains("なれはて化"),
+        )
 
-        assertTrue(complicationsText.contains("完全魔女化"))
-        assertTrue(complicationsText.contains("なれはて化"))
+        assertEquals(
+            expected = actual.keys.associateWith { true },
+            actual = actual,
+        )
     }
 
     @Test
@@ -177,19 +231,31 @@ class DiseaseFinalOverridesTest {
     fun `witch factor syndrome prognosis should describe irreversibility tempered by witch factor depletion`() {
         val disease0079 = generateDiseases().first { it.id == "disease_0079" }
         val prognosis = disease0079.prognosis.orEmpty()
+        val actual = mapOf(
+            "containsIrreversible" to prognosis.contains("不可逆"),
+            "containsGreatWitchManifestation" to prognosis.contains("大魔女顕現"),
+            "containsWitchFactorDepletion" to prognosis.contains("魔女因子喪失"),
+        )
 
-        assertTrue(prognosis.contains("不可逆"))
-        assertTrue(prognosis.contains("大魔女顕現"))
-        assertTrue(prognosis.contains("魔女因子喪失"))
+        assertEquals(
+            expected = actual.keys.associateWith { true },
+            actual = actual,
+        )
     }
 
     @Test
     fun `witch factor syndrome prevention should target stress avoidance and pre 15 mental stability`() {
         val disease0079 = generateDiseases().first { it.id == "disease_0079" }
         val preventionText = disease0079.prevention.joinToString()
+        val actual = mapOf(
+            "containsStress" to preventionText.contains("ストレス"),
+            "containsAge15" to preventionText.contains("15 歳"),
+        )
 
-        assertTrue(preventionText.contains("ストレス"))
-        assertTrue(preventionText.contains("15 歳"))
+        assertEquals(
+            expected = actual.keys.associateWith { true },
+            actual = actual,
+        )
     }
 
     @Test
@@ -202,15 +268,25 @@ class DiseaseFinalOverridesTest {
     @Test
     fun `insomnia disease should reflect insomnia clinical details`() {
         val insomnia = generateDiseases().first { it.id == "disease_0022" }
+        val violations = listOfNotNull(
+            "nameKana must be フミンショウ but was ${insomnia.nameKana}"
+                .takeUnless { insomnia.nameKana == "フミンショウ" },
+            "nameEnglish must be Insomnia (fictional) but was ${insomnia.nameEnglish}"
+                .takeUnless { insomnia.nameEnglish == "Insomnia (fictional)" },
+            "summary must contain 睡眠".takeUnless { insomnia.summary.contains("睡眠") },
+            "mainSymptoms size must be >= 2 but was ${insomnia.symptoms.mainSymptoms.size}"
+                .takeUnless { insomnia.symptoms.mainSymptoms.size >= 2 },
+            "requiredExams must be non-empty".takeUnless { insomnia.requiredExams.isNotEmpty() },
+            "chronicity must be CHRONIC but was ${insomnia.chronicity}"
+                .takeUnless { insomnia.chronicity == Chronicity.CHRONIC },
+            "infectious must be false".takeUnless { !insomnia.infectious },
+            "summary must end with (架空)".takeUnless { insomnia.summary.endsWith("(架空)") },
+        )
 
-        assertEquals("フミンショウ", insomnia.nameKana)
-        assertEquals("Insomnia (fictional)", insomnia.nameEnglish)
-        assertTrue(insomnia.summary.contains("睡眠"))
-        assertTrue(insomnia.symptoms.mainSymptoms.size >= 2)
-        assertTrue(insomnia.requiredExams.isNotEmpty())
-        assertEquals(Chronicity.CHRONIC, insomnia.chronicity)
-        assertEquals(false, insomnia.infectious)
-        assertTrue(insomnia.summary.endsWith("(架空)"))
+        assertTrue(
+            actual = violations.isEmpty(),
+            message = "disease_0022 narrative violations: $violations",
+        )
     }
 
     @Test

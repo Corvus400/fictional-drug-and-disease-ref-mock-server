@@ -14,6 +14,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.DiagnosticCriteriaInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.SymptomInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.TreatmentInfo
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.Drug
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DosageForm
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RouteOfAdministration
@@ -42,17 +43,26 @@ class DrugGeneratorTest {
     @Test
     fun `generate returns a Drug with non-blank required name fields`() {
         val drug = generator.generate(blueprint = sampleBlueprint)
-        assertTrue(drug.id.isNotBlank())
-        assertTrue(drug.brandName.isNotBlank())
-        assertTrue(drug.brandNameKana.isNotBlank())
-        assertTrue(drug.genericName.isNotBlank())
-        assertTrue(drug.atcCode.isNotBlank())
-        assertTrue(drug.therapeuticCategoryName.isNotBlank())
-        assertTrue(drug.manufacturer.isNotBlank())
-        assertTrue(drug.composition.activeIngredient.isNotBlank())
-        assertTrue(drug.composition.inactiveIngredients.isNotEmpty())
-        val physicochemical = assertNotNull(drug.physicochemicalProperties)
-        assertTrue(physicochemical.genericNameEnglish.isNotBlank())
+        val violations = buildList {
+            addIf("id blank") { drug.id.isBlank() }
+            addIf("brandName blank") { drug.brandName.isBlank() }
+            addIf("brandNameKana blank") { drug.brandNameKana.isBlank() }
+            addIf("genericName blank") { drug.genericName.isBlank() }
+            addIf("atcCode blank") { drug.atcCode.isBlank() }
+            addIf("therapeuticCategoryName blank") { drug.therapeuticCategoryName.isBlank() }
+            addIf("manufacturer blank") { drug.manufacturer.isBlank() }
+            addIf("composition.activeIngredient blank") { drug.composition.activeIngredient.isBlank() }
+            addIf("composition.inactiveIngredients empty") { drug.composition.inactiveIngredients.isEmpty() }
+            addIf("physicochemicalProperties null") { drug.physicochemicalProperties == null }
+            addIf("physicochemicalProperties.genericNameEnglish blank") {
+                drug.physicochemicalProperties?.genericNameEnglish.isNullOrBlank()
+            }
+        }
+
+        assertTrue(
+            actual = violations.isEmpty(),
+            message = "Generated drug required name field violations: $violations",
+        )
     }
 
     @Test
@@ -183,53 +193,12 @@ class DrugGeneratorTest {
     fun `generate returns a Drug with all 38 top-level fields populated (non-null and non-empty)`() {
         val drug = generator.generate(blueprint = sampleBlueprint)
 
-        // 9 文字列フィールド: 非 blank
-        assertTrue(drug.id.isNotBlank(), "id blank")
-        assertTrue(drug.genericName.isNotBlank(), "genericName blank")
-        assertTrue(drug.brandName.isNotBlank(), "brandName blank")
-        assertTrue(drug.brandNameKana.isNotBlank(), "brandNameKana blank")
-        assertTrue(drug.atcCode.isNotBlank(), "atcCode blank")
-        val yjCode = assertNotNull(drug.yjCode, "yjCode null")
-        assertTrue(yjCode.isNotBlank(), "yjCode blank")
-        assertTrue(drug.therapeuticCategoryName.isNotBlank(), "therapeuticCategoryName blank")
-        assertTrue(drug.manufacturer.isNotBlank(), "manufacturer blank")
-        assertTrue(drug.revisedAt.isNotBlank(), "revisedAt blank")
-        assertTrue(drug.disclaimer.isNotBlank(), "disclaimer blank")
+        val violations = populatedFieldViolations(drug = drug)
 
-        // 10 非 null 構造フィールド
-        assertNotNull(drug.dosageForm, "dosageForm null")
-        assertNotNull(drug.routeOfAdministration, "routeOfAdministration null")
-        assertNotNull(drug.composition, "composition null")
-        assertNotNull(drug.dosage, "dosage null")
-        assertNotNull(drug.adverseReactions, "adverseReactions null")
-        assertNotNull(drug.interactions, "interactions null")
-        assertNotNull(drug.overdose, "overdose null")
-        assertNotNull(drug.pharmacokinetics, "pharmacokinetics null")
-        assertNotNull(drug.pharmacology, "pharmacology null")
-        assertNotNull(drug.physicochemicalProperties, "physicochemicalProperties null")
-
-        // 18 List フィールド: 非 empty
-        assertTrue(drug.regulatoryClass.isNotEmpty(), "regulatoryClass empty")
-        assertTrue(drug.warning.isNotEmpty(), "warning empty")
-        assertTrue(drug.contraindications.isNotEmpty(), "contraindications empty")
-        assertTrue(drug.indications.isNotEmpty(), "indications empty")
-        assertTrue(drug.indicationsRelatedPrecautions.isNotEmpty(), "indicationsRelatedPrecautions empty")
-        assertTrue(drug.dosageRelatedPrecautions.isNotEmpty(), "dosageRelatedPrecautions empty")
-        assertTrue(drug.importantPrecautions.isNotEmpty(), "importantPrecautions empty")
         assertTrue(
-            drug.precautionsForSpecificPopulations.isNotEmpty(),
-            "precautionsForSpecificPopulations empty",
+            actual = violations.isEmpty(),
+            message = "Generated drug populated-field violations: $violations",
         )
-        assertTrue(drug.effectsOnLabTests.isNotEmpty(), "effectsOnLabTests empty")
-        assertTrue(drug.administrationPrecautions.isNotEmpty(), "administrationPrecautions empty")
-        assertTrue(drug.otherPrecautions.isNotEmpty(), "otherPrecautions empty")
-        assertTrue(drug.clinicalResults.isNotEmpty(), "clinicalResults empty")
-        assertTrue(drug.handlingPrecautions.isNotEmpty(), "handlingPrecautions empty")
-        assertTrue(drug.approvalConditions.isNotEmpty(), "approvalConditions empty")
-        assertTrue(drug.packages.isNotEmpty(), "packages empty")
-        assertTrue(drug.references.isNotEmpty(), "references empty")
-        assertTrue(drug.insuranceNotes.isNotEmpty(), "insuranceNotes empty")
-        assertTrue(drug.relatedDiseaseIds.isNotEmpty(), "relatedDiseaseIds empty")
     }
 
     @Test
@@ -458,48 +427,32 @@ class DrugGeneratorTest {
     @Test
     fun `regulatory class counts are preserved across the full inventory after fixed overrides`() {
         val drugs = generator.generate(blueprints = DrugBlueprintFactory.build())
-        val prescriptionRequiredCount =
-            drugs.count { drug -> RegulatoryClass.PRESCRIPTION_REQUIRED in drug.regulatoryClass }
-        val psychotropic1Count =
-            drugs.count { drug -> RegulatoryClass.PSYCHOTROPIC_1 in drug.regulatoryClass }
-        val poisonCount =
-            drugs.count { drug -> RegulatoryClass.POISON in drug.regulatoryClass }
-        val biologicalCount =
-            drugs.count { drug -> RegulatoryClass.BIOLOGICAL in drug.regulatoryClass }
-        val specifiedBiologicalCount =
-            drugs.count { drug -> RegulatoryClass.SPECIFIED_BIOLOGICAL in drug.regulatoryClass }
-        val stimulantPrecursorCount =
-            drugs.count { drug -> RegulatoryClass.STIMULANT_PRECURSOR in drug.regulatoryClass }
+        val actualCounts = mapOf(
+            RegulatoryClass.PRESCRIPTION_REQUIRED to
+                drugs.count { drug -> RegulatoryClass.PRESCRIPTION_REQUIRED in drug.regulatoryClass },
+            RegulatoryClass.PSYCHOTROPIC_1 to
+                drugs.count { drug -> RegulatoryClass.PSYCHOTROPIC_1 in drug.regulatoryClass },
+            RegulatoryClass.POISON to
+                drugs.count { drug -> RegulatoryClass.POISON in drug.regulatoryClass },
+            RegulatoryClass.BIOLOGICAL to
+                drugs.count { drug -> RegulatoryClass.BIOLOGICAL in drug.regulatoryClass },
+            RegulatoryClass.SPECIFIED_BIOLOGICAL to
+                drugs.count { drug -> RegulatoryClass.SPECIFIED_BIOLOGICAL in drug.regulatoryClass },
+            RegulatoryClass.STIMULANT_PRECURSOR to
+                drugs.count { drug -> RegulatoryClass.STIMULANT_PRECURSOR in drug.regulatoryClass },
+        )
 
         assertEquals(
-            expected = PRESCRIPTION_REQUIRED_EXPECTED_COUNT,
-            actual = prescriptionRequiredCount,
-            message = "PRESCRIPTION_REQUIRED count must be preserved after fixed overrides",
-        )
-        assertEquals(
-            expected = PSYCHOTROPIC_1_EXPECTED_COUNT,
-            actual = psychotropic1Count,
-            message = "PSYCHOTROPIC_1 count must be preserved after fixed overrides",
-        )
-        assertEquals(
-            expected = POISON_EXPECTED_COUNT,
-            actual = poisonCount,
-            message = "POISON count must be preserved after fixed overrides",
-        )
-        assertEquals(
-            expected = BIOLOGICAL_EXPECTED_COUNT,
-            actual = biologicalCount,
-            message = "BIOLOGICAL count must be preserved after fixed overrides",
-        )
-        assertEquals(
-            expected = SPECIFIED_BIOLOGICAL_EXPECTED_COUNT,
-            actual = specifiedBiologicalCount,
-            message = "SPECIFIED_BIOLOGICAL count must be preserved after fixed overrides",
-        )
-        assertEquals(
-            expected = STIMULANT_PRECURSOR_EXPECTED_COUNT,
-            actual = stimulantPrecursorCount,
-            message = "STIMULANT_PRECURSOR count must be preserved after fixed overrides",
+            expected = mapOf(
+                RegulatoryClass.PRESCRIPTION_REQUIRED to PRESCRIPTION_REQUIRED_EXPECTED_COUNT,
+                RegulatoryClass.PSYCHOTROPIC_1 to PSYCHOTROPIC_1_EXPECTED_COUNT,
+                RegulatoryClass.POISON to POISON_EXPECTED_COUNT,
+                RegulatoryClass.BIOLOGICAL to BIOLOGICAL_EXPECTED_COUNT,
+                RegulatoryClass.SPECIFIED_BIOLOGICAL to SPECIFIED_BIOLOGICAL_EXPECTED_COUNT,
+                RegulatoryClass.STIMULANT_PRECURSOR to STIMULANT_PRECURSOR_EXPECTED_COUNT,
+            ),
+            actual = actualCounts,
+            message = "Regulatory class counts must be preserved after fixed overrides",
         )
     }
 
@@ -519,6 +472,51 @@ class DrugGeneratorTest {
             }
         }
     }
+
+    private fun MutableList<String>.addIf(message: String, predicate: () -> Boolean) {
+        if (predicate()) {
+            add(message)
+        }
+    }
+
+    private fun populatedFieldViolations(drug: Drug): List<String> =
+        buildList {
+            addIf("id blank") { drug.id.isBlank() }
+            addIf("genericName blank") { drug.genericName.isBlank() }
+            addIf("brandName blank") { drug.brandName.isBlank() }
+            addIf("brandNameKana blank") { drug.brandNameKana.isBlank() }
+            addIf("atcCode blank") { drug.atcCode.isBlank() }
+            addIf("yjCode null or blank") { drug.yjCode.isNullOrBlank() }
+            addIf("therapeuticCategoryName blank") { drug.therapeuticCategoryName.isBlank() }
+            addIf("manufacturer blank") { drug.manufacturer.isBlank() }
+            addIf("revisedAt blank") { drug.revisedAt.isBlank() }
+            addIf("disclaimer blank") { drug.disclaimer.isBlank() }
+
+            addIf("interactions null") { drug.interactions == null }
+            addIf("overdose null") { drug.overdose == null }
+            addIf("pharmacokinetics null") { drug.pharmacokinetics == null }
+            addIf("pharmacology null") { drug.pharmacology == null }
+            addIf("physicochemicalProperties null") { drug.physicochemicalProperties == null }
+
+            addIf("regulatoryClass empty") { drug.regulatoryClass.isEmpty() }
+            addIf("warning empty") { drug.warning.isEmpty() }
+            addIf("contraindications empty") { drug.contraindications.isEmpty() }
+            addIf("indications empty") { drug.indications.isEmpty() }
+            addIf("indicationsRelatedPrecautions empty") { drug.indicationsRelatedPrecautions.isEmpty() }
+            addIf("dosageRelatedPrecautions empty") { drug.dosageRelatedPrecautions.isEmpty() }
+            addIf("importantPrecautions empty") { drug.importantPrecautions.isEmpty() }
+            addIf("precautionsForSpecificPopulations empty") { drug.precautionsForSpecificPopulations.isEmpty() }
+            addIf("effectsOnLabTests empty") { drug.effectsOnLabTests.isEmpty() }
+            addIf("administrationPrecautions empty") { drug.administrationPrecautions.isEmpty() }
+            addIf("otherPrecautions empty") { drug.otherPrecautions.isEmpty() }
+            addIf("clinicalResults empty") { drug.clinicalResults.isEmpty() }
+            addIf("handlingPrecautions empty") { drug.handlingPrecautions.isEmpty() }
+            addIf("approvalConditions empty") { drug.approvalConditions.isEmpty() }
+            addIf("packages empty") { drug.packages.isEmpty() }
+            addIf("references empty") { drug.references.isEmpty() }
+            addIf("insuranceNotes empty") { drug.insuranceNotes.isEmpty() }
+            addIf("relatedDiseaseIds empty") { drug.relatedDiseaseIds.isEmpty() }
+        }
 
     private companion object {
         const val APPEARANCE_UNIQUE_FLOOR: Int = 30

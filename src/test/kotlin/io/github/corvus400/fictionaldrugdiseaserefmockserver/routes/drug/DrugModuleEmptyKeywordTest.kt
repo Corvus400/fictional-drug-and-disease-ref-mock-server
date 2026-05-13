@@ -17,8 +17,6 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
 
 /**
  * Phase 11-12a (Issue #101): `empty` シナリオ × `keyword` でシナリオ非依存性原則を検証する。
@@ -52,20 +50,14 @@ class DrugModuleEmptyKeywordTest {
             urlString = "/v1/drugs?keyword=whatever&keyword_target=both&keyword_match=partial",
         )
 
-        assertEquals(
-            expected = HttpStatusCode.OK,
-            actual = response.status,
-            message = "empty scenario × keyword must return 200 OK, not propagate an exception",
-        )
         val body = response.parseBody()
         assertEquals(
-            expected = 0,
-            actual = body.totalCount(),
-            message = "empty scenario × keyword must report total_count=0",
-        )
-        assertTrue(
-            actual = body.itemsIsEmpty(),
-            message = "empty scenario × keyword must return an empty items array",
+            expected = EmptyEnvelopeSnapshot(status = HttpStatusCode.OK, totalCount = 0, itemsSize = 0),
+            actual = EmptyEnvelopeSnapshot(
+                status = response.status,
+                totalCount = body.totalCountOrNull(),
+                itemsSize = body.itemsSizeOrNull(),
+            ),
         )
 
         client.post(urlString = "/__admin/reset")
@@ -75,15 +67,15 @@ class DrugModuleEmptyKeywordTest {
         return json.parseToJsonElement(string = bodyAsText()).jsonObject
     }
 
-    private fun JsonObject.totalCount(): Int {
-        val totalCount = this["total_count"]?.jsonPrimitive?.content?.toIntOrNull()
-        assertNotNull(actual = totalCount, message = "response body must have a numeric total_count")
-        return totalCount
-    }
+    private fun JsonObject.totalCountOrNull(): Int? =
+        this["total_count"]?.jsonPrimitive?.content?.toIntOrNull()
 
-    private fun JsonObject.itemsIsEmpty(): Boolean {
-        val items = this["items"]?.jsonArray
-        assertNotNull(actual = items, message = "response body must have an items array")
-        return items.isEmpty()
-    }
+    private fun JsonObject.itemsSizeOrNull(): Int? =
+        this["items"]?.jsonArray?.size
+
+    private data class EmptyEnvelopeSnapshot(
+        val status: HttpStatusCode,
+        val totalCount: Int?,
+        val itemsSize: Int?,
+    )
 }

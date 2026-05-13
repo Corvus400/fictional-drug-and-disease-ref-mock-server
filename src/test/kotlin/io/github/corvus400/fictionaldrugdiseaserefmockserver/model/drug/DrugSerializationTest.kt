@@ -17,6 +17,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.S
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.AppJson
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -26,83 +27,140 @@ class DrugSerializationTest {
     fun `Drug serializes required identification and naming fields in snake_case`() {
         val drug = minimalDrug()
         val jsonObject = Json.parseToJsonElement(AppJson.encodeToString(drug)).jsonObject
-        assertEquals("drug_0001", jsonObject["id"]?.toString()?.trim('"'))
-        assertEquals("テスト一般名", jsonObject["generic_name"]?.toString()?.trim('"'))
-        assertEquals("テスト販売名", jsonObject["brand_name"]?.toString()?.trim('"'))
-        assertEquals("テストハンバイメイ", jsonObject["brand_name_kana"]?.toString()?.trim('"'))
-        assertEquals("N02BE01", jsonObject["atc_code"]?.toString()?.trim('"'))
-        assertEquals("経口鎮痛薬", jsonObject["therapeutic_category_name"]?.toString()?.trim('"'))
-        assertEquals("架空製薬株式会社", jsonObject["manufacturer"]?.toString()?.trim('"'))
-        assertEquals("2024-03-01", jsonObject["revised_at"]?.toString()?.trim('"'))
-        assertEquals("/v1/images/dosage-forms/tablet?size=Original", jsonObject["image_url"]?.toString()?.trim('"'))
+        val actual = listOf(
+            "id",
+            "generic_name",
+            "brand_name",
+            "brand_name_kana",
+            "atc_code",
+            "therapeutic_category_name",
+            "manufacturer",
+            "revised_at",
+            "image_url",
+        ).associateWith { key -> jsonObject[key]?.jsonPrimitive?.content }
+
+        assertEquals(
+            expected = mapOf(
+                "id" to "drug_0001",
+                "generic_name" to "テスト一般名",
+                "brand_name" to "テスト販売名",
+                "brand_name_kana" to "テストハンバイメイ",
+                "atc_code" to "N02BE01",
+                "therapeutic_category_name" to "経口鎮痛薬",
+                "manufacturer" to "架空製薬株式会社",
+                "revised_at" to "2024-03-01",
+                "image_url" to "/v1/images/dosage-forms/tablet?size=Original",
+            ),
+            actual = actual,
+        )
     }
 
     @Test
     fun `Drug serializes classification enums with Japanese SerialName values`() {
         val json = AppJson.encodeToString(minimalDrug())
-        assertTrue(json.contains(""""regulatory_class":["prescription_required"]"""))
-        assertTrue(json.contains(""""dosage_form":"tablet""""))
-        assertTrue(json.contains(""""route_of_administration":"oral""""))
+        val missingFragments = listOf(
+            """"regulatory_class":["prescription_required"]""",
+            """"dosage_form":"tablet"""",
+            """"route_of_administration":"oral"""",
+        ).filterNot { json.contains(it) }
+
+        assertTrue(
+            actual = missingFragments.isEmpty(),
+            message = "Drug classification enum serialization is missing fragments: $missingFragments",
+        )
     }
 
     @Test
     fun `Drug serializes required nested objects recursively`() {
         val json = AppJson.encodeToString(minimalDrug())
-        assertTrue(json.contains(""""composition":{"active_ingredient":"サンプルシン""""))
-        assertTrue(json.contains(""""dosage":{"standard_dosage":"通常、成人には 1 回 100 mg を経口投与""""))
-        assertTrue(json.contains(""""adverse_reactions":{"serious":[],"other":{"""))
-        assertTrue(json.contains(""""packages":[{"size":"100 錠 (10 錠 × 10 PTP)""""))
+        val missingFragments = listOf(
+            """"composition":{"active_ingredient":"サンプルシン"""",
+            """"dosage":{"standard_dosage":"通常、成人には 1 回 100 mg を経口投与"""",
+            """"adverse_reactions":{"serious":[],"other":{""",
+            """"packages":[{"size":"100 錠 (10 錠 × 10 PTP)"""",
+        ).filterNot { json.contains(it) }
+
+        assertTrue(
+            actual = missingFragments.isEmpty(),
+            message = "Drug required nested serialization is missing fragments: $missingFragments",
+        )
     }
 
     @Test
     fun `Drug serializes required contraindications and indications lists`() {
         val json = AppJson.encodeToString(minimalDrug())
+        val missingFragments = listOf(
+            """"contraindications":[{"order":1,"sub_order":null,"content":"本剤の成分に対し過敏症の既往歴のある患者"}]""",
+            """"indications":[{"order":1,"content":"各種疾患における鎮痛"}]""",
+        ).filterNot { json.contains(it) }
+
         assertTrue(
-            json.contains(""""contraindications":[{"order":1,"sub_order":null,"content":"本剤の成分に対し過敏症の既往歴のある患者"}]"""),
+            actual = missingFragments.isEmpty(),
+            message = "Drug required list serialization is missing fragments: $missingFragments",
         )
-        assertTrue(json.contains(""""indications":[{"order":1,"content":"各種疾患における鎮痛"}]"""))
     }
 
     @Test
     fun `Drug serializes optional list fields as empty array by default`() {
         val json = AppJson.encodeToString(minimalDrug())
-        assertTrue(json.contains(""""warning":[]"""))
-        assertTrue(json.contains(""""indications_related_precautions":[]"""))
-        assertTrue(json.contains(""""dosage_related_precautions":[]"""))
-        assertTrue(json.contains(""""important_precautions":[]"""))
-        assertTrue(json.contains(""""precautions_for_specific_populations":[]"""))
-        assertTrue(json.contains(""""effects_on_lab_tests":[]"""))
-        assertTrue(json.contains(""""administration_precautions":[]"""))
-        assertTrue(json.contains(""""other_precautions":[]"""))
-        assertTrue(json.contains(""""clinical_results":[]"""))
-        assertTrue(json.contains(""""handling_precautions":[]"""))
-        assertTrue(json.contains(""""approval_conditions":[]"""))
-        assertTrue(json.contains(""""references":[]"""))
-        assertTrue(json.contains(""""insurance_notes":[]"""))
-        assertTrue(json.contains(""""related_disease_ids":[]"""))
+        val missingEmptyArrays = listOf(
+            "warning",
+            "indications_related_precautions",
+            "dosage_related_precautions",
+            "important_precautions",
+            "precautions_for_specific_populations",
+            "effects_on_lab_tests",
+            "administration_precautions",
+            "other_precautions",
+            "clinical_results",
+            "handling_precautions",
+            "approval_conditions",
+            "references",
+            "insurance_notes",
+            "related_disease_ids",
+        ).filterNot { field -> json.contains(""""$field":[]""") }
+
+        assertTrue(
+            actual = missingEmptyArrays.isEmpty(),
+            message = "Drug optional list fields must serialize as empty arrays: $missingEmptyArrays",
+        )
     }
 
     @Test
     fun `Drug serializes nullable optional fields as null by default`() {
         val json = AppJson.encodeToString(minimalDrug())
-        assertTrue(json.contains(""""yj_code":null"""))
-        assertTrue(json.contains(""""interactions":null"""))
-        assertTrue(json.contains(""""overdose":null"""))
-        assertTrue(json.contains(""""pharmacokinetics":null"""))
-        assertTrue(json.contains(""""pharmacology":null"""))
-        assertTrue(json.contains(""""physicochemical_properties":null"""))
+        val missingNulls = listOf(
+            "yj_code",
+            "interactions",
+            "overdose",
+            "pharmacokinetics",
+            "pharmacology",
+            "physicochemical_properties",
+        ).filterNot { field -> json.contains(""""$field":null""") }
+
+        assertTrue(
+            actual = missingNulls.isEmpty(),
+            message = "Drug nullable optional fields must serialize as null: $missingNulls",
+        )
     }
 
     @Test
     fun `Drug serializes exactly 39 fields with snake_case keys`() {
         val jsonObject = Json.parseToJsonElement(AppJson.encodeToString(minimalDrug())).jsonObject
-        assertEquals(39, jsonObject.size)
-        val keyCasingViolations = jsonObject.keys.filter { key ->
-            key != key.lowercase() || key.contains(Regex("[A-Z]"))
+        val violations = buildList {
+            if (jsonObject.size != 39) {
+                add("expected 39 fields but was ${jsonObject.size}")
+            }
+            addAll(
+                jsonObject.keys
+                    .filter { key -> key != key.lowercase() || key.contains(Regex("[A-Z]")) }
+                    .map { key -> "Non snake_case key detected: $key" },
+            )
         }
+
         assertTrue(
-            actual = keyCasingViolations.isEmpty(),
-            message = "Non snake_case keys detected: $keyCasingViolations",
+            actual = violations.isEmpty(),
+            message = "Drug field shape violations: $violations",
         )
     }
 

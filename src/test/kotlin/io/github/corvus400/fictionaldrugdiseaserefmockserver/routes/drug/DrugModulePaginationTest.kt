@@ -11,7 +11,6 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 
 class DrugModulePaginationTest {
     private val json = Json { ignoreUnknownKeys = true }
@@ -22,20 +21,17 @@ class DrugModulePaginationTest {
 
         val response = client.get("/v1/drugs?page=1&page_size=20")
 
-        assertEquals(HttpStatusCode.OK, response.status)
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
-        val items = body["items"]?.jsonArray
-        assertNotNull(items, "response must include items array")
-        assertEquals(expected = 20, actual = items.size, message = "items.size must be 20 for page_size=20")
         assertEquals(
-            expected = 6,
-            actual = body["total_pages"]?.jsonPrimitive?.content?.toInt(),
-            message = "total_pages must be 6 (ceil(120/20))",
-        )
-        assertEquals(
-            expected = 120,
-            actual = body["total_count"]?.jsonPrimitive?.content?.toInt(),
-            message = "total_count must be 120 (全 fixture 件数)",
+            expected = PaginationSnapshot(
+                status = HttpStatusCode.OK,
+                itemsSize = 20,
+                page = 1,
+                pageSize = 20,
+                totalPages = 6,
+                totalCount = 120,
+            ),
+            actual = body.paginationSnapshot(status = response.status),
         )
     }
 
@@ -45,20 +41,17 @@ class DrugModulePaginationTest {
 
         val response = client.get("/v1/drugs?page=2&page_size=50")
 
-        assertEquals(HttpStatusCode.OK, response.status)
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
-        val items = body["items"]?.jsonArray
-        assertNotNull(items, "response must include items array")
-        assertEquals(expected = 50, actual = items.size, message = "items.size must be 50 for page_size=50")
         assertEquals(
-            expected = 2,
-            actual = body["page"]?.jsonPrimitive?.content?.toInt(),
-            message = "page must echo 2 from query parameter",
-        )
-        assertEquals(
-            expected = 3,
-            actual = body["total_pages"]?.jsonPrimitive?.content?.toInt(),
-            message = "total_pages must be 3 (ceil(120/50))",
+            expected = PaginationSnapshot(
+                status = HttpStatusCode.OK,
+                itemsSize = 50,
+                page = 2,
+                pageSize = 50,
+                totalPages = 3,
+                totalCount = 120,
+            ),
+            actual = body.paginationSnapshot(status = response.status),
         )
     }
 
@@ -68,24 +61,36 @@ class DrugModulePaginationTest {
 
         val response = client.get("/v1/drugs?page_size=1000")
 
-        assertEquals(HttpStatusCode.OK, response.status)
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
-        val items = body["items"]?.jsonArray
-        assertNotNull(items, "response must include items array")
         assertEquals(
-            expected = 100,
-            actual = items.size,
-            message = "items.size must be clamped to MAX_PAGE_SIZE=100 even when page_size=1000",
-        )
-        assertEquals(
-            expected = 100,
-            actual = body["page_size"]?.jsonPrimitive?.content?.toInt(),
-            message = "page_size in envelope must reflect clamped value 100",
-        )
-        assertEquals(
-            expected = 2,
-            actual = body["total_pages"]?.jsonPrimitive?.content?.toInt(),
-            message = "total_pages must be 2 after clamping (ceil(120/100))",
+            expected = PaginationSnapshot(
+                status = HttpStatusCode.OK,
+                itemsSize = 100,
+                page = 1,
+                pageSize = 100,
+                totalPages = 2,
+                totalCount = 120,
+            ),
+            actual = body.paginationSnapshot(status = response.status),
         )
     }
+
+    private data class PaginationSnapshot(
+        val status: HttpStatusCode,
+        val itemsSize: Int?,
+        val page: Int?,
+        val pageSize: Int?,
+        val totalPages: Int?,
+        val totalCount: Int?,
+    )
+
+    private fun kotlinx.serialization.json.JsonObject.paginationSnapshot(status: HttpStatusCode): PaginationSnapshot =
+        PaginationSnapshot(
+            status = status,
+            itemsSize = this["items"]?.jsonArray?.size,
+            page = this["page"]?.jsonPrimitive?.content?.toIntOrNull(),
+            pageSize = this["page_size"]?.jsonPrimitive?.content?.toIntOrNull(),
+            totalPages = this["total_pages"]?.jsonPrimitive?.content?.toIntOrNull(),
+            totalCount = this["total_count"]?.jsonPrimitive?.content?.toIntOrNull(),
+        )
 }

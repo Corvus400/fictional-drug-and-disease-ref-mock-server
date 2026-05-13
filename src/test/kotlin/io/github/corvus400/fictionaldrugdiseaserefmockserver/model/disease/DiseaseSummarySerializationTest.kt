@@ -6,8 +6,8 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.AppJson
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class DiseaseSummarySerializationTest {
@@ -26,9 +26,11 @@ class DiseaseSummarySerializationTest {
 
         val jsonObject = Json.parseToJsonElement(AppJson.encodeToString(summary)).jsonObject
 
-        assertEquals(8, jsonObject.size)
-        assertEquals(
-            setOf(
+        val violations = buildList {
+            if (jsonObject.size != 8) {
+                add("expected 8 fields but was ${jsonObject.size}")
+            }
+            val expectedKeys = setOf(
                 "id",
                 "name",
                 "icd10_chapter",
@@ -37,23 +39,43 @@ class DiseaseSummarySerializationTest {
                 "infectious",
                 "name_kana",
                 "revised_at",
-            ),
-            jsonObject.keys,
-        )
-        val keyCasingViolations = jsonObject.keys.filter { key ->
-            key != key.lowercase() || key.contains(Regex("[A-Z]"))
+            )
+            if (jsonObject.keys != expectedKeys) {
+                add("expected keys=$expectedKeys but was ${jsonObject.keys}")
+            }
+            addAll(
+                jsonObject.keys
+                    .filter { key -> key != key.lowercase() || key.contains(Regex("[A-Z]")) }
+                    .map { key -> "Non snake_case key detected: $key" },
+            )
+            val actualValues = mapOf(
+                "id" to jsonObject["id"]?.jsonPrimitive?.content,
+                "name" to jsonObject["name"]?.jsonPrimitive?.content,
+                "icd10_chapter" to jsonObject["icd10_chapter"]?.toString(),
+                "medical_department" to jsonObject["medical_department"]?.toString(),
+                "chronicity" to jsonObject["chronicity"]?.toString(),
+                "infectious" to jsonObject["infectious"]?.toString(),
+                "name_kana" to jsonObject["name_kana"]?.jsonPrimitive?.content,
+                "revised_at" to jsonObject["revised_at"]?.jsonPrimitive?.content,
+            )
+            val expectedValues = mapOf(
+                "id" to "disease_0001",
+                "name" to "テスト疾患",
+                "icd10_chapter" to "\"chapter_iv\"",
+                "medical_department" to "[\"endocrinology\"]",
+                "chronicity" to "\"chronic\"",
+                "infectious" to "false",
+                "name_kana" to "テストシッカン",
+                "revised_at" to "2026-04-23",
+            )
+            if (actualValues != expectedValues) {
+                add("expected values=$expectedValues but was $actualValues")
+            }
         }
+
         assertTrue(
-            actual = keyCasingViolations.isEmpty(),
-            message = "Non snake_case keys detected: $keyCasingViolations",
+            actual = violations.isEmpty(),
+            message = "DiseaseSummary serialization violations: $violations",
         )
-        assertEquals("disease_0001", jsonObject["id"]?.toString()?.trim('"'))
-        assertEquals("テスト疾患", jsonObject["name"]?.toString()?.trim('"'))
-        assertEquals("\"chapter_iv\"", jsonObject["icd10_chapter"]?.toString())
-        assertEquals("[\"endocrinology\"]", jsonObject["medical_department"]?.toString())
-        assertEquals("\"chronic\"", jsonObject["chronicity"]?.toString())
-        assertEquals("false", jsonObject["infectious"]?.toString())
-        assertEquals("テストシッカン", jsonObject["name_kana"]?.toString()?.trim('"'))
-        assertEquals("2026-04-23", jsonObject["revised_at"]?.toString()?.trim('"'))
     }
 }

@@ -9,6 +9,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.neste
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.AppJson
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -17,61 +18,102 @@ class DiseaseSerializationTest {
     @Test
     fun `Disease serializes required identification and naming fields in snake_case`() {
         val jsonObject = Json.parseToJsonElement(AppJson.encodeToString(minimalDisease())).jsonObject
-        assertEquals("disease_0001", jsonObject["id"]?.toString()?.trim('"'))
-        assertEquals("テスト疾患", jsonObject["name"]?.toString()?.trim('"'))
-        assertEquals("テストシッカン", jsonObject["name_kana"]?.toString()?.trim('"'))
-        assertEquals("2024-03-01", jsonObject["revised_at"]?.toString()?.trim('"'))
+        val actual = listOf("id", "name", "name_kana", "revised_at")
+            .associateWith { key -> jsonObject[key]?.jsonPrimitive?.content }
+
+        assertEquals(
+            expected = mapOf(
+                "id" to "disease_0001",
+                "name" to "テスト疾患",
+                "name_kana" to "テストシッカン",
+                "revised_at" to "2024-03-01",
+            ),
+            actual = actual,
+        )
     }
 
     @Test
     fun `Disease serializes classification enums with english snake_case SerialName values`() {
         val json = AppJson.encodeToString(minimalDisease())
-        assertTrue(json.contains(""""icd10_chapter":"chapter_iv""""))
-        assertTrue(json.contains(""""medical_department":["endocrinology"]"""))
-        assertTrue(json.contains(""""chronicity":"chronic""""))
+        val missingFragments = listOf(
+            """"icd10_chapter":"chapter_iv"""",
+            """"medical_department":["endocrinology"]""",
+            """"chronicity":"chronic"""",
+        ).filterNot { json.contains(it) }
+
+        assertTrue(
+            actual = missingFragments.isEmpty(),
+            message = "Disease classification enum serialization is missing fragments: $missingFragments",
+        )
     }
 
     @Test
     fun `Disease serializes required nested objects recursively`() {
         val json = AppJson.encodeToString(minimalDisease())
-        assertTrue(json.contains(""""symptoms":{"main_symptoms":["多飲","多尿"]"""))
-        assertTrue(json.contains(""""diagnostic_criteria":{"required":["空腹時サンプル値 126 以上"]"""))
+        val missingFragments = listOf(
+            """"symptoms":{"main_symptoms":["多飲","多尿"]""",
+            """"diagnostic_criteria":{"required":["空腹時サンプル値 126 以上"]""",
+            """"treatments":{"pharmacological":[],"non_pharmacological":[],"acute_phase_protocol":[]}""",
+        ).filterNot { json.contains(it) }
+
         assertTrue(
-            json.contains(""""treatments":{"pharmacological":[],"non_pharmacological":[],"acute_phase_protocol":[]}"""),
+            actual = missingFragments.isEmpty(),
+            message = "Disease required nested serialization is missing fragments: $missingFragments",
         )
     }
 
     @Test
     fun `Disease serializes optional list fields as empty array by default`() {
         val json = AppJson.encodeToString(minimalDisease())
-        assertTrue(json.contains(""""synonyms":[]"""))
-        assertTrue(json.contains(""""required_exams":[]"""))
-        assertTrue(json.contains(""""differential_diagnoses":[]"""))
-        assertTrue(json.contains(""""complications":[]"""))
-        assertTrue(json.contains(""""prevention":[]"""))
-        assertTrue(json.contains(""""related_drug_ids":[]"""))
-        assertTrue(json.contains(""""related_disease_ids":[]"""))
+        val missingEmptyArrays = listOf(
+            "synonyms",
+            "required_exams",
+            "differential_diagnoses",
+            "complications",
+            "prevention",
+            "related_drug_ids",
+            "related_disease_ids",
+        ).filterNot { field -> json.contains(""""$field":[]""") }
+
+        assertTrue(
+            actual = missingEmptyArrays.isEmpty(),
+            message = "Disease optional list fields must serialize as empty arrays: $missingEmptyArrays",
+        )
     }
 
     @Test
     fun `Disease serializes nullable optional fields as null by default`() {
         val json = AppJson.encodeToString(minimalDisease())
-        assertTrue(json.contains(""""name_english":null"""))
-        assertTrue(json.contains(""""epidemiology":null"""))
-        assertTrue(json.contains(""""severity_grading":null"""))
-        assertTrue(json.contains(""""prognosis":null"""))
+        val missingNulls = listOf(
+            "name_english",
+            "epidemiology",
+            "severity_grading",
+            "prognosis",
+        ).filterNot { field -> json.contains(""""$field":null""") }
+
+        assertTrue(
+            actual = missingNulls.isEmpty(),
+            message = "Disease nullable optional fields must serialize as null: $missingNulls",
+        )
     }
 
     @Test
     fun `Disease serializes exactly 25 fields with snake_case keys`() {
         val jsonObject = Json.parseToJsonElement(AppJson.encodeToString(minimalDisease())).jsonObject
-        assertEquals(25, jsonObject.size)
-        val keyCasingViolations = jsonObject.keys.filter { key ->
-            key != key.lowercase() || key.contains(Regex("[A-Z]"))
+        val violations = buildList {
+            if (jsonObject.size != 25) {
+                add("expected 25 fields but was ${jsonObject.size}")
+            }
+            addAll(
+                jsonObject.keys
+                    .filter { key -> key != key.lowercase() || key.contains(Regex("[A-Z]")) }
+                    .map { key -> "Non snake_case key detected: $key" },
+            )
         }
+
         assertTrue(
-            actual = keyCasingViolations.isEmpty(),
-            message = "Non snake_case keys detected: $keyCasingViolations",
+            actual = violations.isEmpty(),
+            message = "Disease field shape violations: $violations",
         )
     }
 
