@@ -15,10 +15,10 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class Phase6BucketCoherenceTest {
+class ClinicalSeedBucketCoherenceTest {
     @Test
-    fun `phase 6 seed buckets pass validator`() {
-        assertEquals(expected = emptyList(), actual = BucketEntryValidator.validateAll(Phase6BucketRegistry.all))
+    fun `clinical seed buckets pass validator`() {
+        assertEquals(expected = emptyList(), actual = BucketEntryValidator.validateAll(ClinicalSeedBucketRegistry.all))
     }
 
     @Test

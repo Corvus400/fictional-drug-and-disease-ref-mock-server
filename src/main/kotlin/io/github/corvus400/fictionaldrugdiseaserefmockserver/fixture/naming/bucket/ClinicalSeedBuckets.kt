@@ -121,7 +121,7 @@ object ExamFindingSeedBucketRepository {
     fun range(chapter: Icd10Chapter): List<String> = ExamFindingSeedBuckets.rangeByChapter.getValue(chapter)
 }
 
-object Phase6BucketRegistry {
+object ClinicalSeedBucketRegistry {
     val all: Map<String, List<String>> =
         buildMap {
             AdverseReactionByFreqSeedBuckets.byAtcInitialAndFrequency.forEach { (atc, byFrequency) ->
