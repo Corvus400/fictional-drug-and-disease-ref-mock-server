@@ -3,6 +3,7 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.gener
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.common.ValueRangeGenerator
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.blueprint.DrugBlueprint
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.stableHash
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DosageForm
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.FrequencyBand
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.HepaticSeverity
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.PrecautionPopulationCategory
@@ -11,7 +12,6 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.A
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.AdverseReactionByFrequency
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.AdverseReactionInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.AgeDosage
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.AgeRange
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.CrClRange
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.DosageInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.HepaticDose
@@ -85,7 +85,11 @@ internal object DrugClinicalBuilders {
         )
     }
 
-    fun buildDosage(id: String, dict: DrugPlaceholderDictionary): DosageInfo {
+    fun buildDosage(
+        id: String,
+        dict: DrugPlaceholderDictionary,
+        dosageForm: DosageForm = DosageForm.TABLET,
+    ): DosageInfo {
         val standardSeed = stableHash(id = id, slot = DrugFieldSlot.DOSAGE_STANDARD.ordinal, index = 0)
         val ageSeed = stableHash(id = id, slot = DrugFieldSlot.DOSAGE_AGE.ordinal, index = 0)
         val renalSeed = stableHash(id = id, slot = DrugFieldSlot.DOSAGE_RENAL.ordinal, index = 0)
@@ -102,11 +106,7 @@ internal object DrugClinicalBuilders {
             listOf(
                 AgeDosage(
                     range =
-                    AgeRange(
-                        minAgeMonths = PEDIATRIC_MIN_MONTHS,
-                        maxAgeMonths = PEDIATRIC_MAX_MONTHS,
-                        label = "6 歳以上 12 歳未満",
-                    ),
+                    DrugSeedDerivedValues.pediatricAgeRange(id = id, form = dosageForm),
                     dose =
                     dict.renderField(
                         field = ParagraphField.AGE_DOSE,
@@ -481,8 +481,6 @@ internal object DrugClinicalBuilders {
 
     private data class RenalRangeSpec(val minMlPerMin: Int?, val maxMlPerMin: Int?, val label: String)
 
-    private const val PEDIATRIC_MIN_MONTHS: Int = 72
-    private const val PEDIATRIC_MAX_MONTHS: Int = 144
     private const val RENAL_SEVERITY_PICK_INDEX: Int = 100
     private const val HEPATIC_SEVERITY_PICK_INDEX: Int = 100
     private const val DEFAULT_ATC_INITIAL: Char = 'V'

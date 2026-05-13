@@ -449,7 +449,8 @@ internal object DiseaseNestedBuilders {
         )
         val ageSeed = stableHash(id = id, slot = DiseaseFieldSlot.EPIDEMIOLOGY_ONSET_AGE.ordinal, index = 0)
         val minAge = ValueRangeGenerator.pickInRange(seed = ageSeed, range = ONSET_MIN_AGE_RANGE)
-        val maxAge = minAge + ONSET_AGE_SPAN
+        val ageSpan = DiseaseSeedDerivedValues.onsetAgeSpan(id = id)
+        val maxAge = minAge + ageSpan
         val onsetAgeRange = OnsetAgeRange(
             minAgeYears = minAge,
             maxAgeYears = maxAge,
@@ -685,7 +686,6 @@ internal object DiseaseNestedBuilders {
 
     private const val ID_PAD_LENGTH: Int = 4
     private const val CHAPTER_V_PSYCHOTROPIC_DRUG_ID: String = "drug_0089"
-    private const val ONSET_AGE_SPAN: Int = 10
     private const val NONPHARMA_ITEM_COUNT: Int = 2
     private const val NONPHARMA_ITEM_INDEX_STRIDE: Int = 10
     private const val DENOMINATOR_PER_BIRTH: Int = 1_000
