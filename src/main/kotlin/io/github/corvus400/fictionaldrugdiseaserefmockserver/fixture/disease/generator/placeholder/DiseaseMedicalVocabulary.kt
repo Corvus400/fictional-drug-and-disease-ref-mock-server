@@ -33,8 +33,11 @@ object DiseaseMedicalVocabulary {
         seed: Long,
         context: BucketContextKey = BucketContextKey.Global,
     ): String {
+        val chapter = BucketContextChapters.pickChapter(context = context, seed = seed)
+        if (chapter != null) {
+            EtiologyVocabulary.resolveOrNull(key = key, chapter = chapter, seed = seed)?.let { return it }
+        }
         if (key in SYMPTOM_KEYS) {
-            val chapter = BucketContextChapters.pickChapter(context = context, seed = seed)
             if (chapter != null) {
                 return BucketSeedCoiner.coin(
                     bucket = SymptomSeedBucketRepository.get(chapter = chapter),
