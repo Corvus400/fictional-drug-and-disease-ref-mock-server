@@ -31,20 +31,24 @@ class DrugModuleAdditionalFilterTest {
             val keyword = "%E9%87%8D%E7%AF%A4%E3%81%AA%E5%89%AF%E4%BD%9C%E7%94%A8%202"
             val response = client.get("/v1/drugs?adverse_reaction_keyword=$keyword&page_size=100")
 
-            assertEquals(HttpStatusCode.OK, response.status)
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
             val totalCount = body["total_count"]?.jsonPrimitive?.content?.toInt()
-            assertNotNull(totalCount, "response must include total_count")
-            assertTrue(
-                actual = totalCount in 1 until 120,
-                message = "total_count=$totalCount must be 1..<120 for adverse_reaction_keyword=重篤な副作用 2 " +
-                    "(filter must be applied; baseline without filter would be 120)",
-            )
             val items = body["items"]?.jsonArray
-            assertNotNull(items, "response must include items array")
+            val violations = listOfNotNull(
+                "status must be 200 OK but was ${response.status}".takeUnless {
+                    response.status == HttpStatusCode.OK
+                },
+                "response must include total_count".takeUnless { totalCount != null },
+                "total_count=$totalCount must be 1..<120 for adverse_reaction_keyword=重篤な副作用 2"
+                    .takeUnless { totalCount != null && totalCount in 1 until 120 },
+                "response must include items array".takeUnless { items != null },
+                "filtered items must be non-empty for adverse_reaction_keyword=重篤な副作用 2"
+                    .takeUnless { items?.isNotEmpty() == true },
+            )
+
             assertTrue(
-                actual = items.isNotEmpty(),
-                message = "filtered items must be non-empty for adverse_reaction_keyword=重篤な副作用 2",
+                actual = violations.isEmpty(),
+                message = "adverse_reaction_keyword filter violations: $violations",
             )
         }
 
@@ -55,20 +59,24 @@ class DrugModuleAdditionalFilterTest {
 
             val response = client.get("/v1/drugs?precaution_category=PREGNANT&page_size=100")
 
-            assertEquals(HttpStatusCode.OK, response.status)
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
             val totalCount = body["total_count"]?.jsonPrimitive?.content?.toInt()
-            assertNotNull(totalCount, "response must include total_count")
-            assertTrue(
-                actual = totalCount in 1 until 120,
-                message = "total_count=$totalCount must be 1..<120 for precaution_category=PREGNANT " +
-                    "(filter must be applied; baseline without filter would be 120)",
-            )
             val items = body["items"]?.jsonArray
-            assertNotNull(items, "response must include items array")
+            val violations = listOfNotNull(
+                "status must be 200 OK but was ${response.status}".takeUnless {
+                    response.status == HttpStatusCode.OK
+                },
+                "response must include total_count".takeUnless { totalCount != null },
+                "total_count=$totalCount must be 1..<120 for precaution_category=PREGNANT"
+                    .takeUnless { totalCount != null && totalCount in 1 until 120 },
+                "response must include items array".takeUnless { items != null },
+                "filtered items must be non-empty for precaution_category=PREGNANT"
+                    .takeUnless { items?.isNotEmpty() == true },
+            )
+
             assertTrue(
-                actual = items.isNotEmpty(),
-                message = "filtered items must be non-empty for precaution_category=PREGNANT",
+                actual = violations.isEmpty(),
+                message = "precaution_category single filter violations: $violations",
             )
         }
 
@@ -94,21 +102,23 @@ class DrugModuleAdditionalFilterTest {
                 "/v1/drugs?adverse_reaction_keyword=$keyword&precaution_category=PREGNANT&page_size=100",
             )
 
-            assertEquals(HttpStatusCode.OK, andResponse.status)
             val andBody = json.parseToJsonElement(string = andResponse.bodyAsText()).jsonObject
             val andTotal = andBody["total_count"]?.jsonPrimitive?.content?.toInt()
-            assertNotNull(andTotal, "AND response must include total_count")
             val singleMin = minOf(a = keywordOnlyTotal, b = precautionOnlyTotal)
-            assertTrue(
-                actual = andTotal <= singleMin,
-                message = "AND total=$andTotal must be <= min(keyword-only=$keywordOnlyTotal, " +
-                    "precaution-only=$precautionOnlyTotal) (intersection cannot exceed either single filter)",
+            val violations = listOfNotNull(
+                "status must be 200 OK but was ${andResponse.status}".takeUnless {
+                    andResponse.status == HttpStatusCode.OK
+                },
+                "AND response must include total_count".takeUnless { andTotal != null },
+                "AND total=$andTotal must be <= min(keyword-only=$keywordOnlyTotal, precaution-only=$precautionOnlyTotal)"
+                    .takeUnless { andTotal != null && andTotal <= singleMin },
+                "AND total=$andTotal must be strictly smaller than at least one single filter"
+                    .takeUnless { andTotal != null && (andTotal < keywordOnlyTotal || andTotal < precautionOnlyTotal) },
             )
+
             assertTrue(
-                actual = andTotal < keywordOnlyTotal || andTotal < precautionOnlyTotal,
-                message = "AND total=$andTotal must be strictly smaller than at least one single filter " +
-                    "(keyword-only=$keywordOnlyTotal, precaution-only=$precautionOnlyTotal); " +
-                    "otherwise the test would also pass under OR semantics and cannot discriminate AND",
+                actual = violations.isEmpty(),
+                message = "adverse_reaction_keyword and precaution_category AND violations: $violations",
             )
         }
 
@@ -119,26 +129,34 @@ class DrugModuleAdditionalFilterTest {
 
             val singlePregnantResponse =
                 client.get("/v1/drugs?precaution_category=PREGNANT&page_size=100")
-            assertEquals(HttpStatusCode.OK, singlePregnantResponse.status)
             val singlePregnantTotal = json.parseToJsonElement(string = singlePregnantResponse.bodyAsText())
                 .jsonObject["total_count"]?.jsonPrimitive?.content?.toInt()
-            assertNotNull(singlePregnantTotal, "single-value PREGNANT response must include total_count")
 
             val orResponse =
                 client.get("/v1/drugs?precaution_category=PREGNANT&precaution_category=GERIATRIC&page_size=100")
 
-            assertEquals(HttpStatusCode.OK, orResponse.status)
             val orBody = json.parseToJsonElement(string = orResponse.bodyAsText()).jsonObject
             val orTotal = orBody["total_count"]?.jsonPrimitive?.content?.toInt()
-            assertNotNull(orTotal, "OR response must include total_count")
-            assertTrue(
-                actual = orTotal in 1 until 120,
-                message = "OR total_count=$orTotal must be 1..<120 (filter must remain applied)",
+            val violations = listOfNotNull(
+                "single-value PREGNANT status must be 200 OK but was ${singlePregnantResponse.status}"
+                    .takeUnless { singlePregnantResponse.status == HttpStatusCode.OK },
+                "single-value PREGNANT response must include total_count".takeUnless {
+                    singlePregnantTotal != null
+                },
+                "OR status must be 200 OK but was ${orResponse.status}".takeUnless {
+                    orResponse.status == HttpStatusCode.OK
+                },
+                "OR response must include total_count".takeUnless { orTotal != null },
+                "OR total_count=$orTotal must be 1..<120".takeUnless {
+                    orTotal != null && orTotal in 1 until 120
+                },
+                "OR total=$orTotal must be >= single-value PREGNANT total=$singlePregnantTotal"
+                    .takeUnless { orTotal != null && singlePregnantTotal != null && orTotal >= singlePregnantTotal },
             )
+
             assertTrue(
-                actual = orTotal >= singlePregnantTotal,
-                message = "OR total=$orTotal must be >= single-value PREGNANT total=$singlePregnantTotal " +
-                    "(adding GERIATRIC must not reduce the result set under OR semantics)",
+                actual = violations.isEmpty(),
+                message = "precaution_category OR filter violations: $violations",
             )
         }
 
@@ -184,24 +202,16 @@ class DrugModuleAdditionalFilterTest {
 
             val response = client.get(urlString = "/v1/drugs?adverse_reaction_keyword=X")
 
-            assertEquals(
-                expected = HttpStatusCode.OK,
-                actual = response.status,
-                message = "empty scenario × adverse_reaction_keyword must return 200 OK, not propagate an exception",
-            )
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
             val totalCount = body["total_count"]?.jsonPrimitive?.content?.toIntOrNull()
-            assertNotNull(actual = totalCount, message = "response body must have a numeric total_count")
-            assertEquals(
-                expected = 0,
-                actual = totalCount,
-                message = "empty scenario × adverse_reaction_keyword must report total_count=0",
-            )
             val items = body["items"]?.jsonArray
-            assertNotNull(actual = items, message = "response body must have an items array")
-            assertTrue(
-                actual = items.isEmpty(),
-                message = "empty scenario × adverse_reaction_keyword must return an empty items array",
+            assertEquals(
+                expected = EmptyEnvelopeSnapshot(status = HttpStatusCode.OK, totalCount = 0, itemsSize = 0),
+                actual = EmptyEnvelopeSnapshot(
+                    status = response.status,
+                    totalCount = totalCount,
+                    itemsSize = items?.size,
+                ),
             )
 
             client.post(urlString = "/__admin/reset")
@@ -232,26 +242,24 @@ class DrugModuleAdditionalFilterTest {
 
             val response = client.get(urlString = "/v1/drugs?precaution_category=PREGNANT")
 
-            assertEquals(
-                expected = HttpStatusCode.OK,
-                actual = response.status,
-                message = "empty scenario × precaution_category must return 200 OK, not propagate an exception",
-            )
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
             val totalCount = body["total_count"]?.jsonPrimitive?.content?.toIntOrNull()
-            assertNotNull(actual = totalCount, message = "response body must have a numeric total_count")
-            assertEquals(
-                expected = 0,
-                actual = totalCount,
-                message = "empty scenario × precaution_category must report total_count=0",
-            )
             val items = body["items"]?.jsonArray
-            assertNotNull(actual = items, message = "response body must have an items array")
-            assertTrue(
-                actual = items.isEmpty(),
-                message = "empty scenario × precaution_category must return an empty items array",
+            assertEquals(
+                expected = EmptyEnvelopeSnapshot(status = HttpStatusCode.OK, totalCount = 0, itemsSize = 0),
+                actual = EmptyEnvelopeSnapshot(
+                    status = response.status,
+                    totalCount = totalCount,
+                    itemsSize = items?.size,
+                ),
             )
 
             client.post(urlString = "/__admin/reset")
         }
+
+    private data class EmptyEnvelopeSnapshot(
+        val status: HttpStatusCode,
+        val totalCount: Int?,
+        val itemsSize: Int?,
+    )
 }

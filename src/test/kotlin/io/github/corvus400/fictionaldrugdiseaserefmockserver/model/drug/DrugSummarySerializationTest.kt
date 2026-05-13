@@ -5,8 +5,8 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.Re
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.AppJson
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class DrugSummarySerializationTest {
@@ -26,21 +26,42 @@ class DrugSummarySerializationTest {
         val encoded = AppJson.encodeToString(summary)
         val jsonObject = Json.parseToJsonElement(encoded).jsonObject
 
-        assertEquals(10, jsonObject.size)
-        assertEquals("drug_0001", jsonObject["id"]?.toString()?.trim('"'))
-        assertEquals("テスト販売名", jsonObject["brand_name"]?.toString()?.trim('"'))
-        assertEquals("テスト一般名", jsonObject["generic_name"]?.toString()?.trim('"'))
-        assertEquals("経口鎮痛薬", jsonObject["therapeutic_category_name"]?.toString()?.trim('"'))
-        assertEquals("/v1/images/dosage-forms/tablet?size=Original", jsonObject["image_url"]?.toString()?.trim('"'))
-        assertTrue(encoded.contains(""""regulatory_class":["prescription_required"]"""))
-        assertTrue(encoded.contains(""""dosage_form":"tablet""""))
-
-        val keyCasingViolations = jsonObject.keys.filter { key ->
-            key != key.lowercase() || key.contains(Regex("[A-Z]"))
+        val violations = buildList {
+            if (jsonObject.size != 10) {
+                add("expected 10 fields but was ${jsonObject.size}")
+            }
+            val actualValues = mapOf(
+                "id" to jsonObject["id"]?.jsonPrimitive?.content,
+                "brand_name" to jsonObject["brand_name"]?.jsonPrimitive?.content,
+                "generic_name" to jsonObject["generic_name"]?.jsonPrimitive?.content,
+                "therapeutic_category_name" to jsonObject["therapeutic_category_name"]?.jsonPrimitive?.content,
+                "image_url" to jsonObject["image_url"]?.jsonPrimitive?.content,
+            )
+            val expectedValues = mapOf(
+                "id" to "drug_0001",
+                "brand_name" to "テスト販売名",
+                "generic_name" to "テスト一般名",
+                "therapeutic_category_name" to "経口鎮痛薬",
+                "image_url" to "/v1/images/dosage-forms/tablet?size=Original",
+            )
+            if (actualValues != expectedValues) {
+                add("expected values=$expectedValues but was $actualValues")
+            }
+            listOf(
+                """"regulatory_class":["prescription_required"]""",
+                """"dosage_form":"tablet"""",
+            ).filterNot { encoded.contains(it) }
+                .forEach { fragment -> add("missing fragment: $fragment") }
+            addAll(
+                jsonObject.keys
+                    .filter { key -> key != key.lowercase() || key.contains(Regex("[A-Z]")) }
+                    .map { key -> "Non snake_case key detected: $key" },
+            )
         }
+
         assertTrue(
-            actual = keyCasingViolations.isEmpty(),
-            message = "Non snake_case keys detected: $keyCasingViolations",
+            actual = violations.isEmpty(),
+            message = "DrugSummary serialization violations: $violations",
         )
     }
 }

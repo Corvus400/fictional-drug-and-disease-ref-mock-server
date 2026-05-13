@@ -37,11 +37,17 @@ class DiseaseGeneratorTest {
     @Test
     fun `generate returns a Disease with non-blank required name fields`() {
         val disease = generator.generate(blueprint = sampleBlueprint)
-        assertTrue(disease.id.isNotBlank())
-        assertTrue(disease.name.isNotBlank())
-        assertTrue(disease.nameKana.isNotBlank())
-        val english = disease.nameEnglish
-        assertTrue(english != null && english.isNotBlank(), "nameEnglish is blank or null")
+        val violations = buildList {
+            addIf("id blank") { disease.id.isBlank() }
+            addIf("name blank") { disease.name.isBlank() }
+            addIf("nameKana blank") { disease.nameKana.isBlank() }
+            addIf("nameEnglish blank or null") { disease.nameEnglish.isNullOrBlank() }
+        }
+
+        assertTrue(
+            actual = violations.isEmpty(),
+            message = "Generated disease required name field violations: $violations",
+        )
     }
 
     @Test
@@ -142,13 +148,16 @@ class DiseaseGeneratorTest {
     @Test
     fun `generate returns a Disease with all 25 top-level fields populated (non-null and non-empty)`() {
         val disease = generator.generate(blueprint = sampleBlueprint)
-        assertAllFieldsPopulated(disease = disease)
 
         val blueprints = DiseaseBlueprintFactory.build()
         val diseases = generator.generate(blueprints = blueprints)
-        for (generated in diseases) {
-            assertAllFieldsPopulated(disease = generated)
-        }
+        val violations = populatedFieldViolations(disease = disease) +
+            diseases.flatMap { generated -> populatedFieldViolations(disease = generated) }
+
+        assertTrue(
+            actual = violations.isEmpty(),
+            message = "Generated disease populated-field violations: $violations",
+        )
     }
 
     // Red-2: Ch.I 感染症・寄生虫症 条件必須
@@ -295,50 +304,43 @@ class DiseaseGeneratorTest {
         }
     }
 
-    private fun assertAllFieldsPopulated(disease: Disease) {
-        assertTrue(disease.id.isNotBlank(), "id blank for ${disease.id}")
-        assertTrue(disease.name.isNotBlank(), "name blank for ${disease.id}")
-        assertTrue(disease.nameKana.isNotBlank(), "nameKana blank for ${disease.id}")
-        val nameEnglish = assertNotNull(disease.nameEnglish, "nameEnglish null for ${disease.id}")
-        assertTrue(nameEnglish.isNotBlank(), "nameEnglish blank for ${disease.id}")
-        assertTrue(disease.summary.isNotBlank(), "summary blank for ${disease.id}")
-        assertTrue(disease.etiology.isNotBlank(), "etiology blank for ${disease.id}")
-        assertTrue(disease.revisedAt.isNotBlank(), "revisedAt blank for ${disease.id}")
-        assertTrue(disease.disclaimer.isNotBlank(), "disclaimer blank for ${disease.id}")
-        assertTrue(
-            disease.symptoms.mainSymptoms.isNotEmpty(),
-            "mainSymptoms empty for ${disease.id}",
-        )
-        assertTrue(
-            disease.diagnosticCriteria.required.isNotEmpty(),
-            "diagnosticCriteria.required empty for ${disease.id}",
-        )
-        val prognosis = assertNotNull(disease.prognosis, "prognosis null for ${disease.id}")
-        assertTrue(prognosis.isNotBlank(), "prognosis blank for ${disease.id}")
-        assertNotNull(disease.epidemiology, "epidemiology null for ${disease.id}")
-        // severityGrading は章別必須 (Ch.II/IX のみ) のため共通 populate 検証から除外。
-        // 章別の非 null 検証は同ファイルの CHAPTER_II / CHAPTER_IX 専用テストで担保されている。
-        assertTrue(
-            disease.medicalDepartment.isNotEmpty(),
-            "medicalDepartment empty for ${disease.id}",
-        )
-        assertTrue(disease.synonyms.isNotEmpty(), "synonyms empty for ${disease.id}")
-        assertTrue(disease.requiredExams.isNotEmpty(), "requiredExams empty for ${disease.id}")
-        assertTrue(
-            disease.differentialDiagnoses.isNotEmpty(),
-            "differentialDiagnoses empty for ${disease.id}",
-        )
-        assertTrue(disease.complications.isNotEmpty(), "complications empty for ${disease.id}")
-        // treatments.pharmacological は章別必須 (Ch.IV のみ) のため共通 populate 検証から除外。
-        // 章別の非 empty 検証は同ファイルの CHAPTER_IV 専用テストで担保されている。
-        assertTrue(disease.prevention.isNotEmpty(), "prevention empty for ${disease.id}")
-        assertTrue(disease.relatedDrugIds.isNotEmpty(), "relatedDrugIds empty for ${disease.id}")
-        // disease_0079 は作中ロア上の対応関連疾患がないため、final override で明示的に空リストへ固定する。
-        assertTrue(
-            disease.relatedDiseaseIds.isNotEmpty() || disease.id == "disease_0079",
-            "relatedDiseaseIds empty for ${disease.id}",
-        )
+    private fun MutableList<String>.addIf(message: String, predicate: () -> Boolean) {
+        if (predicate()) {
+            add(message)
+        }
     }
+
+    private fun populatedFieldViolations(disease: Disease): List<String> =
+        buildList {
+            val prefix = disease.id
+            addIf("$prefix id blank") { disease.id.isBlank() }
+            addIf("$prefix name blank") { disease.name.isBlank() }
+            addIf("$prefix nameKana blank") { disease.nameKana.isBlank() }
+            addIf("$prefix nameEnglish null or blank") { disease.nameEnglish.isNullOrBlank() }
+            addIf("$prefix summary blank") { disease.summary.isBlank() }
+            addIf("$prefix etiology blank") { disease.etiology.isBlank() }
+            addIf("$prefix revisedAt blank") { disease.revisedAt.isBlank() }
+            addIf("$prefix disclaimer blank") { disease.disclaimer.isBlank() }
+            addIf("$prefix mainSymptoms empty") { disease.symptoms.mainSymptoms.isEmpty() }
+            addIf("$prefix diagnosticCriteria.required empty") { disease.diagnosticCriteria.required.isEmpty() }
+            addIf("$prefix prognosis null or blank") { disease.prognosis.isNullOrBlank() }
+            addIf("$prefix epidemiology null") { disease.epidemiology == null }
+            // severityGrading は章別必須 (Ch.II/IX のみ) のため共通 populate 検証から除外。
+            // 章別の非 null 検証は同ファイルの CHAPTER_II / CHAPTER_IX 専用テストで担保されている。
+            addIf("$prefix medicalDepartment empty") { disease.medicalDepartment.isEmpty() }
+            addIf("$prefix synonyms empty") { disease.synonyms.isEmpty() }
+            addIf("$prefix requiredExams empty") { disease.requiredExams.isEmpty() }
+            addIf("$prefix differentialDiagnoses empty") { disease.differentialDiagnoses.isEmpty() }
+            addIf("$prefix complications empty") { disease.complications.isEmpty() }
+            // treatments.pharmacological は章別必須 (Ch.IV のみ) のため共通 populate 検証から除外。
+            // 章別の非 empty 検証は同ファイルの CHAPTER_IV 専用テストで担保されている。
+            addIf("$prefix prevention empty") { disease.prevention.isEmpty() }
+            addIf("$prefix relatedDrugIds empty") { disease.relatedDrugIds.isEmpty() }
+            // disease_0079 は作中ロア上の対応関連疾患がないため、final override で明示的に空リストへ固定する。
+            addIf("$prefix relatedDiseaseIds empty") {
+                disease.relatedDiseaseIds.isEmpty() && disease.id != "disease_0079"
+            }
+        }
 
     @Test
     fun `no raw placeholder delimiters survive in any generated disease JSON`() {
