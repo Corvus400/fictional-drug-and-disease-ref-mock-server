@@ -11,8 +11,16 @@ class CountryBucketDataTest {
     private val katakanaRegex: Regex = Regex(pattern = "^[゠-ヿー]+$")
 
     @Test
-    fun `all 14 countries have a bucket entry`() {
-        assertEquals(14, Country.entries.size)
+    fun `Country enum has 14 entries`() {
+        assertEquals(
+            expected = 14,
+            actual = Country.entries.size,
+            message = "Country enum must contain the 14 supported country buckets",
+        )
+    }
+
+    @Test
+    fun `all countries have a bucket entry`() {
         for (country in Country.entries) {
             assertNotNull(
                 CountryBucketData.BY_COUNTRY[country],

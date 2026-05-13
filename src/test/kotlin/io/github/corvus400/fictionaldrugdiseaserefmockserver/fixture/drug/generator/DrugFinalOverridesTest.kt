@@ -52,12 +52,12 @@ class DrugFinalOverridesTest {
         assertNotEquals(
             "対魔女兵器 (架空分類)",
             drug0079.therapeuticCategoryName,
-            "contract assertion failed"
+            "drug_0079 therapeuticCategoryName must not receive the drug_0080 override",
         )
         assertNotEquals(
             "魔女因子研究所",
             drug0079.manufacturer,
-            "contract assertion failed"
+            "drug_0079 manufacturer must not receive the drug_0080 override",
         )
     }
 

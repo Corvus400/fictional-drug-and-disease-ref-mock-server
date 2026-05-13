@@ -27,7 +27,7 @@ class DrugModuleTherapeuticCategoryTest {
             assertEquals(
                 HttpStatusCode.OK,
                 response.status,
-                "contract assertion failed"
+                "therapeutic_category=ALIMENTARY_METABOLISM must return HTTP 200"
             )
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
             val totalCount = body["total_count"]?.jsonPrimitive?.content?.toInt()
@@ -64,7 +64,7 @@ class DrugModuleTherapeuticCategoryTest {
         assertEquals(
             HttpStatusCode.OK,
             response.status,
-            "contract assertion failed"
+            "therapeutic_category=NERVOUS_SYSTEM must return HTTP 200"
         )
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
         val totalCount = body["total_count"]?.jsonPrimitive?.content?.toInt()
@@ -129,7 +129,7 @@ class DrugModuleTherapeuticCategoryTest {
         assertEquals(
             HttpStatusCode.OK,
             response.status,
-            "contract assertion failed"
+            "matching therapeutic_category and category_atc filters must return HTTP 200"
         )
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
         val totalCount = body["total_count"]?.jsonPrimitive?.content?.toInt()
@@ -168,7 +168,7 @@ class DrugModuleTherapeuticCategoryTest {
         assertEquals(
             HttpStatusCode.OK,
             response.status,
-            "contract assertion failed"
+            "conflicting therapeutic_category and category_atc filters must return HTTP 200 with empty results"
         )
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
         assertEquals(
@@ -195,12 +195,12 @@ class DrugModuleTherapeuticCategoryTest {
         assertEquals(
             HttpStatusCode.OK,
             deprecatedResponse.status,
-            "contract assertion failed"
+            "category_name query must be accepted and ignored with HTTP 200"
         )
         assertEquals(
             HttpStatusCode.OK,
             unfilteredResponse.status,
-            "contract assertion failed"
+            "unfiltered /v1/drugs baseline request must return HTTP 200"
         )
         val deprecatedBody = json.parseToJsonElement(string = deprecatedResponse.bodyAsText()).jsonObject
         val unfilteredBody = json.parseToJsonElement(string = unfilteredResponse.bodyAsText()).jsonObject

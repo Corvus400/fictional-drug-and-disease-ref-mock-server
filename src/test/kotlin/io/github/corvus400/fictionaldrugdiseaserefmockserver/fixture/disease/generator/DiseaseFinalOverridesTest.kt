@@ -158,11 +158,11 @@ class DiseaseFinalOverridesTest {
 
         assertTrue(
             requiredText.contains("全国検査"),
-            "contract assertion failed"
+            "disease_0079 diagnosticCriteria.required must reference 全国検査",
         )
         assertTrue(
             requiredText.contains("魔女因子高値"),
-            "contract assertion failed"
+            "disease_0079 diagnosticCriteria.required must reference 魔女因子高値",
         )
     }
 

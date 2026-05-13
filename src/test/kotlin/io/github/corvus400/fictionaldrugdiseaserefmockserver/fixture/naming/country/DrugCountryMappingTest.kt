@@ -23,12 +23,16 @@ class DrugCountryMappingTest {
         )
 
     @Test
-    fun `all 14 ATC first letters map to the expected country`() {
+    fun `expected ATC mapping covers 14 first letters`() {
         assertEquals(
             14,
             expectedByAtcFirstLetter.size,
-            "contract assertion failed"
+            "DrugCountryMapping test data must cover all 14 ATC first letters",
         )
+    }
+
+    @Test
+    fun `all 14 ATC first letters map to the expected country`() {
         for ((atc, expected) in expectedByAtcFirstLetter) {
             val actual = DrugCountryMapping.of(atcFirstLetter = atc)
             assertEquals(

@@ -56,12 +56,12 @@ class DiseasePlaceholderDictionaryTest {
         assertEquals(
             "A",
             first,
-            "contract assertion failed"
+            "disease self-reference placeholder must resolve to the first context selfName",
         )
         assertEquals(
             "B",
             second,
-            "contract assertion failed"
+            "disease self-reference placeholder must resolve to the second context selfName",
         )
     }
 

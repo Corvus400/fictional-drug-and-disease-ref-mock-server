@@ -29,7 +29,11 @@ class DiseaseModuleFilterTest {
 
             val response = client.get(urlString = "/v1/diseases?icd10_chapter=chapter_i")
 
-            assertEquals(expected = HttpStatusCode.OK, actual = response.status)
+            assertEquals(
+                expected = HttpStatusCode.OK,
+                actual = response.status,
+                message = "icd10_chapter=chapter_i filter must return HTTP 200",
+            )
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
             val items = body["items"]?.jsonArray
             assertNotNull(actual = items, message = "response body must have an items array")
@@ -62,7 +66,11 @@ class DiseaseModuleFilterTest {
 
             val response = client.get(urlString = "/v1/diseases?icd10_chapter=chapter_ii")
 
-            assertEquals(expected = HttpStatusCode.OK, actual = response.status)
+            assertEquals(
+                expected = HttpStatusCode.OK,
+                actual = response.status,
+                message = "icd10_chapter=chapter_ii filter must return HTTP 200",
+            )
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
             val items = body["items"]?.jsonArray
             assertNotNull(actual = items, message = "response body must have an items array")
@@ -100,7 +108,11 @@ class DiseaseModuleFilterTest {
                 urlString = "/v1/diseases?department=$encodedDepartment&page_size=100",
             )
 
-            assertEquals(expected = HttpStatusCode.OK, actual = response.status)
+            assertEquals(
+                expected = HttpStatusCode.OK,
+                actual = response.status,
+                message = "department=PSYCHIATRY filter must return HTTP 200",
+            )
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
             val items = body["items"]?.jsonArray
             assertNotNull(actual = items, message = "response body must have an items array")
@@ -134,7 +146,11 @@ class DiseaseModuleFilterTest {
             urlString = "/v1/diseases?chronicity=$encodedChronicity&page_size=100",
         )
 
-        assertEquals(expected = HttpStatusCode.OK, actual = response.status)
+        assertEquals(
+            expected = HttpStatusCode.OK,
+            actual = response.status,
+            message = "chronicity=ACUTE filter must return HTTP 200",
+        )
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
         val items = body["items"]?.jsonArray
         assertNotNull(actual = items, message = "response body must have an items array")
@@ -159,7 +175,11 @@ class DiseaseModuleFilterTest {
 
         val response = client.get(urlString = "/v1/diseases?infectious=true&page_size=100")
 
-        assertEquals(expected = HttpStatusCode.OK, actual = response.status)
+        assertEquals(
+            expected = HttpStatusCode.OK,
+            actual = response.status,
+            message = "infectious=true filter must return HTTP 200",
+        )
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
         val items = body["items"]?.jsonArray
         assertNotNull(actual = items, message = "response body must have an items array")
@@ -187,7 +207,11 @@ class DiseaseModuleFilterTest {
                 urlString = "/v1/diseases?icd10_chapter=chapter_i&infectious=true&page_size=100",
             )
 
-            assertEquals(expected = HttpStatusCode.OK, actual = response.status)
+            assertEquals(
+                expected = HttpStatusCode.OK,
+                actual = response.status,
+                message = "icd10_chapter=chapter_i&infectious=true filter must return HTTP 200",
+            )
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
             val items = body["items"]?.jsonArray
             assertNotNull(actual = items, message = "response body must have an items array")
@@ -227,7 +251,11 @@ class DiseaseModuleFilterTest {
 
         val response = client.get(urlString = "/v1/diseases?icd10_chapter=I&page_size=100")
 
-        assertEquals(expected = HttpStatusCode.OK, actual = response.status)
+        assertEquals(
+            expected = HttpStatusCode.OK,
+            actual = response.status,
+            message = "legacy roman icd10_chapter=I query must return HTTP 200 with empty results",
+        )
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
         val items = body["items"]?.jsonArray
         assertNotNull(actual = items, message = "response body must have an items array")

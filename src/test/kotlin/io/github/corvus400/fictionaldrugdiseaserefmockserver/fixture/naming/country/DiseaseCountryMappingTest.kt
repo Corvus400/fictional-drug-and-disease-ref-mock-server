@@ -6,13 +6,18 @@ import kotlin.test.assertEquals
 
 class DiseaseCountryMappingTest {
     @Test
-    fun `all 22 ICD10 chapters map by ordinal modulo 14`() {
+    fun `country list has 14 entries for ICD10 modulo mapping`() {
         val countries = Country.entries
         assertEquals(
             14,
             countries.size,
-            "contract assertion failed"
+            "DiseaseCountryMapping modulo contract requires exactly 14 country buckets",
         )
+    }
+
+    @Test
+    fun `all 22 ICD10 chapters map by ordinal modulo 14`() {
+        val countries = Country.entries
         for (chapter in Icd10Chapter.entries) {
             val expected = countries[chapter.ordinal % countries.size]
             val actual = DiseaseCountryMapping.of(chapter = chapter)

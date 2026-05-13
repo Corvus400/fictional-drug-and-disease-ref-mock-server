@@ -14,17 +14,17 @@ class CoinerTest {
         assertEquals(
             first.latin,
             second.latin,
-            "contract assertion failed"
+            "coinName latin output must be deterministic for the same slot and seed",
         )
         assertEquals(
             first.katakana,
             second.katakana,
-            "contract assertion failed"
+            "coinName katakana output must be deterministic for the same slot and seed",
         )
         assertEquals(
             first.pattern,
             second.pattern,
-            "contract assertion failed"
+            "coinName pattern output must be deterministic for the same slot and seed",
         )
     }
 
@@ -34,11 +34,11 @@ class CoinerTest {
         val coined = engine.coinName(slot = NameSlot.DISEASE_NAME, seed = 42L)
         assertTrue(
             coined.latin.isNotBlank(),
-            "contract assertion failed"
+            "coinName must return non-blank latin text",
         )
         assertTrue(
             coined.katakana.isNotBlank(),
-            "contract assertion failed"
+            "coinName must return non-blank katakana text",
         )
     }
 
@@ -50,12 +50,12 @@ class CoinerTest {
         assertEquals(
             NameSlot.DRUG_BRAND.defaultPattern,
             brand.pattern,
-            "contract assertion failed"
+            "DRUG_BRAND coinName must use the slot default pattern",
         )
         assertEquals(
             NameSlot.DRUG_GENERIC.defaultPattern,
             generic.pattern,
-            "contract assertion failed"
+            "DRUG_GENERIC coinName must use the slot default pattern",
         )
     }
 }

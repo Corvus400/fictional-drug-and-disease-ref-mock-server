@@ -131,7 +131,11 @@ class DiseaseModuleKeywordTest {
             urlString = "/v1/diseases?keyword=$encodedKeyword" +
                 "&keyword_target=name&keyword_match=partial&page_size=100",
         )
-        assertEquals(expected = HttpStatusCode.OK, actual = response.status)
+        assertEquals(
+            expected = HttpStatusCode.OK,
+            actual = response.status,
+            message = "keyword search under default scenario must return HTTP 200",
+        )
         val filteredCount = response.totalCount()
         assertTrue(
             actual = filteredCount in MIN_FILTERED_COUNT until DEFAULT_TOTAL_COUNT,

@@ -150,7 +150,11 @@ class DrugModuleTest {
 
             val response = client.get("/v1/drugs?sort=brand_name_kana&page_size=100")
 
-            assertEquals(HttpStatusCode.OK, response.status)
+            assertEquals(
+                expected = HttpStatusCode.OK,
+                actual = response.status,
+                message = "sort=brand_name_kana must return HTTP 200",
+            )
             val body = AppJson.decodeFromString<DrugListResponse>(response.bodyAsText())
             val kanas = body.items.map { summary -> summary.brandNameKana }
             assertEquals(

@@ -26,7 +26,11 @@ class DiseaseModuleAdditionalFilterTest {
         val keyword = "発熱".encodeURLParameter()
         val response = client.get(urlString = "/v1/diseases?symptom_keyword=$keyword&page_size=100")
 
-        assertEquals(expected = HttpStatusCode.OK, actual = response.status)
+        assertEquals(
+            expected = HttpStatusCode.OK,
+            actual = response.status,
+            message = "symptom_keyword=発熱 filter must return HTTP 200",
+        )
         val totalCount = response.totalCount()
         assertTrue(
             actual = totalCount in 1 until DEFAULT_DISEASE_COUNT,
@@ -81,7 +85,11 @@ class DiseaseModuleAdditionalFilterTest {
 
         val response = client.get(urlString = "/v1/diseases?exam_category=IMAGING&page_size=100")
 
-        assertEquals(expected = HttpStatusCode.OK, actual = response.status)
+        assertEquals(
+            expected = HttpStatusCode.OK,
+            actual = response.status,
+            message = "exam_category=IMAGING filter must return HTTP 200",
+        )
         val totalCount = response.totalCount()
         assertTrue(
             actual = totalCount in 1 until DEFAULT_DISEASE_COUNT,
@@ -98,7 +106,11 @@ class DiseaseModuleAdditionalFilterTest {
                 urlString = "/v1/diseases?has_pharmacological_treatment=true&page_size=100",
             )
 
-            assertEquals(expected = HttpStatusCode.OK, actual = response.status)
+            assertEquals(
+                expected = HttpStatusCode.OK,
+                actual = response.status,
+                message = "has_pharmacological_treatment=true filter must return HTTP 200",
+            )
             val totalCount = response.totalCount()
             assertTrue(
                 actual = totalCount in 1 until DEFAULT_DISEASE_COUNT,
@@ -154,7 +166,11 @@ class DiseaseModuleAdditionalFilterTest {
 
             val response = client.get(urlString = "/v1/diseases?has_severity_grading=true&page_size=100")
 
-            assertEquals(expected = HttpStatusCode.OK, actual = response.status)
+            assertEquals(
+                expected = HttpStatusCode.OK,
+                actual = response.status,
+                message = "has_severity_grading=true filter must return HTTP 200",
+            )
             val totalCount = response.totalCount()
             assertTrue(
                 actual = totalCount in 1 until DEFAULT_DISEASE_COUNT,

@@ -106,7 +106,7 @@ class AdminCatalogTest {
         assertEquals(
             "All",
             allBtn?.text(),
-            "contract assertion failed"
+            "the first catalog filter button must be the All filter",
         )
     }
 
