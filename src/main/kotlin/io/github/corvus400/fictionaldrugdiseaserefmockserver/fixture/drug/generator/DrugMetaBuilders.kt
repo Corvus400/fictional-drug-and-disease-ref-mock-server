@@ -15,7 +15,6 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.N
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.PackageInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.PharmacokineticsInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.PharmacologyInfo
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.PkParameter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.Reference
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.StorageCondition
 
@@ -52,18 +51,13 @@ internal object DrugMetaBuilders {
                 seed = stableHash(id = id, slot = DrugFieldSlot.PK_EXCRETION.ordinal, index = 0),
             ),
             parameters =
-            listOf(
-                PkParameter(name = "Cmax", value = "4.5 μg/mL"),
-                PkParameter(name = "T1/2", value = "6.2 時間"),
-                PkParameter(name = "AUC", value = "38.4 μg・時/mL"),
-            ),
+            DrugSeedDerivedValues.pharmacokineticParameters(id = id),
         )
     }
 
     fun buildClinicalResults(id: String, dict: DrugPlaceholderDictionary): List<ClinicalResultSection> {
         val countSeed = stableHash(id = id, slot = DrugFieldSlot.CLINICAL_RESULT.ordinal, index = 0)
         val count = ValueRangeGenerator.pickCount(seed = countSeed, range = CLINICAL_RESULT_RANGE)
-        val headings = listOf("有効性", "安全性", "長期投与試験")
         return (0 until count).map { offset ->
             val contentSeed =
                 stableHash(
@@ -72,7 +66,7 @@ internal object DrugMetaBuilders {
                     index = offset + 1,
                 )
             ClinicalResultSection(
-                heading = headings[offset % headings.size],
+                heading = DrugSeedDerivedValues.clinicalResultHeading(id = id, offset = offset),
                 content =
                 dict.renderField(
                     field = ParagraphField.CLINICAL_RESULT_CONTENT,
@@ -228,8 +222,17 @@ internal object DrugMetaBuilders {
                         isBiological = isBiological,
                         drugId = id,
                     ),
-                    lightProtection = false,
-                    moistureProtection = false,
+                    lightProtection =
+                    DrugSeedDerivedValues.lightProtection(
+                        id = id,
+                        form = dosageForm,
+                        isBiological = isBiological,
+                    ),
+                    moistureProtection =
+                    DrugSeedDerivedValues.moistureProtection(
+                        id = id,
+                        form = dosageForm,
+                    ),
                 ),
                 expirationMonths = expiration,
             ),

@@ -134,7 +134,11 @@ class DrugGenerator(
                 activeIngredient = generic.katakana,
                 activeIngredientAmount =
                 Dose(
-                    amount = STANDARD_DOSE_AMOUNT,
+                    amount =
+                    DrugSeedDerivedValues.standardDoseAmount(
+                        id = drugId,
+                        form = blueprint.dosageForm,
+                    ),
                     unit =
                     pickDoseUnit(
                         form = blueprint.dosageForm,
@@ -166,7 +170,12 @@ class DrugGenerator(
                 id = drugId,
                 dict = contextualDictionary,
             ),
-            dosage = DrugClinicalBuilders.buildDosage(id = drugId, dict = contextualDictionary),
+            dosage =
+            DrugClinicalBuilders.buildDosage(
+                id = drugId,
+                dict = contextualDictionary,
+                dosageForm = blueprint.dosageForm,
+            ),
             dosageRelatedPrecautions =
             DrugClinicalBuilders.buildDosageRelatedPrecautions(id = drugId, dict = contextualDictionary),
             importantPrecautions =
@@ -207,7 +216,11 @@ class DrugGenerator(
             physicochemicalProperties =
             PhysicochemicalInfo(
                 genericNameEnglish = generic.latin,
-                molecularFormula = DEFAULT_MOLECULAR_FORMULA,
+                molecularFormula =
+                DrugSeedDerivedValues.molecularFormula(
+                    id = drugId,
+                    atcInitial = blueprint.atcFirstLetter,
+                ),
                 description =
                 ensureFictionalMarker(
                     blueprint.textOverride?.originalSubstanceDescription
@@ -306,9 +319,7 @@ class DrugGenerator(
         private const val DRUG_ID_PAD_LENGTH: Int = 4
         private const val ATC_FICTIONAL_NAMESPACE: String = "99ZZ"
         private const val ATC_CODE_SUFFIX_MOD: Int = 100
-        private const val STANDARD_DOSE_AMOUNT: Double = 10.0
         private const val MANUFACTURER_SUFFIX: String = "製薬"
-        private const val DEFAULT_MOLECULAR_FORMULA: String = "C20H25N3O"
         private val REVISED_AT_BASE: LocalDate = LocalDate.of(2026, 4, 23)
         internal const val REVISED_AT_SPREAD_DAYS: Int = 90
         private val INJECTION_FORM_DOSE_UNITS: List<DoseUnit> =

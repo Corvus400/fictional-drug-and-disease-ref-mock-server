@@ -23,6 +23,8 @@ class DiseaseGenerator(
     private val coiner: BucketNameCoiner = BucketNameCoiner(adapter = adapter)
 
     fun generate(blueprint: DiseaseBlueprint): Disease {
+        val diseaseId =
+            "disease_${blueprint.index.toString().padStart(length = DISEASE_ID_PAD_LENGTH, padChar = '0')}"
         val country = DiseaseCountryMapping.of(chapter = blueprint.icd10Chapter)
         val cities = CountryBucketRepository.of(country = country).cities
         val name =
@@ -32,7 +34,7 @@ class DiseaseGenerator(
                 slot = NameSlot.DISEASE_NAME,
                 offset = 0,
             )
-        val synonyms = (0 until SYNONYM_COUNT).map { offset ->
+        val synonyms = (0 until DiseaseSeedDerivedValues.synonymCount(id = diseaseId)).map { offset ->
             coiner.coin(
                 bucket = cities,
                 blueprintIndex = blueprint.index,
@@ -40,7 +42,7 @@ class DiseaseGenerator(
                 offset = offset,
             )
         }
-        val differentials = (0 until DIFFERENTIAL_COUNT).map { offset ->
+        val differentials = (0 until DiseaseSeedDerivedValues.differentialCount(id = diseaseId)).map { offset ->
             coiner.coin(
                 bucket = cities,
                 blueprintIndex = blueprint.index,
@@ -48,7 +50,7 @@ class DiseaseGenerator(
                 offset = offset,
             )
         }
-        val complications = (0 until COMPLICATION_COUNT).map { offset ->
+        val complications = (0 until DiseaseSeedDerivedValues.complicationCount(id = diseaseId)).map { offset ->
             coiner.coin(
                 bucket = cities,
                 blueprintIndex = blueprint.index,
@@ -161,9 +163,6 @@ class DiseaseGenerator(
     }
 
     companion object {
-        private const val SYNONYM_COUNT: Int = 2
-        private const val DIFFERENTIAL_COUNT: Int = 2
-        private const val COMPLICATION_COUNT: Int = 2
         private const val DISEASE_ID_PAD_LENGTH: Int = 4
         private val REVISED_AT_BASE: LocalDate = LocalDate.of(2026, 4, 23)
         internal const val REVISED_AT_SPREAD_DAYS: Int = 90
