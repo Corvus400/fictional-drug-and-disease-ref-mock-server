@@ -13,6 +13,14 @@ DO NOT use for medical decisions or clinical practice.
 
 詳細は [DISCLAIMER.md](DISCLAIMER.md) を参照してください。
 
+## Repository Operations
+
+- Dependency update pull requests are managed by Renovate.
+- GitHub Actions and workflow dependency updates are reviewed manually.
+- External pull requests are rejected by CI and are not reviewed.
+- General support, feature requests, and bug reports are not accepted through GitHub Issues.
+- Security reports must follow [SECURITY.md](./SECURITY.md).
+
 ## クイックスタート
 
 1. 初回セットアップ:

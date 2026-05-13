@@ -7,7 +7,44 @@ permissions:
   actions: read
   contents: read
 jobs:
+  classify-ci-metrics-trust:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    outputs:
+      trusted: ${{ steps.classify.outputs.trusted }}
+
+    steps:
+      - id: classify
+        name: Classify workflow run trust
+        shell: bash
+        env:
+          ACTOR: ${{ github.event.workflow_run.actor.login }}
+          EVENT: ${{ github.event.workflow_run.event }}
+          HEAD_REPOSITORY: ${{ github.event.workflow_run.head_repository.full_name }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+
+          trusted="false"
+          case "$EVENT" in
+            pull_request|push)
+              case "$ACTOR" in
+                Corvus400|renovate\[bot\])
+                  if [ "$HEAD_REPOSITORY" = "$REPOSITORY" ]; then
+                    trusted="true"
+                  fi
+                  ;;
+              esac
+              ;;
+          esac
+
+          echo "trusted=$trusted" >> "$GITHUB_OUTPUT"
+          echo "trusted=$trusted"
+
   collect:
+    needs: [classify-ci-metrics-trust]
+    if: needs.classify-ci-metrics-trust.outputs.trusted == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:

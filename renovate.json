@@ -5,6 +5,7 @@
   "schedule": ["before 1am on sunday"],
   "rebaseWhen": "never",
   "dependencyDashboard": true,
+  "enabledManagers": ["dockerfile", "gradle", "gradle-wrapper"],
   "labels": ["dependencies", "renovate"],
   "assignees": ["Corvus400"],
   "packageRules": [
@@ -34,10 +35,6 @@
         "org.jsoup:jsoup"
       ],
       "groupName": "Test dependencies"
-    },
-    {
-      "matchManagers": ["github-actions"],
-      "groupName": "GitHub Actions"
     }
   ],
   "prBodyDefinitions": {

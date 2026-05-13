@@ -1,6 +1,8 @@
 # Contributing
 
 This repository is a portfolio mock server. External pull requests are not accepted by default.
+Automated dependency update pull requests are created by Renovate and reviewed by the repository owner.
+GitHub Actions and workflow dependency updates are reviewed manually.
 
 Before opening an issue, read [DISCLAIMER.md](DISCLAIMER.md). The data returned by this server is fictional and must not be used for medical decisions, diagnosis, treatment, or clinical practice.
 
