@@ -118,7 +118,7 @@ class DiseaseGenerator(
             symptoms = DiseaseNestedBuilders.buildSymptoms(id = diseaseId),
             diagnosticCriteria = DiseaseNestedBuilders.buildDiagnosticCriteria(
                 id = diseaseId,
-                dict = placeholderDictionary,
+                dict = contextualDictionary,
                 context = context,
             ),
             requiredExams = DiseaseNestedBuilders.buildRequiredExams(
