@@ -3,7 +3,6 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 
 class FictionNameGeneratorTest {
     @BeforeTest
@@ -30,33 +29,40 @@ class FictionNameGeneratorTest {
         }
         val kanaSet = all.map { it.kana }.toSet()
         val kanjiSet = all.map { it.kanji }.toSet()
-        assertEquals(expected = all.size, actual = kanaSet.size, message = "kana collision detected")
-        assertEquals(expected = all.size, actual = kanjiSet.size, message = "kanji collision detected")
+        assertEquals(
+            expected = CollisionSnapshot(total = all.size, uniqueKana = all.size, uniqueKanji = all.size),
+            actual = CollisionSnapshot(total = all.size, uniqueKana = kanaSet.size, uniqueKanji = kanjiSet.size),
+        )
     }
 
     @Test
     fun `generated names avoid all PMDA and ICD-10 blacklist entries`() {
+        val violations = mutableListOf<String>()
         repeat(times = 120) { index ->
             val id = "drug_${"%04d".format(index + 1)}"
             for (slot in NameSlot.entries) {
                 val name = FictionNameGenerator.generate(id = id, slot = slot)
-                assertFalse(
-                    actual = ForbiddenNames.contains(name = name.kana),
-                    message = "kana '${name.kana}' is in blacklist (id=$id slot=$slot)",
-                )
-                assertFalse(
-                    actual = ForbiddenNames.contains(name = name.kanji),
-                    message = "kanji '${name.kanji}' is in blacklist (id=$id slot=$slot)",
-                )
-                assertFalse(
-                    actual = ForbiddenNames.containsClassSuffix(name = name.kana),
-                    message = "kana '${name.kana}' ends with drug class suffix (id=$id slot=$slot)",
-                )
-                assertFalse(
-                    actual = ForbiddenNames.containsClassSuffix(name = name.kanji),
-                    message = "kanji '${name.kanji}' ends with drug class suffix (id=$id slot=$slot)",
-                )
+                if (ForbiddenNames.contains(name = name.kana)) {
+                    violations += "kana '${name.kana}' is in blacklist (id=$id slot=$slot)"
+                }
+                if (ForbiddenNames.contains(name = name.kanji)) {
+                    violations += "kanji '${name.kanji}' is in blacklist (id=$id slot=$slot)"
+                }
+                if (ForbiddenNames.containsClassSuffix(name = name.kana)) {
+                    violations += "kana '${name.kana}' ends with drug class suffix (id=$id slot=$slot)"
+                }
+                if (ForbiddenNames.containsClassSuffix(name = name.kanji)) {
+                    violations += "kanji '${name.kanji}' ends with drug class suffix (id=$id slot=$slot)"
+                }
             }
         }
+
+        assertEquals(expected = emptyList(), actual = violations)
     }
+
+    private data class CollisionSnapshot(
+        val total: Int,
+        val uniqueKana: Int,
+        val uniqueKanji: Int,
+    )
 }

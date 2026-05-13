@@ -206,15 +206,20 @@ class OpenApiDocTest {
     fun `disease icd10_chapter parameter has description`() = testApplication {
         application { module() }
         val description = fetchParameterDescription(path = "/v1/diseases", parameterName = "icd10_chapter")
-        assertTrue(
-            description.isNotEmpty(),
-            "icd10_chapter description が空文字列",
-        )
-        assertTrue(
-            description.contains("chapter_i"),
-            "icd10_chapter description に英語 SerialName 'chapter_i' が含まれていない: $description",
+        assertEquals(
+            expected = ParameterDescriptionSnapshot(isNotEmpty = true, containsChapterI = true),
+            actual = ParameterDescriptionSnapshot(
+                isNotEmpty = description.isNotEmpty(),
+                containsChapterI = description.contains("chapter_i"),
+            ),
+            message = "icd10_chapter description must include english SerialName 'chapter_i': $description",
         )
     }
+
+    private data class ParameterDescriptionSnapshot(
+        val isNotEmpty: Boolean,
+        val containsChapterI: Boolean,
+    )
 
     @Test
     fun `disease department parameter has description`() = testApplication {

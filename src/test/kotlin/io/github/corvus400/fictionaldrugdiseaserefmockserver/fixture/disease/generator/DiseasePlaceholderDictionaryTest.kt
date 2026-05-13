@@ -7,7 +7,6 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.stab
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
-import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class DiseasePlaceholderDictionaryTest {
@@ -54,14 +53,9 @@ class DiseasePlaceholderDictionaryTest {
         val first = dict.resolve("disease", seed = 0L, context = DiseaseRenderContext(selfName = "A"))
         val second = dict.resolve("disease", seed = 0L, context = DiseaseRenderContext(selfName = "B"))
         assertEquals(
-            "A",
-            first,
-            "disease self-reference placeholder must resolve to the first context selfName",
-        )
-        assertEquals(
-            "B",
-            second,
-            "disease self-reference placeholder must resolve to the second context selfName",
+            expected = listOf("A", "B"),
+            actual = listOf(first, second),
+            message = "disease self-reference placeholder must resolve to each context selfName",
         )
     }
 
@@ -71,14 +65,14 @@ class DiseasePlaceholderDictionaryTest {
         val context = DiseaseRenderContext(selfName = "架空疾患テスト甲")
         val template = "{{disease}}は、{{mainFeature}}を特徴とする{{chronicity}}疾患である。"
         val result = dict.resolveAll(template, seed = 42L, context = context)
-        assertFalse(
-            result.contains(DiseasePlaceholderDelimiter.OPEN) ||
-                result.contains(DiseasePlaceholderDelimiter.CLOSE),
-            "resolveAll must consume every placeholder; got: $result",
-        )
-        assertTrue(
-            result.contains("架空疾患テスト甲"),
-            "disease self-reference must be present in resolved output; got: $result",
+        assertEquals(
+            expected = ResolveAllSnapshot(hasRawDelimiter = false, containsSelfName = true),
+            actual = ResolveAllSnapshot(
+                hasRawDelimiter = result.contains(DiseasePlaceholderDelimiter.OPEN) ||
+                    result.contains(DiseasePlaceholderDelimiter.CLOSE),
+                containsSelfName = result.contains("架空疾患テスト甲"),
+            ),
+            message = "resolveAll must substitute placeholders and preserve disease self-reference; got: $result",
         )
     }
 
@@ -99,12 +93,14 @@ class DiseasePlaceholderDictionaryTest {
         val template = "{{mainSymptom}} / {{mainSymptom}} / {{mainSymptom}}"
         val result = dict.resolveAll(template, seed = 42L, context = context)
         val occurrences = result.split(" / ")
-        assertEquals(3, occurrences.size, "template must yield exactly 3 segments")
-        val distinctCount = occurrences.toSet().size
-        assertTrue(
-            distinctCount >= 2,
-            "same-key placeholders at different match positions must derive seeds independently; " +
-                "got identical substitutions at every position: $result",
+        assertEquals(
+            expected = RepeatedPlaceholderSnapshot(segmentCount = 3, hasVariation = true),
+            actual = RepeatedPlaceholderSnapshot(
+                segmentCount = occurrences.size,
+                hasVariation = occurrences.toSet().size >= 2,
+            ),
+            message = "same-key placeholders at different match positions must derive seeds independently; " +
+                "got: $result",
         )
     }
 
@@ -118,13 +114,31 @@ class DiseasePlaceholderDictionaryTest {
                 seed = 42L,
                 context = context,
             )
-        assertTrue(rendered.isNotBlank(), "renderField must produce a non-empty paragraph")
-        assertFalse(
-            rendered.contains(DiseasePlaceholderDelimiter.OPEN) ||
-                rendered.contains(DiseasePlaceholderDelimiter.CLOSE),
-            "renderField must consume every placeholder in the picked template; got: $rendered",
+        assertEquals(
+            expected = RenderedFieldSnapshot(isNotBlank = true, hasRawDelimiter = false),
+            actual = RenderedFieldSnapshot(
+                isNotBlank = rendered.isNotBlank(),
+                hasRawDelimiter = rendered.contains(DiseasePlaceholderDelimiter.OPEN) ||
+                    rendered.contains(DiseasePlaceholderDelimiter.CLOSE),
+            ),
+            message = "renderField must produce a substituted non-empty paragraph; got: $rendered",
         )
     }
+
+    private data class ResolveAllSnapshot(
+        val hasRawDelimiter: Boolean,
+        val containsSelfName: Boolean,
+    )
+
+    private data class RepeatedPlaceholderSnapshot(
+        val segmentCount: Int,
+        val hasVariation: Boolean,
+    )
+
+    private data class RenderedFieldSnapshot(
+        val isNotBlank: Boolean,
+        val hasRawDelimiter: Boolean,
+    )
 
     @Test
     fun `resolve throws TASK ORDER VIOLATION for unknown placeholder key`() {

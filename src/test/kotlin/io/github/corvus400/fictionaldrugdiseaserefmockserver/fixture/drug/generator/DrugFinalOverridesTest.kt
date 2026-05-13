@@ -9,7 +9,6 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disea
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.Drug
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 class DrugFinalOverridesTest {
@@ -49,15 +48,15 @@ class DrugFinalOverridesTest {
         val drugs = generateDrugs()
         val drug0079 = drugs.first { it.id == "drug_0079" }
 
-        assertNotEquals(
-            "対魔女兵器 (架空分類)",
-            drug0079.therapeuticCategoryName,
-            "drug_0079 therapeuticCategoryName must not receive the drug_0080 override",
-        )
-        assertNotEquals(
-            "魔女因子研究所",
-            drug0079.manufacturer,
-            "drug_0079 manufacturer must not receive the drug_0080 override",
+        assertEquals(
+            expected = mapOf(
+                "therapeuticCategoryUnaffected" to true,
+                "manufacturerUnaffected" to true,
+            ),
+            actual = mapOf(
+                "therapeuticCategoryUnaffected" to (drug0079.therapeuticCategoryName != "対魔女兵器 (架空分類)"),
+                "manufacturerUnaffected" to (drug0079.manufacturer != "魔女因子研究所"),
+            ),
         )
     }
 

@@ -3,24 +3,23 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.ge
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.stableHash
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class DiseaseNumericPlaceholderRangesTest {
     @Test
     fun `resolve returns a non-blank value matching the expected pattern for every category-D key`() {
-        EXPECTED_PATTERNS.forEach { (key, pattern) ->
+        val violations = EXPECTED_PATTERNS.mapNotNull { (key, pattern) ->
             val seed = stableHash(id = "disease_0001:$key", slot = 0, index = 0)
             val value = DiseaseNumericPlaceholderRanges.resolve(key, seed)
-            assertTrue(
-                value.isNotBlank(),
-                "resolve('$key', $seed) returned blank",
-            )
-            assertTrue(
-                pattern.matches(value),
-                "resolve('$key', $seed) returned '$value' which does not match /${pattern.pattern}/",
-            )
+            when {
+                value.isBlank() -> "resolve('$key', $seed) returned blank"
+                pattern.matches(value).not() ->
+                    "resolve('$key', $seed) returned '$value' which does not match /${pattern.pattern}/"
+                else -> null
+            }
         }
+
+        assertTrue(actual = violations.isEmpty(), message = "category-D formatting violations: $violations")
     }
 
     @Test
@@ -39,19 +38,21 @@ class DiseaseNumericPlaceholderRangesTest {
 
     @Test
     fun `resolve throws on unknown category-D key to catch formatter gaps`() {
-        val error =
-            runCatching {
-                DiseaseNumericPlaceholderRanges.resolve("unknownKey", seed = 0)
-            }.exceptionOrNull()
-        assertNotNull(
-            error,
-            "resolve must throw for an unknown category-D key so gaps fail fast",
-        )
-        assertTrue(
-            error.message.orEmpty().contains("unknownKey"),
-            "error message must mention the offending key; got: ${error.message}",
+        val error = runCatching { DiseaseNumericPlaceholderRanges.resolve("unknownKey", seed = 0) }.exceptionOrNull()
+        assertEquals(
+            expected = UnknownKeyFailureSnapshot(throws = true, mentionsKey = true),
+            actual = UnknownKeyFailureSnapshot(
+                throws = error != null,
+                mentionsKey = error?.message.orEmpty().contains("unknownKey"),
+            ),
+            message = "resolve must fail fast and mention the offending category-D key",
         )
     }
+
+    private data class UnknownKeyFailureSnapshot(
+        val throws: Boolean,
+        val mentionsKey: Boolean,
+    )
 
     companion object {
         private val EXPECTED_PATTERNS: Map<String, Regex> =

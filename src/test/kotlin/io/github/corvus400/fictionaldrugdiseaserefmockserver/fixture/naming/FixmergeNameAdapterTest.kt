@@ -3,29 +3,22 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixmerge.nameslot.NameSlot
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 class FixmergeNameAdapterTest {
     private val adapter: FixmergeNameAdapter = FixmergeNameAdapter()
 
     @Test
     fun `coin returns a non-empty CoinedName for every NameSlot`() {
-        for (slot in NameSlot.entries) {
+        val violations = NameSlot.entries.flatMap { slot ->
             val result = adapter.coin(slot = slot, seed = 0L)
-            assertTrue(
-                result.latin.isNotBlank(),
-                "latin is blank for slot=$slot"
-            )
-            assertTrue(
-                result.katakana.isNotBlank(),
-                "katakana is blank for slot=$slot"
-            )
-            assertTrue(
-                result.mixedSurface.isNotBlank(),
-                "mixedSurface is blank for slot=$slot"
+            listOfNotNull(
+                "latin is blank for slot=$slot".takeIf { result.latin.isBlank() },
+                "katakana is blank for slot=$slot".takeIf { result.katakana.isBlank() },
+                "mixedSurface is blank for slot=$slot".takeIf { result.mixedSurface.isBlank() },
             )
         }
+
+        assertEquals(expected = emptyList(), actual = violations)
     }
 
     @Test
@@ -37,16 +30,18 @@ class FixmergeNameAdapterTest {
 
     @Test
     fun `coin never returns a value listed in ForbiddenNames for many seeds`() {
-        for (seed in 0L until 100L) {
+        val violations = (0L until 100L).flatMap { seed ->
             val result = adapter.coin(slot = NameSlot.DRUG_BRAND, seed = seed)
-            assertFalse(
-                ForbiddenNames.contains(name = result.katakana),
-                "katakana collision at seed=$seed: '${result.katakana}'",
-            )
-            assertFalse(
-                ForbiddenNames.contains(name = result.latin),
-                "latin collision at seed=$seed: '${result.latin}'",
+            listOfNotNull(
+                "katakana collision at seed=$seed: '${result.katakana}'".takeIf {
+                    ForbiddenNames.contains(name = result.katakana)
+                },
+                "latin collision at seed=$seed: '${result.latin}'".takeIf {
+                    ForbiddenNames.contains(name = result.latin)
+                },
             )
         }
+
+        assertEquals(expected = emptyList(), actual = violations)
     }
 }

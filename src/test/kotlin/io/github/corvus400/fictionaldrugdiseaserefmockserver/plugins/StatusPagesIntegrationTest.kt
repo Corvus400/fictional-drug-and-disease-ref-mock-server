@@ -20,17 +20,22 @@ class StatusPagesIntegrationTest {
         application { module() }
 
         val response = client.get("/unknown-route")
-
-        assertEquals(
-            HttpStatusCode.NotFound,
-            response.status,
-            "unknown route must return 404 before validating the error payload",
-        )
         val body = json.parseToJsonElement(response.bodyAsText()).jsonObject
         assertEquals(
-            Disclaimer.SHORT,
-            body["disclaimer"]?.jsonPrimitive?.content,
-            "unknown route error response must include the short disclaimer",
+            expected = ErrorResponseSnapshot(
+                status = HttpStatusCode.NotFound,
+                disclaimer = Disclaimer.SHORT,
+            ),
+            actual = ErrorResponseSnapshot(
+                status = response.status,
+                disclaimer = body["disclaimer"]?.jsonPrimitive?.content,
+            ),
+            message = "unknown route must return 404 with the short disclaimer",
         )
     }
+
+    private data class ErrorResponseSnapshot(
+        val status: HttpStatusCode,
+        val disclaimer: String?,
+    )
 }
