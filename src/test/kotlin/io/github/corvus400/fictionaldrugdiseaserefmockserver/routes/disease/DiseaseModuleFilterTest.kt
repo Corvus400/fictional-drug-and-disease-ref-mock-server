@@ -16,8 +16,6 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
 
 class DiseaseModuleFilterTest {
     private val json = Json { ignoreUnknownKeys = true }
@@ -30,32 +28,19 @@ class DiseaseModuleFilterTest {
             val response = client.get(urlString = "/v1/diseases?icd10_chapter=chapter_i")
 
             assertEquals(
-                expected = HttpStatusCode.OK,
-                actual = response.status,
-                message = "icd10_chapter=chapter_i filter must return HTTP 200",
-            )
-            val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
-            val items = body["items"]?.jsonArray
-            assertNotNull(actual = items, message = "response body must have an items array")
-            assertTrue(
-                actual = items.isNotEmpty(),
-                message = "icd10_chapter=chapter_i must return a non-empty items array " +
-                    "(fixture distribution for CHAPTER_I is 6)",
-            )
-            val expectedSerialName = Icd10Chapter.CHAPTER_I.declaredSerialName()
-            items.forEachIndexed { index, item ->
-                assertEquals(
-                    expected = expectedSerialName,
-                    actual = item.jsonObject["icd10_chapter"]?.jsonPrimitive?.content,
-                    message = "items[$index].icd10_chapter must equal CHAPTER_I serialName when " +
-                        "query=icd10_chapter=chapter_i (item=${item.jsonObject})",
-                )
-            }
-            val totalCount = body["total_count"]?.jsonPrimitive?.content?.toIntOrNull()
-            assertEquals(
-                expected = 6,
-                actual = totalCount,
-                message = "icd10_chapter=chapter_i total_count must equal the fixture distribution for CHAPTER_I (= 6)",
+                expected = DiseaseFilterSnapshot(
+                    status = HttpStatusCode.OK,
+                    hasItems = true,
+                    totalCountMatches = true,
+                    itemViolations = emptyList(),
+                ),
+                actual = fieldEqualsSnapshot(
+                    response = response,
+                    fieldName = "icd10_chapter",
+                    expectedValue = Icd10Chapter.CHAPTER_I.declaredSerialName(),
+                    expectedTotalCount = 6,
+                ),
+                message = "icd10_chapter=chapter_i must return only CHAPTER_I items",
             )
         }
 
@@ -67,33 +52,19 @@ class DiseaseModuleFilterTest {
             val response = client.get(urlString = "/v1/diseases?icd10_chapter=chapter_ii")
 
             assertEquals(
-                expected = HttpStatusCode.OK,
-                actual = response.status,
-                message = "icd10_chapter=chapter_ii filter must return HTTP 200",
-            )
-            val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
-            val items = body["items"]?.jsonArray
-            assertNotNull(actual = items, message = "response body must have an items array")
-            assertTrue(
-                actual = items.isNotEmpty(),
-                message = "icd10_chapter=chapter_ii must return a non-empty items array " +
-                    "(fixture distribution for CHAPTER_II is 6)",
-            )
-            val expectedSerialName = Icd10Chapter.CHAPTER_II.declaredSerialName()
-            items.forEachIndexed { index, item ->
-                assertEquals(
-                    expected = expectedSerialName,
-                    actual = item.jsonObject["icd10_chapter"]?.jsonPrimitive?.content,
-                    message = "items[$index].icd10_chapter must equal CHAPTER_II serialName when " +
-                        "query=icd10_chapter=chapter_ii (item=${item.jsonObject})",
-                )
-            }
-            val totalCount = body["total_count"]?.jsonPrimitive?.content?.toIntOrNull()
-            assertEquals(
-                expected = 6,
-                actual = totalCount,
-                message = "icd10_chapter=chapter_ii total_count must equal the fixture distribution " +
-                    "for CHAPTER_II (= 6)",
+                expected = DiseaseFilterSnapshot(
+                    status = HttpStatusCode.OK,
+                    hasItems = true,
+                    totalCountMatches = true,
+                    itemViolations = emptyList(),
+                ),
+                actual = fieldEqualsSnapshot(
+                    response = response,
+                    fieldName = "icd10_chapter",
+                    expectedValue = Icd10Chapter.CHAPTER_II.declaredSerialName(),
+                    expectedTotalCount = 6,
+                ),
+                message = "icd10_chapter=chapter_ii must return only CHAPTER_II items",
             )
         }
 
@@ -109,31 +80,15 @@ class DiseaseModuleFilterTest {
             )
 
             assertEquals(
-                expected = HttpStatusCode.OK,
-                actual = response.status,
-                message = "department=PSYCHIATRY filter must return HTTP 200",
+                expected = DiseaseFilterSnapshot(
+                    status = HttpStatusCode.OK,
+                    hasItems = true,
+                    totalCountMatches = true,
+                    itemViolations = emptyList(),
+                ),
+                actual = departmentSnapshot(response = response, expectedDepartment = expectedSerialName),
+                message = "department=PSYCHIATRY must return only items containing PSYCHIATRY",
             )
-            val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
-            val items = body["items"]?.jsonArray
-            assertNotNull(actual = items, message = "response body must have an items array")
-            assertTrue(
-                actual = items.isNotEmpty(),
-                message = "department=$expectedSerialName must return a non-empty items array " +
-                    "(PSYCHIATRY is the primary department for CHAPTER_V)",
-            )
-            items.forEachIndexed { index, item ->
-                val departments = item.jsonObject["medical_department"]?.jsonArray
-                assertNotNull(
-                    actual = departments,
-                    message = "items[$index].medical_department must exist (item=${item.jsonObject})",
-                )
-                val serialNames = departments.map { it.jsonPrimitive.content }
-                assertTrue(
-                    actual = serialNames.contains(element = expectedSerialName),
-                    message = "items[$index].medical_department must contain '$expectedSerialName' when " +
-                        "query=department=$expectedSerialName (item=${item.jsonObject})",
-                )
-            }
         }
 
     @Test
@@ -147,26 +102,19 @@ class DiseaseModuleFilterTest {
         )
 
         assertEquals(
-            expected = HttpStatusCode.OK,
-            actual = response.status,
-            message = "chronicity=ACUTE filter must return HTTP 200",
+            expected = DiseaseFilterSnapshot(
+                status = HttpStatusCode.OK,
+                hasItems = true,
+                totalCountMatches = true,
+                itemViolations = emptyList(),
+            ),
+            actual = fieldEqualsSnapshot(
+                response = response,
+                fieldName = "chronicity",
+                expectedValue = expectedSerialName,
+            ),
+            message = "chronicity=ACUTE must return only ACUTE items",
         )
-        val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
-        val items = body["items"]?.jsonArray
-        assertNotNull(actual = items, message = "response body must have an items array")
-        assertTrue(
-            actual = items.isNotEmpty(),
-            message = "chronicity=$expectedSerialName must return a non-empty items array " +
-                "(ACUTE is the chronicity for CHAPTER_I and several default chapters)",
-        )
-        items.forEachIndexed { index, item ->
-            assertEquals(
-                expected = expectedSerialName,
-                actual = item.jsonObject["chronicity"]?.jsonPrimitive?.content,
-                message = "items[$index].chronicity must equal '$expectedSerialName' when " +
-                    "query=chronicity=$expectedSerialName (item=${item.jsonObject})",
-            )
-        }
     }
 
     @Test
@@ -176,26 +124,15 @@ class DiseaseModuleFilterTest {
         val response = client.get(urlString = "/v1/diseases?infectious=true&page_size=100")
 
         assertEquals(
-            expected = HttpStatusCode.OK,
-            actual = response.status,
-            message = "infectious=true filter must return HTTP 200",
+            expected = DiseaseFilterSnapshot(
+                status = HttpStatusCode.OK,
+                hasItems = true,
+                totalCountMatches = true,
+                itemViolations = emptyList(),
+            ),
+            actual = booleanFieldSnapshot(response = response, fieldName = "infectious", expectedValue = true),
+            message = "infectious=true must return only infectious items",
         )
-        val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
-        val items = body["items"]?.jsonArray
-        assertNotNull(actual = items, message = "response body must have an items array")
-        assertTrue(
-            actual = items.isNotEmpty(),
-            message = "infectious=true must return a non-empty items array " +
-                "(CHAPTER_I blueprints populate infectious=true for 6 fixtures)",
-        )
-        items.forEachIndexed { index, item ->
-            assertEquals(
-                expected = true,
-                actual = item.jsonObject["infectious"]?.jsonPrimitive?.content?.toBooleanStrictOrNull(),
-                message = "items[$index].infectious must equal true when " +
-                    "query=infectious=true (item=${item.jsonObject})",
-            )
-        }
     }
 
     @Test
@@ -207,41 +144,21 @@ class DiseaseModuleFilterTest {
                 urlString = "/v1/diseases?icd10_chapter=chapter_i&infectious=true&page_size=100",
             )
 
-            assertEquals(
-                expected = HttpStatusCode.OK,
-                actual = response.status,
-                message = "icd10_chapter=chapter_i&infectious=true filter must return HTTP 200",
-            )
-            val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
-            val items = body["items"]?.jsonArray
-            assertNotNull(actual = items, message = "response body must have an items array")
             val expectedChapter = Icd10Chapter.CHAPTER_I.declaredSerialName()
-            assertTrue(
-                actual = items.isNotEmpty(),
-                message = "icd10_chapter=chapter_i & infectious=true must return a non-empty items array " +
-                    "(CHAPTER_I fixtures all have infectious=true by blueprint contract)",
-            )
-            items.forEachIndexed { index, item ->
-                val obj = item.jsonObject
-                assertEquals(
-                    expected = expectedChapter,
-                    actual = obj["icd10_chapter"]?.jsonPrimitive?.content,
-                    message = "items[$index].icd10_chapter must equal '$expectedChapter' when " +
-                        "query=icd10_chapter=chapter_i&infectious=true (item=$obj)",
-                )
-                assertEquals(
-                    expected = true,
-                    actual = obj["infectious"]?.jsonPrimitive?.content?.toBooleanStrictOrNull(),
-                    message = "items[$index].infectious must equal true when " +
-                        "query=icd10_chapter=chapter_i&infectious=true (item=$obj)",
-                )
-            }
-            val totalCount = body["total_count"]?.jsonPrimitive?.content?.toIntOrNull()
             assertEquals(
-                expected = 6,
-                actual = totalCount,
-                message = "intersection total_count must equal CHAPTER_I distribution (= 6) since " +
-                    "all CHAPTER_I fixtures are infectious=true",
+                expected = DiseaseFilterSnapshot(
+                    status = HttpStatusCode.OK,
+                    hasItems = true,
+                    totalCountMatches = true,
+                    itemViolations = emptyList(),
+                ),
+                actual = andFieldSnapshot(
+                    response = response,
+                    expectedChapter = expectedChapter,
+                    expectedInfectious = true,
+                    expectedTotalCount = 6,
+                ),
+                message = "icd10_chapter=chapter_i&infectious=true must return the AND intersection",
             )
         }
 
@@ -252,23 +169,9 @@ class DiseaseModuleFilterTest {
         val response = client.get(urlString = "/v1/diseases?icd10_chapter=I&page_size=100")
 
         assertEquals(
-            expected = HttpStatusCode.OK,
-            actual = response.status,
+            expected = EmptyEnvelopeSnapshot(status = HttpStatusCode.OK, totalCount = 0, itemsSize = 0),
+            actual = emptyEnvelopeSnapshot(response = response),
             message = "legacy roman icd10_chapter=I query must return HTTP 200 with empty results",
-        )
-        val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
-        val items = body["items"]?.jsonArray
-        assertNotNull(actual = items, message = "response body must have an items array")
-        assertTrue(
-            actual = items.isEmpty(),
-            message = "items must be empty when legacy roman key 'I' is provided " +
-                "(only @SerialName snake_case keys are accepted)",
-        )
-        val totalCount = body["total_count"]?.jsonPrimitive?.content?.toIntOrNull()
-        assertEquals(
-            expected = 0,
-            actual = totalCount,
-            message = "total_count must equal 0 when legacy roman key 'I' is provided",
         )
     }
 
@@ -315,19 +218,107 @@ class DiseaseModuleFilterTest {
     private suspend fun assertZeroResultsForInvalidFilter(client: HttpClient, url: String) {
         val response = client.get(urlString = url)
 
-        assertEquals(expected = HttpStatusCode.OK, actual = response.status)
+        assertEquals(
+            expected = EmptyEnvelopeSnapshot(status = HttpStatusCode.OK, totalCount = 0, itemsSize = 0),
+            actual = emptyEnvelopeSnapshot(response = response),
+            message = "invalid filter value must return an empty envelope: $url",
+        )
+    }
+
+    private suspend fun fieldEqualsSnapshot(
+        response: io.ktor.client.statement.HttpResponse,
+        fieldName: String,
+        expectedValue: String,
+        expectedTotalCount: Int? = null,
+    ): DiseaseFilterSnapshot {
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
         val items = body["items"]?.jsonArray
-        assertNotNull(actual = items, message = "response body must have an items array")
         val totalCount = body["total_count"]?.jsonPrimitive?.content?.toIntOrNull()
-        assertEquals(
-            expected = 0,
-            actual = totalCount,
-            message = "total_count must equal 0 when invalid filter value is provided: $url",
+        return DiseaseFilterSnapshot(
+            status = response.status,
+            hasItems = items?.isNotEmpty() == true,
+            totalCountMatches = expectedTotalCount == null || totalCount == expectedTotalCount,
+            itemViolations = items.orEmpty().mapIndexedNotNull { index, item ->
+                val actual = item.jsonObject[fieldName]?.jsonPrimitive?.content
+                "items[$index].$fieldName must equal '$expectedValue' but was '$actual' (item=${item.jsonObject})"
+                    .takeUnless { actual == expectedValue }
+            },
         )
-        assertTrue(
-            actual = items.isEmpty(),
-            message = "items must be empty when invalid filter value is provided: $url",
+    }
+
+    private suspend fun departmentSnapshot(
+        response: io.ktor.client.statement.HttpResponse,
+        expectedDepartment: String,
+    ): DiseaseFilterSnapshot {
+        val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
+        val items = body["items"]?.jsonArray
+        return DiseaseFilterSnapshot(
+            status = response.status,
+            hasItems = items?.isNotEmpty() == true,
+            totalCountMatches = true,
+            itemViolations = items.orEmpty().mapIndexedNotNull { index, item ->
+                val departments = item.jsonObject["medical_department"]?.jsonArray
+                val serialNames = departments.orEmpty().map { it.jsonPrimitive.content }
+                "items[$index].medical_department must contain '$expectedDepartment' (item=${item.jsonObject})"
+                    .takeUnless { expectedDepartment in serialNames }
+            },
+        )
+    }
+
+    private suspend fun booleanFieldSnapshot(
+        response: io.ktor.client.statement.HttpResponse,
+        fieldName: String,
+        expectedValue: Boolean,
+    ): DiseaseFilterSnapshot {
+        val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
+        val items = body["items"]?.jsonArray
+        return DiseaseFilterSnapshot(
+            status = response.status,
+            hasItems = items?.isNotEmpty() == true,
+            totalCountMatches = true,
+            itemViolations = items.orEmpty().mapIndexedNotNull { index, item ->
+                val actual = item.jsonObject[fieldName]?.jsonPrimitive?.content?.toBooleanStrictOrNull()
+                "items[$index].$fieldName must equal $expectedValue but was $actual (item=${item.jsonObject})"
+                    .takeUnless { actual == expectedValue }
+            },
+        )
+    }
+
+    private suspend fun andFieldSnapshot(
+        response: io.ktor.client.statement.HttpResponse,
+        expectedChapter: String,
+        expectedInfectious: Boolean,
+        expectedTotalCount: Int,
+    ): DiseaseFilterSnapshot {
+        val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
+        val items = body["items"]?.jsonArray
+        val totalCount = body["total_count"]?.jsonPrimitive?.content?.toIntOrNull()
+        return DiseaseFilterSnapshot(
+            status = response.status,
+            hasItems = items?.isNotEmpty() == true,
+            totalCountMatches = totalCount == expectedTotalCount,
+            itemViolations = items.orEmpty().flatMapIndexed { index, item ->
+                val obj = item.jsonObject
+                listOfNotNull(
+                    "items[$index].icd10_chapter must equal '$expectedChapter' (item=$obj)"
+                        .takeUnless { obj["icd10_chapter"]?.jsonPrimitive?.content == expectedChapter },
+                    "items[$index].infectious must equal $expectedInfectious (item=$obj)"
+                        .takeUnless {
+                            obj["infectious"]?.jsonPrimitive?.content?.toBooleanStrictOrNull() == expectedInfectious
+                        },
+                )
+            },
+        )
+    }
+
+    private suspend fun emptyEnvelopeSnapshot(
+        response: io.ktor.client.statement.HttpResponse,
+    ): EmptyEnvelopeSnapshot {
+        val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
+        return EmptyEnvelopeSnapshot(
+            status = response.status,
+            totalCount = body["total_count"]?.jsonPrimitive?.content?.toIntOrNull(),
+            itemsSize = body["items"]?.jsonArray?.size,
         )
     }
 
@@ -339,4 +330,17 @@ class DiseaseModuleFilterTest {
 
     private fun MedicalDepartment.declaredSerialName(): String =
         MedicalDepartment.serializer().descriptor.getElementName(index = ordinal)
+
+    private data class DiseaseFilterSnapshot(
+        val status: HttpStatusCode,
+        val hasItems: Boolean,
+        val totalCountMatches: Boolean,
+        val itemViolations: List<String>,
+    )
+
+    private data class EmptyEnvelopeSnapshot(
+        val status: HttpStatusCode,
+        val totalCount: Int?,
+        val itemsSize: Int?,
+    )
 }

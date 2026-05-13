@@ -18,7 +18,7 @@ import kotlin.test.assertTrue
  */
 class CategoriesModuleSourceTest {
     @Test
-    fun `routes_categories sources contain no scenarioManager FixtureProvider or X-Mock-Scenario references`() {
+    fun `routes_categories source directory exists`() {
         val routesDir = File(
             "src/main/kotlin/io/github/corvus400/fictionaldrugdiseaserefmockserver/routes/categories",
         )
@@ -26,6 +26,13 @@ class CategoriesModuleSourceTest {
             actual = routesDir.isDirectory,
             message = "expected routes/categories source directory to exist at ${routesDir.absolutePath}; " +
                 "test must run from the gradle project root (cwd at projectDir)",
+        )
+    }
+
+    @Test
+    fun `routes_categories sources contain no scenarioManager FixtureProvider or X-Mock-Scenario references`() {
+        val routesDir = File(
+            "src/main/kotlin/io/github/corvus400/fictionaldrugdiseaserefmockserver/routes/categories",
         )
         val pattern = Regex(pattern = "scenarioManager|FixtureProvider|X-Mock-Scenario")
         val hits: List<String> = routesDir.walkTopDown()

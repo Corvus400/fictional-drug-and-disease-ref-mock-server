@@ -209,11 +209,6 @@ class DrugModuleAdditionalFilterTest {
                 contentType(type = ContentType.Application.Json)
                 setBody(body = """{"state":"empty"}""")
             }
-            assertEquals(
-                expected = HttpStatusCode.OK,
-                actual = configResponse.status,
-                message = "Admin API must accept drugList empty scenario override",
-            )
 
             val response = client.get(urlString = "/v1/drugs?adverse_reaction_keyword=X")
 
@@ -221,8 +216,14 @@ class DrugModuleAdditionalFilterTest {
             val totalCount = body["total_count"]?.jsonPrimitive?.content?.toIntOrNull()
             val items = body["items"]?.jsonArray
             assertEquals(
-                expected = EmptyEnvelopeSnapshot(status = HttpStatusCode.OK, totalCount = 0, itemsSize = 0),
+                expected = EmptyEnvelopeSnapshot(
+                    configStatus = HttpStatusCode.OK,
+                    status = HttpStatusCode.OK,
+                    totalCount = 0,
+                    itemsSize = 0,
+                ),
                 actual = EmptyEnvelopeSnapshot(
+                    configStatus = configResponse.status,
                     status = response.status,
                     totalCount = totalCount,
                     itemsSize = items?.size,
@@ -249,11 +250,6 @@ class DrugModuleAdditionalFilterTest {
                 contentType(type = ContentType.Application.Json)
                 setBody(body = """{"state":"empty"}""")
             }
-            assertEquals(
-                expected = HttpStatusCode.OK,
-                actual = configResponse.status,
-                message = "Admin API must accept drugList empty scenario override",
-            )
 
             val response = client.get(urlString = "/v1/drugs?precaution_category=PREGNANT")
 
@@ -261,8 +257,14 @@ class DrugModuleAdditionalFilterTest {
             val totalCount = body["total_count"]?.jsonPrimitive?.content?.toIntOrNull()
             val items = body["items"]?.jsonArray
             assertEquals(
-                expected = EmptyEnvelopeSnapshot(status = HttpStatusCode.OK, totalCount = 0, itemsSize = 0),
+                expected = EmptyEnvelopeSnapshot(
+                    configStatus = HttpStatusCode.OK,
+                    status = HttpStatusCode.OK,
+                    totalCount = 0,
+                    itemsSize = 0,
+                ),
                 actual = EmptyEnvelopeSnapshot(
+                    configStatus = configResponse.status,
                     status = response.status,
                     totalCount = totalCount,
                     itemsSize = items?.size,
@@ -273,6 +275,7 @@ class DrugModuleAdditionalFilterTest {
         }
 
     private data class EmptyEnvelopeSnapshot(
+        val configStatus: HttpStatusCode,
         val status: HttpStatusCode,
         val totalCount: Int?,
         val itemsSize: Int?,

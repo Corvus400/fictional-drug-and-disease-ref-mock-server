@@ -27,14 +27,9 @@ class DiseaseModuleAdditionalFilterTest {
         val response = client.get(urlString = "/v1/diseases?symptom_keyword=$keyword&page_size=100")
 
         assertEquals(
-            expected = HttpStatusCode.OK,
-            actual = response.status,
-            message = "symptom_keyword=発熱 filter must return HTTP 200",
-        )
-        val totalCount = response.totalCount()
-        assertTrue(
-            actual = totalCount in 1 until DEFAULT_DISEASE_COUNT,
-            message = "symptom_keyword=発熱 must filter total_count to 1..<80, got $totalCount",
+            expected = CountFilterSnapshot(status = HttpStatusCode.OK, totalCountInFilteredRange = true),
+            actual = countFilterSnapshot(response = response),
+            message = "symptom_keyword=発熱 must filter total_count to 1..<80",
         )
     }
 
@@ -86,14 +81,9 @@ class DiseaseModuleAdditionalFilterTest {
         val response = client.get(urlString = "/v1/diseases?exam_category=IMAGING&page_size=100")
 
         assertEquals(
-            expected = HttpStatusCode.OK,
-            actual = response.status,
-            message = "exam_category=IMAGING filter must return HTTP 200",
-        )
-        val totalCount = response.totalCount()
-        assertTrue(
-            actual = totalCount in 1 until DEFAULT_DISEASE_COUNT,
-            message = "exam_category=IMAGING must filter total_count to 1..<80, got $totalCount",
+            expected = CountFilterSnapshot(status = HttpStatusCode.OK, totalCountInFilteredRange = true),
+            actual = countFilterSnapshot(response = response),
+            message = "exam_category=IMAGING must filter total_count to 1..<80",
         )
     }
 
@@ -107,14 +97,9 @@ class DiseaseModuleAdditionalFilterTest {
             )
 
             assertEquals(
-                expected = HttpStatusCode.OK,
-                actual = response.status,
-                message = "has_pharmacological_treatment=true filter must return HTTP 200",
-            )
-            val totalCount = response.totalCount()
-            assertTrue(
-                actual = totalCount in 1 until DEFAULT_DISEASE_COUNT,
-                message = "has_pharmacological_treatment=true must filter total_count to 1..<80, got $totalCount",
+                expected = CountFilterSnapshot(status = HttpStatusCode.OK, totalCountInFilteredRange = true),
+                actual = countFilterSnapshot(response = response),
+                message = "has_pharmacological_treatment=true must filter total_count to 1..<80",
             )
         }
 
@@ -167,14 +152,9 @@ class DiseaseModuleAdditionalFilterTest {
             val response = client.get(urlString = "/v1/diseases?has_severity_grading=true&page_size=100")
 
             assertEquals(
-                expected = HttpStatusCode.OK,
-                actual = response.status,
-                message = "has_severity_grading=true filter must return HTTP 200",
-            )
-            val totalCount = response.totalCount()
-            assertTrue(
-                actual = totalCount in 1 until DEFAULT_DISEASE_COUNT,
-                message = "has_severity_grading=true must filter total_count to 1..<80, got $totalCount",
+                expected = CountFilterSnapshot(status = HttpStatusCode.OK, totalCountInFilteredRange = true),
+                actual = countFilterSnapshot(response = response),
+                message = "has_severity_grading=true must filter total_count to 1..<80",
             )
         }
 
@@ -281,6 +261,16 @@ class DiseaseModuleAdditionalFilterTest {
         return totalCount
     }
 
+    private suspend fun countFilterSnapshot(
+        response: io.ktor.client.statement.HttpResponse,
+    ): CountFilterSnapshot {
+        val totalCount = response.totalCount()
+        return CountFilterSnapshot(
+            status = response.status,
+            totalCountInFilteredRange = totalCount in 1 until DEFAULT_DISEASE_COUNT,
+        )
+    }
+
     private suspend fun assertOkEmptyItems(response: io.ktor.client.statement.HttpResponse) {
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
         val items = body["items"]?.jsonArray
@@ -304,6 +294,11 @@ class DiseaseModuleAdditionalFilterTest {
         val status: HttpStatusCode,
         val code: String?,
         val messageMentionsInvalid: Boolean,
+    )
+
+    private data class CountFilterSnapshot(
+        val status: HttpStatusCode,
+        val totalCountInFilteredRange: Boolean,
     )
 
     private companion object {

@@ -15,7 +15,6 @@ import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
-import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class DiseaseGeneratorTest {
@@ -82,10 +81,13 @@ class DiseaseGeneratorTest {
     fun `nameEnglish is latin and differs from the katakana name`() {
         val disease = generator.generate(blueprint = sampleBlueprint)
         val english = disease.nameEnglish
-        assertTrue(english != null && english.isNotBlank(), "nameEnglish is blank or null")
-        assertFalse(
-            english == disease.name,
-            "nameEnglish should not equal name (one is latin, the other katakana)",
+        assertEquals(
+            expected = NameEnglishSnapshot(nonBlank = true, differsFromName = true),
+            actual = NameEnglishSnapshot(
+                nonBlank = !english.isNullOrBlank(),
+                differsFromName = english != disease.name,
+            ),
+            message = "nameEnglish must be non-blank latin text distinct from the katakana name",
         )
     }
 
@@ -171,31 +173,26 @@ class DiseaseGeneratorTest {
     fun `generate for CHAPTER_I blueprints populates infectious epidemiology riskFactors and prevention`() {
         val blueprints =
             DiseaseBlueprintFactory.build().filter { it.icd10Chapter == Icd10Chapter.CHAPTER_I }
-        assertTrue(blueprints.isNotEmpty(), "no CHAPTER_I blueprint present in factory")
+        val violations = mutableListOf<String>().apply {
+            addIf("no CHAPTER_I blueprint present in factory") { blueprints.isEmpty() }
+        }
         for (blueprint in blueprints) {
             val disease = generator.generate(blueprint = blueprint)
-            assertTrue(
-                disease.infectious,
-                "CHAPTER_I disease ${disease.id} must be infectious",
-            )
-            val epidemiology = assertNotNull(
-                disease.epidemiology,
-                "CHAPTER_I disease ${disease.id} must have epidemiology",
-            )
-            assertTrue(
-                epidemiology.riskFactors.isNotEmpty(),
-                "CHAPTER_I disease ${disease.id} must have epidemiology.riskFactors " +
-                    "(transmission routes)",
-            )
-            assertTrue(
-                disease.prevention.isNotEmpty(),
-                "CHAPTER_I disease ${disease.id} must have prevention items",
-            )
-            assertNotNull(
-                disease.symptoms.onsetPattern,
-                "CHAPTER_I disease ${disease.id} must have symptoms.onsetPattern",
-            )
+            violations.addIf("CHAPTER_I disease ${disease.id} must be infectious") { !disease.infectious }
+            violations.addIf("CHAPTER_I disease ${disease.id} must have epidemiology") {
+                disease.epidemiology == null
+            }
+            violations.addIf("CHAPTER_I disease ${disease.id} must have epidemiology.riskFactors") {
+                disease.epidemiology?.riskFactors.isNullOrEmpty()
+            }
+            violations.addIf("CHAPTER_I disease ${disease.id} must have prevention items") {
+                disease.prevention.isEmpty()
+            }
+            violations.addIf("CHAPTER_I disease ${disease.id} must have symptoms.onsetPattern") {
+                disease.symptoms.onsetPattern == null
+            }
         }
+        assertTrue(actual = violations.isEmpty(), message = "CHAPTER_I disease violations: $violations")
     }
 
     // Red-3: Ch.II 新生物 条件必須
@@ -203,22 +200,19 @@ class DiseaseGeneratorTest {
     fun `generate for CHAPTER_II blueprints populates severityGrading and prognosis`() {
         val blueprints =
             DiseaseBlueprintFactory.build().filter { it.icd10Chapter == Icd10Chapter.CHAPTER_II }
-        assertTrue(blueprints.isNotEmpty(), "no CHAPTER_II blueprint present in factory")
+        val violations = mutableListOf<String>().apply {
+            addIf("no CHAPTER_II blueprint present in factory") { blueprints.isEmpty() }
+        }
         for (blueprint in blueprints) {
             val disease = generator.generate(blueprint = blueprint)
-            assertNotNull(
-                disease.severityGrading,
-                "CHAPTER_II disease ${disease.id} must have severityGrading",
-            )
-            val prognosis = assertNotNull(
-                disease.prognosis,
-                "CHAPTER_II disease ${disease.id} must have prognosis",
-            )
-            assertTrue(
-                prognosis.isNotBlank(),
-                "CHAPTER_II disease ${disease.id} prognosis must be non-blank",
-            )
+            violations.addIf("CHAPTER_II disease ${disease.id} must have severityGrading") {
+                disease.severityGrading == null
+            }
+            violations.addIf("CHAPTER_II disease ${disease.id} prognosis must be non-blank") {
+                disease.prognosis.isNullOrBlank()
+            }
         }
+        assertTrue(actual = violations.isEmpty(), message = "CHAPTER_II disease violations: $violations")
     }
 
     // Red-4: Ch.IV 内分泌・栄養・代謝疾患 条件必須 (慢性)
@@ -228,19 +222,22 @@ class DiseaseGeneratorTest {
             .filter {
                 it.icd10Chapter == Icd10Chapter.CHAPTER_IV && it.chronicity == Chronicity.CHRONIC
             }
-        assertTrue(blueprints.isNotEmpty(), "no CHAPTER_IV + CHRONIC blueprint present in factory")
+        val violations = mutableListOf<String>().apply {
+            addIf("no CHAPTER_IV + CHRONIC blueprint present in factory") { blueprints.isEmpty() }
+        }
         for (blueprint in blueprints) {
             val disease = generator.generate(blueprint = blueprint)
-            assertTrue(
-                disease.treatments.pharmacological.isNotEmpty(),
-                "CHAPTER_IV+CHRONIC disease ${disease.id} must have pharmacological treatments",
-            )
-            assertTrue(
-                disease.requiredExams.size >= MIN_CHAPTER_IV_EXAM_COUNT,
+            violations.addIf("CHAPTER_IV+CHRONIC disease ${disease.id} must have pharmacological treatments") {
+                disease.treatments.pharmacological.isEmpty()
+            }
+            violations.addIf(
                 "CHAPTER_IV+CHRONIC disease ${disease.id} must have at least " +
                     "$MIN_CHAPTER_IV_EXAM_COUNT requiredExams, got ${disease.requiredExams.size}",
-            )
+            ) {
+                disease.requiredExams.size < MIN_CHAPTER_IV_EXAM_COUNT
+            }
         }
+        assertTrue(actual = violations.isEmpty(), message = "CHAPTER_IV+CHRONIC disease violations: $violations")
     }
 
     // Red-5: Ch.V 精神・行動の障害 条件必須
@@ -248,24 +245,25 @@ class DiseaseGeneratorTest {
     fun `generate for CHAPTER_V blueprints populates diagnosticCriteria and at least three mainSymptoms`() {
         val blueprints =
             DiseaseBlueprintFactory.build().filter { it.icd10Chapter == Icd10Chapter.CHAPTER_V }
-        assertTrue(blueprints.isNotEmpty(), "no CHAPTER_V blueprint present in factory")
+        val violations = mutableListOf<String>().apply {
+            addIf("no CHAPTER_V blueprint present in factory") { blueprints.isEmpty() }
+        }
         for (blueprint in blueprints) {
             val disease = generator.generate(blueprint = blueprint)
-            assertTrue(
-                disease.diagnosticCriteria.required.isNotEmpty(),
-                "CHAPTER_V disease ${disease.id} must have diagnosticCriteria.required",
-            )
-            assertTrue(
-                disease.symptoms.mainSymptoms.size >= MIN_CHAPTER_V_MAIN_SYMPTOMS,
+            violations.addIf("CHAPTER_V disease ${disease.id} must have diagnosticCriteria.required") {
+                disease.diagnosticCriteria.required.isEmpty()
+            }
+            violations.addIf(
                 "CHAPTER_V disease ${disease.id} must have at least " +
-                    "$MIN_CHAPTER_V_MAIN_SYMPTOMS mainSymptoms, " +
-                    "got ${disease.symptoms.mainSymptoms.size}",
-            )
-            assertTrue(
-                disease.relatedDrugIds.isNotEmpty(),
-                "CHAPTER_V disease ${disease.id} must have relatedDrugIds (psychotropics)",
-            )
+                    "$MIN_CHAPTER_V_MAIN_SYMPTOMS mainSymptoms, got ${disease.symptoms.mainSymptoms.size}",
+            ) {
+                disease.symptoms.mainSymptoms.size < MIN_CHAPTER_V_MAIN_SYMPTOMS
+            }
+            violations.addIf("CHAPTER_V disease ${disease.id} must have relatedDrugIds") {
+                disease.relatedDrugIds.isEmpty()
+            }
         }
+        assertTrue(actual = violations.isEmpty(), message = "CHAPTER_V disease violations: $violations")
     }
 
     // Red-6: Ch.IX 循環器系疾患 条件必須
@@ -273,18 +271,19 @@ class DiseaseGeneratorTest {
     fun `generate for CHAPTER_IX blueprints populates severityGrading and imaging requiredExams`() {
         val blueprints =
             DiseaseBlueprintFactory.build().filter { it.icd10Chapter == Icd10Chapter.CHAPTER_IX }
-        assertTrue(blueprints.isNotEmpty(), "no CHAPTER_IX blueprint present in factory")
+        val violations = mutableListOf<String>().apply {
+            addIf("no CHAPTER_IX blueprint present in factory") { blueprints.isEmpty() }
+        }
         for (blueprint in blueprints) {
             val disease = generator.generate(blueprint = blueprint)
-            assertNotNull(
-                disease.severityGrading,
-                "CHAPTER_IX disease ${disease.id} must have severityGrading",
-            )
-            assertTrue(
-                disease.requiredExams.any { it.category == ExamCategory.IMAGING },
-                "CHAPTER_IX disease ${disease.id} must include at least one IMAGING exam",
-            )
+            violations.addIf("CHAPTER_IX disease ${disease.id} must have severityGrading") {
+                disease.severityGrading == null
+            }
+            violations.addIf("CHAPTER_IX disease ${disease.id} must include at least one IMAGING exam") {
+                disease.requiredExams.none { it.category == ExamCategory.IMAGING }
+            }
         }
+        assertTrue(actual = violations.isEmpty(), message = "CHAPTER_IX disease violations: $violations")
     }
 
     // Red-7: Ch.XV 妊娠・分娩・産褥 条件必須
@@ -292,22 +291,22 @@ class DiseaseGeneratorTest {
     fun `generate for CHAPTER_XV blueprints populates epidemiology onsetAgeRange and sexRatio`() {
         val blueprints =
             DiseaseBlueprintFactory.build().filter { it.icd10Chapter == Icd10Chapter.CHAPTER_XV }
-        assertTrue(blueprints.isNotEmpty(), "no CHAPTER_XV blueprint present in factory")
+        val violations = mutableListOf<String>().apply {
+            addIf("no CHAPTER_XV blueprint present in factory") { blueprints.isEmpty() }
+        }
         for (blueprint in blueprints) {
             val disease = generator.generate(blueprint = blueprint)
-            val epidemiology = assertNotNull(
-                disease.epidemiology,
-                "CHAPTER_XV disease ${disease.id} must have epidemiology",
-            )
-            assertNotNull(
-                epidemiology.onsetAgeRange,
-                "CHAPTER_XV disease ${disease.id} must have epidemiology.onsetAgeRange",
-            )
-            assertNotNull(
-                epidemiology.sexRatio,
-                "CHAPTER_XV disease ${disease.id} must have epidemiology.sexRatio",
-            )
+            violations.addIf("CHAPTER_XV disease ${disease.id} must have epidemiology") {
+                disease.epidemiology == null
+            }
+            violations.addIf("CHAPTER_XV disease ${disease.id} must have epidemiology.onsetAgeRange") {
+                disease.epidemiology?.onsetAgeRange == null
+            }
+            violations.addIf("CHAPTER_XV disease ${disease.id} must have epidemiology.sexRatio") {
+                disease.epidemiology?.sexRatio == null
+            }
         }
+        assertTrue(actual = violations.isEmpty(), message = "CHAPTER_XV disease violations: $violations")
     }
 
     private fun MutableList<String>.addIf(message: String, predicate: () -> Boolean) {
@@ -370,4 +369,9 @@ class DiseaseGeneratorTest {
         private const val RESIDUAL_SAMPLE_LIMIT: Int = 10
         private val ISO_8601_DATE_PATTERN: Regex = Regex("""^\d{4}-\d{2}-\d{2}$""")
     }
+
+    private data class NameEnglishSnapshot(
+        val nonBlank: Boolean,
+        val differsFromName: Boolean,
+    )
 }

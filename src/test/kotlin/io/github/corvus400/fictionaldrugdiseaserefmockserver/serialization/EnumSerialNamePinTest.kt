@@ -16,7 +16,6 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.Re
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RouteOfAdministration
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.StorageTemperature
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.plugins.AppJson
-import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -35,747 +34,275 @@ class EnumSerialNamePinTest {
 
     @Test
     fun `DosageForm encodes to literal english snake_case`() {
-        assertEquals(
-            "\"tablet\"",
-            Json.encodeToString(DosageForm.serializer(), DosageForm.TABLET),
-            "DosageForm.TABLET",
-        )
-        assertEquals(
-            "\"capsule\"",
-            Json.encodeToString(DosageForm.serializer(), DosageForm.CAPSULE),
-            "DosageForm.CAPSULE",
-        )
-        assertEquals(
-            "\"powder\"",
-            Json.encodeToString(DosageForm.serializer(), DosageForm.POWDER),
-            "DosageForm.POWDER",
-        )
-        assertEquals(
-            "\"granule\"",
-            Json.encodeToString(DosageForm.serializer(), DosageForm.GRANULE),
-            "DosageForm.GRANULE",
-        )
-        assertEquals(
-            "\"liquid\"",
-            Json.encodeToString(DosageForm.serializer(), DosageForm.LIQUID),
-            "DosageForm.LIQUID",
-        )
-        assertEquals(
-            "\"injection_form\"",
-            Json.encodeToString(DosageForm.serializer(), DosageForm.INJECTION_FORM),
-            "DosageForm.INJECTION_FORM",
-        )
-        assertEquals(
-            "\"ointment\"",
-            Json.encodeToString(DosageForm.serializer(), DosageForm.OINTMENT),
-            "DosageForm.OINTMENT",
-        )
-        assertEquals(
-            "\"cream\"",
-            Json.encodeToString(DosageForm.serializer(), DosageForm.CREAM),
-            "DosageForm.CREAM",
-        )
-        assertEquals(
-            "\"patch\"",
-            Json.encodeToString(DosageForm.serializer(), DosageForm.PATCH),
-            "DosageForm.PATCH",
-        )
-        assertEquals(
-            "\"eye_drops\"",
-            Json.encodeToString(DosageForm.serializer(), DosageForm.EYE_DROPS),
-            "DosageForm.EYE_DROPS",
-        )
-        assertEquals(
-            "\"suppository\"",
-            Json.encodeToString(DosageForm.serializer(), DosageForm.SUPPOSITORY),
-            "DosageForm.SUPPOSITORY",
-        )
-        assertEquals(
-            "\"inhaler\"",
-            Json.encodeToString(DosageForm.serializer(), DosageForm.INHALER),
-            "DosageForm.INHALER",
-        )
-        assertEquals(
-            "\"nasal_spray\"",
-            Json.encodeToString(DosageForm.serializer(), DosageForm.NASAL_SPRAY),
-            "DosageForm.NASAL_SPRAY",
+        assertEncodedSerialNames(
+            mapOf(
+                DosageForm.TABLET to "tablet",
+                DosageForm.CAPSULE to "capsule",
+                DosageForm.POWDER to "powder",
+                DosageForm.GRANULE to "granule",
+                DosageForm.LIQUID to "liquid",
+                DosageForm.INJECTION_FORM to "injection_form",
+                DosageForm.OINTMENT to "ointment",
+                DosageForm.CREAM to "cream",
+                DosageForm.PATCH to "patch",
+                DosageForm.EYE_DROPS to "eye_drops",
+                DosageForm.SUPPOSITORY to "suppository",
+                DosageForm.INHALER to "inhaler",
+                DosageForm.NASAL_SPRAY to "nasal_spray",
+            ),
         )
     }
 
     @Test
     fun `DosageForm decodes from literal english snake_case`() {
-        assertEquals(
-            DosageForm.TABLET,
-            Json.decodeFromString(DosageForm.serializer(), "\"tablet\""),
-            "DosageForm.TABLET",
-        )
-        assertEquals(
-            DosageForm.CAPSULE,
-            Json.decodeFromString(DosageForm.serializer(), "\"capsule\""),
-            "DosageForm.CAPSULE",
-        )
-        assertEquals(
-            DosageForm.POWDER,
-            Json.decodeFromString(DosageForm.serializer(), "\"powder\""),
-            "DosageForm.POWDER",
-        )
-        assertEquals(
-            DosageForm.GRANULE,
-            Json.decodeFromString(DosageForm.serializer(), "\"granule\""),
-            "DosageForm.GRANULE",
-        )
-        assertEquals(
-            DosageForm.LIQUID,
-            Json.decodeFromString(DosageForm.serializer(), "\"liquid\""),
-            "DosageForm.LIQUID",
-        )
-        assertEquals(
-            DosageForm.INJECTION_FORM,
-            Json.decodeFromString(DosageForm.serializer(), "\"injection_form\""),
-            "DosageForm.INJECTION_FORM",
-        )
-        assertEquals(
-            DosageForm.OINTMENT,
-            Json.decodeFromString(DosageForm.serializer(), "\"ointment\""),
-            "DosageForm.OINTMENT",
-        )
-        assertEquals(
-            DosageForm.CREAM,
-            Json.decodeFromString(DosageForm.serializer(), "\"cream\""),
-            "DosageForm.CREAM",
-        )
-        assertEquals(
-            DosageForm.PATCH,
-            Json.decodeFromString(DosageForm.serializer(), "\"patch\""),
-            "DosageForm.PATCH",
-        )
-        assertEquals(
-            DosageForm.EYE_DROPS,
-            Json.decodeFromString(DosageForm.serializer(), "\"eye_drops\""),
-            "DosageForm.EYE_DROPS",
-        )
-        assertEquals(
-            DosageForm.SUPPOSITORY,
-            Json.decodeFromString(DosageForm.serializer(), "\"suppository\""),
-            "DosageForm.SUPPOSITORY",
-        )
-        assertEquals(
-            DosageForm.INHALER,
-            Json.decodeFromString(DosageForm.serializer(), "\"inhaler\""),
-            "DosageForm.INHALER",
-        )
-        assertEquals(
-            DosageForm.NASAL_SPRAY,
-            Json.decodeFromString(DosageForm.serializer(), "\"nasal_spray\""),
-            "DosageForm.NASAL_SPRAY",
+        assertDecodedSerialNames<DosageForm>(
+            mapOf(
+                "tablet" to DosageForm.TABLET,
+                "capsule" to DosageForm.CAPSULE,
+                "powder" to DosageForm.POWDER,
+                "granule" to DosageForm.GRANULE,
+                "liquid" to DosageForm.LIQUID,
+                "injection_form" to DosageForm.INJECTION_FORM,
+                "ointment" to DosageForm.OINTMENT,
+                "cream" to DosageForm.CREAM,
+                "patch" to DosageForm.PATCH,
+                "eye_drops" to DosageForm.EYE_DROPS,
+                "suppository" to DosageForm.SUPPOSITORY,
+                "inhaler" to DosageForm.INHALER,
+                "nasal_spray" to DosageForm.NASAL_SPRAY,
+            ),
         )
     }
 
     @Test
     fun `DoseUnit encodes to literal english snake_case`() {
-        assertEquals(
-            "\"mg\"",
-            Json.encodeToString(DoseUnit.serializer(), DoseUnit.MG),
-            "DoseUnit.MG",
-        )
-        assertEquals(
-            "\"g\"",
-            Json.encodeToString(DoseUnit.serializer(), DoseUnit.G),
-            "DoseUnit.G",
-        )
-        assertEquals(
-            "\"microgram\"",
-            Json.encodeToString(DoseUnit.serializer(), DoseUnit.MICROGRAM),
-            "DoseUnit.MICROGRAM",
-        )
-        assertEquals(
-            "\"ml\"",
-            Json.encodeToString(DoseUnit.serializer(), DoseUnit.ML),
-            "DoseUnit.ML",
-        )
-        assertEquals(
-            "\"l\"",
-            Json.encodeToString(DoseUnit.serializer(), DoseUnit.L),
-            "DoseUnit.L",
-        )
-        assertEquals(
-            "\"iu\"",
-            Json.encodeToString(DoseUnit.serializer(), DoseUnit.IU),
-            "DoseUnit.IU",
-        )
-        assertEquals(
-            "\"meq\"",
-            Json.encodeToString(DoseUnit.serializer(), DoseUnit.MEQ),
-            "DoseUnit.MEQ",
-        )
-        assertEquals(
-            "\"mol\"",
-            Json.encodeToString(DoseUnit.serializer(), DoseUnit.MOL),
-            "DoseUnit.MOL",
-        )
-        assertEquals(
-            "\"mmol\"",
-            Json.encodeToString(DoseUnit.serializer(), DoseUnit.MMOL),
-            "DoseUnit.MMOL",
-        )
-        assertEquals(
-            "\"percent\"",
-            Json.encodeToString(DoseUnit.serializer(), DoseUnit.PERCENT),
-            "DoseUnit.PERCENT",
+        assertEncodedSerialNames(
+            mapOf(
+                DoseUnit.MG to "mg",
+                DoseUnit.G to "g",
+                DoseUnit.MICROGRAM to "microgram",
+                DoseUnit.ML to "ml",
+                DoseUnit.L to "l",
+                DoseUnit.IU to "iu",
+                DoseUnit.MEQ to "meq",
+                DoseUnit.MOL to "mol",
+                DoseUnit.MMOL to "mmol",
+                DoseUnit.PERCENT to "percent",
+            ),
         )
     }
 
     @Test
     fun `DoseUnit decodes from literal english snake_case`() {
-        assertEquals(
-            DoseUnit.MG,
-            Json.decodeFromString(DoseUnit.serializer(), "\"mg\""),
-            "DoseUnit.MG",
-        )
-        assertEquals(
-            DoseUnit.G,
-            Json.decodeFromString(DoseUnit.serializer(), "\"g\""),
-            "DoseUnit.G",
-        )
-        assertEquals(
-            DoseUnit.MICROGRAM,
-            Json.decodeFromString(DoseUnit.serializer(), "\"microgram\""),
-            "DoseUnit.MICROGRAM",
-        )
-        assertEquals(
-            DoseUnit.ML,
-            Json.decodeFromString(DoseUnit.serializer(), "\"ml\""),
-            "DoseUnit.ML",
-        )
-        assertEquals(
-            DoseUnit.L,
-            Json.decodeFromString(DoseUnit.serializer(), "\"l\""),
-            "DoseUnit.L",
-        )
-        assertEquals(
-            DoseUnit.IU,
-            Json.decodeFromString(DoseUnit.serializer(), "\"iu\""),
-            "DoseUnit.IU",
-        )
-        assertEquals(
-            DoseUnit.MEQ,
-            Json.decodeFromString(DoseUnit.serializer(), "\"meq\""),
-            "DoseUnit.MEQ",
-        )
-        assertEquals(
-            DoseUnit.MOL,
-            Json.decodeFromString(DoseUnit.serializer(), "\"mol\""),
-            "DoseUnit.MOL",
-        )
-        assertEquals(
-            DoseUnit.MMOL,
-            Json.decodeFromString(DoseUnit.serializer(), "\"mmol\""),
-            "DoseUnit.MMOL",
-        )
-        assertEquals(
-            DoseUnit.PERCENT,
-            Json.decodeFromString(DoseUnit.serializer(), "\"percent\""),
-            "DoseUnit.PERCENT",
+        assertDecodedSerialNames<DoseUnit>(
+            mapOf(
+                "mg" to DoseUnit.MG,
+                "g" to DoseUnit.G,
+                "microgram" to DoseUnit.MICROGRAM,
+                "ml" to DoseUnit.ML,
+                "l" to DoseUnit.L,
+                "iu" to DoseUnit.IU,
+                "meq" to DoseUnit.MEQ,
+                "mol" to DoseUnit.MOL,
+                "mmol" to DoseUnit.MMOL,
+                "percent" to DoseUnit.PERCENT,
+            ),
         )
     }
 
     @Test
     fun `FrequencyBand encodes to literal english snake_case`() {
-        assertEquals(
-            "\"over_5_percent\"",
-            Json.encodeToString(FrequencyBand.serializer(), FrequencyBand.OVER_5_PERCENT),
-            "FrequencyBand.OVER_5_PERCENT",
-        )
-        assertEquals(
-            "\"between_1_and_5_percent\"",
-            Json.encodeToString(FrequencyBand.serializer(), FrequencyBand.BETWEEN_1_AND_5_PERCENT),
-            "FrequencyBand.BETWEEN_1_AND_5_PERCENT",
-        )
-        assertEquals(
-            "\"under_1_percent\"",
-            Json.encodeToString(FrequencyBand.serializer(), FrequencyBand.UNDER_1_PERCENT),
-            "FrequencyBand.UNDER_1_PERCENT",
-        )
-        assertEquals(
-            "\"unknown\"",
-            Json.encodeToString(FrequencyBand.serializer(), FrequencyBand.UNKNOWN),
-            "FrequencyBand.UNKNOWN",
+        assertEncodedSerialNames(
+            mapOf(
+                FrequencyBand.OVER_5_PERCENT to "over_5_percent",
+                FrequencyBand.BETWEEN_1_AND_5_PERCENT to "between_1_and_5_percent",
+                FrequencyBand.UNDER_1_PERCENT to "under_1_percent",
+                FrequencyBand.UNKNOWN to "unknown",
+            ),
         )
     }
 
     @Test
     fun `FrequencyBand decodes from literal english snake_case`() {
-        assertEquals(
-            FrequencyBand.OVER_5_PERCENT,
-            Json.decodeFromString(FrequencyBand.serializer(), "\"over_5_percent\""),
-            "FrequencyBand.OVER_5_PERCENT",
-        )
-        assertEquals(
-            FrequencyBand.BETWEEN_1_AND_5_PERCENT,
-            Json.decodeFromString(FrequencyBand.serializer(), "\"between_1_and_5_percent\""),
-            "FrequencyBand.BETWEEN_1_AND_5_PERCENT",
-        )
-        assertEquals(
-            FrequencyBand.UNDER_1_PERCENT,
-            Json.decodeFromString(FrequencyBand.serializer(), "\"under_1_percent\""),
-            "FrequencyBand.UNDER_1_PERCENT",
-        )
-        assertEquals(
-            FrequencyBand.UNKNOWN,
-            Json.decodeFromString(FrequencyBand.serializer(), "\"unknown\""),
-            "FrequencyBand.UNKNOWN",
+        assertDecodedSerialNames<FrequencyBand>(
+            mapOf(
+                "over_5_percent" to FrequencyBand.OVER_5_PERCENT,
+                "between_1_and_5_percent" to FrequencyBand.BETWEEN_1_AND_5_PERCENT,
+                "under_1_percent" to FrequencyBand.UNDER_1_PERCENT,
+                "unknown" to FrequencyBand.UNKNOWN,
+            ),
         )
     }
 
     @Test
     fun `HepaticSeverity encodes to literal english snake_case`() {
-        assertEquals(
-            "\"mild\"",
-            Json.encodeToString(HepaticSeverity.serializer(), HepaticSeverity.MILD),
-            "HepaticSeverity.MILD",
-        )
-        assertEquals(
-            "\"moderate\"",
-            Json.encodeToString(HepaticSeverity.serializer(), HepaticSeverity.MODERATE),
-            "HepaticSeverity.MODERATE",
-        )
-        assertEquals(
-            "\"severe\"",
-            Json.encodeToString(HepaticSeverity.serializer(), HepaticSeverity.SEVERE),
-            "HepaticSeverity.SEVERE",
+        assertEncodedSerialNames(
+            mapOf(
+                HepaticSeverity.MILD to "mild",
+                HepaticSeverity.MODERATE to "moderate",
+                HepaticSeverity.SEVERE to "severe",
+            ),
         )
     }
 
     @Test
     fun `HepaticSeverity decodes from literal english snake_case`() {
-        assertEquals(
-            HepaticSeverity.MILD,
-            Json.decodeFromString(HepaticSeverity.serializer(), "\"mild\""),
-            "HepaticSeverity.MILD",
-        )
-        assertEquals(
-            HepaticSeverity.MODERATE,
-            Json.decodeFromString(HepaticSeverity.serializer(), "\"moderate\""),
-            "HepaticSeverity.MODERATE",
-        )
-        assertEquals(
-            HepaticSeverity.SEVERE,
-            Json.decodeFromString(HepaticSeverity.serializer(), "\"severe\""),
-            "HepaticSeverity.SEVERE",
+        assertDecodedSerialNames<HepaticSeverity>(
+            mapOf(
+                "mild" to HepaticSeverity.MILD,
+                "moderate" to HepaticSeverity.MODERATE,
+                "severe" to HepaticSeverity.SEVERE,
+            ),
         )
     }
 
     @Test
     fun `PrecautionPopulationCategory encodes to literal english snake_case`() {
-        assertEquals(
-            "\"comorbidity\"",
-            Json.encodeToString(
-                PrecautionPopulationCategory.serializer(),
-                PrecautionPopulationCategory.COMORBIDITY,
+        assertEncodedSerialNames(
+            mapOf(
+                PrecautionPopulationCategory.COMORBIDITY to "comorbidity",
+                PrecautionPopulationCategory.RENAL_IMPAIRMENT to "renal_impairment",
+                PrecautionPopulationCategory.HEPATIC_IMPAIRMENT to "hepatic_impairment",
+                PrecautionPopulationCategory.REPRODUCTIVE_POTENTIAL to "reproductive_potential",
+                PrecautionPopulationCategory.PREGNANT to "pregnant",
+                PrecautionPopulationCategory.LACTATING to "lactating",
+                PrecautionPopulationCategory.PEDIATRIC to "pediatric",
+                PrecautionPopulationCategory.GERIATRIC to "geriatric",
             ),
-            "PrecautionPopulationCategory.COMORBIDITY",
-        )
-        assertEquals(
-            "\"renal_impairment\"",
-            Json.encodeToString(
-                PrecautionPopulationCategory.serializer(),
-                PrecautionPopulationCategory.RENAL_IMPAIRMENT,
-            ),
-            "PrecautionPopulationCategory.RENAL_IMPAIRMENT",
-        )
-        assertEquals(
-            "\"hepatic_impairment\"",
-            Json.encodeToString(
-                PrecautionPopulationCategory.serializer(),
-                PrecautionPopulationCategory.HEPATIC_IMPAIRMENT,
-            ),
-            "PrecautionPopulationCategory.HEPATIC_IMPAIRMENT",
-        )
-        assertEquals(
-            "\"reproductive_potential\"",
-            Json.encodeToString(
-                PrecautionPopulationCategory.serializer(),
-                PrecautionPopulationCategory.REPRODUCTIVE_POTENTIAL,
-            ),
-            "PrecautionPopulationCategory.REPRODUCTIVE_POTENTIAL",
-        )
-        assertEquals(
-            "\"pregnant\"",
-            Json.encodeToString(
-                PrecautionPopulationCategory.serializer(),
-                PrecautionPopulationCategory.PREGNANT,
-            ),
-            "PrecautionPopulationCategory.PREGNANT",
-        )
-        assertEquals(
-            "\"lactating\"",
-            Json.encodeToString(
-                PrecautionPopulationCategory.serializer(),
-                PrecautionPopulationCategory.LACTATING,
-            ),
-            "PrecautionPopulationCategory.LACTATING",
-        )
-        assertEquals(
-            "\"pediatric\"",
-            Json.encodeToString(
-                PrecautionPopulationCategory.serializer(),
-                PrecautionPopulationCategory.PEDIATRIC,
-            ),
-            "PrecautionPopulationCategory.PEDIATRIC",
-        )
-        assertEquals(
-            "\"geriatric\"",
-            Json.encodeToString(
-                PrecautionPopulationCategory.serializer(),
-                PrecautionPopulationCategory.GERIATRIC,
-            ),
-            "PrecautionPopulationCategory.GERIATRIC",
         )
     }
 
     @Test
     fun `PrecautionPopulationCategory decodes from literal english snake_case`() {
-        assertEquals(
-            PrecautionPopulationCategory.COMORBIDITY,
-            Json.decodeFromString(PrecautionPopulationCategory.serializer(), "\"comorbidity\""),
-            "PrecautionPopulationCategory.COMORBIDITY",
-        )
-        assertEquals(
-            PrecautionPopulationCategory.RENAL_IMPAIRMENT,
-            Json.decodeFromString(PrecautionPopulationCategory.serializer(), "\"renal_impairment\""),
-            "PrecautionPopulationCategory.RENAL_IMPAIRMENT",
-        )
-        assertEquals(
-            PrecautionPopulationCategory.HEPATIC_IMPAIRMENT,
-            Json.decodeFromString(PrecautionPopulationCategory.serializer(), "\"hepatic_impairment\""),
-            "PrecautionPopulationCategory.HEPATIC_IMPAIRMENT",
-        )
-        assertEquals(
-            PrecautionPopulationCategory.REPRODUCTIVE_POTENTIAL,
-            Json.decodeFromString(PrecautionPopulationCategory.serializer(), "\"reproductive_potential\""),
-            "PrecautionPopulationCategory.REPRODUCTIVE_POTENTIAL",
-        )
-        assertEquals(
-            PrecautionPopulationCategory.PREGNANT,
-            Json.decodeFromString(PrecautionPopulationCategory.serializer(), "\"pregnant\""),
-            "PrecautionPopulationCategory.PREGNANT",
-        )
-        assertEquals(
-            PrecautionPopulationCategory.LACTATING,
-            Json.decodeFromString(PrecautionPopulationCategory.serializer(), "\"lactating\""),
-            "PrecautionPopulationCategory.LACTATING",
-        )
-        assertEquals(
-            PrecautionPopulationCategory.PEDIATRIC,
-            Json.decodeFromString(PrecautionPopulationCategory.serializer(), "\"pediatric\""),
-            "PrecautionPopulationCategory.PEDIATRIC",
-        )
-        assertEquals(
-            PrecautionPopulationCategory.GERIATRIC,
-            Json.decodeFromString(PrecautionPopulationCategory.serializer(), "\"geriatric\""),
-            "PrecautionPopulationCategory.GERIATRIC",
+        assertDecodedSerialNames<PrecautionPopulationCategory>(
+            mapOf(
+                "comorbidity" to PrecautionPopulationCategory.COMORBIDITY,
+                "renal_impairment" to PrecautionPopulationCategory.RENAL_IMPAIRMENT,
+                "hepatic_impairment" to PrecautionPopulationCategory.HEPATIC_IMPAIRMENT,
+                "reproductive_potential" to PrecautionPopulationCategory.REPRODUCTIVE_POTENTIAL,
+                "pregnant" to PrecautionPopulationCategory.PREGNANT,
+                "lactating" to PrecautionPopulationCategory.LACTATING,
+                "pediatric" to PrecautionPopulationCategory.PEDIATRIC,
+                "geriatric" to PrecautionPopulationCategory.GERIATRIC,
+            ),
         )
     }
 
     @Test
     fun `RegulatoryClass encodes to literal english snake_case`() {
-        assertEquals(
-            "\"poison\"",
-            Json.encodeToString(RegulatoryClass.serializer(), RegulatoryClass.POISON),
-            "RegulatoryClass.POISON",
-        )
-        assertEquals(
-            "\"potent\"",
-            Json.encodeToString(RegulatoryClass.serializer(), RegulatoryClass.POTENT),
-            "RegulatoryClass.POTENT",
-        )
-        assertEquals(
-            "\"ordinary\"",
-            Json.encodeToString(RegulatoryClass.serializer(), RegulatoryClass.ORDINARY),
-            "RegulatoryClass.ORDINARY",
-        )
-        assertEquals(
-            "\"psychotropic_1\"",
-            Json.encodeToString(RegulatoryClass.serializer(), RegulatoryClass.PSYCHOTROPIC_1),
-            "RegulatoryClass.PSYCHOTROPIC_1",
-        )
-        assertEquals(
-            "\"psychotropic_2\"",
-            Json.encodeToString(RegulatoryClass.serializer(), RegulatoryClass.PSYCHOTROPIC_2),
-            "RegulatoryClass.PSYCHOTROPIC_2",
-        )
-        assertEquals(
-            "\"psychotropic_3\"",
-            Json.encodeToString(RegulatoryClass.serializer(), RegulatoryClass.PSYCHOTROPIC_3),
-            "RegulatoryClass.PSYCHOTROPIC_3",
-        )
-        assertEquals(
-            "\"narcotic\"",
-            Json.encodeToString(RegulatoryClass.serializer(), RegulatoryClass.NARCOTIC),
-            "RegulatoryClass.NARCOTIC",
-        )
-        assertEquals(
-            "\"stimulant_precursor\"",
-            Json.encodeToString(RegulatoryClass.serializer(), RegulatoryClass.STIMULANT_PRECURSOR),
-            "RegulatoryClass.STIMULANT_PRECURSOR",
-        )
-        assertEquals(
-            "\"biological\"",
-            Json.encodeToString(RegulatoryClass.serializer(), RegulatoryClass.BIOLOGICAL),
-            "RegulatoryClass.BIOLOGICAL",
-        )
-        assertEquals(
-            "\"specified_biological\"",
-            Json.encodeToString(RegulatoryClass.serializer(), RegulatoryClass.SPECIFIED_BIOLOGICAL),
-            "RegulatoryClass.SPECIFIED_BIOLOGICAL",
-        )
-        assertEquals(
-            "\"prescription_required\"",
-            Json.encodeToString(RegulatoryClass.serializer(), RegulatoryClass.PRESCRIPTION_REQUIRED),
-            "RegulatoryClass.PRESCRIPTION_REQUIRED",
+        assertEncodedSerialNames(
+            mapOf(
+                RegulatoryClass.POISON to "poison",
+                RegulatoryClass.POTENT to "potent",
+                RegulatoryClass.ORDINARY to "ordinary",
+                RegulatoryClass.PSYCHOTROPIC_1 to "psychotropic_1",
+                RegulatoryClass.PSYCHOTROPIC_2 to "psychotropic_2",
+                RegulatoryClass.PSYCHOTROPIC_3 to "psychotropic_3",
+                RegulatoryClass.NARCOTIC to "narcotic",
+                RegulatoryClass.STIMULANT_PRECURSOR to "stimulant_precursor",
+                RegulatoryClass.BIOLOGICAL to "biological",
+                RegulatoryClass.SPECIFIED_BIOLOGICAL to "specified_biological",
+                RegulatoryClass.PRESCRIPTION_REQUIRED to "prescription_required",
+            ),
         )
     }
 
     @Test
     fun `RegulatoryClass decodes from literal english snake_case`() {
-        assertEquals(
-            RegulatoryClass.POISON,
-            Json.decodeFromString(RegulatoryClass.serializer(), "\"poison\""),
-            "RegulatoryClass.POISON",
-        )
-        assertEquals(
-            RegulatoryClass.POTENT,
-            Json.decodeFromString(RegulatoryClass.serializer(), "\"potent\""),
-            "RegulatoryClass.POTENT",
-        )
-        assertEquals(
-            RegulatoryClass.ORDINARY,
-            Json.decodeFromString(RegulatoryClass.serializer(), "\"ordinary\""),
-            "RegulatoryClass.ORDINARY",
-        )
-        assertEquals(
-            RegulatoryClass.PSYCHOTROPIC_1,
-            Json.decodeFromString(RegulatoryClass.serializer(), "\"psychotropic_1\""),
-            "RegulatoryClass.PSYCHOTROPIC_1",
-        )
-        assertEquals(
-            RegulatoryClass.PSYCHOTROPIC_2,
-            Json.decodeFromString(RegulatoryClass.serializer(), "\"psychotropic_2\""),
-            "RegulatoryClass.PSYCHOTROPIC_2",
-        )
-        assertEquals(
-            RegulatoryClass.PSYCHOTROPIC_3,
-            Json.decodeFromString(RegulatoryClass.serializer(), "\"psychotropic_3\""),
-            "RegulatoryClass.PSYCHOTROPIC_3",
-        )
-        assertEquals(
-            RegulatoryClass.NARCOTIC,
-            Json.decodeFromString(RegulatoryClass.serializer(), "\"narcotic\""),
-            "RegulatoryClass.NARCOTIC",
-        )
-        assertEquals(
-            RegulatoryClass.STIMULANT_PRECURSOR,
-            Json.decodeFromString(RegulatoryClass.serializer(), "\"stimulant_precursor\""),
-            "RegulatoryClass.STIMULANT_PRECURSOR",
-        )
-        assertEquals(
-            RegulatoryClass.BIOLOGICAL,
-            Json.decodeFromString(RegulatoryClass.serializer(), "\"biological\""),
-            "RegulatoryClass.BIOLOGICAL",
-        )
-        assertEquals(
-            RegulatoryClass.SPECIFIED_BIOLOGICAL,
-            Json.decodeFromString(RegulatoryClass.serializer(), "\"specified_biological\""),
-            "RegulatoryClass.SPECIFIED_BIOLOGICAL",
-        )
-        assertEquals(
-            RegulatoryClass.PRESCRIPTION_REQUIRED,
-            Json.decodeFromString(RegulatoryClass.serializer(), "\"prescription_required\""),
-            "RegulatoryClass.PRESCRIPTION_REQUIRED",
+        assertDecodedSerialNames<RegulatoryClass>(
+            mapOf(
+                "poison" to RegulatoryClass.POISON,
+                "potent" to RegulatoryClass.POTENT,
+                "ordinary" to RegulatoryClass.ORDINARY,
+                "psychotropic_1" to RegulatoryClass.PSYCHOTROPIC_1,
+                "psychotropic_2" to RegulatoryClass.PSYCHOTROPIC_2,
+                "psychotropic_3" to RegulatoryClass.PSYCHOTROPIC_3,
+                "narcotic" to RegulatoryClass.NARCOTIC,
+                "stimulant_precursor" to RegulatoryClass.STIMULANT_PRECURSOR,
+                "biological" to RegulatoryClass.BIOLOGICAL,
+                "specified_biological" to RegulatoryClass.SPECIFIED_BIOLOGICAL,
+                "prescription_required" to RegulatoryClass.PRESCRIPTION_REQUIRED,
+            ),
         )
     }
 
     @Test
     fun `RenalSeverity encodes to literal english snake_case`() {
-        assertEquals(
-            "\"normal\"",
-            Json.encodeToString(RenalSeverity.serializer(), RenalSeverity.NORMAL),
-            "RenalSeverity.NORMAL",
-        )
-        assertEquals(
-            "\"mild\"",
-            Json.encodeToString(RenalSeverity.serializer(), RenalSeverity.MILD),
-            "RenalSeverity.MILD",
-        )
-        assertEquals(
-            "\"moderate\"",
-            Json.encodeToString(RenalSeverity.serializer(), RenalSeverity.MODERATE),
-            "RenalSeverity.MODERATE",
-        )
-        assertEquals(
-            "\"severe\"",
-            Json.encodeToString(RenalSeverity.serializer(), RenalSeverity.SEVERE),
-            "RenalSeverity.SEVERE",
-        )
-        assertEquals(
-            "\"end_stage\"",
-            Json.encodeToString(RenalSeverity.serializer(), RenalSeverity.END_STAGE),
-            "RenalSeverity.END_STAGE",
+        assertEncodedSerialNames(
+            mapOf(
+                RenalSeverity.NORMAL to "normal",
+                RenalSeverity.MILD to "mild",
+                RenalSeverity.MODERATE to "moderate",
+                RenalSeverity.SEVERE to "severe",
+                RenalSeverity.END_STAGE to "end_stage",
+            ),
         )
     }
 
     @Test
     fun `RenalSeverity decodes from literal english snake_case`() {
-        assertEquals(
-            RenalSeverity.NORMAL,
-            Json.decodeFromString(RenalSeverity.serializer(), "\"normal\""),
-            "RenalSeverity.NORMAL",
-        )
-        assertEquals(
-            RenalSeverity.MILD,
-            Json.decodeFromString(RenalSeverity.serializer(), "\"mild\""),
-            "RenalSeverity.MILD",
-        )
-        assertEquals(
-            RenalSeverity.MODERATE,
-            Json.decodeFromString(RenalSeverity.serializer(), "\"moderate\""),
-            "RenalSeverity.MODERATE",
-        )
-        assertEquals(
-            RenalSeverity.SEVERE,
-            Json.decodeFromString(RenalSeverity.serializer(), "\"severe\""),
-            "RenalSeverity.SEVERE",
-        )
-        assertEquals(
-            RenalSeverity.END_STAGE,
-            Json.decodeFromString(RenalSeverity.serializer(), "\"end_stage\""),
-            "RenalSeverity.END_STAGE",
+        assertDecodedSerialNames<RenalSeverity>(
+            mapOf(
+                "normal" to RenalSeverity.NORMAL,
+                "mild" to RenalSeverity.MILD,
+                "moderate" to RenalSeverity.MODERATE,
+                "severe" to RenalSeverity.SEVERE,
+                "end_stage" to RenalSeverity.END_STAGE,
+            ),
         )
     }
 
     @Test
     fun `RouteOfAdministration encodes to literal english snake_case`() {
-        assertEquals(
-            "\"oral\"",
-            Json.encodeToString(RouteOfAdministration.serializer(), RouteOfAdministration.ORAL),
-            "RouteOfAdministration.ORAL",
-        )
-        assertEquals(
-            "\"topical\"",
-            Json.encodeToString(RouteOfAdministration.serializer(), RouteOfAdministration.TOPICAL),
-            "RouteOfAdministration.TOPICAL",
-        )
-        assertEquals(
-            "\"injection_route\"",
-            Json.encodeToString(RouteOfAdministration.serializer(), RouteOfAdministration.INJECTION_ROUTE),
-            "RouteOfAdministration.INJECTION_ROUTE",
-        )
-        assertEquals(
-            "\"inhalation\"",
-            Json.encodeToString(RouteOfAdministration.serializer(), RouteOfAdministration.INHALATION),
-            "RouteOfAdministration.INHALATION",
-        )
-        assertEquals(
-            "\"rectal\"",
-            Json.encodeToString(RouteOfAdministration.serializer(), RouteOfAdministration.RECTAL),
-            "RouteOfAdministration.RECTAL",
-        )
-        assertEquals(
-            "\"ophthalmic\"",
-            Json.encodeToString(RouteOfAdministration.serializer(), RouteOfAdministration.OPHTHALMIC),
-            "RouteOfAdministration.OPHTHALMIC",
-        )
-        assertEquals(
-            "\"nasal\"",
-            Json.encodeToString(RouteOfAdministration.serializer(), RouteOfAdministration.NASAL),
-            "RouteOfAdministration.NASAL",
-        )
-        assertEquals(
-            "\"transdermal\"",
-            Json.encodeToString(RouteOfAdministration.serializer(), RouteOfAdministration.TRANSDERMAL),
-            "RouteOfAdministration.TRANSDERMAL",
+        assertEncodedSerialNames(
+            mapOf(
+                RouteOfAdministration.ORAL to "oral",
+                RouteOfAdministration.TOPICAL to "topical",
+                RouteOfAdministration.INJECTION_ROUTE to "injection_route",
+                RouteOfAdministration.INHALATION to "inhalation",
+                RouteOfAdministration.RECTAL to "rectal",
+                RouteOfAdministration.OPHTHALMIC to "ophthalmic",
+                RouteOfAdministration.NASAL to "nasal",
+                RouteOfAdministration.TRANSDERMAL to "transdermal",
+            ),
         )
     }
 
     @Test
     fun `RouteOfAdministration decodes from literal english snake_case`() {
-        assertEquals(
-            RouteOfAdministration.ORAL,
-            Json.decodeFromString(RouteOfAdministration.serializer(), "\"oral\""),
-            "RouteOfAdministration.ORAL",
-        )
-        assertEquals(
-            RouteOfAdministration.TOPICAL,
-            Json.decodeFromString(RouteOfAdministration.serializer(), "\"topical\""),
-            "RouteOfAdministration.TOPICAL",
-        )
-        assertEquals(
-            RouteOfAdministration.INJECTION_ROUTE,
-            Json.decodeFromString(RouteOfAdministration.serializer(), "\"injection_route\""),
-            "RouteOfAdministration.INJECTION_ROUTE",
-        )
-        assertEquals(
-            RouteOfAdministration.INHALATION,
-            Json.decodeFromString(RouteOfAdministration.serializer(), "\"inhalation\""),
-            "RouteOfAdministration.INHALATION",
-        )
-        assertEquals(
-            RouteOfAdministration.RECTAL,
-            Json.decodeFromString(RouteOfAdministration.serializer(), "\"rectal\""),
-            "RouteOfAdministration.RECTAL",
-        )
-        assertEquals(
-            RouteOfAdministration.OPHTHALMIC,
-            Json.decodeFromString(RouteOfAdministration.serializer(), "\"ophthalmic\""),
-            "RouteOfAdministration.OPHTHALMIC",
-        )
-        assertEquals(
-            RouteOfAdministration.NASAL,
-            Json.decodeFromString(RouteOfAdministration.serializer(), "\"nasal\""),
-            "RouteOfAdministration.NASAL",
-        )
-        assertEquals(
-            RouteOfAdministration.TRANSDERMAL,
-            Json.decodeFromString(RouteOfAdministration.serializer(), "\"transdermal\""),
-            "RouteOfAdministration.TRANSDERMAL",
+        assertDecodedSerialNames<RouteOfAdministration>(
+            mapOf(
+                "oral" to RouteOfAdministration.ORAL,
+                "topical" to RouteOfAdministration.TOPICAL,
+                "injection_route" to RouteOfAdministration.INJECTION_ROUTE,
+                "inhalation" to RouteOfAdministration.INHALATION,
+                "rectal" to RouteOfAdministration.RECTAL,
+                "ophthalmic" to RouteOfAdministration.OPHTHALMIC,
+                "nasal" to RouteOfAdministration.NASAL,
+                "transdermal" to RouteOfAdministration.TRANSDERMAL,
+            ),
         )
     }
 
     @Test
     fun `StorageTemperature encodes to literal english snake_case`() {
-        assertEquals(
-            "\"room_temperature\"",
-            Json.encodeToString(StorageTemperature.serializer(), StorageTemperature.ROOM_TEMPERATURE),
-            "StorageTemperature.ROOM_TEMPERATURE",
-        )
-        assertEquals(
-            "\"cold\"",
-            Json.encodeToString(StorageTemperature.serializer(), StorageTemperature.COLD),
-            "StorageTemperature.COLD",
-        )
-        assertEquals(
-            "\"frozen\"",
-            Json.encodeToString(StorageTemperature.serializer(), StorageTemperature.FROZEN),
-            "StorageTemperature.FROZEN",
+        assertEncodedSerialNames(
+            mapOf(
+                StorageTemperature.ROOM_TEMPERATURE to "room_temperature",
+                StorageTemperature.COLD to "cold",
+                StorageTemperature.FROZEN to "frozen",
+            ),
         )
     }
 
     @Test
     fun `StorageTemperature decodes from literal english snake_case`() {
-        assertEquals(
-            StorageTemperature.ROOM_TEMPERATURE,
-            Json.decodeFromString(StorageTemperature.serializer(), "\"room_temperature\""),
-            "StorageTemperature.ROOM_TEMPERATURE",
-        )
-        assertEquals(
-            StorageTemperature.COLD,
-            Json.decodeFromString(StorageTemperature.serializer(), "\"cold\""),
-            "StorageTemperature.COLD",
-        )
-        assertEquals(
-            StorageTemperature.FROZEN,
-            Json.decodeFromString(StorageTemperature.serializer(), "\"frozen\""),
-            "StorageTemperature.FROZEN",
+        assertDecodedSerialNames<StorageTemperature>(
+            mapOf(
+                "room_temperature" to StorageTemperature.ROOM_TEMPERATURE,
+                "cold" to StorageTemperature.COLD,
+                "frozen" to StorageTemperature.FROZEN,
+            ),
         )
     }
 
