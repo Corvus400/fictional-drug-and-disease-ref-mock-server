@@ -91,12 +91,18 @@ class DrugModuleAdditionalFilterTest {
             val keywordOnlyTotal = client.get("/v1/drugs?adverse_reaction_keyword=$keyword&page_size=100")
                 .let { json.parseToJsonElement(string = it.bodyAsText()).jsonObject }
                 .let { it["total_count"]?.jsonPrimitive?.content?.toInt() }
-            assertNotNull(keywordOnlyTotal, "keyword-only response must include total_count")
+            assertNotNull(
+                keywordOnlyTotal,
+                "keyword-only response must include total_count"
+            )
 
             val precautionOnlyTotal = client.get("/v1/drugs?precaution_category=PREGNANT&page_size=100")
                 .let { json.parseToJsonElement(string = it.bodyAsText()).jsonObject }
                 .let { it["total_count"]?.jsonPrimitive?.content?.toInt() }
-            assertNotNull(precautionOnlyTotal, "precaution-only response must include total_count")
+            assertNotNull(
+                precautionOnlyTotal,
+                "precaution-only response must include total_count"
+            )
 
             val andResponse = client.get(
                 "/v1/drugs?adverse_reaction_keyword=$keyword&precaution_category=PREGNANT&page_size=100",
@@ -167,12 +173,23 @@ class DrugModuleAdditionalFilterTest {
 
             val response = client.get("/v1/drugs?precaution_category=INVALID")
 
-            assertEquals(HttpStatusCode.BadRequest, response.status)
+            assertEquals(
+                HttpStatusCode.BadRequest,
+                response.status,
+                "contract assertion failed"
+            )
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
             val code = body["code"]?.jsonPrimitive?.content
-            assertEquals("INVALID_PRECAUTION_CATEGORY", code)
+            assertEquals(
+                "INVALID_PRECAUTION_CATEGORY",
+                code,
+                "contract assertion failed"
+            )
             val message = body["message"]?.jsonPrimitive?.content
-            assertNotNull(message, "ErrorResponse must include a non-null message describing the rejected value")
+            assertNotNull(
+                message,
+                "ErrorResponse must include a non-null message describing the rejected value"
+            )
             assertTrue(
                 actual = message.contains("INVALID"),
                 message = "ErrorResponse message=$message must mention the rejected raw value 'INVALID'",

@@ -787,324 +787,231 @@ class EnumSerialNamePinTest {
 
     @Test
     fun `Chronicity encodes to literal english snake_case`() {
-        assertEquals("\"acute\"", AppJson.encodeToString(Chronicity.ACUTE))
-        assertEquals("\"subacute\"", AppJson.encodeToString(Chronicity.SUBACUTE))
-        assertEquals("\"chronic\"", AppJson.encodeToString(Chronicity.CHRONIC))
-        assertEquals("\"relapsing\"", AppJson.encodeToString(Chronicity.RELAPSING))
+        assertEncodedSerialNames(
+            mapOf(
+                Chronicity.ACUTE to "acute",
+                Chronicity.SUBACUTE to "subacute",
+                Chronicity.CHRONIC to "chronic",
+                Chronicity.RELAPSING to "relapsing",
+            ),
+        )
     }
 
     @Test
     fun `Chronicity decodes from literal english snake_case`() {
-        assertEquals(
-            Chronicity.ACUTE,
-            AppJson.decodeFromString<Chronicity>("\"acute\""),
-        )
-        assertEquals(
-            Chronicity.SUBACUTE,
-            AppJson.decodeFromString<Chronicity>("\"subacute\""),
-        )
-        assertEquals(
-            Chronicity.CHRONIC,
-            AppJson.decodeFromString<Chronicity>("\"chronic\""),
-        )
-        assertEquals(
-            Chronicity.RELAPSING,
-            AppJson.decodeFromString<Chronicity>("\"relapsing\""),
+        assertDecodedSerialNames<Chronicity>(
+            mapOf(
+                "acute" to Chronicity.ACUTE,
+                "subacute" to Chronicity.SUBACUTE,
+                "chronic" to Chronicity.CHRONIC,
+                "relapsing" to Chronicity.RELAPSING,
+            ),
         )
     }
 
     @Test
     fun `ExamCategory encodes to literal english snake_case`() {
-        assertEquals("\"blood_test\"", AppJson.encodeToString(ExamCategory.BLOOD_TEST))
-        assertEquals("\"imaging\"", AppJson.encodeToString(ExamCategory.IMAGING))
-        assertEquals("\"physiological\"", AppJson.encodeToString(ExamCategory.PHYSIOLOGICAL))
-        assertEquals("\"pathology\"", AppJson.encodeToString(ExamCategory.PATHOLOGY))
-        assertEquals("\"interview\"", AppJson.encodeToString(ExamCategory.INTERVIEW))
+        assertEncodedSerialNames(
+            mapOf(
+                ExamCategory.BLOOD_TEST to "blood_test",
+                ExamCategory.IMAGING to "imaging",
+                ExamCategory.PHYSIOLOGICAL to "physiological",
+                ExamCategory.PATHOLOGY to "pathology",
+                ExamCategory.INTERVIEW to "interview",
+            ),
+        )
     }
 
     @Test
     fun `ExamCategory decodes from literal english snake_case`() {
-        assertEquals(
-            ExamCategory.BLOOD_TEST,
-            AppJson.decodeFromString<ExamCategory>("\"blood_test\""),
-        )
-        assertEquals(
-            ExamCategory.IMAGING,
-            AppJson.decodeFromString<ExamCategory>("\"imaging\""),
-        )
-        assertEquals(
-            ExamCategory.PHYSIOLOGICAL,
-            AppJson.decodeFromString<ExamCategory>("\"physiological\""),
-        )
-        assertEquals(
-            ExamCategory.PATHOLOGY,
-            AppJson.decodeFromString<ExamCategory>("\"pathology\""),
-        )
-        assertEquals(
-            ExamCategory.INTERVIEW,
-            AppJson.decodeFromString<ExamCategory>("\"interview\""),
+        assertDecodedSerialNames<ExamCategory>(
+            mapOf(
+                "blood_test" to ExamCategory.BLOOD_TEST,
+                "imaging" to ExamCategory.IMAGING,
+                "physiological" to ExamCategory.PHYSIOLOGICAL,
+                "pathology" to ExamCategory.PATHOLOGY,
+                "interview" to ExamCategory.INTERVIEW,
+            ),
         )
     }
 
     @Test
     fun `Icd10Chapter encodes to literal english snake_case`() {
-        assertEquals("\"chapter_i\"", AppJson.encodeToString(Icd10Chapter.CHAPTER_I))
-        assertEquals("\"chapter_ii\"", AppJson.encodeToString(Icd10Chapter.CHAPTER_II))
-        assertEquals("\"chapter_iii\"", AppJson.encodeToString(Icd10Chapter.CHAPTER_III))
-        assertEquals("\"chapter_iv\"", AppJson.encodeToString(Icd10Chapter.CHAPTER_IV))
-        assertEquals("\"chapter_v\"", AppJson.encodeToString(Icd10Chapter.CHAPTER_V))
-        assertEquals("\"chapter_vi\"", AppJson.encodeToString(Icd10Chapter.CHAPTER_VI))
-        assertEquals("\"chapter_vii\"", AppJson.encodeToString(Icd10Chapter.CHAPTER_VII))
-        assertEquals("\"chapter_viii\"", AppJson.encodeToString(Icd10Chapter.CHAPTER_VIII))
-        assertEquals("\"chapter_ix\"", AppJson.encodeToString(Icd10Chapter.CHAPTER_IX))
-        assertEquals("\"chapter_x\"", AppJson.encodeToString(Icd10Chapter.CHAPTER_X))
-        assertEquals("\"chapter_xi\"", AppJson.encodeToString(Icd10Chapter.CHAPTER_XI))
-        assertEquals("\"chapter_xii\"", AppJson.encodeToString(Icd10Chapter.CHAPTER_XII))
-        assertEquals("\"chapter_xiii\"", AppJson.encodeToString(Icd10Chapter.CHAPTER_XIII))
-        assertEquals("\"chapter_xiv\"", AppJson.encodeToString(Icd10Chapter.CHAPTER_XIV))
-        assertEquals("\"chapter_xv\"", AppJson.encodeToString(Icd10Chapter.CHAPTER_XV))
-        assertEquals("\"chapter_xvi\"", AppJson.encodeToString(Icd10Chapter.CHAPTER_XVI))
-        assertEquals("\"chapter_xvii\"", AppJson.encodeToString(Icd10Chapter.CHAPTER_XVII))
-        assertEquals("\"chapter_xviii\"", AppJson.encodeToString(Icd10Chapter.CHAPTER_XVIII))
-        assertEquals("\"chapter_xix\"", AppJson.encodeToString(Icd10Chapter.CHAPTER_XIX))
-        assertEquals("\"chapter_xx\"", AppJson.encodeToString(Icd10Chapter.CHAPTER_XX))
-        assertEquals("\"chapter_xxi\"", AppJson.encodeToString(Icd10Chapter.CHAPTER_XXI))
-        assertEquals("\"chapter_xxii\"", AppJson.encodeToString(Icd10Chapter.CHAPTER_XXII))
+        assertEncodedSerialNames(
+            mapOf(
+                Icd10Chapter.CHAPTER_I to "chapter_i",
+                Icd10Chapter.CHAPTER_II to "chapter_ii",
+                Icd10Chapter.CHAPTER_III to "chapter_iii",
+                Icd10Chapter.CHAPTER_IV to "chapter_iv",
+                Icd10Chapter.CHAPTER_V to "chapter_v",
+                Icd10Chapter.CHAPTER_VI to "chapter_vi",
+                Icd10Chapter.CHAPTER_VII to "chapter_vii",
+                Icd10Chapter.CHAPTER_VIII to "chapter_viii",
+                Icd10Chapter.CHAPTER_IX to "chapter_ix",
+                Icd10Chapter.CHAPTER_X to "chapter_x",
+                Icd10Chapter.CHAPTER_XI to "chapter_xi",
+                Icd10Chapter.CHAPTER_XII to "chapter_xii",
+                Icd10Chapter.CHAPTER_XIII to "chapter_xiii",
+                Icd10Chapter.CHAPTER_XIV to "chapter_xiv",
+                Icd10Chapter.CHAPTER_XV to "chapter_xv",
+                Icd10Chapter.CHAPTER_XVI to "chapter_xvi",
+                Icd10Chapter.CHAPTER_XVII to "chapter_xvii",
+                Icd10Chapter.CHAPTER_XVIII to "chapter_xviii",
+                Icd10Chapter.CHAPTER_XIX to "chapter_xix",
+                Icd10Chapter.CHAPTER_XX to "chapter_xx",
+                Icd10Chapter.CHAPTER_XXI to "chapter_xxi",
+                Icd10Chapter.CHAPTER_XXII to "chapter_xxii",
+            ),
+        )
     }
 
     @Test
     fun `Icd10Chapter decodes from literal english snake_case`() {
-        assertEquals(
-            Icd10Chapter.CHAPTER_I,
-            AppJson.decodeFromString<Icd10Chapter>("\"chapter_i\""),
-        )
-        assertEquals(
-            Icd10Chapter.CHAPTER_II,
-            AppJson.decodeFromString<Icd10Chapter>("\"chapter_ii\""),
-        )
-        assertEquals(
-            Icd10Chapter.CHAPTER_III,
-            AppJson.decodeFromString<Icd10Chapter>("\"chapter_iii\""),
-        )
-        assertEquals(
-            Icd10Chapter.CHAPTER_IV,
-            AppJson.decodeFromString<Icd10Chapter>("\"chapter_iv\""),
-        )
-        assertEquals(
-            Icd10Chapter.CHAPTER_V,
-            AppJson.decodeFromString<Icd10Chapter>("\"chapter_v\""),
-        )
-        assertEquals(
-            Icd10Chapter.CHAPTER_VI,
-            AppJson.decodeFromString<Icd10Chapter>("\"chapter_vi\""),
-        )
-        assertEquals(
-            Icd10Chapter.CHAPTER_VII,
-            AppJson.decodeFromString<Icd10Chapter>("\"chapter_vii\""),
-        )
-        assertEquals(
-            Icd10Chapter.CHAPTER_VIII,
-            AppJson.decodeFromString<Icd10Chapter>("\"chapter_viii\""),
-        )
-        assertEquals(
-            Icd10Chapter.CHAPTER_IX,
-            AppJson.decodeFromString<Icd10Chapter>("\"chapter_ix\""),
-        )
-        assertEquals(
-            Icd10Chapter.CHAPTER_X,
-            AppJson.decodeFromString<Icd10Chapter>("\"chapter_x\""),
-        )
-        assertEquals(
-            Icd10Chapter.CHAPTER_XI,
-            AppJson.decodeFromString<Icd10Chapter>("\"chapter_xi\""),
-        )
-        assertEquals(
-            Icd10Chapter.CHAPTER_XII,
-            AppJson.decodeFromString<Icd10Chapter>("\"chapter_xii\""),
-        )
-        assertEquals(
-            Icd10Chapter.CHAPTER_XIII,
-            AppJson.decodeFromString<Icd10Chapter>("\"chapter_xiii\""),
-        )
-        assertEquals(
-            Icd10Chapter.CHAPTER_XIV,
-            AppJson.decodeFromString<Icd10Chapter>("\"chapter_xiv\""),
-        )
-        assertEquals(
-            Icd10Chapter.CHAPTER_XV,
-            AppJson.decodeFromString<Icd10Chapter>("\"chapter_xv\""),
-        )
-        assertEquals(
-            Icd10Chapter.CHAPTER_XVI,
-            AppJson.decodeFromString<Icd10Chapter>("\"chapter_xvi\""),
-        )
-        assertEquals(
-            Icd10Chapter.CHAPTER_XVII,
-            AppJson.decodeFromString<Icd10Chapter>("\"chapter_xvii\""),
-        )
-        assertEquals(
-            Icd10Chapter.CHAPTER_XVIII,
-            AppJson.decodeFromString<Icd10Chapter>("\"chapter_xviii\""),
-        )
-        assertEquals(
-            Icd10Chapter.CHAPTER_XIX,
-            AppJson.decodeFromString<Icd10Chapter>("\"chapter_xix\""),
-        )
-        assertEquals(
-            Icd10Chapter.CHAPTER_XX,
-            AppJson.decodeFromString<Icd10Chapter>("\"chapter_xx\""),
-        )
-        assertEquals(
-            Icd10Chapter.CHAPTER_XXI,
-            AppJson.decodeFromString<Icd10Chapter>("\"chapter_xxi\""),
-        )
-        assertEquals(
-            Icd10Chapter.CHAPTER_XXII,
-            AppJson.decodeFromString<Icd10Chapter>("\"chapter_xxii\""),
+        assertDecodedSerialNames<Icd10Chapter>(
+            mapOf(
+                "chapter_i" to Icd10Chapter.CHAPTER_I,
+                "chapter_ii" to Icd10Chapter.CHAPTER_II,
+                "chapter_iii" to Icd10Chapter.CHAPTER_III,
+                "chapter_iv" to Icd10Chapter.CHAPTER_IV,
+                "chapter_v" to Icd10Chapter.CHAPTER_V,
+                "chapter_vi" to Icd10Chapter.CHAPTER_VI,
+                "chapter_vii" to Icd10Chapter.CHAPTER_VII,
+                "chapter_viii" to Icd10Chapter.CHAPTER_VIII,
+                "chapter_ix" to Icd10Chapter.CHAPTER_IX,
+                "chapter_x" to Icd10Chapter.CHAPTER_X,
+                "chapter_xi" to Icd10Chapter.CHAPTER_XI,
+                "chapter_xii" to Icd10Chapter.CHAPTER_XII,
+                "chapter_xiii" to Icd10Chapter.CHAPTER_XIII,
+                "chapter_xiv" to Icd10Chapter.CHAPTER_XIV,
+                "chapter_xv" to Icd10Chapter.CHAPTER_XV,
+                "chapter_xvi" to Icd10Chapter.CHAPTER_XVI,
+                "chapter_xvii" to Icd10Chapter.CHAPTER_XVII,
+                "chapter_xviii" to Icd10Chapter.CHAPTER_XVIII,
+                "chapter_xix" to Icd10Chapter.CHAPTER_XIX,
+                "chapter_xx" to Icd10Chapter.CHAPTER_XX,
+                "chapter_xxi" to Icd10Chapter.CHAPTER_XXI,
+                "chapter_xxii" to Icd10Chapter.CHAPTER_XXII,
+            ),
         )
     }
 
     @Test
     fun `MedicalDepartment encodes to literal english snake_case`() {
-        assertEquals("\"internal_medicine\"", AppJson.encodeToString(MedicalDepartment.INTERNAL_MEDICINE))
-        assertEquals("\"cardiology\"", AppJson.encodeToString(MedicalDepartment.CARDIOLOGY))
-        assertEquals("\"gastroenterology\"", AppJson.encodeToString(MedicalDepartment.GASTROENTEROLOGY))
-        assertEquals("\"endocrinology\"", AppJson.encodeToString(MedicalDepartment.ENDOCRINOLOGY))
-        assertEquals("\"neurology\"", AppJson.encodeToString(MedicalDepartment.NEUROLOGY))
-        assertEquals("\"psychiatry\"", AppJson.encodeToString(MedicalDepartment.PSYCHIATRY))
-        assertEquals("\"surgery\"", AppJson.encodeToString(MedicalDepartment.SURGERY))
-        assertEquals("\"orthopedics\"", AppJson.encodeToString(MedicalDepartment.ORTHOPEDICS))
-        assertEquals("\"dermatology\"", AppJson.encodeToString(MedicalDepartment.DERMATOLOGY))
-        assertEquals("\"ophthalmology\"", AppJson.encodeToString(MedicalDepartment.OPHTHALMOLOGY))
-        assertEquals("\"otolaryngology\"", AppJson.encodeToString(MedicalDepartment.OTOLARYNGOLOGY))
-        assertEquals("\"urology\"", AppJson.encodeToString(MedicalDepartment.UROLOGY))
-        assertEquals("\"gynecology\"", AppJson.encodeToString(MedicalDepartment.GYNECOLOGY))
-        assertEquals("\"pediatrics\"", AppJson.encodeToString(MedicalDepartment.PEDIATRICS))
-        assertEquals("\"emergency\"", AppJson.encodeToString(MedicalDepartment.EMERGENCY))
-        assertEquals("\"infectious_disease\"", AppJson.encodeToString(MedicalDepartment.INFECTIOUS_DISEASE))
+        assertEncodedSerialNames(
+            mapOf(
+                MedicalDepartment.INTERNAL_MEDICINE to "internal_medicine",
+                MedicalDepartment.CARDIOLOGY to "cardiology",
+                MedicalDepartment.GASTROENTEROLOGY to "gastroenterology",
+                MedicalDepartment.ENDOCRINOLOGY to "endocrinology",
+                MedicalDepartment.NEUROLOGY to "neurology",
+                MedicalDepartment.PSYCHIATRY to "psychiatry",
+                MedicalDepartment.SURGERY to "surgery",
+                MedicalDepartment.ORTHOPEDICS to "orthopedics",
+                MedicalDepartment.DERMATOLOGY to "dermatology",
+                MedicalDepartment.OPHTHALMOLOGY to "ophthalmology",
+                MedicalDepartment.OTOLARYNGOLOGY to "otolaryngology",
+                MedicalDepartment.UROLOGY to "urology",
+                MedicalDepartment.GYNECOLOGY to "gynecology",
+                MedicalDepartment.PEDIATRICS to "pediatrics",
+                MedicalDepartment.EMERGENCY to "emergency",
+                MedicalDepartment.INFECTIOUS_DISEASE to "infectious_disease",
+            ),
+        )
     }
 
     @Test
     fun `MedicalDepartment decodes from literal english snake_case`() {
-        assertEquals(
-            MedicalDepartment.INTERNAL_MEDICINE,
-            AppJson.decodeFromString<MedicalDepartment>("\"internal_medicine\""),
-        )
-        assertEquals(
-            MedicalDepartment.CARDIOLOGY,
-            AppJson.decodeFromString<MedicalDepartment>("\"cardiology\""),
-        )
-        assertEquals(
-            MedicalDepartment.GASTROENTEROLOGY,
-            AppJson.decodeFromString<MedicalDepartment>("\"gastroenterology\""),
-        )
-        assertEquals(
-            MedicalDepartment.ENDOCRINOLOGY,
-            AppJson.decodeFromString<MedicalDepartment>("\"endocrinology\""),
-        )
-        assertEquals(
-            MedicalDepartment.NEUROLOGY,
-            AppJson.decodeFromString<MedicalDepartment>("\"neurology\""),
-        )
-        assertEquals(
-            MedicalDepartment.PSYCHIATRY,
-            AppJson.decodeFromString<MedicalDepartment>("\"psychiatry\""),
-        )
-        assertEquals(
-            MedicalDepartment.SURGERY,
-            AppJson.decodeFromString<MedicalDepartment>("\"surgery\""),
-        )
-        assertEquals(
-            MedicalDepartment.ORTHOPEDICS,
-            AppJson.decodeFromString<MedicalDepartment>("\"orthopedics\""),
-        )
-        assertEquals(
-            MedicalDepartment.DERMATOLOGY,
-            AppJson.decodeFromString<MedicalDepartment>("\"dermatology\""),
-        )
-        assertEquals(
-            MedicalDepartment.OPHTHALMOLOGY,
-            AppJson.decodeFromString<MedicalDepartment>("\"ophthalmology\""),
-        )
-        assertEquals(
-            MedicalDepartment.OTOLARYNGOLOGY,
-            AppJson.decodeFromString<MedicalDepartment>("\"otolaryngology\""),
-        )
-        assertEquals(
-            MedicalDepartment.UROLOGY,
-            AppJson.decodeFromString<MedicalDepartment>("\"urology\""),
-        )
-        assertEquals(
-            MedicalDepartment.GYNECOLOGY,
-            AppJson.decodeFromString<MedicalDepartment>("\"gynecology\""),
-        )
-        assertEquals(
-            MedicalDepartment.PEDIATRICS,
-            AppJson.decodeFromString<MedicalDepartment>("\"pediatrics\""),
-        )
-        assertEquals(
-            MedicalDepartment.EMERGENCY,
-            AppJson.decodeFromString<MedicalDepartment>("\"emergency\""),
-        )
-        assertEquals(
-            MedicalDepartment.INFECTIOUS_DISEASE,
-            AppJson.decodeFromString<MedicalDepartment>("\"infectious_disease\""),
+        assertDecodedSerialNames<MedicalDepartment>(
+            mapOf(
+                "internal_medicine" to MedicalDepartment.INTERNAL_MEDICINE,
+                "cardiology" to MedicalDepartment.CARDIOLOGY,
+                "gastroenterology" to MedicalDepartment.GASTROENTEROLOGY,
+                "endocrinology" to MedicalDepartment.ENDOCRINOLOGY,
+                "neurology" to MedicalDepartment.NEUROLOGY,
+                "psychiatry" to MedicalDepartment.PSYCHIATRY,
+                "surgery" to MedicalDepartment.SURGERY,
+                "orthopedics" to MedicalDepartment.ORTHOPEDICS,
+                "dermatology" to MedicalDepartment.DERMATOLOGY,
+                "ophthalmology" to MedicalDepartment.OPHTHALMOLOGY,
+                "otolaryngology" to MedicalDepartment.OTOLARYNGOLOGY,
+                "urology" to MedicalDepartment.UROLOGY,
+                "gynecology" to MedicalDepartment.GYNECOLOGY,
+                "pediatrics" to MedicalDepartment.PEDIATRICS,
+                "emergency" to MedicalDepartment.EMERGENCY,
+                "infectious_disease" to MedicalDepartment.INFECTIOUS_DISEASE,
+            ),
         )
     }
 
     @Test
     fun `OnsetPattern encodes to literal english snake_case`() {
-        assertEquals("\"acute\"", AppJson.encodeToString(OnsetPattern.ACUTE))
-        assertEquals("\"subacute\"", AppJson.encodeToString(OnsetPattern.SUBACUTE))
-        assertEquals("\"chronic\"", AppJson.encodeToString(OnsetPattern.CHRONIC))
-        assertEquals("\"intermittent\"", AppJson.encodeToString(OnsetPattern.INTERMITTENT))
-        assertEquals("\"relapsing\"", AppJson.encodeToString(OnsetPattern.RELAPSING))
+        assertEncodedSerialNames(
+            mapOf(
+                OnsetPattern.ACUTE to "acute",
+                OnsetPattern.SUBACUTE to "subacute",
+                OnsetPattern.CHRONIC to "chronic",
+                OnsetPattern.INTERMITTENT to "intermittent",
+                OnsetPattern.RELAPSING to "relapsing",
+            ),
+        )
     }
 
     @Test
     fun `OnsetPattern decodes from literal english snake_case`() {
-        assertEquals(
-            OnsetPattern.ACUTE,
-            AppJson.decodeFromString<OnsetPattern>("\"acute\""),
-        )
-        assertEquals(
-            OnsetPattern.SUBACUTE,
-            AppJson.decodeFromString<OnsetPattern>("\"subacute\""),
-        )
-        assertEquals(
-            OnsetPattern.CHRONIC,
-            AppJson.decodeFromString<OnsetPattern>("\"chronic\""),
-        )
-        assertEquals(
-            OnsetPattern.INTERMITTENT,
-            AppJson.decodeFromString<OnsetPattern>("\"intermittent\""),
-        )
-        assertEquals(
-            OnsetPattern.RELAPSING,
-            AppJson.decodeFromString<OnsetPattern>("\"relapsing\""),
+        assertDecodedSerialNames<OnsetPattern>(
+            mapOf(
+                "acute" to OnsetPattern.ACUTE,
+                "subacute" to OnsetPattern.SUBACUTE,
+                "chronic" to OnsetPattern.CHRONIC,
+                "intermittent" to OnsetPattern.INTERMITTENT,
+                "relapsing" to OnsetPattern.RELAPSING,
+            ),
         )
     }
 
     @Test
     fun `PrevalenceUnit encodes to literal english snake_case`() {
-        assertEquals("\"per_population\"", AppJson.encodeToString(PrevalenceUnit.PER_POPULATION))
-        assertEquals("\"per_patient\"", AppJson.encodeToString(PrevalenceUnit.PER_PATIENT))
-        assertEquals("\"per_birth\"", AppJson.encodeToString(PrevalenceUnit.PER_BIRTH))
+        assertEncodedSerialNames(
+            mapOf(
+                PrevalenceUnit.PER_POPULATION to "per_population",
+                PrevalenceUnit.PER_PATIENT to "per_patient",
+                PrevalenceUnit.PER_BIRTH to "per_birth",
+            ),
+        )
     }
 
     @Test
     fun `PrevalenceUnit decodes from literal english snake_case`() {
-        assertEquals(
-            PrevalenceUnit.PER_POPULATION,
-            AppJson.decodeFromString<PrevalenceUnit>("\"per_population\""),
+        assertDecodedSerialNames<PrevalenceUnit>(
+            mapOf(
+                "per_population" to PrevalenceUnit.PER_POPULATION,
+                "per_patient" to PrevalenceUnit.PER_PATIENT,
+                "per_birth" to PrevalenceUnit.PER_BIRTH,
+            ),
         )
+    }
+
+    private inline fun <reified T> assertEncodedSerialNames(expected: Map<T, String>) {
+        val actual = expected.keys.associateWith { value ->
+            AppJson.encodeToString(value).removeSurrounding("\"")
+        }
+
         assertEquals(
-            PrevalenceUnit.PER_PATIENT,
-            AppJson.decodeFromString<PrevalenceUnit>("\"per_patient\""),
+            expected = expected,
+            actual = actual,
+            message = "${T::class.simpleName} encoded serial names must stay pinned",
         )
+    }
+
+    private inline fun <reified T> assertDecodedSerialNames(expected: Map<String, T>) {
+        val actual = expected.keys.associateWith { serialName ->
+            AppJson.decodeFromString<T>("\"$serialName\"")
+        }
+
         assertEquals(
-            PrevalenceUnit.PER_BIRTH,
-            AppJson.decodeFromString<PrevalenceUnit>("\"per_birth\""),
+            expected = expected,
+            actual = actual,
+            message = "${T::class.simpleName} decoded serial names must stay pinned",
         )
     }
 }

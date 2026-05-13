@@ -25,8 +25,15 @@ class DiseaseModuleTest {
 
         val response = client.get("/v1/diseases")
 
-        assertEquals(HttpStatusCode.OK, response.status)
-        assertTrue(response.bodyAsText().contains("disease_0001"))
+        assertEquals(
+            HttpStatusCode.OK,
+            response.status,
+            "contract assertion failed"
+        )
+        assertTrue(
+            response.bodyAsText().contains("disease_0001"),
+            "contract assertion failed"
+        )
     }
 
     @Test
@@ -35,17 +42,39 @@ class DiseaseModuleTest {
 
         val response = client.get("/v1/diseases/disease_0001")
 
-        assertEquals(HttpStatusCode.OK, response.status)
+        assertEquals(
+            HttpStatusCode.OK,
+            response.status,
+            "contract assertion failed"
+        )
         val body = json.decodeFromString<JsonObject>(response.bodyAsText())
         val name = body["name"]?.jsonPrimitive?.content
         val nameKana = body["name_kana"]?.jsonPrimitive?.content
         val nameEnglish = body["name_english"]?.jsonPrimitive?.content
-        assertNotNull(name)
-        assertTrue(name.isNotBlank(), "name must be non-blank")
-        assertNotNull(nameKana)
-        assertTrue(nameKana.isNotBlank(), "nameKana must be non-blank")
-        assertNotNull(nameEnglish)
-        assertTrue(nameEnglish.isNotBlank(), "nameEnglish must be non-blank")
+        assertNotNull(
+            name,
+            "contract assertion failed"
+        )
+        assertTrue(
+            name.isNotBlank(),
+            "name must be non-blank"
+        )
+        assertNotNull(
+            nameKana,
+            "contract assertion failed"
+        )
+        assertTrue(
+            nameKana.isNotBlank(),
+            "nameKana must be non-blank"
+        )
+        assertNotNull(
+            nameEnglish,
+            "contract assertion failed"
+        )
+        assertTrue(
+            nameEnglish.isNotBlank(),
+            "nameEnglish must be non-blank"
+        )
     }
 
     @Test
@@ -54,8 +83,15 @@ class DiseaseModuleTest {
 
         val response = client.get("/v1/diseases")
 
-        assertEquals(HttpStatusCode.OK, response.status)
-        assertTrue(response.bodyAsText().contains("disease_0001"))
+        assertEquals(
+            HttpStatusCode.OK,
+            response.status,
+            "contract assertion failed"
+        )
+        assertTrue(
+            response.bodyAsText().contains("disease_0001"),
+            "contract assertion failed"
+        )
     }
 
     @Test
@@ -65,10 +101,17 @@ class DiseaseModuleTest {
 
             val response = client.get("/v1/diseases")
 
-            assertEquals(HttpStatusCode.OK, response.status)
+            assertEquals(
+                HttpStatusCode.OK,
+                response.status,
+                "contract assertion failed"
+            )
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
             val items = body["items"]?.jsonArray
-            assertNotNull(items, "response body must have an items array")
+            assertNotNull(
+                items,
+                "response body must have an items array"
+            )
             assertTrue(
                 items.isNotEmpty(),
                 "default scenario first page must expose non-empty items array",
@@ -105,10 +148,17 @@ class DiseaseModuleTest {
             }
         }
 
-        assertEquals(HttpStatusCode.OK, response.status)
+        assertEquals(
+            HttpStatusCode.OK,
+            response.status,
+            "contract assertion failed"
+        )
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
         val items = body["items"]?.jsonArray
-        assertNotNull(items, "empty scenario must still expose an items array")
+        assertNotNull(
+            items,
+            "empty scenario must still expose an items array"
+        )
         assertEquals(
             expected = 0,
             actual = items.size,

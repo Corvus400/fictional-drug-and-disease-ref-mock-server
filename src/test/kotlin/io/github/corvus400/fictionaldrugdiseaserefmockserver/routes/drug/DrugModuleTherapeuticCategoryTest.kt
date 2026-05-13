@@ -24,7 +24,11 @@ class DrugModuleTherapeuticCategoryTest {
 
             val response = client.get("/v1/drugs?therapeutic_category=ALIMENTARY_METABOLISM&page_size=100")
 
-            assertEquals(HttpStatusCode.OK, response.status)
+            assertEquals(
+                HttpStatusCode.OK,
+                response.status,
+                "contract assertion failed"
+            )
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
             val totalCount = body["total_count"]?.jsonPrimitive?.content?.toInt()
             assertNotNull(totalCount, "response must include total_count")
@@ -57,7 +61,11 @@ class DrugModuleTherapeuticCategoryTest {
 
         val response = client.get("/v1/drugs?therapeutic_category=NERVOUS_SYSTEM&page_size=100")
 
-        assertEquals(HttpStatusCode.OK, response.status)
+        assertEquals(
+            HttpStatusCode.OK,
+            response.status,
+            "contract assertion failed"
+        )
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
         val totalCount = body["total_count"]?.jsonPrimitive?.content?.toInt()
         assertNotNull(totalCount, "response must include total_count")
@@ -91,11 +99,16 @@ class DrugModuleTherapeuticCategoryTest {
 
             val response = client.get("/v1/drugs?therapeutic_category=UNKNOWN_CATEGORY")
 
-            assertEquals(HttpStatusCode.BadRequest, response.status)
+            assertEquals(
+                expected = HttpStatusCode.BadRequest,
+                actual = response.status,
+                message = "invalid therapeutic_category must return 400",
+            )
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
             assertEquals(
                 expected = "INVALID_THERAPEUTIC_CATEGORY",
                 actual = body["code"]?.jsonPrimitive?.content,
+                message = "invalid therapeutic_category response must expose INVALID_THERAPEUTIC_CATEGORY",
             )
             val message = body["message"]?.jsonPrimitive?.content
             assertNotNull(message, "ErrorResponse must include message")
@@ -113,7 +126,11 @@ class DrugModuleTherapeuticCategoryTest {
             "/v1/drugs?therapeutic_category=ALIMENTARY_METABOLISM&category_atc=A&page_size=100",
         )
 
-        assertEquals(HttpStatusCode.OK, response.status)
+        assertEquals(
+            HttpStatusCode.OK,
+            response.status,
+            "contract assertion failed"
+        )
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
         val totalCount = body["total_count"]?.jsonPrimitive?.content?.toInt()
         assertNotNull(totalCount, "response must include total_count")
@@ -148,7 +165,11 @@ class DrugModuleTherapeuticCategoryTest {
             "/v1/drugs?therapeutic_category=ALIMENTARY_METABOLISM&category_atc=N&page_size=100",
         )
 
-        assertEquals(HttpStatusCode.OK, response.status)
+        assertEquals(
+            HttpStatusCode.OK,
+            response.status,
+            "contract assertion failed"
+        )
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
         assertEquals(
             expected = 0,
@@ -171,8 +192,16 @@ class DrugModuleTherapeuticCategoryTest {
         val deprecatedResponse = client.get("/v1/drugs?category_name=消化器系および代謝&page=1")
         val unfilteredResponse = client.get("/v1/drugs?page=1")
 
-        assertEquals(HttpStatusCode.OK, deprecatedResponse.status)
-        assertEquals(HttpStatusCode.OK, unfilteredResponse.status)
+        assertEquals(
+            HttpStatusCode.OK,
+            deprecatedResponse.status,
+            "contract assertion failed"
+        )
+        assertEquals(
+            HttpStatusCode.OK,
+            unfilteredResponse.status,
+            "contract assertion failed"
+        )
         val deprecatedBody = json.parseToJsonElement(string = deprecatedResponse.bodyAsText()).jsonObject
         val unfilteredBody = json.parseToJsonElement(string = unfilteredResponse.bodyAsText()).jsonObject
         assertEquals(

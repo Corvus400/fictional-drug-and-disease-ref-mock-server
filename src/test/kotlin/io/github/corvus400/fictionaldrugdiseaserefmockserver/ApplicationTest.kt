@@ -22,16 +22,32 @@ class ApplicationTest {
     fun `health endpoint returns ok`() = testApplication {
         application { module() }
         val response = client.get("/health")
-        assertEquals(HttpStatusCode.OK, response.status)
-        assertEquals("""{"status":"ok"}""", response.bodyAsText())
+        assertEquals(
+            HttpStatusCode.OK,
+            response.status,
+            "contract assertion failed"
+        )
+        assertEquals(
+            """{"status":"ok"}""",
+            response.bodyAsText(),
+            "contract assertion failed"
+        )
     }
 
     @Test
     fun `admin configs returns empty map initially`() = testApplication {
         application { module() }
         val response = client.get("/__admin/configs")
-        assertEquals(HttpStatusCode.OK, response.status)
-        assertEquals("{}", response.bodyAsText())
+        assertEquals(
+            HttpStatusCode.OK,
+            response.status,
+            "contract assertion failed"
+        )
+        assertEquals(
+            "{}",
+            response.bodyAsText(),
+            "contract assertion failed"
+        )
     }
 
     @Test
@@ -42,12 +58,20 @@ class ApplicationTest {
             contentType(ContentType.Application.Json)
             setBody("""{"state":"TestState"}""")
         }
-        assertEquals(HttpStatusCode.OK, setResponse.status)
+        assertEquals(
+            HttpStatusCode.OK,
+            setResponse.status,
+            "contract assertion failed"
+        )
 
         // Get configs
         val getResponse = client.get("/__admin/configs")
         val body = json.decodeFromString<JsonObject>(getResponse.bodyAsText())
-        assertEquals("TestState", body["test"]?.jsonObject?.get("state")?.jsonPrimitive?.content)
+        assertEquals(
+            "TestState",
+            body["test"]?.jsonObject?.get("state")?.jsonPrimitive?.content,
+            "contract assertion failed"
+        )
     }
 
     @Test
@@ -70,10 +94,18 @@ class ApplicationTest {
 
         // Reset
         val resetResponse = client.post("/__admin/reset")
-        assertEquals(HttpStatusCode.OK, resetResponse.status)
+        assertEquals(
+            HttpStatusCode.OK,
+            resetResponse.status,
+            "contract assertion failed"
+        )
 
         // Verify empty
         val getResponse = client.get("/__admin/configs")
-        assertEquals("{}", getResponse.bodyAsText())
+        assertEquals(
+            "{}",
+            getResponse.bodyAsText(),
+            "contract assertion failed"
+        )
     }
 }

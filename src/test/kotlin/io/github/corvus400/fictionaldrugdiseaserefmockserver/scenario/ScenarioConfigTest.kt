@@ -19,8 +19,16 @@ class ScenarioConfigTest {
     fun `admin configs returns empty map initially`() = testApplication {
         application { module() }
         val response = client.get("/__admin/configs")
-        assertEquals(HttpStatusCode.OK, response.status)
-        assertEquals("{}", response.bodyAsText())
+        assertEquals(
+            HttpStatusCode.OK,
+            response.status,
+            "contract assertion failed"
+        )
+        assertEquals(
+            "{}",
+            response.bodyAsText(),
+            "contract assertion failed"
+        )
     }
 
     @Test
@@ -30,13 +38,26 @@ class ScenarioConfigTest {
             contentType(ContentType.Application.Json)
             setBody("""{"state":"ServerError","delay_ms":2000,"status_code":500}""")
         }
-        assertEquals(HttpStatusCode.OK, setResponse.status)
+        assertEquals(
+            HttpStatusCode.OK,
+            setResponse.status,
+            "contract assertion failed"
+        )
 
         val getResponse = client.get("/__admin/configs")
         val body = getResponse.bodyAsText()
-        assertTrue(body.contains("ServerError"))
-        assertTrue(body.contains("2000"))
-        assertTrue(body.contains("500"))
+        assertTrue(
+            body.contains("ServerError"),
+            "contract assertion failed"
+        )
+        assertTrue(
+            body.contains("2000"),
+            "contract assertion failed"
+        )
+        assertTrue(
+            body.contains("500"),
+            "contract assertion failed"
+        )
     }
 
     @Test
@@ -46,13 +67,26 @@ class ScenarioConfigTest {
             contentType(ContentType.Application.Json)
             setBody("""{"state":"Redirect","status_code":302,"headers":{"Location":"/dashboard"}}""")
         }
-        assertEquals(HttpStatusCode.OK, setResponse.status)
+        assertEquals(
+            HttpStatusCode.OK,
+            setResponse.status,
+            "contract assertion failed"
+        )
 
         val getResponse = client.get("/__admin/configs")
         val body = getResponse.bodyAsText()
-        assertTrue(body.contains("302"))
-        assertTrue(body.contains("Location"))
-        assertTrue(body.contains("/dashboard"))
+        assertTrue(
+            body.contains("302"),
+            "contract assertion failed"
+        )
+        assertTrue(
+            body.contains("Location"),
+            "contract assertion failed"
+        )
+        assertTrue(
+            body.contains("/dashboard"),
+            "contract assertion failed"
+        )
     }
 
     @Test
@@ -66,11 +100,19 @@ class ScenarioConfigTest {
 
         // リセット
         val resetResponse = client.post("/__admin/reset")
-        assertEquals(HttpStatusCode.OK, resetResponse.status)
+        assertEquals(
+            HttpStatusCode.OK,
+            resetResponse.status,
+            "contract assertion failed"
+        )
 
         // 空になっていることを確認
         val getResponse = client.get("/__admin/configs")
-        assertEquals("{}", getResponse.bodyAsText())
+        assertEquals(
+            "{}",
+            getResponse.bodyAsText(),
+            "contract assertion failed"
+        )
     }
 
     @Test
@@ -83,7 +125,11 @@ class ScenarioConfigTest {
             contentType(ContentType.Application.Json)
             setBody("""{"state":"empty"}""")
         }
-        assertEquals(HttpStatusCode.OK, setResponse.status)
+        assertEquals(
+            HttpStatusCode.OK,
+            setResponse.status,
+            "contract assertion failed"
+        )
 
         val afterSet = client.get("/__admin/configs").bodyAsText()
         assertTrue(
@@ -92,7 +138,11 @@ class ScenarioConfigTest {
         )
 
         val resetResponse = client.post("/__admin/reset")
-        assertEquals(HttpStatusCode.OK, resetResponse.status)
+        assertEquals(
+            HttpStatusCode.OK,
+            resetResponse.status,
+            "contract assertion failed"
+        )
 
         val afterReset = client.get("/__admin/configs").bodyAsText()
         assertEquals(

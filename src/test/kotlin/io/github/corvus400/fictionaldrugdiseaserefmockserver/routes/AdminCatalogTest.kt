@@ -30,9 +30,15 @@ class AdminCatalogTest {
 
         val response = client.get("/__admin/catalog")
 
-        assertEquals(HttpStatusCode.OK, response.status)
+        assertEquals(
+            HttpStatusCode.OK,
+            response.status,
+            "contract assertion failed"
+        )
         assertTrue(
             response.headers["Content-Type"]?.contains(ContentType.Text.Html.toString()) == true,
+
+            message = "contract assertion failed",
         )
     }
 
@@ -84,10 +90,17 @@ class AdminCatalogTest {
 
         val filterBtns = doc.select(".filter-btn")
         doc.assertElementExists(".filter-btn", "Should have filter buttons (All + tags)")
-        assertTrue(filterBtns.size > 1, "Should have filter buttons (All + tags)")
+        assertTrue(
+            filterBtns.size > 1,
+            "Should have filter buttons (All + tags)"
+        )
 
         val allBtn = filterBtns.first()
-        assertEquals("All", allBtn?.text())
+        assertEquals(
+            "All",
+            allBtn?.text(),
+            "contract assertion failed"
+        )
     }
 
     @Test
@@ -147,8 +160,14 @@ class AdminCatalogTest {
 
         doc.assertElementCount(".disclaimer-banner", 1)
         val banner = doc.assertElementExists(".disclaimer-banner")
-        assertTrue(banner.text().contains("FICTIONAL DATA"))
-        assertTrue(banner.text().contains("架空データ"))
+        assertTrue(
+            banner.text().contains("FICTIONAL DATA"),
+            "contract assertion failed"
+        )
+        assertTrue(
+            banner.text().contains("架空データ"),
+            "contract assertion failed"
+        )
     }
 
     @Test
@@ -175,8 +194,16 @@ class AdminCatalogTest {
 
         val viewBtns = doc.select(".view-btn")
         doc.assertElementCount(".view-btn", 2)
-        assertEquals("画面別", viewBtns[0].text())
-        assertEquals("API別", viewBtns[1].text())
+        assertEquals(
+            "画面別",
+            viewBtns[0].text(),
+            "contract assertion failed"
+        )
+        assertEquals(
+            "API別",
+            viewBtns[1].text(),
+            "contract assertion failed"
+        )
     }
 
     @Test

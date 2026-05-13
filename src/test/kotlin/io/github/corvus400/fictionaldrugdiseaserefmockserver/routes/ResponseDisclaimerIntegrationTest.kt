@@ -24,15 +24,37 @@ class ResponseDisclaimerIntegrationTest {
 
         val detailResponse = client.get("/v1/drugs/drug_0001")
 
-        assertEquals(HttpStatusCode.OK, detailResponse.status)
-        assertEquals("true", detailResponse.headers["X-Fictional-Data"])
-        assertTrue(detailResponse.headers["X-Disclaimer"].orEmpty().contains("FICTIONAL DATA"))
+        assertEquals(
+            HttpStatusCode.OK,
+            detailResponse.status,
+            "contract assertion failed"
+        )
+        assertEquals(
+            "true",
+            detailResponse.headers["X-Fictional-Data"],
+            "contract assertion failed"
+        )
+        assertTrue(
+            detailResponse.headers["X-Disclaimer"].orEmpty().contains("FICTIONAL DATA"),
+            "contract assertion failed"
+        )
         val detailBody = json.parseToJsonElement(detailResponse.bodyAsText()).jsonObject
-        assertEquals(Disclaimer.SHORT, detailBody["disclaimer"]?.jsonPrimitive?.content)
+        assertEquals(
+            Disclaimer.SHORT,
+            detailBody["disclaimer"]?.jsonPrimitive?.content,
+            "contract assertion failed"
+        )
 
         val listResponse = client.get("/v1/drugs")
         val listBody = json.parseToJsonElement(listResponse.bodyAsText()).jsonObject
-        assertEquals(Disclaimer.SHORT, listBody["disclaimer"]?.jsonPrimitive?.content)
-        assertNull(listBody["items"]?.jsonArray?.first()?.jsonObject?.get("disclaimer"))
+        assertEquals(
+            Disclaimer.SHORT,
+            listBody["disclaimer"]?.jsonPrimitive?.content,
+            "contract assertion failed"
+        )
+        assertNull(
+            listBody["items"]?.jsonArray?.first()?.jsonObject?.get("disclaimer"),
+            "contract assertion failed"
+        )
     }
 }

@@ -89,12 +89,23 @@ class DiseaseModuleSortTest {
             header(key = "X-Mock-Scenario", value = "empty")
         }
 
-        assertEquals(expected = HttpStatusCode.OK, actual = response.status)
+        assertEquals(
+            expected = HttpStatusCode.OK,
+            actual = response.status,
+            "contract assertion failed"
+        )
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
         val totalCount = body["total_count"]?.jsonPrimitive?.content?.toIntOrNull()
-        assertEquals(expected = 0, actual = totalCount)
+        assertEquals(
+            expected = 0,
+            actual = totalCount,
+            "contract assertion failed"
+        )
         val items = body["items"]?.jsonArray
         assertNotNull(actual = items, message = "response body must have an items array")
-        assertTrue(actual = items.isEmpty())
+        assertTrue(
+            actual = items.isEmpty(),
+            "contract assertion failed"
+        )
     }
 }

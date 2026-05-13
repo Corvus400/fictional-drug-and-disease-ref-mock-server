@@ -11,17 +11,35 @@ class CoinerTest {
         val engine = FixmergeEngineFactory.default()
         val first = engine.coinName(slot = NameSlot.DRUG_BRAND, seed = 100L)
         val second = engine.coinName(slot = NameSlot.DRUG_BRAND, seed = 100L)
-        assertEquals(first.latin, second.latin)
-        assertEquals(first.katakana, second.katakana)
-        assertEquals(first.pattern, second.pattern)
+        assertEquals(
+            first.latin,
+            second.latin,
+            "contract assertion failed"
+        )
+        assertEquals(
+            first.katakana,
+            second.katakana,
+            "contract assertion failed"
+        )
+        assertEquals(
+            first.pattern,
+            second.pattern,
+            "contract assertion failed"
+        )
     }
 
     @Test
     fun `coinName returns non-blank latin and katakana`() {
         val engine = FixmergeEngineFactory.default()
         val coined = engine.coinName(slot = NameSlot.DISEASE_NAME, seed = 42L)
-        assertTrue(coined.latin.isNotBlank())
-        assertTrue(coined.katakana.isNotBlank())
+        assertTrue(
+            coined.latin.isNotBlank(),
+            "contract assertion failed"
+        )
+        assertTrue(
+            coined.katakana.isNotBlank(),
+            "contract assertion failed"
+        )
     }
 
     @Test
@@ -29,7 +47,15 @@ class CoinerTest {
         val engine = FixmergeEngineFactory.default()
         val brand = engine.coinName(slot = NameSlot.DRUG_BRAND, seed = 1L)
         val generic = engine.coinName(slot = NameSlot.DRUG_GENERIC, seed = 1L)
-        assertEquals(NameSlot.DRUG_BRAND.defaultPattern, brand.pattern)
-        assertEquals(NameSlot.DRUG_GENERIC.defaultPattern, generic.pattern)
+        assertEquals(
+            NameSlot.DRUG_BRAND.defaultPattern,
+            brand.pattern,
+            "contract assertion failed"
+        )
+        assertEquals(
+            NameSlot.DRUG_GENERIC.defaultPattern,
+            generic.pattern,
+            "contract assertion failed"
+        )
     }
 }

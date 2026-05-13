@@ -156,8 +156,14 @@ class DiseaseFinalOverridesTest {
         val disease0079 = generateDiseases().first { it.id == "disease_0079" }
         val requiredText = disease0079.diagnosticCriteria.required.joinToString()
 
-        assertTrue(requiredText.contains("全国検査"))
-        assertTrue(requiredText.contains("魔女因子高値"))
+        assertTrue(
+            requiredText.contains("全国検査"),
+            "contract assertion failed"
+        )
+        assertTrue(
+            requiredText.contains("魔女因子高値"),
+            "contract assertion failed"
+        )
     }
 
     @Test

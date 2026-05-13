@@ -21,8 +21,16 @@ class StatusPagesIntegrationTest {
 
         val response = client.get("/unknown-route")
 
-        assertEquals(HttpStatusCode.NotFound, response.status)
+        assertEquals(
+            HttpStatusCode.NotFound,
+            response.status,
+            "contract assertion failed"
+        )
         val body = json.parseToJsonElement(response.bodyAsText()).jsonObject
-        assertEquals(Disclaimer.SHORT, body["disclaimer"]?.jsonPrimitive?.content)
+        assertEquals(
+            Disclaimer.SHORT,
+            body["disclaimer"]?.jsonPrimitive?.content,
+            "contract assertion failed"
+        )
     }
 }

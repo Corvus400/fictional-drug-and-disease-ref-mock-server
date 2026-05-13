@@ -118,9 +118,17 @@ class DiseaseGeneratorTest {
                 sampleBlueprint.copy(index = 2, icd10Chapter = Icd10Chapter.CHAPTER_V),
             )
         val diseases = generator.generate(blueprints = blueprints)
-        assertEquals(3, diseases.size)
+        assertEquals(
+            3,
+            diseases.size,
+            "contract assertion failed"
+        )
         for ((i, disease) in diseases.withIndex()) {
-            assertEquals("disease_${i.toString().padStart(4, '0')}", disease.id)
+            assertEquals(
+                "disease_${i.toString().padStart(4, '0')}",
+                disease.id,
+                "contract assertion failed"
+            )
         }
     }
 
@@ -135,12 +143,32 @@ class DiseaseGeneratorTest {
             adapter = FixmergeNameAdapter(),
             placeholderDictionary = DiseasePlaceholderDictionary(),
         ).generate(blueprints = blueprints)
-        assertEquals(blueprints.size, first.size)
-        assertEquals(first, second)
-        assertEquals(first.size, first.map { it.id }.toSet().size, "disease ids are not unique")
+        assertEquals(
+            blueprints.size,
+            first.size,
+            "contract assertion failed"
+        )
+        assertEquals(
+            first,
+            second,
+            "contract assertion failed"
+        )
+        assertEquals(
+            first.size,
+            first.map {
+                it.id
+            }.toSet().size,
+            "disease ids are not unique"
+        )
         for (disease in first) {
-            assertTrue(disease.name.isNotBlank(), "name blank for ${disease.id}")
-            assertTrue(disease.nameKana.isNotBlank(), "nameKana blank for ${disease.id}")
+            assertTrue(
+                disease.name.isNotBlank(),
+                "name blank for ${disease.id}"
+            )
+            assertTrue(
+                disease.nameKana.isNotBlank(),
+                "nameKana blank for ${disease.id}"
+            )
         }
     }
 
