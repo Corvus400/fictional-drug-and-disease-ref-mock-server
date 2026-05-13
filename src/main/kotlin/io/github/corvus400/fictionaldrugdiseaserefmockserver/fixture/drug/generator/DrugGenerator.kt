@@ -10,6 +10,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.coun
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixmerge.coinage.CoinedName
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixmerge.nameslot.NameSlot
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.stableHash
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.Drug
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DosageForm
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DoseUnit
@@ -23,6 +24,7 @@ import java.time.LocalDate
 class DrugGenerator(
     adapter: FixmergeNameAdapter,
     private val placeholderDictionary: DrugPlaceholderDictionary,
+    private val diseases: List<Disease> = emptyList(),
 ) {
     private val coiner: BucketNameCoiner = BucketNameCoiner(adapter = adapter)
 
@@ -104,6 +106,7 @@ class DrugGenerator(
         val drugId: String =
             blueprint.idOverride
                 ?: "drug_${blueprint.index.toString().padStart(length = DRUG_ID_PAD_LENGTH, padChar = '0')}"
+        val therapeuticCategory = therapeuticCategoryOf(atcFirstLetter = blueprint.atcFirstLetter)
         return Drug(
             id = drugId,
             genericName = generic.katakana,
@@ -111,7 +114,7 @@ class DrugGenerator(
             brandNameKana = brand.katakana,
             atcCode = buildAtcCode(blueprint = blueprint),
             yjCode = DrugMetaBuilders.buildYjCode(id = drugId),
-            therapeuticCategoryName = therapeuticCategoryNameOf(atcFirstLetter = blueprint.atcFirstLetter),
+            therapeuticCategoryName = therapeuticCategory.displayName,
             regulatoryClass = blueprint.regulatoryClasses.toList(),
             dosageForm = blueprint.dosageForm,
             routeOfAdministration = routeOf(form = blueprint.dosageForm),
@@ -204,7 +207,12 @@ class DrugGenerator(
             DrugMetaBuilders.buildInsuranceNotes(id = drugId, dict = placeholderDictionary),
             manufacturer = manufacturer.katakana + MANUFACTURER_SUFFIX,
             revisedAt = revisedAtFor(blueprint = blueprint),
-            relatedDiseaseIds = DrugMetaBuilders.buildRelatedDiseaseIds(id = drugId),
+            relatedDiseaseIds =
+            DrugMetaBuilders.buildRelatedDiseaseIds(
+                id = drugId,
+                therapeuticCategory = therapeuticCategory,
+                diseaseFixtures = diseases,
+            ),
         )
     }
 
@@ -266,8 +274,8 @@ class DrugGenerator(
             DosageForm.NASAL_SPRAY -> RouteOfAdministration.NASAL
         }
 
-    private fun therapeuticCategoryNameOf(atcFirstLetter: Char): String =
-        TherapeuticCategory.fromAtcInitial(initial = atcFirstLetter)?.displayName
+    private fun therapeuticCategoryOf(atcFirstLetter: Char): TherapeuticCategory =
+        TherapeuticCategory.fromAtcInitial(initial = atcFirstLetter)
             ?: error("unsupported ATC first letter '$atcFirstLetter'")
 
     companion object {

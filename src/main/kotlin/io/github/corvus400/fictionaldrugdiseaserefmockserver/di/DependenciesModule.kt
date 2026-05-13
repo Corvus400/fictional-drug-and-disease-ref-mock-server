@@ -38,7 +38,11 @@ fun Application.configureDependencies() {
     val placeholderDictionary =
         DrugPlaceholderDictionary(nameAdapter = adapter, diseases = diseases)
     val drugs =
-        DrugGenerator(adapter = adapter, placeholderDictionary = placeholderDictionary)
+        DrugGenerator(
+            adapter = adapter,
+            placeholderDictionary = placeholderDictionary,
+            diseases = diseases,
+        )
             .generate(blueprints = DrugBlueprintFactory.build())
     val drugListFixtures = DrugListFixtures(drugs = drugs)
     val drugDetailFixtures = DrugDetailFixtures(drugs = drugs)
