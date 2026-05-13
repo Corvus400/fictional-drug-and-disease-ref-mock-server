@@ -1,0 +1,10 @@
+title = "fictional-drug-and-disease-ref-mock-server gitleaks configuration"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "CategoriesModuleTest asserts the public icd10_chapters JSON key; this is not an API key."
+condition = "AND"
+paths = ['''src/test/kotlin/io/github/corvus400/fictionaldrugdiseaserefmockserver/routes/categories/CategoriesModuleTest\.kt''']
+regexes = ['''icd10_chapters''']

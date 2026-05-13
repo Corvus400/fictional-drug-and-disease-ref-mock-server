@@ -39,3 +39,14 @@ out/
 
 ### Local config ###
 local.properties
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.jks
+*.keystore
+id_rsa
+id_ed25519
+*.log

@@ -9,6 +9,7 @@ permissions:
 jobs:
   collect:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Collect timing and jobs JSON
         env:
@@ -22,7 +23,8 @@ jobs:
           gh api "repos/$REPO/actions/runs/$RUN_ID/jobs" > metrics/jobs.json
           gh api "repos/$REPO/actions/runs/$RUN_ID" > metrics/run.json
       - name: Upload metrics artifact
-        uses: actions/upload-artifact@v7
+        # actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: ci-metrics-${{ github.event.workflow_run.id }}
           path: metrics/
