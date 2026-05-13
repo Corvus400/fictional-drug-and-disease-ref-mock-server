@@ -11,6 +11,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.genera
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.FixmergeNameAdapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.Drug
+import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -90,6 +91,17 @@ class ClinicalSeedBucketCoherenceTest {
         assertTrue(actual = references.map { reference -> reference.source }.distinct().size >= 3)
     }
 
+    @Test
+    fun `generated drug and disease text does not duplicate semantic suffixes`() {
+        val (diseases, drugs) = generateFixtures()
+        val fixtureText = Json.encodeToString(diseases) + "\n" + Json.encodeToString(drugs)
+        val firstViolation =
+            DUPLICATED_SEMANTIC_SUFFIXES
+                .firstNotNullOfOrNull { pattern -> pattern.find(fixtureText)?.value }
+
+        assertEquals(expected = null, actual = firstViolation)
+    }
+
     private fun generateFixtures(): Pair<List<Disease>, List<Drug>> {
         val adapter = FixmergeNameAdapter()
         val diseasePlaceholderDictionary = DiseasePlaceholderDictionary()
@@ -124,5 +136,14 @@ class ClinicalSeedBucketCoherenceTest {
         val NUMBERED_GRADE: Regex = Regex("""^Grade \d+$""")
         val NUMBERED_DRUG_CATEGORY: Regex = Regex("""^架空薬効群 \d+$""")
         val NUMBERED_ITEM: Regex = Regex("""^項目 \d+$""")
+        val DUPLICATED_SEMANTIC_SUFFIXES: List<Regex> =
+            listOf(
+                Regex("""[\p{IsHan}\p{IsKatakana}A-Za-z0-9（）()・]+モデル モデル"""),
+                Regex("""[\p{IsHan}\p{IsKatakana}A-Za-z0-9（）()・]+コンパートメント コンパートメントモデル"""),
+                Regex("""[\p{IsHan}\p{IsKatakana}A-Za-z0-9（）()・]+経路 経路"""),
+                Regex("""[\p{IsHan}\p{IsKatakana}A-Za-z0-9（）()・]+チャネル チャネル"""),
+                Regex("""[\p{IsHan}\p{IsKatakana}A-Za-z0-9（）()・]+受容体 受容体"""),
+                Regex("""[\p{IsHan}\p{IsKatakana}A-Za-z0-9（）()・]+酵素 酵素"""),
+            )
     }
 }
