@@ -1,6 +1,16 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.placeholder
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.common.ValueRangeGenerator
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.AdverseReactionSeedBucketRepository
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.BucketContextChapters
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.BucketContextKey
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.BucketSeedCoiner
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.ComorbiditySeedBucketRepository
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.DrugCategorySeedBucketRepository
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.EffectSeedBucketRepository
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.EnzymeSeedBucketRepository
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.SymptomSeedBucketRepository
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixmerge.nameslot.NameSlot
 
 private const val MIN_ENTRY_COUNT = 3
 
@@ -26,7 +36,52 @@ object MedicalVocabularyDictionary {
     fun resolve(
         key: String,
         seed: Long,
+        context: BucketContextKey = BucketContextKey.Global,
     ): String {
+        if (key == ADVERSE_REACTION_KEY && context is BucketContextKey.DrugContext) {
+            return coinAdverseReaction(seed = seed, atcInitial = context.atcInitial)
+        }
+        if (key == DRUG_CATEGORY_KEY && context is BucketContextKey.DrugContext) {
+            return BucketSeedCoiner.coin(
+                bucket = DrugCategorySeedBucketRepository.get(atcInitial = context.atcInitial),
+                seed = seed,
+                slot = NameSlot.DRUG_DRUG_CATEGORY,
+            )
+        }
+        if (key == EFFECT_KEY && context is BucketContextKey.DrugContext) {
+            return BucketSeedCoiner.coin(
+                bucket = EffectSeedBucketRepository.get(atcInitial = context.atcInitial),
+                seed = seed,
+                slot = NameSlot.DRUG_EFFECT,
+            )
+        }
+        if (key == ENZYME_KEY) {
+            return BucketSeedCoiner.coin(
+                bucket = EnzymeSeedBucketRepository.get(),
+                seed = seed,
+                slot = NameSlot.DRUG_ENZYME,
+            )
+        }
+        if (key == COMORBIDITY_KEY) {
+            val chapter = BucketContextChapters.pickChapter(context = context, seed = seed)
+            if (chapter != null) {
+                return BucketSeedCoiner.coin(
+                    bucket = ComorbiditySeedBucketRepository.get(chapter = chapter),
+                    seed = seed,
+                    slot = NameSlot.DISEASE_COMORBIDITY,
+                )
+            }
+        }
+        if (key == SYMPTOM_KEY) {
+            val chapter = BucketContextChapters.pickChapter(context = context, seed = seed)
+            if (chapter != null) {
+                return BucketSeedCoiner.coin(
+                    bucket = SymptomSeedBucketRepository.get(chapter = chapter),
+                    seed = seed,
+                    slot = NameSlot.DISEASE_SYMPTOM,
+                )
+            }
+        }
         val vocabulary =
             VOCABULARY[key]
                 ?: error(
@@ -36,6 +91,25 @@ object MedicalVocabularyDictionary {
                 )
         return ValueRangeGenerator.pickOne(seed = seed, candidates = vocabulary.entries)
     }
+
+    private fun coinAdverseReaction(
+        seed: Long,
+        atcInitial: Char,
+    ): String {
+        val bucket = AdverseReactionSeedBucketRepository.get(atcInitial = atcInitial)
+        return BucketSeedCoiner.coin(
+            bucket = bucket,
+            seed = seed,
+            slot = NameSlot.DRUG_ADVERSE_REACTION,
+        )
+    }
+
+    private const val ADVERSE_REACTION_KEY = "adverseReaction"
+    private const val COMORBIDITY_KEY = "comorbidity"
+    private const val DRUG_CATEGORY_KEY = "drugCategory"
+    private const val EFFECT_KEY = "effect"
+    private const val ENZYME_KEY = "enzyme"
+    private const val SYMPTOM_KEY = "symptom"
 
     private val VOCABULARY: Map<String, NamedVocabulary> =
         mapOf(

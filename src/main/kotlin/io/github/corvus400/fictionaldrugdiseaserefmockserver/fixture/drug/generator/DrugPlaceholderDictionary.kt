@@ -9,6 +9,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.genera
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.placeholder.PlaceholderKey
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.placeholder.TargetMoleculeSuffixes
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.FixmergeNameAdapter
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.BucketContextKey
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixmerge.nameslot.NameSlot
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.stableHash
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
@@ -18,14 +19,25 @@ class DrugPlaceholderDictionary(
     private val numericRanges: NumericPlaceholderRanges = NumericPlaceholderRanges,
     private val nameAdapter: FixmergeNameAdapter,
     private val diseases: List<Disease>,
+    private val defaultContext: BucketContextKey = BucketContextKey.Global,
 ) {
+    fun withContext(context: BucketContextKey): DrugPlaceholderDictionary =
+        DrugPlaceholderDictionary(
+            medicalVocabulary = medicalVocabulary,
+            numericRanges = numericRanges,
+            nameAdapter = nameAdapter,
+            diseases = diseases,
+            defaultContext = context,
+        )
+
     fun resolve(
         key: String,
         seed: Long,
+        context: BucketContextKey = defaultContext,
     ): String {
         val placeholderKey = PlaceholderKey.fromJsonKey(key) ?: throwUnknownPlaceholderError(key)
         return when (placeholderKey.category) {
-            PlaceholderCategory.A_MEDICAL_VOCABULARY -> medicalVocabulary.resolve(key, seed)
+            PlaceholderCategory.A_MEDICAL_VOCABULARY -> medicalVocabulary.resolve(key, seed, context)
             PlaceholderCategory.B_COINED_NAME -> resolveCoinedName(placeholderKey, seed)
             PlaceholderCategory.C_DISEASE_REFERENCE -> resolveDiseaseReference(seed)
             PlaceholderCategory.D_NUMERIC_RANGE -> numericRanges.resolve(key, seed)
@@ -35,6 +47,7 @@ class DrugPlaceholderDictionary(
     fun resolveAll(
         template: String,
         seed: Long,
+        context: BucketContextKey = defaultContext,
     ): String {
         val result =
             PlaceholderDelimiter.REGEX.replace(template) { match ->
@@ -45,7 +58,7 @@ class DrugPlaceholderDictionary(
                         slot = 0,
                         index = 0,
                     )
-                resolve(key, derivedSeed)
+                resolve(key, derivedSeed, context)
             }
         check(PlaceholderDelimiter.OPEN !in result && PlaceholderDelimiter.CLOSE !in result) {
             "Raw placeholder delimiter survived resolveAll — a resolver branch must have returned a " +
@@ -58,7 +71,8 @@ class DrugPlaceholderDictionary(
     fun renderField(
         field: ParagraphField,
         seed: Long,
-    ): String = resolveAll(template = DrugParagraphTemplates.pickTemplate(field, seed), seed = seed)
+        context: BucketContextKey = defaultContext,
+    ): String = resolveAll(template = DrugParagraphTemplates.pickTemplate(field, seed), seed = seed, context = context)
 
     private fun throwUnknownPlaceholderError(key: String): Nothing =
         error(PlaceholderContractMessages.unknownPlaceholderError(key = key))

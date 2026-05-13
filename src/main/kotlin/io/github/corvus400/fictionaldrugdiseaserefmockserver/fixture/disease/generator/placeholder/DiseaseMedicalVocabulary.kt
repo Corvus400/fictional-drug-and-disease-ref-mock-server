@@ -1,6 +1,11 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.placeholder
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.common.ValueRangeGenerator
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.BucketContextChapters
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.BucketContextKey
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.BucketSeedCoiner
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.SymptomSeedBucketRepository
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixmerge.nameslot.NameSlot
 
 private const val MIN_ENTRY_COUNT = 3
 
@@ -26,7 +31,18 @@ object DiseaseMedicalVocabulary {
     fun resolve(
         key: String,
         seed: Long,
+        context: BucketContextKey = BucketContextKey.Global,
     ): String {
+        if (key in SYMPTOM_KEYS) {
+            val chapter = BucketContextChapters.pickChapter(context = context, seed = seed)
+            if (chapter != null) {
+                return BucketSeedCoiner.coin(
+                    bucket = SymptomSeedBucketRepository.get(chapter = chapter),
+                    seed = seed,
+                    slot = NameSlot.DISEASE_SYMPTOM,
+                )
+            }
+        }
         val vocabulary =
             VOCABULARY[key]
                 ?: error(
@@ -37,6 +53,15 @@ object DiseaseMedicalVocabulary {
                 )
         return ValueRangeGenerator.pickOne(seed = seed, candidates = vocabulary.entries)
     }
+
+    private val SYMPTOM_KEYS =
+        setOf(
+            "additionalSymptom",
+            "associatedSymptom",
+            "initialSymptom",
+            "mainSymptom",
+            "progressedSymptom",
+        )
 
     private val VOCABULARY: Map<String, DiseaseNamedVocabulary> =
         mapOf(

@@ -5,6 +5,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.blu
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.placeholder.DiseaseRenderContext
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.BucketNameCoiner
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.FixmergeNameAdapter
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.BucketContextKey
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.country.CountryBucketRepository
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.country.DiseaseCountryMapping
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixmerge.coinage.CoinedName
@@ -80,6 +81,10 @@ class DiseaseGenerator(
         val diseaseId =
             "disease_${blueprint.index.toString().padStart(length = DISEASE_ID_PAD_LENGTH, padChar = '0')}"
         val context = DiseaseRenderContext(selfName = name.katakana)
+        val contextualDictionary =
+            placeholderDictionary.withContext(
+                bucketContext = BucketContextKey.DiseaseContext(chapter = blueprint.icd10Chapter),
+            )
         return Disease(
             id = diseaseId,
             name = name.katakana,
@@ -95,7 +100,7 @@ class DiseaseGenerator(
             synonyms = synonyms.map { it.katakana },
             summary = DiseaseNestedBuilders.buildSummary(
                 id = diseaseId,
-                dict = placeholderDictionary,
+                dict = contextualDictionary,
                 context = context,
             ),
             epidemiology = DiseaseNestedBuilders.buildEpidemiology(
@@ -105,7 +110,7 @@ class DiseaseGenerator(
             ),
             etiology = DiseaseNestedBuilders.buildEtiology(
                 id = diseaseId,
-                dict = placeholderDictionary,
+                dict = contextualDictionary,
                 context = context,
             ),
             symptoms = DiseaseNestedBuilders.buildSymptoms(id = diseaseId),
@@ -121,7 +126,7 @@ class DiseaseGenerator(
             severityGrading = if (blueprint.icd10Chapter in CHAPTERS_REQUIRING_SEVERITY_GRADING) {
                 DiseaseNestedBuilders.buildSeverityGrading(
                     id = diseaseId,
-                    dict = placeholderDictionary,
+                    dict = contextualDictionary,
                     context = context,
                 )
             } else {
@@ -132,12 +137,12 @@ class DiseaseGenerator(
             treatments = DiseaseNestedBuilders.buildTreatments(
                 id = diseaseId,
                 chapter = blueprint.icd10Chapter,
-                dict = placeholderDictionary,
+                dict = contextualDictionary,
                 context = context,
             ),
             prognosis = DiseaseNestedBuilders.buildPrognosis(
                 id = diseaseId,
-                dict = placeholderDictionary,
+                dict = contextualDictionary,
                 context = context,
             ),
             prevention = DiseaseNestedBuilders.buildPrevention(id = diseaseId),
