@@ -9,53 +9,64 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.neste
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.SymptomInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.TreatmentInfo
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class DrugClinicalBuildersTest {
     @Test
-    fun `buildWarning paragraphs contain no raw placeholder delimiters`() {
+    fun `buildWarning returns at least one paragraph`() {
         val dict = buildDict()
         val paragraphs = DrugClinicalBuilders.buildWarning(id = SAMPLE_ID, dict = dict)
-        val violations = buildList {
-            if (paragraphs.isEmpty()) {
-                add("buildWarning must return at least one paragraph")
-            }
-            paragraphs.forEach { paragraph ->
-                if ("{{" in paragraph.content || "}}" in paragraph.content) {
-                    add(
-                        "buildWarning paragraph must contain no raw '{{...}}' after Dictionary wiring; " +
-                            "got content='${paragraph.content}'"
-                    )
-                }
-            }
-        }
 
-        assertTrue(actual = violations.isEmpty(), message = "buildWarning violations: $violations")
+        assertTrue(actual = paragraphs.isNotEmpty(), message = "buildWarning must return at least one paragraph")
     }
 
     @Test
-    fun `buildInteractions entries contain no raw placeholder delimiters`() {
+    fun `buildWarning paragraphs contain no raw placeholder delimiters`() {
+        val dict = buildDict()
+        val paragraphs = DrugClinicalBuilders.buildWarning(id = SAMPLE_ID, dict = dict)
+
+        assertEquals(
+            expected = null,
+            actual = paragraphs.firstOrNull { "{{" in it.content || "}}" in it.content }?.content,
+            message = "buildWarning paragraph must contain no raw '{{...}}' after Dictionary wiring",
+        )
+    }
+
+    @Test
+    fun `buildInteractions returns at least one entry`() {
         val dict = buildDict()
         val interactions = DrugClinicalBuilders.buildInteractions(id = SAMPLE_ID, dict = dict)
         val allEntries = interactions.combinationProhibited + interactions.combinationCaution
-        val violations = buildList {
-            if (allEntries.isEmpty()) {
-                add("buildInteractions must return at least one entry")
-            }
-            allEntries.forEach { entry ->
-                if ("{{" in entry.clinicalSymptom || "}}" in entry.clinicalSymptom) {
-                    add(
-                        "buildInteractions clinicalSymptom must contain no raw '{{...}}'; " +
-                            "got='${entry.clinicalSymptom}'"
-                    )
-                }
-                if ("{{" in entry.mechanism || "}}" in entry.mechanism) {
-                    add("buildInteractions mechanism must contain no raw '{{...}}'; got='${entry.mechanism}'")
-                }
-            }
-        }
 
-        assertTrue(actual = violations.isEmpty(), message = "buildInteractions violations: $violations")
+        assertTrue(actual = allEntries.isNotEmpty(), message = "buildInteractions must return at least one entry")
+    }
+
+    @Test
+    fun `buildInteractions clinical symptoms contain no raw placeholder delimiters`() {
+        val dict = buildDict()
+        val interactions = DrugClinicalBuilders.buildInteractions(id = SAMPLE_ID, dict = dict)
+        val allEntries = interactions.combinationProhibited + interactions.combinationCaution
+
+        assertEquals(
+            expected = null,
+            actual = allEntries.firstOrNull { "{{" in it.clinicalSymptom || "}}" in it.clinicalSymptom }
+                ?.clinicalSymptom,
+            message = "buildInteractions clinicalSymptom must contain no raw '{{...}}'",
+        )
+    }
+
+    @Test
+    fun `buildInteractions mechanisms contain no raw placeholder delimiters`() {
+        val dict = buildDict()
+        val interactions = DrugClinicalBuilders.buildInteractions(id = SAMPLE_ID, dict = dict)
+        val allEntries = interactions.combinationProhibited + interactions.combinationCaution
+
+        assertEquals(
+            expected = null,
+            actual = allEntries.firstOrNull { "{{" in it.mechanism || "}}" in it.mechanism }?.mechanism,
+            message = "buildInteractions mechanism must contain no raw '{{...}}'",
+        )
     }
 
     private fun buildDict(): DrugPlaceholderDictionary =

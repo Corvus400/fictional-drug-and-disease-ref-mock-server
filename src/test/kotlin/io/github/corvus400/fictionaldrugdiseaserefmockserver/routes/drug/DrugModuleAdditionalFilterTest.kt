@@ -21,150 +21,153 @@ class DrugModuleAdditionalFilterTest {
     private val json = Json { ignoreUnknownKeys = true }
 
     @Test
-    fun `GET drugs with adverse_reaction_keyword filters items to total_count less than 120 under default`() =
+    fun `GET drugs with adverse_reaction_keyword returns 200 OK`() =
         testApplication {
             application { module() }
 
-            // 「重篤な副作用 2」は serious[].name に count=2 の医薬品のみが保持する文字列。
-            // SHORT_LIST_COUNT_RANGE = 1..2 のため fixture 全 120 件のうち count=2 のサブセットのみ一致する。
-            val keyword = "%E9%87%8D%E7%AF%A4%E3%81%AA%E5%89%AF%E4%BD%9C%E7%94%A8%202"
-            val response = client.get("/v1/drugs?adverse_reaction_keyword=$keyword&page_size=100")
+            val response = client.get(adverseReactionKeywordUrl())
 
-            val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
-            val totalCount = body["total_count"]?.jsonPrimitive?.content?.toInt()
-            val items = body["items"]?.jsonArray
-            val violations = listOfNotNull(
-                "status must be 200 OK but was ${response.status}".takeUnless {
-                    response.status == HttpStatusCode.OK
-                },
-                "response must include total_count".takeUnless { totalCount != null },
-                "total_count=$totalCount must be 1..<120 for adverse_reaction_keyword=重篤な副作用 2"
-                    .takeUnless { totalCount != null && totalCount in 1 until 120 },
-                "response must include items array".takeUnless { items != null },
-                "filtered items must be non-empty for adverse_reaction_keyword=重篤な副作用 2"
-                    .takeUnless { items?.isNotEmpty() == true },
-            )
+            assertEquals(expected = HttpStatusCode.OK, actual = response.status)
+        }
+
+    @Test
+    fun `GET drugs with adverse_reaction_keyword filters total_count to strict subset`() =
+        testApplication {
+            application { module() }
+
+            val totalCount = client.get(adverseReactionKeywordUrl()).totalCount()
 
             assertTrue(
-                actual = violations.isEmpty(),
-                message = "adverse_reaction_keyword filter violations: $violations",
+                actual = totalCount in 1 until DEFAULT_DRUG_COUNT,
+                message = "total_count=$totalCount must be 1..<120 for adverse_reaction_keyword=重篤な副作用 2",
             )
         }
 
     @Test
-    fun `GET drugs with precaution_category=PREGNANT returns single-value filtered items`() =
+    fun `GET drugs with adverse_reaction_keyword returns non-empty items`() =
         testApplication {
             application { module() }
 
-            val response = client.get("/v1/drugs?precaution_category=PREGNANT&page_size=100")
-
-            val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
-            val totalCount = body["total_count"]?.jsonPrimitive?.content?.toInt()
-            val items = body["items"]?.jsonArray
-            val violations = listOfNotNull(
-                "status must be 200 OK but was ${response.status}".takeUnless {
-                    response.status == HttpStatusCode.OK
-                },
-                "response must include total_count".takeUnless { totalCount != null },
-                "total_count=$totalCount must be 1..<120 for precaution_category=PREGNANT"
-                    .takeUnless { totalCount != null && totalCount in 1 until 120 },
-                "response must include items array".takeUnless { items != null },
-                "filtered items must be non-empty for precaution_category=PREGNANT"
-                    .takeUnless { items?.isNotEmpty() == true },
-            )
+            val itemsSize = client.get(adverseReactionKeywordUrl()).itemsSize()
 
             assertTrue(
-                actual = violations.isEmpty(),
-                message = "precaution_category single filter violations: $violations",
+                actual = itemsSize > 0,
+                message = "filtered items must be non-empty for adverse_reaction_keyword=重篤な副作用 2",
             )
         }
 
     @Test
-    fun `GET drugs with adverse_reaction_keyword and precaution_category returns AND intersection`() =
+    fun `GET drugs with precaution_category=PREGNANT returns 200 OK`() =
         testApplication {
             application { module() }
 
-            // 「重篤な副作用 2」は serious[].name に count=2 の医薬品のみが保持する文字列。
-            val keyword = "%E9%87%8D%E7%AF%A4%E3%81%AA%E5%89%AF%E4%BD%9C%E7%94%A8%202"
+            val response = client.get(PREGNANT_PRECAUTION_URL)
 
-            val keywordOnlyTotal = client.get("/v1/drugs?adverse_reaction_keyword=$keyword&page_size=100")
-                .let { json.parseToJsonElement(string = it.bodyAsText()).jsonObject }
-                .let { it["total_count"]?.jsonPrimitive?.content?.toInt() }
+            assertEquals(expected = HttpStatusCode.OK, actual = response.status)
+        }
 
-            val precautionOnlyTotal = client.get("/v1/drugs?precaution_category=PREGNANT&page_size=100")
-                .let { json.parseToJsonElement(string = it.bodyAsText()).jsonObject }
-                .let { it["total_count"]?.jsonPrimitive?.content?.toInt() }
+    @Test
+    fun `GET drugs with precaution_category=PREGNANT filters total_count to strict subset`() =
+        testApplication {
+            application { module() }
 
-            val andResponse = client.get(
-                "/v1/drugs?adverse_reaction_keyword=$keyword&precaution_category=PREGNANT&page_size=100",
-            )
-
-            val andBody = json.parseToJsonElement(string = andResponse.bodyAsText()).jsonObject
-            val andTotal = andBody["total_count"]?.jsonPrimitive?.content?.toInt()
-            val violations = listOfNotNull(
-                "keyword-only response must include total_count".takeUnless { keywordOnlyTotal != null },
-                "precaution-only response must include total_count".takeUnless { precautionOnlyTotal != null },
-                "status must be 200 OK but was ${andResponse.status}".takeUnless {
-                    andResponse.status == HttpStatusCode.OK
-                },
-                "AND response must include total_count".takeUnless { andTotal != null },
-                "AND total=$andTotal must be <= min(keyword-only=$keywordOnlyTotal, precaution-only=$precautionOnlyTotal)"
-                    .takeUnless {
-                        andTotal != null &&
-                            keywordOnlyTotal != null &&
-                            precautionOnlyTotal != null &&
-                            andTotal <= minOf(a = keywordOnlyTotal, b = precautionOnlyTotal)
-                    },
-                "AND total=$andTotal must be strictly smaller than at least one single filter"
-                    .takeUnless {
-                        andTotal != null &&
-                            keywordOnlyTotal != null &&
-                            precautionOnlyTotal != null &&
-                            (andTotal < keywordOnlyTotal || andTotal < precautionOnlyTotal)
-                    },
-            )
+            val totalCount = client.get(PREGNANT_PRECAUTION_URL).totalCount()
 
             assertTrue(
-                actual = violations.isEmpty(),
-                message = "adverse_reaction_keyword and precaution_category AND violations: $violations",
+                actual = totalCount in 1 until DEFAULT_DRUG_COUNT,
+                message = "total_count=$totalCount must be 1..<120 for precaution_category=PREGNANT",
             )
         }
 
     @Test
-    fun `GET drugs with precaution_category PREGNANT and GERIATRIC returns OR-filtered items`() =
+    fun `GET drugs with precaution_category=PREGNANT returns non-empty items`() =
         testApplication {
             application { module() }
 
-            val singlePregnantResponse =
-                client.get("/v1/drugs?precaution_category=PREGNANT&page_size=100")
-            val singlePregnantTotal = json.parseToJsonElement(string = singlePregnantResponse.bodyAsText())
-                .jsonObject["total_count"]?.jsonPrimitive?.content?.toInt()
-
-            val orResponse =
-                client.get("/v1/drugs?precaution_category=PREGNANT&precaution_category=GERIATRIC&page_size=100")
-
-            val orBody = json.parseToJsonElement(string = orResponse.bodyAsText()).jsonObject
-            val orTotal = orBody["total_count"]?.jsonPrimitive?.content?.toInt()
-            val violations = listOfNotNull(
-                "single-value PREGNANT status must be 200 OK but was ${singlePregnantResponse.status}"
-                    .takeUnless { singlePregnantResponse.status == HttpStatusCode.OK },
-                "single-value PREGNANT response must include total_count".takeUnless {
-                    singlePregnantTotal != null
-                },
-                "OR status must be 200 OK but was ${orResponse.status}".takeUnless {
-                    orResponse.status == HttpStatusCode.OK
-                },
-                "OR response must include total_count".takeUnless { orTotal != null },
-                "OR total_count=$orTotal must be 1..<120".takeUnless {
-                    orTotal != null && orTotal in 1 until 120
-                },
-                "OR total=$orTotal must be >= single-value PREGNANT total=$singlePregnantTotal"
-                    .takeUnless { orTotal != null && singlePregnantTotal != null && orTotal >= singlePregnantTotal },
-            )
+            val itemsSize = client.get(PREGNANT_PRECAUTION_URL).itemsSize()
 
             assertTrue(
-                actual = violations.isEmpty(),
-                message = "precaution_category OR filter violations: $violations",
+                actual = itemsSize > 0,
+                message = "filtered items must be non-empty for precaution_category=PREGNANT",
+            )
+        }
+
+    @Test
+    fun `GET drugs with adverse_reaction_keyword and precaution_category returns 200 OK`() =
+        testApplication {
+            application { module() }
+
+            val response = client.get(andFilterUrl())
+
+            assertEquals(expected = HttpStatusCode.OK, actual = response.status)
+        }
+
+    @Test
+    fun `GET drugs with adverse_reaction_keyword and precaution_category total_count is no larger than singles`() =
+        testApplication {
+            application { module() }
+
+            val keywordOnlyTotal = client.get(adverseReactionKeywordUrl()).totalCount()
+            val precautionOnlyTotal = client.get(PREGNANT_PRECAUTION_URL).totalCount()
+            val andTotal = client.get(andFilterUrl()).totalCount()
+
+            assertTrue(
+                actual = andTotal <= minOf(a = keywordOnlyTotal, b = precautionOnlyTotal),
+                message = "AND total=$andTotal must be <= min(keyword-only=$keywordOnlyTotal, " +
+                    "precaution-only=$precautionOnlyTotal)",
+            )
+        }
+
+    @Test
+    fun `GET drugs with adverse_reaction_keyword and precaution_category total_count is smaller than singles`() =
+        testApplication {
+            application { module() }
+
+            val keywordOnlyTotal = client.get(adverseReactionKeywordUrl()).totalCount()
+            val precautionOnlyTotal = client.get(PREGNANT_PRECAUTION_URL).totalCount()
+            val andTotal = client.get(andFilterUrl()).totalCount()
+
+            assertTrue(
+                actual = andTotal < keywordOnlyTotal || andTotal < precautionOnlyTotal,
+                message = "AND total=$andTotal must be strictly smaller than at least one single filter " +
+                    "(keyword=$keywordOnlyTotal, precaution=$precautionOnlyTotal)",
+            )
+        }
+
+    @Test
+    fun `GET drugs with precaution_category PREGNANT and GERIATRIC returns 200 OK`() =
+        testApplication {
+            application { module() }
+
+            val response = client.get(PREGNANT_OR_GERIATRIC_URL)
+
+            assertEquals(expected = HttpStatusCode.OK, actual = response.status)
+        }
+
+    @Test
+    fun `GET drugs with precaution_category PREGNANT and GERIATRIC filters total_count to strict subset`() =
+        testApplication {
+            application { module() }
+
+            val orTotal = client.get(PREGNANT_OR_GERIATRIC_URL).totalCount()
+
+            assertTrue(
+                actual = orTotal in 1 until DEFAULT_DRUG_COUNT,
+                message = "OR total_count=$orTotal must be 1..<120",
+            )
+        }
+
+    @Test
+    fun `GET drugs with precaution_category PREGNANT and GERIATRIC total_count is at least PREGNANT only`() =
+        testApplication {
+            application { module() }
+
+            val singlePregnantTotal = client.get(PREGNANT_PRECAUTION_URL).totalCount()
+            val orTotal = client.get(PREGNANT_OR_GERIATRIC_URL).totalCount()
+
+            assertTrue(
+                actual = orTotal >= singlePregnantTotal,
+                message = "OR total=$orTotal must be >= single-value PREGNANT total=$singlePregnantTotal",
             )
         }
 
@@ -286,4 +289,33 @@ class DrugModuleAdditionalFilterTest {
         val code: String?,
         val messageMentionsInvalid: Boolean,
     )
+
+    private suspend fun io.ktor.client.statement.HttpResponse.totalCount(): Int =
+        json.parseToJsonElement(string = bodyAsText()).jsonObject["total_count"]
+            ?.jsonPrimitive
+            ?.content
+            ?.toIntOrNull()
+            ?: error("response must include numeric total_count")
+
+    private suspend fun io.ktor.client.statement.HttpResponse.itemsSize(): Int =
+        json.parseToJsonElement(string = bodyAsText()).jsonObject["items"]
+            ?.jsonArray
+            ?.size
+            ?: error("response must include items array")
+
+    private fun adverseReactionKeywordUrl(): String =
+        "/v1/drugs?adverse_reaction_keyword=$ADVERSE_REACTION_KEYWORD&page_size=100"
+
+    private fun andFilterUrl(): String =
+        "/v1/drugs?adverse_reaction_keyword=$ADVERSE_REACTION_KEYWORD&precaution_category=PREGNANT&page_size=100"
+
+    private companion object {
+        // 「重篤な副作用 2」は serious[].name に count=2 の医薬品のみが保持する文字列。
+        private const val ADVERSE_REACTION_KEYWORD =
+            "%E9%87%8D%E7%AF%A4%E3%81%AA%E5%89%AF%E4%BD%9C%E7%94%A8%202"
+        private const val DEFAULT_DRUG_COUNT = 120
+        private const val PREGNANT_PRECAUTION_URL = "/v1/drugs?precaution_category=PREGNANT&page_size=100"
+        private const val PREGNANT_OR_GERIATRIC_URL =
+            "/v1/drugs?precaution_category=PREGNANT&precaution_category=GERIATRIC&page_size=100"
+    }
 }

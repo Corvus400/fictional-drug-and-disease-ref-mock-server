@@ -9,33 +9,46 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.neste
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.SymptomInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.TreatmentInfo
 import kotlin.test.Test
-import kotlin.test.assertTrue
+import kotlin.test.assertEquals
 
 class DrugMetaBuildersTest {
     @Test
-    fun `buildPharmacokinetics fields contain no raw placeholder delimiters`() {
+    fun `buildPharmacokinetics text fields are non-null`() {
         val dict = buildDict()
         val pk = DrugMetaBuilders.buildPharmacokinetics(id = SAMPLE_ID, dict = dict)
-        val textFields =
-            listOf(
-                "bloodConcentration" to pk.bloodConcentration,
-                "absorption" to pk.absorption,
-                "distribution" to pk.distribution,
-                "metabolism" to pk.metabolism,
-                "excretion" to pk.excretion,
-            )
-        val violations = textFields.mapNotNull { (fieldName, nullableValue) ->
-            when {
-                nullableValue == null -> "buildPharmacokinetics.$fieldName must be non-null"
-                "{{" in nullableValue || "}}" in nullableValue ->
-                    "buildPharmacokinetics.$fieldName must contain no raw '{{...}}' after " +
-                        "Dictionary wiring; got='$nullableValue'"
-                else -> null
-            }
-        }
 
-        assertTrue(actual = violations.isEmpty(), message = "pharmacokinetics placeholder violations: $violations")
+        assertEquals(
+            expected = null,
+            actual = textFieldsOf(pk).firstOrNull { (_, nullableValue) -> nullableValue == null }?.first,
+            message = "buildPharmacokinetics text fields must be non-null",
+        )
     }
+
+    @Test
+    fun `buildPharmacokinetics text fields contain no raw placeholder delimiters`() {
+        val dict = buildDict()
+        val pk = DrugMetaBuilders.buildPharmacokinetics(id = SAMPLE_ID, dict = dict)
+
+        assertEquals(
+            expected = null,
+            actual = textFieldsOf(pk)
+                .firstOrNull { (_, nullableValue) ->
+                    nullableValue != null && ("{{" in nullableValue || "}}" in nullableValue)
+                },
+            message = "buildPharmacokinetics text fields must contain no raw '{{...}}' after Dictionary wiring",
+        )
+    }
+
+    private fun textFieldsOf(
+        pk: io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.PharmacokineticsInfo,
+    ): List<Pair<String, String?>> =
+        listOf(
+            "bloodConcentration" to pk.bloodConcentration,
+            "absorption" to pk.absorption,
+            "distribution" to pk.distribution,
+            "metabolism" to pk.metabolism,
+            "excretion" to pk.excretion,
+        )
 
     private fun buildDict(): DrugPlaceholderDictionary =
         DrugPlaceholderDictionary(

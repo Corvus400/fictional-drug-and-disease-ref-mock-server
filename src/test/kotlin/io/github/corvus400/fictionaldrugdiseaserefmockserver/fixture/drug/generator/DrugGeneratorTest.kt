@@ -42,26 +42,23 @@ class DrugGeneratorTest {
     @Test
     fun `generate returns a Drug with non-blank required name fields`() {
         val drug = generator.generate(blueprint = sampleBlueprint)
-        val violations = buildList {
-            addIf("id blank") { drug.id.isBlank() }
-            addIf("brandName blank") { drug.brandName.isBlank() }
-            addIf("brandNameKana blank") { drug.brandNameKana.isBlank() }
-            addIf("genericName blank") { drug.genericName.isBlank() }
-            addIf("atcCode blank") { drug.atcCode.isBlank() }
-            addIf("therapeuticCategoryName blank") { drug.therapeuticCategoryName.isBlank() }
-            addIf("manufacturer blank") { drug.manufacturer.isBlank() }
-            addIf("composition.activeIngredient blank") { drug.composition.activeIngredient.isBlank() }
-            addIf("composition.inactiveIngredients empty") { drug.composition.inactiveIngredients.isEmpty() }
-            addIf("physicochemicalProperties null") { drug.physicochemicalProperties == null }
-            addIf("physicochemicalProperties.genericNameEnglish blank") {
+        val firstViolation = listOfNotNull(
+            "id blank".takeIf { drug.id.isBlank() },
+            "brandName blank".takeIf { drug.brandName.isBlank() },
+            "brandNameKana blank".takeIf { drug.brandNameKana.isBlank() },
+            "genericName blank".takeIf { drug.genericName.isBlank() },
+            "atcCode blank".takeIf { drug.atcCode.isBlank() },
+            "therapeuticCategoryName blank".takeIf { drug.therapeuticCategoryName.isBlank() },
+            "manufacturer blank".takeIf { drug.manufacturer.isBlank() },
+            "composition.activeIngredient blank".takeIf { drug.composition.activeIngredient.isBlank() },
+            "composition.inactiveIngredients empty".takeIf { drug.composition.inactiveIngredients.isEmpty() },
+            "physicochemicalProperties null".takeIf { drug.physicochemicalProperties == null },
+            "physicochemicalProperties.genericNameEnglish blank".takeIf {
                 drug.physicochemicalProperties?.genericNameEnglish.isNullOrBlank()
-            }
-        }
+            },
+        ).firstOrNull()
 
-        assertTrue(
-            actual = violations.isEmpty(),
-            message = "Generated drug required name field violations: $violations",
-        )
+        assertEquals(expected = null, actual = firstViolation)
     }
 
     @Test
@@ -89,21 +86,26 @@ class DrugGeneratorTest {
     }
 
     @Test
-    fun `manufacturer ends with 製薬 and contains no beverage raw token`() {
+    fun `manufacturer ends with 製薬`() {
+        val drug = generator.generate(blueprint = sampleBlueprint)
+
+        assertTrue(
+            actual = drug.manufacturer.endsWith(suffix = "製薬"),
+            message = "manufacturer does not end with 製薬: '${drug.manufacturer}'",
+        )
+    }
+
+    @Test
+    fun `manufacturer contains no beverage raw token`() {
         val drug = generator.generate(blueprint = sampleBlueprint)
         val country = DrugCountryMapping.of(atcFirstLetter = sampleBlueprint.atcFirstLetter)
         val beverageBucket = CountryBucketRepository.of(country = country).beverage
-        val violations = mutableListOf<String>().apply {
-            addIf("manufacturer does not end with 製薬: '${drug.manufacturer}'") {
-                !drug.manufacturer.endsWith(suffix = "製薬")
-            }
-        }
-        for (raw in beverageBucket) {
-            violations.addIf("manufacturer '${drug.manufacturer}' leaks beverage raw token '$raw'") {
-                drug.manufacturer.contains(other = raw)
-            }
-        }
-        assertTrue(actual = violations.isEmpty(), message = "manufacturer violations: $violations")
+
+        assertEquals(
+            expected = null,
+            actual = beverageBucket.firstOrNull { raw -> drug.manufacturer.contains(other = raw) },
+            message = "manufacturer '${drug.manufacturer}' must not leak beverage raw tokens",
+        )
     }
 
     @Test
@@ -158,65 +160,54 @@ class DrugGeneratorTest {
         val blueprints = DrugBlueprintFactory.build()
         val first = buildFreshGenerator().generate(blueprints = blueprints)
         val second = buildFreshGenerator().generate(blueprints = blueprints)
-        val violations = buildList {
-            addIf("expected ${blueprints.size} drugs but got ${first.size}") { first.size != blueprints.size }
-            addIf("fresh generators produced different drug inventories") { first != second }
-            addIf("drug ids are not unique") { first.map { it.id }.toSet().size != first.size }
-            first.forEach { drug ->
-                addIf("brandName blank for ${drug.id}") { drug.brandName.isBlank() }
-                addIf("genericName blank for ${drug.id}") { drug.genericName.isBlank() }
-                addIf("manufacturer blank for ${drug.id}") { drug.manufacturer.isBlank() }
-            }
-        }
-        assertTrue(
-            actual = violations.isEmpty(),
-            message = "full inventory determinism/populated-field violations: $violations",
-        )
+        val firstViolation = listOfNotNull(
+            "expected ${blueprints.size} drugs but got ${first.size}".takeIf { first.size != blueprints.size },
+            "fresh generators produced different drug inventories".takeIf { first != second },
+            "drug ids are not unique".takeIf { first.map { drug -> drug.id }.toSet().size != first.size },
+            first.firstOrNull { drug -> drug.brandName.isBlank() }?.let { drug -> "brandName blank for ${drug.id}" },
+            first.firstOrNull { drug ->
+                drug.genericName.isBlank()
+            }?.let { drug -> "genericName blank for ${drug.id}" },
+            first.firstOrNull { drug ->
+                drug.manufacturer.isBlank()
+            }?.let { drug -> "manufacturer blank for ${drug.id}" },
+        ).firstOrNull()
+        assertEquals(expected = null, actual = firstViolation)
     }
 
     @Test
     fun `generate uses fictional ATC 99ZZ namespace for the full inventory`() {
         val drugs = buildFreshGenerator().generate(blueprints = DrugBlueprintFactory.build())
 
-        val violations = buildList {
-            drugs.forEach { drug ->
-                addIf("atcCode must use fictional 99ZZ namespace: ${drug.id}=${drug.atcCode}") {
-                    !drug.atcCode.matches(Regex("^[A-V]99ZZ\\d{2}$"))
-                }
-                addIf("atcCode must not use real 01AA namespace: ${drug.id}=${drug.atcCode}") {
-                    drug.atcCode.contains("01AA")
-                }
-            }
+        val firstViolation = drugs.firstNotNullOfOrNull { drug ->
+            "atcCode must use fictional 99ZZ namespace: ${drug.id}=${drug.atcCode}"
+                .takeUnless { drug.atcCode.matches(Regex("^[A-V]99ZZ\\d{2}$")) }
+                ?: "atcCode must not use real 01AA namespace: ${drug.id}=${drug.atcCode}"
+                    .takeIf { drug.atcCode.contains("01AA") }
         }
-        assertTrue(actual = violations.isEmpty(), message = "fictional ATC namespace violations: $violations")
+        assertEquals(expected = null, actual = firstViolation)
     }
 
     @Test
     fun `generate uses fictional YJ 999 prefix for the full inventory`() {
         val drugs = buildFreshGenerator().generate(blueprints = DrugBlueprintFactory.build())
 
-        val violations = buildList {
-            drugs.forEach { drug ->
-                val yjCode = drug.yjCode
-                addIf("yjCode null for ${drug.id}") { yjCode == null }
-                addIf("yjCode must be 12 digits with fictional 999 prefix: ${drug.id}=$yjCode") {
-                    yjCode?.matches(Regex("^999\\d{9}$")) != true
-                }
-            }
+        val firstViolation = drugs.firstNotNullOfOrNull { drug ->
+            val yjCode = drug.yjCode
+            "yjCode null for ${drug.id}".takeIf { yjCode == null }
+                ?: "yjCode must be 12 digits with fictional 999 prefix: ${drug.id}=$yjCode"
+                    .takeUnless { yjCode?.matches(Regex("^999\\d{9}$")) == true }
         }
-        assertTrue(actual = violations.isEmpty(), message = "fictional YJ prefix violations: $violations")
+        assertEquals(expected = null, actual = firstViolation)
     }
 
     @Test
     fun `generate returns a Drug with all 38 top-level fields populated (non-null and non-empty)`() {
         val drug = generator.generate(blueprint = sampleBlueprint)
 
-        val violations = populatedFieldViolations(drug = drug)
+        val firstViolation = populatedFieldViolations(drug = drug).firstOrNull()
 
-        assertTrue(
-            actual = violations.isEmpty(),
-            message = "Generated drug populated-field violations: $violations",
-        )
+        assertEquals(expected = null, actual = firstViolation)
     }
 
     @Test
@@ -371,9 +362,9 @@ class DrugGeneratorTest {
     @Test
     fun `composition appearance for each non-overridden drug belongs to its dosageForm variants`() {
         val drugs = generator.generate(blueprints = DrugBlueprintFactory.build())
-        val violations = drugs
+        val firstViolation = drugs
             .filterNot { drug -> drug.id in FIXED_TEXT_OVERRIDE_IDS }
-            .mapNotNull { drug ->
+            .firstNotNullOfOrNull { drug ->
                 val expected: String =
                     DosageFormAppearance.pickAppearance(form = drug.dosageForm, drugId = drug.id)
                 (
@@ -381,15 +372,15 @@ class DrugGeneratorTest {
                         "expected '$expected', got '${drug.composition.appearance}'"
                     ).takeUnless { drug.composition.appearance == expected }
             }
-        assertTrue(actual = violations.isEmpty(), message = "appearance variant violations: $violations")
+        assertEquals(expected = null, actual = firstViolation)
     }
 
     @Test
     fun `physicochemical description for each non-overridden drug belongs to its dosageForm variants`() {
         val drugs = generator.generate(blueprints = DrugBlueprintFactory.build())
-        val violations = drugs
+        val firstViolation = drugs
             .filterNot { drug -> drug.id in FIXED_TEXT_OVERRIDE_IDS }
-            .flatMap { drug ->
+            .firstNotNullOfOrNull { drug ->
                 val expected: String =
                     DosageFormAppearance.pickOriginalSubstanceDescription(
                         form = drug.dosageForm,
@@ -402,9 +393,9 @@ class DrugGeneratorTest {
                         "drug ${drug.id} (${drug.dosageForm}) description mismatch: " +
                             "expected '$expected', got '${info?.description}'"
                         ).takeUnless { info?.description == expected },
-                )
+                ).firstOrNull()
             }
-        assertTrue(actual = violations.isEmpty(), message = "description variant violations: $violations")
+        assertEquals(expected = null, actual = firstViolation)
     }
 
     @Test
