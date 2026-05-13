@@ -112,6 +112,12 @@ class DrugGenerator(
             placeholderDictionary.withContext(
                 context = BucketContextKey.DrugContext(atcInitial = blueprint.atcFirstLetter),
             )
+        val relatedDiseaseIds =
+            DrugMetaBuilders.buildRelatedDiseaseIds(
+                id = drugId,
+                therapeuticCategory = therapeuticCategory,
+                diseaseFixtures = diseases,
+            )
         return Drug(
             id = drugId,
             genericName = generic.katakana,
@@ -148,7 +154,13 @@ class DrugGenerator(
             warning = DrugClinicalBuilders.buildWarning(id = drugId, dict = contextualDictionary),
             contraindications =
             DrugClinicalBuilders.buildContraindications(id = drugId, dict = contextualDictionary),
-            indications = DrugClinicalBuilders.buildIndications(id = drugId, dict = contextualDictionary),
+            indications =
+            DrugClinicalBuilders.buildIndications(
+                id = drugId,
+                dict = contextualDictionary,
+                relatedDiseaseIds = relatedDiseaseIds,
+                diseaseNameResolver = ::resolveDiseaseName,
+            ),
             indicationsRelatedPrecautions =
             DrugClinicalBuilders.buildIndicationsRelatedPrecautions(
                 id = drugId,
@@ -212,14 +224,12 @@ class DrugGenerator(
             DrugMetaBuilders.buildInsuranceNotes(id = drugId, dict = contextualDictionary),
             manufacturer = manufacturer.katakana + MANUFACTURER_SUFFIX,
             revisedAt = revisedAtFor(blueprint = blueprint),
-            relatedDiseaseIds =
-            DrugMetaBuilders.buildRelatedDiseaseIds(
-                id = drugId,
-                therapeuticCategory = therapeuticCategory,
-                diseaseFixtures = diseases,
-            ),
+            relatedDiseaseIds = relatedDiseaseIds,
         )
     }
+
+    private fun resolveDiseaseName(diseaseId: String): String? =
+        diseases.firstOrNull { disease -> disease.id == diseaseId }?.name
 
     private fun pickDoseUnit(
         form: DosageForm,

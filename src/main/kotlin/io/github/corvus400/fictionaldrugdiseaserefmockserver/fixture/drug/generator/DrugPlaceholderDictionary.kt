@@ -20,6 +20,7 @@ class DrugPlaceholderDictionary(
     private val nameAdapter: FixmergeNameAdapter,
     private val diseases: List<Disease>,
     private val defaultContext: BucketContextKey = BucketContextKey.Global,
+    private val diseaseNameOverride: String? = null,
 ) {
     fun withContext(context: BucketContextKey): DrugPlaceholderDictionary =
         DrugPlaceholderDictionary(
@@ -28,6 +29,17 @@ class DrugPlaceholderDictionary(
             nameAdapter = nameAdapter,
             diseases = diseases,
             defaultContext = context,
+            diseaseNameOverride = diseaseNameOverride,
+        )
+
+    fun withDiseaseNameOverride(diseaseName: String): DrugPlaceholderDictionary =
+        DrugPlaceholderDictionary(
+            medicalVocabulary = medicalVocabulary,
+            numericRanges = numericRanges,
+            nameAdapter = nameAdapter,
+            diseases = diseases,
+            defaultContext = defaultContext,
+            diseaseNameOverride = diseaseName,
         )
 
     fun resolve(
@@ -78,6 +90,7 @@ class DrugPlaceholderDictionary(
         error(PlaceholderContractMessages.unknownPlaceholderError(key = key))
 
     private fun resolveDiseaseReference(seed: Long): String {
+        diseaseNameOverride?.let { diseaseName -> return diseaseName }
         check(diseases.isNotEmpty()) {
             "Disease fixture list is empty. " +
                 "Generation order may be wrong — Drug must be generated after Disease, " +

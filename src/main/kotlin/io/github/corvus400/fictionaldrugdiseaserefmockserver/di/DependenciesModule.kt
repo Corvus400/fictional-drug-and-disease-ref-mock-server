@@ -6,7 +6,9 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.categories.
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.DiseaseDetailFixtures
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.DiseaseListFixtures
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.blueprint.DiseaseBlueprintFactory
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.DISEASE_FINAL_OVERRIDES
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.DiseaseGenerator
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.DiseaseNestedBuilders
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.DiseasePlaceholderDictionary
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.DrugDetailFixtures
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.DrugListFixtures
@@ -44,12 +46,18 @@ fun Application.configureDependencies() {
         )
             .generate(blueprints = DrugBlueprintFactory.build())
     val diseases =
-        DiseaseGenerator(
-            adapter = adapter,
-            placeholderDictionary = diseasePlaceholderDictionary,
-            drugs = drugs,
-        )
-            .generate(blueprints = diseaseBlueprints)
+        initialDiseases.map { disease ->
+            val withRelatedDrugIds =
+                disease.copy(
+                    relatedDrugIds =
+                    DiseaseNestedBuilders.buildRelatedDrugIds(
+                        id = disease.id,
+                        chapter = disease.icd10Chapter,
+                        drugFixtures = drugs,
+                    ),
+                )
+            DISEASE_FINAL_OVERRIDES[withRelatedDrugIds.id]?.invoke(withRelatedDrugIds) ?: withRelatedDrugIds
+        }
     val diseaseListFixtures = DiseaseListFixtures(diseases = diseases)
     val diseaseDetailFixtures = DiseaseDetailFixtures(diseases = diseases)
     val drugListFixtures = DrugListFixtures(drugs = drugs)

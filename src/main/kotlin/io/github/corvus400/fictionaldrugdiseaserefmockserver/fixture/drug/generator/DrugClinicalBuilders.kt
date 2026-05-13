@@ -44,14 +44,25 @@ internal object DrugClinicalBuilders {
         )
     }
 
-    fun buildIndications(id: String, dict: DrugPlaceholderDictionary): List<IndicationItem> {
+    fun buildIndications(
+        id: String,
+        dict: DrugPlaceholderDictionary,
+        relatedDiseaseIds: List<String> = emptyList(),
+        diseaseNameResolver: (String) -> String? = { null },
+    ): List<IndicationItem> {
         val seed = stableHash(id = id, slot = DrugFieldSlot.DOSAGE_STANDARD.ordinal, index = 0)
         val count = ValueRangeGenerator.pickCount(seed = seed, range = INDICATION_COUNT_RANGE)
+        val indicationDictionary =
+            relatedDiseaseIds
+                .firstOrNull()
+                ?.let(diseaseNameResolver)
+                ?.let(dict::withDiseaseNameOverride)
+                ?: dict
         return (0 until count).map { offset ->
             IndicationItem(
                 order = offset + 1,
                 content =
-                dict.renderField(
+                indicationDictionary.renderField(
                     field = ParagraphField.INDICATION_CONTENT,
                     seed =
                     stableHash(
