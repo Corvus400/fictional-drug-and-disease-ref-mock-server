@@ -223,26 +223,29 @@ class CategoriesModuleTest {
      * `{"value":"...","label":"..."}` の JsonObject ではなく単なる JSON 文字列であることを pin する。
      */
     @Test
-    fun `GET categories enum-derived 4 lists return JSON strings, not labeled-entry objects`() =
+    fun `GET categories enum-derived 4 lists expose string content`() =
         categoriesEndpointTest { response ->
             val body = json.decodeFromString<JsonObject>(response.bodyAsText())
-            val enumDerivedKeys = listOf(
-                "route_of_administration",
-                "dosage_form",
-                "regulatory_class",
-                "medical_departments",
-            )
-            for (key in enumDerivedKeys) {
+            val firstViolation = enumDerivedKeys().firstNotNullOfOrNull { key ->
                 val firstElement = body.getValue(key = key).jsonArray.first()
-                val asString = firstElement.jsonPrimitive.contentOrNull
-                val violations = listOfNotNull(
-                    "GET /categories .$key[0] must be a JSON string content; was: $firstElement"
-                        .takeUnless { asString != null },
-                    "GET /categories .$key[0] must be a JSON string primitive; was: $firstElement"
-                        .takeUnless { firstElement.jsonPrimitive.isString },
-                )
-                assertTrue(actual = violations.isEmpty(), message = violations.joinToString())
+                "GET /categories .$key[0] must be a JSON string content; was: $firstElement"
+                    .takeUnless { firstElement.jsonPrimitive.contentOrNull != null }
             }
+
+            assertEquals(expected = null, actual = firstViolation)
+        }
+
+    @Test
+    fun `GET categories enum-derived 4 lists expose string primitives`() =
+        categoriesEndpointTest { response ->
+            val body = json.decodeFromString<JsonObject>(response.bodyAsText())
+            val firstViolation = enumDerivedKeys().firstNotNullOfOrNull { key ->
+                val firstElement = body.getValue(key = key).jsonArray.first()
+                "GET /categories .$key[0] must be a JSON string primitive; was: $firstElement"
+                    .takeUnless { firstElement.jsonPrimitive.isString }
+            }
+
+            assertEquals(expected = null, actual = firstViolation)
         }
 
     @Test
@@ -422,4 +425,12 @@ class CategoriesModuleTest {
         val adminStatus: HttpStatusCode,
         val categoriesBodyUnchanged: Boolean,
     )
+
+    private fun enumDerivedKeys(): List<String> =
+        listOf(
+            "route_of_administration",
+            "dosage_form",
+            "regulatory_class",
+            "medical_departments",
+        )
 }
