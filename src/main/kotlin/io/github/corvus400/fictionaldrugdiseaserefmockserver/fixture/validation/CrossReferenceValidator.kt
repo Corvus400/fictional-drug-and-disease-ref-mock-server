@@ -3,6 +3,8 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.validation
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.common.AtcIcd10Mapping
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.DISEASE_RELATED_DRUG_IDS_FINAL_OVERRIDE_IDS
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.DRUG_RELATED_DISEASE_IDS_FINAL_OVERRIDE_IDS
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.PreventionSeedBuckets
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.RiskFactorSeedBuckets
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.Drug
@@ -71,6 +73,8 @@ object CrossReferenceValidator {
             diseases = diseases,
         ) + collectDiseaseToDrugSemanticMismatch(
             drugs = drugs,
+            diseases = diseases,
+        ) + collectDiseaseFieldSemanticMismatch(
             diseases = diseases,
         )
     }
@@ -211,11 +215,179 @@ object CrossReferenceValidator {
     private fun categoryOf(drug: Drug): TherapeuticCategory? =
         drug.atcCode.firstOrNull()?.let(TherapeuticCategory::fromAtcInitial)
 
+    private fun collectDiseaseFieldSemanticMismatch(diseases: List<Disease>): List<CrossRefViolation> =
+        diseases.flatMap { disease ->
+            collectRiskFactorSemanticMismatch(disease = disease) +
+                collectPreventionSemanticMismatch(disease = disease) +
+                collectChapterOneOnlyTextMismatch(
+                    disease = disease,
+                    targetType = TYPE_DISEASE_SUMMARY_CHAPTER_MISMATCH,
+                    fieldPath = "summary",
+                    textValues = listOf(disease.summary, disease.etiology),
+                ) +
+                collectChapterOneOnlyTextMismatch(
+                    disease = disease,
+                    targetType = TYPE_DISEASE_DIAGNOSTIC_CHAPTER_MISMATCH,
+                    fieldPath = "diagnosticCriteria",
+                    textValues =
+                    disease.diagnosticCriteria.required +
+                        disease.diagnosticCriteria.supporting +
+                        listOfNotNull(disease.diagnosticCriteria.notes),
+                ) +
+                collectChapterOneOnlyTextMismatch(
+                    disease = disease,
+                    targetType = TYPE_DISEASE_TREATMENT_CHAPTER_MISMATCH,
+                    fieldPath = "treatments",
+                    textValues = treatmentTextValues(disease = disease),
+                ) +
+                collectChapterOneOnlyTextMismatch(
+                    disease = disease,
+                    targetType = TYPE_DISEASE_PROGNOSIS_CHAPTER_MISMATCH,
+                    fieldPath = "prognosis",
+                    textValues = listOfNotNull(disease.prognosis),
+                ) +
+                collectChapterOneOnlyTextMismatch(
+                    disease = disease,
+                    targetType = TYPE_DISEASE_SEVERITY_CHAPTER_MISMATCH,
+                    fieldPath = "severityGrading",
+                    textValues = severityTextValues(disease = disease),
+                )
+        }
+
+    private fun collectRiskFactorSemanticMismatch(disease: Disease): List<CrossRefViolation> {
+        val riskFactors = disease.epidemiology?.riskFactors.orEmpty()
+        val chapterIOnlyFactors = RiskFactorSeedBuckets.infectionExclusiveFactors()
+        val mismatches =
+            if (disease.icd10Chapter == Icd10Chapter.CHAPTER_I) {
+                if (riskFactors.none { riskFactor -> riskFactor in chapterIOnlyFactors }) {
+                    listOf("epidemiology.riskFactors:<missing-chapter-I-infection-risk-factor>")
+                } else {
+                    emptyList()
+                }
+            } else {
+                riskFactors
+                    .filter { riskFactor -> riskFactor in chapterIOnlyFactors }
+                    .map { riskFactor -> "epidemiology.riskFactors:$riskFactor" }
+            }
+        return mismatches.map { mismatch ->
+            diseaseFieldViolation(
+                disease = disease,
+                targetType = TYPE_DISEASE_RISK_FACTOR_CHAPTER_MISMATCH,
+                value = mismatch,
+            )
+        }
+    }
+
+    private fun collectPreventionSemanticMismatch(disease: Disease): List<CrossRefViolation> {
+        val expectedItems =
+            PreventionSeedBuckets.preventionFor(chapter = disease.icd10Chapter).toSet() +
+                OVERRIDE_ALLOWED_PREVENTION_ITEMS.getValue(disease.id)
+        return disease.prevention
+            .filter { item -> item !in expectedItems }
+            .map { item ->
+                diseaseFieldViolation(
+                    disease = disease,
+                    targetType = TYPE_DISEASE_PREVENTION_CHAPTER_MISMATCH,
+                    value = "prevention:$item",
+                )
+            }
+    }
+
+    private fun collectChapterOneOnlyTextMismatch(
+        disease: Disease,
+        targetType: String,
+        fieldPath: String,
+        textValues: List<String>,
+    ): List<CrossRefViolation> {
+        if (disease.icd10Chapter == Icd10Chapter.CHAPTER_I) {
+            return emptyList()
+        }
+        return textValues
+            .flatMap { text ->
+                CHAPTER_I_ONLY_TEXT_MARKERS
+                    .filter { marker -> marker in text }
+                    .map { marker ->
+                        diseaseFieldViolation(
+                            disease = disease,
+                            targetType = targetType,
+                            value = "$fieldPath:$marker",
+                        )
+                    }
+            }
+    }
+
+    private fun treatmentTextValues(disease: Disease): List<String> =
+        disease.treatments.pharmacological.flatMap { treatment ->
+            listOf(treatment.drugCategory, treatment.indication, treatment.notes)
+        } + disease.treatments.nonPharmacological.flatMap { section ->
+            listOf(section.heading) + section.items + listOfNotNull(section.description)
+        } + disease.treatments.acutePhaseProtocol.flatMap { step ->
+            listOf(step.action) + listOfNotNull(step.target)
+        }
+
+    private fun severityTextValues(disease: Disease): List<String> {
+        val severity = disease.severityGrading ?: return emptyList()
+        return listOf(severity.gradingSystem) +
+            severity.grades.flatMap { grade ->
+                listOf(grade.label, grade.criteria, grade.recommendedAction)
+            }
+    }
+
+    private fun diseaseFieldViolation(
+        disease: Disease,
+        targetType: String,
+        value: String,
+    ): CrossRefViolation =
+        CrossRefViolation(
+            sourceType = TYPE_DISEASE,
+            sourceId = disease.id,
+            targetType = targetType,
+            danglingTargetId = value,
+        )
+
     private const val TYPE_DRUG = "drug"
     private const val TYPE_DISEASE = "disease"
     private const val TYPE_DISEASE_CHAPTER_MISMATCH = "disease_chapter_mismatch"
     private const val TYPE_DRUG_ATC_MISMATCH = "drug_atc_mismatch"
+    private const val TYPE_DISEASE_RISK_FACTOR_CHAPTER_MISMATCH = "disease_risk_factor_chapter_mismatch"
+    private const val TYPE_DISEASE_PREVENTION_CHAPTER_MISMATCH = "disease_prevention_chapter_mismatch"
+    private const val TYPE_DISEASE_SUMMARY_CHAPTER_MISMATCH = "disease_summary_chapter_mismatch"
+    private const val TYPE_DISEASE_DIAGNOSTIC_CHAPTER_MISMATCH = "disease_diagnostic_chapter_mismatch"
+    private const val TYPE_DISEASE_TREATMENT_CHAPTER_MISMATCH = "disease_treatment_chapter_mismatch"
+    private const val TYPE_DISEASE_PROGNOSIS_CHAPTER_MISMATCH = "disease_prognosis_chapter_mismatch"
+    private const val TYPE_DISEASE_SEVERITY_CHAPTER_MISMATCH = "disease_severity_chapter_mismatch"
     private const val REQUIRED_PSYCHOTROPIC_DRUG = "psychotropic_drug"
+
+    private val CHAPTER_I_ONLY_TEXT_MARKERS: Set<String> =
+        setOf(
+            "感染性疾患",
+            "病原体関連疾患",
+            "伝播性疾患",
+            "感染症に整合する",
+            "感染症評価パネル",
+            "感染症管理",
+            "抗微生物薬適正使用",
+            "病原体量の早期低下",
+            "感染制御",
+            "感染症重症度分類",
+        )
+
+    private val OVERRIDE_ALLOWED_PREVENTION_ITEMS: Map<String, Set<String>> =
+        mapOf(
+            "disease_0022" to
+                setOf(
+                    "規則的な睡眠覚醒リズムの維持 (架空)",
+                    "就寝前の刺激物と強い光の回避 (架空)",
+                    "ストレス管理と適度な運動 (架空)",
+                ),
+            "disease_0079" to
+                setOf(
+                    "強いストレス・トラウマ刺激の回避 (架空)",
+                    "悪意・不信感の拡散抑制 (架空)",
+                    "全国検査による魔女因子高値の早期発見 (架空)",
+                    "15 歳以前の精神安定環境の維持 (架空)",
+                ),
+        ).withDefault { emptySet() }
 
     private val PSYCHOTROPIC_CLASSES: Set<RegulatoryClass> =
         setOf(

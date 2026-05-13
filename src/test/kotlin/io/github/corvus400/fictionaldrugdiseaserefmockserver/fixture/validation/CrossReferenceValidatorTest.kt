@@ -9,6 +9,9 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.genera
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.FixmergeNameAdapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.SeverityInfo
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.TreatmentInfo
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.TreatmentSection
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.Drug
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.PrecautionPopulationCategory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass
@@ -302,10 +305,70 @@ class CrossReferenceValidatorTest {
         )
     }
 
+    @Test
+    fun `validate detects disease field chapter semantic violations`() {
+        val (diseases, drugs) = generateAllFixtures()
+        val chapterTwoDisease = diseases.first { disease -> disease.icd10Chapter == Icd10Chapter.CHAPTER_II }
+        val corruptedDisease =
+            chapterTwoDisease.copy(
+                summary = "感染性疾患に分類される疾患群である。 (架空)",
+                epidemiology =
+                chapterTwoDisease.epidemiology?.let { epidemiology ->
+                    epidemiology.copy(riskFactors = epidemiology.riskFactors + "飛沫伝播")
+                },
+                diagnosticCriteria =
+                chapterTwoDisease.diagnosticCriteria.copy(
+                    required = listOf("感染症に整合する身体所見"),
+                ),
+                treatments =
+                TreatmentInfo(
+                    nonPharmacological =
+                    listOf(
+                        TreatmentSection(
+                            heading = "感染症管理",
+                            items = listOf("感染管理指導"),
+                        ),
+                    ),
+                ),
+                prognosis = "早期治療により感染制御が期待できる。 (架空)",
+                prevention = chapterTwoDisease.prevention + "手指衛生の徹底",
+                severityGrading =
+                SeverityInfo(
+                    gradingSystem = "感染症重症度分類 (架空)",
+                    grades = emptyList(),
+                ),
+            )
+        val diseasesWithCorruption =
+            diseases.map { disease ->
+                if (disease.id == corruptedDisease.id) corruptedDisease else disease
+            }
+
+        val violations =
+            CrossReferenceValidator.validate(
+                drugs = drugs,
+                diseases = diseasesWithCorruption,
+            ).filter { violation -> violation.sourceId == corruptedDisease.id }
+
+        assertEquals(
+            expected = DISEASE_FIELD_MISMATCH_TYPES,
+            actual = violations.map { violation -> violation.targetType }.toSet(),
+        )
+    }
+
     private companion object {
         const val DANGLING_DISEASE_ID = "disease_9999"
         const val DANGLING_DRUG_ID = "drug_9999"
         val ATC_CHAPTER_MISMATCH_TYPES: Set<String> = setOf("disease_chapter_mismatch", "drug_atc_mismatch")
+        val DISEASE_FIELD_MISMATCH_TYPES: Set<String> =
+            setOf(
+                "disease_risk_factor_chapter_mismatch",
+                "disease_prevention_chapter_mismatch",
+                "disease_summary_chapter_mismatch",
+                "disease_diagnostic_chapter_mismatch",
+                "disease_treatment_chapter_mismatch",
+                "disease_prognosis_chapter_mismatch",
+                "disease_severity_chapter_mismatch",
+            )
         val FINAL_OVERRIDE_DRUG_IDS: Set<String> = setOf("drug_0080", "drug_0089")
 
         val PSYCHOTROPIC_CLASSES: Set<RegulatoryClass> =
