@@ -16,7 +16,6 @@ import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonPrimitive
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 /**
  * シナリオ実行基盤のテスト
@@ -35,24 +34,23 @@ class ScenarioExecutionTest {
             contentType(ContentType.Application.Json)
             setBody("""{"state":"default","delay_ms":500}""")
         }
-        assertEquals(
-            HttpStatusCode.OK,
-            configResponse.status,
-            "contract assertion failed"
-        )
 
         val startTime = System.currentTimeMillis()
         val response = client.get("/v1/drugs")
         val elapsed = System.currentTimeMillis() - startTime
 
         assertEquals(
-            HttpStatusCode.OK,
-            response.status,
-            "contract assertion failed"
-        )
-        assertTrue(
-            actual = elapsed >= 500,
-            message = "Expected delay of at least 500ms, but got ${elapsed}ms",
+            expected = DelaySnapshot(
+                configStatus = HttpStatusCode.OK,
+                responseStatus = HttpStatusCode.OK,
+                delayed = true
+            ),
+            actual = DelaySnapshot(
+                configStatus = configResponse.status,
+                responseStatus = response.status,
+                delayed = elapsed >= 500,
+            ),
+            message = "drugList delay override must keep 200 and delay at least 500ms, observed=${elapsed}ms",
         )
     }
 
@@ -64,18 +62,15 @@ class ScenarioExecutionTest {
             contentType(ContentType.Application.Json)
             setBody("""{"state":"default","status_code":500}""")
         }
-        assertEquals(
-            HttpStatusCode.OK,
-            configResponse.status,
-            "contract assertion failed"
-        )
 
         val response = client.get("/v1/drugs")
 
         assertEquals(
-            HttpStatusCode.InternalServerError,
-            response.status,
-            "contract assertion failed"
+            expected = StatusOverrideSnapshot(
+                configStatus = HttpStatusCode.OK,
+                responseStatus = HttpStatusCode.InternalServerError,
+            ),
+            actual = StatusOverrideSnapshot(configStatus = configResponse.status, responseStatus = response.status),
         )
     }
 
@@ -87,23 +82,20 @@ class ScenarioExecutionTest {
             contentType(ContentType.Application.Json)
             setBody("""{"state":"default","headers":{"X-Custom-Header":"custom-value"}}""")
         }
-        assertEquals(
-            HttpStatusCode.OK,
-            configResponse.status,
-            "contract assertion failed"
-        )
 
         val response = client.get("/v1/drugs")
 
         assertEquals(
-            HttpStatusCode.OK,
-            response.status,
-            "contract assertion failed"
-        )
-        assertEquals(
-            "custom-value",
-            response.headers["X-Custom-Header"],
-            "contract assertion failed"
+            expected = HeaderOverrideSnapshot(
+                configStatus = HttpStatusCode.OK,
+                responseStatus = HttpStatusCode.OK,
+                headerValue = "custom-value",
+            ),
+            actual = HeaderOverrideSnapshot(
+                configStatus = configResponse.status,
+                responseStatus = response.status,
+                headerValue = response.headers["X-Custom-Header"],
+            ),
         )
     }
 
@@ -117,29 +109,24 @@ class ScenarioExecutionTest {
         }
 
         val errorResponse = client.get("/v1/drugs")
-        assertEquals(
-            HttpStatusCode.InternalServerError,
-            errorResponse.status,
-            "contract assertion failed"
-        )
 
         val resetResponse = client.post("/__admin/reset")
-        assertEquals(
-            HttpStatusCode.OK,
-            resetResponse.status,
-            "contract assertion failed"
-        )
         val body = json.decodeFromString<JsonObject>(resetResponse.bodyAsText())
-        assertTrue(
-            body["success"]?.jsonPrimitive?.boolean == true,
-            "contract assertion failed"
-        )
 
         val normalResponse = client.get("/v1/drugs")
         assertEquals(
-            HttpStatusCode.OK,
-            normalResponse.status,
-            "contract assertion failed"
+            expected = ResetBehaviorSnapshot(
+                errorStatus = HttpStatusCode.InternalServerError,
+                resetStatus = HttpStatusCode.OK,
+                resetSuccess = true,
+                restoredStatus = HttpStatusCode.OK,
+            ),
+            actual = ResetBehaviorSnapshot(
+                errorStatus = errorResponse.status,
+                resetStatus = resetResponse.status,
+                resetSuccess = body["success"]?.jsonPrimitive?.boolean,
+                restoredStatus = normalResponse.status,
+            ),
         )
     }
 
@@ -151,24 +138,23 @@ class ScenarioExecutionTest {
             contentType(ContentType.Application.Json)
             setBody("""{"state":"default","delay_ms":300,"status_code":503}""")
         }
-        assertEquals(
-            HttpStatusCode.OK,
-            configResponse.status,
-            "contract assertion failed"
-        )
 
         val startTime = System.currentTimeMillis()
         val response = client.get("/v1/drugs")
         val elapsed = System.currentTimeMillis() - startTime
 
         assertEquals(
-            HttpStatusCode.ServiceUnavailable,
-            response.status,
-            "contract assertion failed"
-        )
-        assertTrue(
-            actual = elapsed >= 300,
-            message = "Expected delay of at least 300ms, but got ${elapsed}ms",
+            expected = DelaySnapshot(
+                configStatus = HttpStatusCode.OK,
+                responseStatus = HttpStatusCode.ServiceUnavailable,
+                delayed = true,
+            ),
+            actual = DelaySnapshot(
+                configStatus = configResponse.status,
+                responseStatus = response.status,
+                delayed = elapsed >= 300,
+            ),
+            message = "drugList delay+status override must return 503 and delay at least 300ms, observed=${elapsed}ms",
         )
     }
 
@@ -249,4 +235,28 @@ class ScenarioExecutionTest {
                 message = "reset 後の /diseases total_count は default の 80 に戻る",
             )
         }
+
+    private data class DelaySnapshot(
+        val configStatus: HttpStatusCode,
+        val responseStatus: HttpStatusCode,
+        val delayed: Boolean,
+    )
+
+    private data class StatusOverrideSnapshot(
+        val configStatus: HttpStatusCode,
+        val responseStatus: HttpStatusCode,
+    )
+
+    private data class HeaderOverrideSnapshot(
+        val configStatus: HttpStatusCode,
+        val responseStatus: HttpStatusCode,
+        val headerValue: String?,
+    )
+
+    private data class ResetBehaviorSnapshot(
+        val errorStatus: HttpStatusCode,
+        val resetStatus: HttpStatusCode,
+        val resetSuccess: Boolean?,
+        val restoredStatus: HttpStatusCode,
+    )
 }

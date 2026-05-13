@@ -16,8 +16,6 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
 
 class DrugModuleTest {
     private val json = Json { ignoreUnknownKeys = true }
@@ -29,13 +27,11 @@ class DrugModuleTest {
         val response = client.get("/v1/drugs")
 
         assertEquals(
-            HttpStatusCode.OK,
-            response.status,
-            "contract assertion failed"
-        )
-        assertTrue(
-            response.bodyAsText().contains("drug_0001"),
-            "contract assertion failed"
+            expected = ListContainsSnapshot(status = HttpStatusCode.OK, containsId = true),
+            actual = ListContainsSnapshot(
+                status = response.status,
+                containsId = response.bodyAsText().contains("drug_0001"),
+            ),
         )
     }
 
@@ -45,38 +41,23 @@ class DrugModuleTest {
 
         val response = client.get("/v1/drugs/drug_0001")
 
-        assertEquals(
-            HttpStatusCode.OK,
-            response.status,
-            "contract assertion failed"
-        )
         val body = json.decodeFromString<JsonObject>(response.bodyAsText())
         val brandName = body["brand_name"]?.jsonPrimitive?.content
         val genericName = body["generic_name"]?.jsonPrimitive?.content
         val manufacturer = body["manufacturer"]?.jsonPrimitive?.content
-        assertNotNull(
-            brandName,
-            "contract assertion failed"
-        )
-        assertTrue(
-            brandName.isNotBlank(),
-            "brandName must be non-blank"
-        )
-        assertNotNull(
-            genericName,
-            "contract assertion failed"
-        )
-        assertTrue(
-            genericName.isNotBlank(),
-            "genericName must be non-blank"
-        )
-        assertNotNull(
-            manufacturer,
-            "contract assertion failed"
-        )
-        assertTrue(
-            manufacturer.isNotBlank(),
-            "manufacturer must be non-blank"
+        assertEquals(
+            expected = DetailNameSnapshot(
+                status = HttpStatusCode.OK,
+                brandNameNonBlank = true,
+                genericNameNonBlank = true,
+                manufacturerNonBlank = true,
+            ),
+            actual = DetailNameSnapshot(
+                status = response.status,
+                brandNameNonBlank = brandName?.isNotBlank() == true,
+                genericNameNonBlank = genericName?.isNotBlank() == true,
+                manufacturerNonBlank = manufacturer?.isNotBlank() == true,
+            ),
         )
     }
 
@@ -87,13 +68,11 @@ class DrugModuleTest {
         val response = client.get("/v1/drugs")
 
         assertEquals(
-            HttpStatusCode.OK,
-            response.status,
-            "contract assertion failed"
-        )
-        assertTrue(
-            response.bodyAsText().contains("drug_0001"),
-            "contract assertion failed"
+            expected = ListContainsSnapshot(status = HttpStatusCode.OK, containsId = true),
+            actual = ListContainsSnapshot(
+                status = response.status,
+                containsId = response.bodyAsText().contains("drug_0001"),
+            ),
         )
     }
 
@@ -104,42 +83,24 @@ class DrugModuleTest {
 
             val response = client.get("/v1/drugs")
 
-            assertEquals(
-                HttpStatusCode.OK,
-                response.status,
-                "contract assertion failed"
-            )
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
             val items = body["items"]?.jsonArray
-            assertNotNull(
-                items,
-                "response body must have an items array"
-            )
-            assertTrue(
-                items.isNotEmpty(),
-                "default scenario first page must expose non-empty items array",
-            )
+            val firstItemKeys = items?.firstOrNull()?.jsonObject?.keys.orEmpty()
             assertEquals(
-                expected = 120,
-                actual = body["total_count"]?.jsonPrimitive?.content?.toInt(),
-                message = "default scenario envelope must surface total_count == 120 regardless of page size",
-            )
-            val firstItemKeys = items.first().jsonObject.keys
-            assertEquals(
-                expected = setOf(
-                    "id",
-                    "brand_name",
-                    "generic_name",
-                    "therapeutic_category_name",
-                    "regulatory_class",
-                    "dosage_form",
-                    "brand_name_kana",
-                    "atc_code",
-                    "revised_at",
-                    "image_url",
+                expected = DrugSummaryPageSnapshot(
+                    status = HttpStatusCode.OK,
+                    itemsPresent = true,
+                    itemsNonEmpty = true,
+                    totalCount = 120,
+                    firstItemKeys = DRUG_SUMMARY_KEYS,
                 ),
-                actual = firstItemKeys,
-                message = "HTTP response items[0] must expose exactly 10 DrugSummary snake_case fields",
+                actual = DrugSummaryPageSnapshot(
+                    status = response.status,
+                    itemsPresent = items != null,
+                    itemsNonEmpty = items?.isNotEmpty() == true,
+                    totalCount = body["total_count"]?.jsonPrimitive?.content?.toInt(),
+                    firstItemKeys = firstItemKeys,
+                ),
             )
         }
 
@@ -153,21 +114,11 @@ class DrugModuleTest {
             }
         }
 
-        assertEquals(
-            HttpStatusCode.OK,
-            response.status,
-            "contract assertion failed"
-        )
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
         val items = body["items"]?.jsonArray
-        assertNotNull(
-            items,
-            "empty scenario must still expose an items array"
-        )
         assertEquals(
-            expected = 0,
-            actual = items.size,
-            message = "empty scenario must expose envelope with items.size == 0",
+            expected = EmptyListSnapshot(status = HttpStatusCode.OK, itemsSize = 0),
+            actual = EmptyListSnapshot(status = response.status, itemsSize = items?.size),
         )
     }
 
@@ -181,20 +132,14 @@ class DrugModuleTest {
             }
         }
 
-        assertEquals(
-            HttpStatusCode.OK,
-            response.status,
-            "contract assertion failed"
-        )
         val body = AppJson.decodeFromString<DrugListResponse>(response.bodyAsText())
         assertEquals(
-            0,
-            body.totalCount,
-            "contract assertion failed"
-        )
-        assertTrue(
-            body.items.isEmpty(),
-            "contract assertion failed"
+            expected = EmptyListSnapshot(status = HttpStatusCode.OK, itemsSize = 0, totalCount = 0),
+            actual = EmptyListSnapshot(
+                status = response.status,
+                itemsSize = body.items.size,
+                totalCount = body.totalCount,
+            ),
         )
     }
 
@@ -221,16 +166,56 @@ class DrugModuleTest {
 
         val response = client.get("/v1/drugs?sort=invalid_key")
 
-        assertEquals(
-            HttpStatusCode.BadRequest,
-            response.status,
-            "contract assertion failed"
-        )
         val error = AppJson.decodeFromString<ErrorResponse>(response.bodyAsText())
         assertEquals(
-            "INVALID_SORT_KEY",
-            error.code,
-            "contract assertion failed"
+            expected = ErrorStatusSnapshot(status = HttpStatusCode.BadRequest, code = "INVALID_SORT_KEY"),
+            actual = ErrorStatusSnapshot(status = response.status, code = error.code),
+        )
+    }
+
+    private data class ListContainsSnapshot(
+        val status: HttpStatusCode,
+        val containsId: Boolean,
+    )
+
+    private data class DetailNameSnapshot(
+        val status: HttpStatusCode,
+        val brandNameNonBlank: Boolean,
+        val genericNameNonBlank: Boolean,
+        val manufacturerNonBlank: Boolean,
+    )
+
+    private data class DrugSummaryPageSnapshot(
+        val status: HttpStatusCode,
+        val itemsPresent: Boolean,
+        val itemsNonEmpty: Boolean,
+        val totalCount: Int?,
+        val firstItemKeys: Set<String>,
+    )
+
+    private data class EmptyListSnapshot(
+        val status: HttpStatusCode,
+        val itemsSize: Int?,
+        val totalCount: Int? = null,
+    )
+
+    private data class ErrorStatusSnapshot(
+        val status: HttpStatusCode,
+        val code: String,
+    )
+
+    private companion object {
+        val DRUG_SUMMARY_KEYS: Set<String> = setOf(
+            "id",
+            "brand_name",
+            "generic_name",
+            "therapeutic_category_name",
+            "regulatory_class",
+            "dosage_form",
+            "brand_name_kana",
+            "atc_code",
+            "revised_at",
+            "image_url",
         )
     }
 }

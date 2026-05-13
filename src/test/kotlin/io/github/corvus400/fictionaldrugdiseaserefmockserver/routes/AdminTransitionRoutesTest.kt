@@ -31,7 +31,11 @@ class AdminTransitionRoutesTest {
             setBody("""{"scenarios": []}""")
         }
 
-        assertEquals(HttpStatusCode.BadRequest, response.status)
+        assertEquals(
+            expected = HttpStatusCode.BadRequest,
+            actual = response.status,
+            message = "empty transition chain must be rejected with 400",
+        )
     }
 
     @Test
@@ -47,21 +51,19 @@ class AdminTransitionRoutesTest {
             )
         }
 
-        assertEquals(
-            HttpStatusCode.OK,
-            response.status,
-            "contract assertion failed"
-        )
-
         val getResponse = client.get("/__admin/transitions")
         val body = json.decodeFromString<JsonObject>(getResponse.bodyAsText())
-        assertTrue(
-            body.containsKey("drugList"),
-            "contract assertion failed"
-        )
-        assertTrue(
-            body.containsKey("diseaseList"),
-            "contract assertion failed"
+        assertEquals(
+            expected = BatchTransitionSnapshot(
+                postStatus = HttpStatusCode.OK,
+                containsDrugList = true,
+                containsDiseaseList = true,
+            ),
+            actual = BatchTransitionSnapshot(
+                postStatus = response.status,
+                containsDrugList = body.containsKey("drugList"),
+                containsDiseaseList = body.containsKey("diseaseList"),
+            ),
         )
 
         client.post("/__admin/reset")
@@ -93,33 +95,25 @@ class AdminTransitionRoutesTest {
             contentType(ContentType.Application.Json)
             setBody("""{"scenarios": ["default", "empty"]}""")
         }
-        assertEquals(HttpStatusCode.OK, transitionResponse.status)
 
         val transitionsResponse = client.get("/__admin/transitions")
         val transitionsBody = json.decodeFromString<JsonObject>(transitionsResponse.bodyAsText())
         val drugListChain = transitionsBody["drugList"]?.jsonObject
         assertEquals(
-            expected = 0,
-            actual = drugListChain?.get("current_index")?.jsonPrimitive?.int,
-            message = "drugList の遷移チェーン初期 current_index は 0 である必要がある",
-        )
-        assertEquals(
-            expected = "default",
-            actual = drugListChain?.get("scenarios")?.jsonArray?.get(0)?.jsonPrimitive?.content,
-            message = "drugList の遷移チェーン scenarios[0] は default",
-        )
-        assertEquals(
-            expected = "empty",
-            actual = drugListChain?.get("scenarios")?.jsonArray?.get(1)?.jsonPrimitive?.content,
-            message = "drugList の遷移チェーン scenarios[1] は empty",
-        )
-
-        val configsResponse = client.get("/__admin/configs")
-        val configsBody = json.decodeFromString<JsonObject>(configsResponse.bodyAsText())
-        assertEquals(
-            expected = "default",
-            actual = configsBody["drugList"]?.jsonObject?.get("state")?.jsonPrimitive?.content,
-            message = "drugList の transition 設定直後は configs に default が反映されている",
+            expected = DrugListTransitionSnapshot(
+                postStatus = HttpStatusCode.OK,
+                currentIndex = 0,
+                scenarios = listOf("default", "empty"),
+                configState = "default",
+            ),
+            actual = DrugListTransitionSnapshot(
+                postStatus = transitionResponse.status,
+                currentIndex = drugListChain?.get("current_index")?.jsonPrimitive?.int,
+                scenarios = drugListChain?.get("scenarios")?.jsonArray?.map { it.jsonPrimitive.content },
+                configState = client.get("/__admin/configs")
+                    .let { json.decodeFromString<JsonObject>(it.bodyAsText()) }
+                    ["drugList"]?.jsonObject?.get("state")?.jsonPrimitive?.content,
+            ),
         )
 
         client.post("/__admin/reset")
@@ -145,4 +139,17 @@ class AdminTransitionRoutesTest {
 
         client.post("/__admin/reset")
     }
+
+    private data class BatchTransitionSnapshot(
+        val postStatus: HttpStatusCode,
+        val containsDrugList: Boolean,
+        val containsDiseaseList: Boolean,
+    )
+
+    private data class DrugListTransitionSnapshot(
+        val postStatus: HttpStatusCode,
+        val currentIndex: Int?,
+        val scenarios: List<String>?,
+        val configState: String?,
+    )
 }

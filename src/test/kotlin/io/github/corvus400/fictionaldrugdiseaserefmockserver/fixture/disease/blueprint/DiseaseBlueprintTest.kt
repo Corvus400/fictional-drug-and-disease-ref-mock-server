@@ -19,34 +19,15 @@ class DiseaseBlueprintTest {
                 isRareDisease = false,
             )
         assertEquals(
-            0,
-            blueprint.index,
-            "contract assertion failed"
-        )
-        assertEquals(
-            Icd10Chapter.CHAPTER_I,
-            blueprint.icd10Chapter,
-            "contract assertion failed"
-        )
-        assertEquals(
-            Chronicity.ACUTE,
-            blueprint.chronicity,
-            "contract assertion failed"
-        )
-        assertEquals(
-            true,
-            blueprint.isInfectious,
-            "contract assertion failed"
-        )
-        assertEquals(
-            false,
-            blueprint.isMentalDisorder,
-            "contract assertion failed"
-        )
-        assertEquals(
-            false,
-            blueprint.isRareDisease,
-            "contract assertion failed"
+            expected = DiseaseBlueprintSnapshot(
+                index = 0,
+                icd10Chapter = Icd10Chapter.CHAPTER_I,
+                chronicity = Chronicity.ACUTE,
+                isInfectious = true,
+                isMentalDisorder = false,
+                isRareDisease = false,
+            ),
+            actual = blueprint.snapshot(),
         )
     }
 
@@ -63,4 +44,23 @@ class DiseaseBlueprintTest {
             )
         }
     }
+
+    private fun DiseaseBlueprint.snapshot(): DiseaseBlueprintSnapshot =
+        DiseaseBlueprintSnapshot(
+            index = index,
+            icd10Chapter = icd10Chapter,
+            chronicity = chronicity,
+            isInfectious = isInfectious,
+            isMentalDisorder = isMentalDisorder,
+            isRareDisease = isRareDisease,
+        )
+
+    private data class DiseaseBlueprintSnapshot(
+        val index: Int,
+        val icd10Chapter: Icd10Chapter,
+        val chronicity: Chronicity,
+        val isInfectious: Boolean,
+        val isMentalDisorder: Boolean,
+        val isRareDisease: Boolean,
+    )
 }
