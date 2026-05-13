@@ -338,8 +338,8 @@ object DiseaseMedicalVocabulary {
                 ),
             "severeGradeLabel" vocabulary
                 listOf(
-                    "Grade 3",
-                    "Grade 4",
+                    "高度重症域",
+                    "緊急介入域",
                     "重症",
                     "最重症",
                     "高度",
