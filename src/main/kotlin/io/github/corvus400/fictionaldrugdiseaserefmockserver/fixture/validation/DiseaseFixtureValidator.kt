@@ -1,6 +1,6 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.validation
 
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.InfectionRouteRiskFactors
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.RiskFactorSeedBuckets
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Chronicity
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.ExamCategory
@@ -147,7 +147,9 @@ object DiseaseFixtureValidator {
                     ),
                 )
             }
-            if (riskFactors.isNotEmpty() && riskFactors.none(InfectionRouteRiskFactors::containsKeyword)) {
+            if (riskFactors.isNotEmpty() &&
+                riskFactors.none { riskFactor -> riskFactor in RiskFactorSeedBuckets.infectionExclusiveFactors() }
+            ) {
                 add(
                     FixtureViolation(
                         entityType = ENTITY_TYPE,
