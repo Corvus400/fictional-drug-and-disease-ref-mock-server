@@ -174,7 +174,7 @@ internal object DrugMetaBuilders {
         val expiration = ValueRangeGenerator.pickInRange(seed = expirationSeed, range = EXPIRATION_RANGE)
         return listOf(
             PackageInfo(
-                size = "100 錠 (10 錠 × 10 PTP)",
+                size = DosageFormPackageSize.pickSize(form = dosageForm, drugId = id),
                 storageCondition =
                 StorageCondition(
                     temperature =
