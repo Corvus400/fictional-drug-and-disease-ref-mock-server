@@ -49,7 +49,7 @@ class DiagnosticVocabularyTest {
     @Test
     fun `disease context resolves diagnostic keys from chapter vocabulary`() {
         DiagnosticVocabulary.keys.forEach { key ->
-            val entries = DiagnosticVocabulary.entriesFor(key = key, chapter = Icd10Chapter.CHAPTER_XIV) ?: emptyList()
+            val entries = DiagnosticVocabulary.entriesFor(key = key, chapter = Icd10Chapter.CHAPTER_XIV).orEmpty()
             val resolved =
                 DiseaseMedicalVocabulary.resolve(
                     key = key,

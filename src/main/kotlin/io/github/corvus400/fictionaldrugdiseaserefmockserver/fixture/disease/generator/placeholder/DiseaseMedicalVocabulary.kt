@@ -6,6 +6,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.buck
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.BucketSeedCoiner
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.SymptomSeedBucketRepository
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixmerge.nameslot.NameSlot
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
 
 private const val MIN_ENTRY_COUNT = 3
 
@@ -34,13 +35,7 @@ object DiseaseMedicalVocabulary {
         context: BucketContextKey = BucketContextKey.Global,
     ): String {
         val chapter = BucketContextChapters.pickChapter(context = context, seed = seed)
-        if (chapter != null) {
-            EtiologyVocabulary.resolveOrNull(key = key, chapter = chapter, seed = seed)?.let { return it }
-            DiagnosticVocabulary.resolveOrNull(key = key, chapter = chapter, seed = seed)?.let { return it }
-            TreatmentVocabulary.resolveOrNull(key = key, chapter = chapter, seed = seed)?.let { return it }
-            PrognosisVocabulary.resolveOrNull(key = key, chapter = chapter, seed = seed)?.let { return it }
-            SeverityVocabulary.resolveOrNull(key = key, chapter = chapter, seed = seed)?.let { return it }
-        }
+        chapter?.let { resolveChapterVocabulary(key = key, seed = seed, chapter = it) }?.let { return it }
         if (key in SYMPTOM_KEYS) {
             if (chapter != null) {
                 return BucketSeedCoiner.coin(
@@ -60,6 +55,17 @@ object DiseaseMedicalVocabulary {
                 )
         return ValueRangeGenerator.pickOne(seed = seed, candidates = vocabulary.entries)
     }
+
+    private fun resolveChapterVocabulary(
+        key: String,
+        seed: Long,
+        chapter: Icd10Chapter,
+    ): String? =
+        EtiologyVocabulary.resolveOrNull(key = key, chapter = chapter, seed = seed)
+            ?: DiagnosticVocabulary.resolveOrNull(key = key, chapter = chapter, seed = seed)
+            ?: TreatmentVocabulary.resolveOrNull(key = key, chapter = chapter, seed = seed)
+            ?: PrognosisVocabulary.resolveOrNull(key = key, chapter = chapter, seed = seed)
+            ?: SeverityVocabulary.resolveOrNull(key = key, chapter = chapter, seed = seed)
 
     private val SYMPTOM_KEYS =
         setOf(
