@@ -16,8 +16,6 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
 
 /**
  * Phase 11-11a (Issue #100): `default` シナリオ × `keyword` で filtered count を検証する。
@@ -59,8 +57,8 @@ class DrugModuleDefaultKeywordFilteredTest {
             setBody(body = """{"state":"default"}""")
         }
 
-        val sampleBrandName = client.get(urlString = "/v1/drugs/drug_0001").extractBrandName()
-        val keywordPrefix = sampleBrandName.take(n = KEYWORD_PREFIX_LENGTH)
+        val brandNameSnapshot = client.get(urlString = "/v1/drugs/drug_0001").brandNameSnapshot()
+        val keywordPrefix = brandNameSnapshot.brandName.orEmpty().take(n = KEYWORD_PREFIX_LENGTH)
         val encodedKeyword = keywordPrefix.encodeURLParameter()
 
         val total = client.get(urlString = "/v1/drugs?page_size=100").totalCount()
@@ -72,15 +70,19 @@ class DrugModuleDefaultKeywordFilteredTest {
         assertEquals(
             expected = KeywordFilterSnapshot(
                 configStatus = HttpStatusCode.OK,
+                detailStatus = HttpStatusCode.OK,
                 brandNameLongEnough = true,
                 total = 120,
                 filteredIsNonTrivialSubset = true,
             ),
             actual = KeywordFilterSnapshot(
                 configStatus = configResponse.status,
-                brandNameLongEnough = sampleBrandName.length >= KEYWORD_PREFIX_LENGTH,
+                detailStatus = brandNameSnapshot.status,
+                brandNameLongEnough = brandNameSnapshot.brandName.orEmpty().length >= KEYWORD_PREFIX_LENGTH,
                 total = total,
-                filteredIsNonTrivialSubset = filtered in MIN_FILTERED_COUNT until total,
+                filteredIsNonTrivialSubset = total?.let { totalCount ->
+                    filtered?.let { filteredCount -> filteredCount in MIN_FILTERED_COUNT until totalCount }
+                } == true,
             ),
             message = "fixture-derived keyword prefix must filter default 120 to a non-trivial " +
                 "subset that contains drug_0001 plus at least one other drug " +
@@ -106,25 +108,27 @@ class DrugModuleDefaultKeywordFilteredTest {
 
     private data class KeywordFilterSnapshot(
         val configStatus: HttpStatusCode,
+        val detailStatus: HttpStatusCode,
         val brandNameLongEnough: Boolean,
-        val total: Int,
+        val total: Int?,
         val filteredIsNonTrivialSubset: Boolean,
     )
 
-    private suspend fun HttpResponse.totalCount(): Int {
-        assertEquals(expected = HttpStatusCode.OK, actual = status)
+    private data class BrandNameSnapshot(
+        val status: HttpStatusCode,
+        val brandName: String?,
+    )
+
+    private suspend fun HttpResponse.totalCount(): Int? {
         val body = json.parseToJsonElement(string = bodyAsText()).jsonObject
-        val totalCount = body["total_count"]?.jsonPrimitive?.content?.toIntOrNull()
-        assertNotNull(actual = totalCount, message = "response body must have a numeric total_count")
-        return totalCount
+        return body["total_count"]?.jsonPrimitive?.content?.toIntOrNull()
     }
 
-    private suspend fun HttpResponse.extractBrandName(): String {
-        assertEquals(expected = HttpStatusCode.OK, actual = status)
+    private suspend fun HttpResponse.brandNameSnapshot(): BrandNameSnapshot {
         val body = json.parseToJsonElement(string = bodyAsText()).jsonObject
-        val brandName = body["brand_name"]?.jsonPrimitive?.content
-        assertNotNull(actual = brandName, message = "drug detail must expose brand_name to derive keyword")
-        assertTrue(actual = brandName.isNotBlank(), message = "brand_name must be non-blank to be a usable keyword")
-        return brandName
+        return BrandNameSnapshot(
+            status = status,
+            brandName = body["brand_name"]?.jsonPrimitive?.content,
+        )
     }
 }
