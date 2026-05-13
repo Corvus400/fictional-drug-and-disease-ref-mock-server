@@ -11,11 +11,13 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixm
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixmerge.nameslot.NameSlot
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.Drug
 import java.time.LocalDate
 
 class DiseaseGenerator(
     adapter: FixmergeNameAdapter,
     private val placeholderDictionary: DiseasePlaceholderDictionary,
+    private val drugs: List<Drug> = emptyList(),
 ) {
     private val coiner: BucketNameCoiner = BucketNameCoiner(adapter = adapter)
 
@@ -142,6 +144,7 @@ class DiseaseGenerator(
             relatedDrugIds = DiseaseNestedBuilders.buildRelatedDrugIds(
                 id = diseaseId,
                 chapter = blueprint.icd10Chapter,
+                drugFixtures = drugs,
             ),
             relatedDiseaseIds = DiseaseNestedBuilders.buildRelatedDiseaseIds(
                 id = diseaseId,

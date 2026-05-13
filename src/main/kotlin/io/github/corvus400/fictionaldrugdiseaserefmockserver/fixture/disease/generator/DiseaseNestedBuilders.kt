@@ -1,5 +1,6 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator
 
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.common.AtcIcd10Mapping
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.common.ValueRangeGenerator
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.InfectionRouteRiskFactors
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.placeholder.DiseaseRenderContext
@@ -23,6 +24,8 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.neste
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.SymptomInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.TreatmentInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.TreatmentSection
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.Drug
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.TherapeuticCategory
 
 /**
  * Disease 共通フィールド 24 の nested 構造を決定論的に populate する。
@@ -424,6 +427,7 @@ internal object DiseaseNestedBuilders {
     fun buildRelatedDrugIds(
         id: String,
         chapter: Icd10Chapter,
+        drugFixtures: List<Drug> = emptyList(),
     ): List<String> {
         fun avoidPregnancyContraindicatedDrug(drugId: String): String {
             val drugIndex = drugId.removePrefix(prefix = "drug_").toInt()
@@ -437,23 +441,38 @@ internal object DiseaseNestedBuilders {
 
         val countSeed = stableHash(id = id, slot = DiseaseFieldSlot.RELATED_DRUG_COUNT.ordinal, index = 0)
         val count = ValueRangeGenerator.pickCount(seed = countSeed, range = RELATED_DRUG_RANGE)
-        val generatedIds = (0 until count).map { offset ->
-            val indexSeed = stableHash(
-                id = id,
-                slot = DiseaseFieldSlot.RELATED_DRUG_INDEX.ordinal,
-                index = offset + 1,
-            )
-            val drugIndex = ValueRangeGenerator.pickInRange(seed = indexSeed, range = DRUG_INDEX_RANGE)
-            "drug_${drugIndex.toString().padStart(length = ID_PAD_LENGTH, padChar = '0')}"
+        val candidateDrugIds =
+            pickFromChapterFilteredDrugs(chapter = chapter, drugFixtures = drugFixtures)
+                .ifEmpty { drugFixtures.map { drug -> drug.id } }
+        val selectedIds = if (candidateDrugIds.isNotEmpty()) {
+            (0 until count).map { offset ->
+                val indexSeed = stableHash(
+                    id = id,
+                    slot = DiseaseFieldSlot.RELATED_DRUG_INDEX.ordinal,
+                    index = offset + 1,
+                )
+                val candidateIndex = ValueRangeGenerator.pickInRange(seed = indexSeed, range = candidateDrugIds.indices)
+                candidateDrugIds[candidateIndex]
+            }
+        } else {
+            (0 until count).map { offset ->
+                val indexSeed = stableHash(
+                    id = id,
+                    slot = DiseaseFieldSlot.RELATED_DRUG_INDEX.ordinal,
+                    index = offset + 1,
+                )
+                val drugIndex = ValueRangeGenerator.pickInRange(seed = indexSeed, range = DRUG_INDEX_RANGE)
+                "drug_${drugIndex.toString().padStart(length = ID_PAD_LENGTH, padChar = '0')}"
+            }
         }
-        return if (chapter == Icd10Chapter.CHAPTER_V) {
-            (listOf(CHAPTER_V_PSYCHOTROPIC_DRUG_ID) + generatedIds).distinct()
-        } else if (chapter == Icd10Chapter.CHAPTER_XV) {
-            generatedIds
+        return if (chapter == Icd10Chapter.CHAPTER_V && CHAPTER_V_PSYCHOTROPIC_DRUG_ID in candidateDrugIds) {
+            (listOf(CHAPTER_V_PSYCHOTROPIC_DRUG_ID) + selectedIds).distinct()
+        } else if (chapter == Icd10Chapter.CHAPTER_XV && candidateDrugIds.isEmpty()) {
+            selectedIds
                 .map { drugId -> avoidPregnancyContraindicatedDrug(drugId = drugId) }
                 .distinct()
         } else {
-            generatedIds.distinct()
+            selectedIds.distinct()
         }
     }
 
@@ -624,4 +643,21 @@ internal object DiseaseNestedBuilders {
         listOf("家族歴", "喫煙", "肥満", "運動不足", "長時間の接触", "飛沫伝播", "媒介生物への曝露")
     private val NONPHARMA_HEADINGS: List<String> =
         listOf("食事療法", "運動療法", "理学療法", "生活指導")
+}
+
+private fun pickFromChapterFilteredDrugs(
+    chapter: Icd10Chapter,
+    drugFixtures: List<Drug>,
+): List<String> {
+    val categories = AtcIcd10Mapping.categoriesFor(chapter = chapter).toSet()
+    val candidates = drugFixtures.filter { drug ->
+        val category = TherapeuticCategory.fromAtcInitial(initial = drug.atcCode.first())
+        category in categories
+    }
+    val pregnancySafeCandidates = if (chapter == Icd10Chapter.CHAPTER_XV) {
+        candidates.filterNot { drug -> DrugClinicalBuilders.hasPregnancyContraindication(id = drug.id) }
+    } else {
+        candidates
+    }
+    return pregnancySafeCandidates.map { drug -> drug.id }
 }
