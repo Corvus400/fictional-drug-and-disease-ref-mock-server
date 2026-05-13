@@ -15,7 +15,6 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class DrugModuleAdditionalFilterTest {
@@ -91,18 +90,10 @@ class DrugModuleAdditionalFilterTest {
             val keywordOnlyTotal = client.get("/v1/drugs?adverse_reaction_keyword=$keyword&page_size=100")
                 .let { json.parseToJsonElement(string = it.bodyAsText()).jsonObject }
                 .let { it["total_count"]?.jsonPrimitive?.content?.toInt() }
-            assertNotNull(
-                keywordOnlyTotal,
-                "keyword-only response must include total_count"
-            )
 
             val precautionOnlyTotal = client.get("/v1/drugs?precaution_category=PREGNANT&page_size=100")
                 .let { json.parseToJsonElement(string = it.bodyAsText()).jsonObject }
                 .let { it["total_count"]?.jsonPrimitive?.content?.toInt() }
-            assertNotNull(
-                precautionOnlyTotal,
-                "precaution-only response must include total_count"
-            )
 
             val andResponse = client.get(
                 "/v1/drugs?adverse_reaction_keyword=$keyword&precaution_category=PREGNANT&page_size=100",
@@ -110,16 +101,27 @@ class DrugModuleAdditionalFilterTest {
 
             val andBody = json.parseToJsonElement(string = andResponse.bodyAsText()).jsonObject
             val andTotal = andBody["total_count"]?.jsonPrimitive?.content?.toInt()
-            val singleMin = minOf(a = keywordOnlyTotal, b = precautionOnlyTotal)
             val violations = listOfNotNull(
+                "keyword-only response must include total_count".takeUnless { keywordOnlyTotal != null },
+                "precaution-only response must include total_count".takeUnless { precautionOnlyTotal != null },
                 "status must be 200 OK but was ${andResponse.status}".takeUnless {
                     andResponse.status == HttpStatusCode.OK
                 },
                 "AND response must include total_count".takeUnless { andTotal != null },
                 "AND total=$andTotal must be <= min(keyword-only=$keywordOnlyTotal, precaution-only=$precautionOnlyTotal)"
-                    .takeUnless { andTotal != null && andTotal <= singleMin },
+                    .takeUnless {
+                        andTotal != null &&
+                            keywordOnlyTotal != null &&
+                            precautionOnlyTotal != null &&
+                            andTotal <= minOf(a = keywordOnlyTotal, b = precautionOnlyTotal)
+                    },
                 "AND total=$andTotal must be strictly smaller than at least one single filter"
-                    .takeUnless { andTotal != null && (andTotal < keywordOnlyTotal || andTotal < precautionOnlyTotal) },
+                    .takeUnless {
+                        andTotal != null &&
+                            keywordOnlyTotal != null &&
+                            precautionOnlyTotal != null &&
+                            (andTotal < keywordOnlyTotal || andTotal < precautionOnlyTotal)
+                    },
             )
 
             assertTrue(
@@ -173,26 +175,22 @@ class DrugModuleAdditionalFilterTest {
 
             val response = client.get("/v1/drugs?precaution_category=INVALID")
 
-            assertEquals(
-                HttpStatusCode.BadRequest,
-                response.status,
-                "contract assertion failed"
-            )
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
             val code = body["code"]?.jsonPrimitive?.content
-            assertEquals(
-                "INVALID_PRECAUTION_CATEGORY",
-                code,
-                "contract assertion failed"
-            )
             val message = body["message"]?.jsonPrimitive?.content
-            assertNotNull(
-                message,
-                "ErrorResponse must include a non-null message describing the rejected value"
-            )
-            assertTrue(
-                actual = message.contains("INVALID"),
-                message = "ErrorResponse message=$message must mention the rejected raw value 'INVALID'",
+
+            assertEquals(
+                expected = ErrorSnapshot(
+                    status = HttpStatusCode.BadRequest,
+                    code = "INVALID_PRECAUTION_CATEGORY",
+                    messageMentionsInvalid = true,
+                ),
+                actual = ErrorSnapshot(
+                    status = response.status,
+                    code = code,
+                    messageMentionsInvalid = message?.contains("INVALID") == true,
+                ),
+                message = "ErrorResponse must describe the rejected raw value: $message",
             )
         }
 
@@ -278,5 +276,11 @@ class DrugModuleAdditionalFilterTest {
         val status: HttpStatusCode,
         val totalCount: Int?,
         val itemsSize: Int?,
+    )
+
+    private data class ErrorSnapshot(
+        val status: HttpStatusCode,
+        val code: String?,
+        val messageMentionsInvalid: Boolean,
     )
 }

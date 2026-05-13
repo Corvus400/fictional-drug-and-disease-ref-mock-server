@@ -31,18 +31,15 @@ class DiseaseFixtureValidatorTest {
 
         val violations = DiseaseFixtureValidator.validate(diseases = diseases)
 
-        assertContainsFixtureViolation(
+        assertOnlyFixtureViolations(
             violations = violations,
-            expected = FixtureViolation(
+            FixtureViolation(
                 entityType = ENTITY_TYPE_DISEASE,
                 entityId = original.id,
                 field = "id",
                 message = "sequential id missing from 0..79",
             ),
-        )
-        assertContainsFixtureViolation(
-            violations = violations,
-            expected = FixtureViolation(
+            FixtureViolation(
                 entityType = ENTITY_TYPE_DISEASE,
                 entityId = "disease_0080",
                 field = "id",
@@ -423,6 +420,17 @@ class DiseaseFixtureValidatorTest {
             assertTrue(
                 actual = violations.any { violation -> violation == expected },
                 message = "expected $expected to be present but got $violations",
+            )
+        }
+
+        fun assertOnlyFixtureViolations(
+            violations: List<*>,
+            vararg expected: FixtureViolation,
+        ) {
+            assertEquals(
+                expected = expected.toList(),
+                actual = violations,
+                message = "fixture violations must match exactly",
             )
         }
     }

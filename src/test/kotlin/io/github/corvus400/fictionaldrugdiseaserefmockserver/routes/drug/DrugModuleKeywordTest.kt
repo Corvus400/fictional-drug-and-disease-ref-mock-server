@@ -38,25 +38,21 @@ class DrugModuleKeywordTest {
                     "&keyword_target=brand&keyword_match=partial&page_size=100",
             )
 
-            assertEquals(
-                expected = HttpStatusCode.OK,
-                actual = totalResponse.status,
-                "contract assertion failed"
-            )
-            assertEquals(
-                expected = HttpStatusCode.OK,
-                actual = filteredResponse.status,
-                "contract assertion failed"
-            )
             val total = totalResponse.totalCount()
             val filtered = filteredResponse.totalCount()
             assertEquals(
-                expected = DEFAULT_TOTAL_COUNT,
-                actual = total,
-                message = "default scenario must populate $DEFAULT_TOTAL_COUNT drugs (total=$total)",
-            )
-            assertTrue(
-                actual = filtered in MIN_FILTERED_COUNT until total,
+                expected = KeywordFilterSnapshot(
+                    totalStatus = HttpStatusCode.OK,
+                    filteredStatus = HttpStatusCode.OK,
+                    total = DEFAULT_TOTAL_COUNT,
+                    filteredIsNonTrivialSubset = true,
+                ),
+                actual = KeywordFilterSnapshot(
+                    totalStatus = totalResponse.status,
+                    filteredStatus = filteredResponse.status,
+                    total = total,
+                    filteredIsNonTrivialSubset = filtered in MIN_FILTERED_COUNT until total,
+                ),
                 message = "fixture-derived keyword prefix must filter default $DEFAULT_TOTAL_COUNT to a non-trivial " +
                     "subset that contains drug_0001 plus at least one other drug " +
                     "(filtered=$filtered total=$total keywordPrefix=\"$keywordPrefix\")",
@@ -82,6 +78,13 @@ class DrugModuleKeywordTest {
          */
         const val DEFAULT_TOTAL_COUNT: Int = 120
     }
+
+    private data class KeywordFilterSnapshot(
+        val totalStatus: HttpStatusCode,
+        val filteredStatus: HttpStatusCode,
+        val total: Int,
+        val filteredIsNonTrivialSubset: Boolean,
+    )
 
     private suspend fun HttpResponse.totalCount(): Int {
         val body = json.parseToJsonElement(string = bodyAsText()).jsonObject

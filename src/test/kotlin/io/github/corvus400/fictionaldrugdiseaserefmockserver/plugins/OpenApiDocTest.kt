@@ -31,23 +31,22 @@ class OpenApiDocTest {
     fun `openapi json is generated and parseable`() = testApplication {
         application { module() }
         val response = client.get("/openapi.json")
-        assertEquals(
-            HttpStatusCode.OK,
-            response.status,
-            "contract assertion failed"
-        )
         val spec = json.decodeFromString<JsonObject>(response.bodyAsText())
-        assertTrue(
-            spec.containsKey("openapi"),
-            "OpenAPI仕様にopenapiフィールドが存在する"
-        )
-        assertTrue(
-            spec.containsKey("paths"),
-            "OpenAPI仕様にpathsフィールドが存在する"
-        )
-        assertTrue(
-            spec.containsKey("info"),
-            "OpenAPI仕様にinfoフィールドが存在する"
+
+        assertEquals(
+            expected = OpenApiRootSnapshot(
+                status = HttpStatusCode.OK,
+                hasOpenApi = true,
+                hasPaths = true,
+                hasInfo = true,
+            ),
+            actual = OpenApiRootSnapshot(
+                status = response.status,
+                hasOpenApi = spec.containsKey("openapi"),
+                hasPaths = spec.containsKey("paths"),
+                hasInfo = spec.containsKey("info"),
+            ),
+            message = "OpenAPI root contract mismatch",
         )
     }
 
@@ -160,13 +159,16 @@ class OpenApiDocTest {
         val spec = json.decodeFromString<JsonObject>(response.bodyAsText())
         val description = spec["info"]?.jsonObject?.get("description")?.jsonPrimitive?.content.orEmpty()
 
-        assertTrue(
-            description.contains("FICTIONAL DATA"),
-            "contract assertion failed"
-        )
-        assertTrue(
-            description.contains("架空データ"),
-            "contract assertion failed"
+        assertEquals(
+            expected = FictionalDataDescriptionSnapshot(
+                mentionsFictionalData = true,
+                mentionsJapaneseFictionalData = true,
+            ),
+            actual = FictionalDataDescriptionSnapshot(
+                mentionsFictionalData = description.contains("FICTIONAL DATA"),
+                mentionsJapaneseFictionalData = description.contains("架空データ"),
+            ),
+            message = "contract assertion failed",
         )
     }
 
@@ -238,13 +240,17 @@ class OpenApiDocTest {
     fun `disease infectious parameter has description`() = testApplication {
         application { module() }
         val description = fetchParameterDescription(path = "/v1/diseases", parameterName = "infectious")
-        assertTrue(
-            description.isNotEmpty(),
-            "infectious description が空文字列",
-        )
-        assertTrue(
-            description.contains("true") && description.contains("false"),
-            "infectious description に Boolean literal 'true' / 'false' が含まれていない: $description",
+
+        assertEquals(
+            expected = InfectiousParameterDescriptionSnapshot(
+                nonEmpty = true,
+                containsBooleanLiterals = true,
+            ),
+            actual = InfectiousParameterDescriptionSnapshot(
+                nonEmpty = description.isNotEmpty(),
+                containsBooleanLiterals = description.contains("true") && description.contains("false"),
+            ),
+            message = "infectious description に Boolean literal 'true' / 'false' が含まれていない: $description",
         )
     }
 
@@ -297,4 +303,21 @@ class OpenApiDocTest {
             }
         }
     }
+
+    private data class OpenApiRootSnapshot(
+        val status: HttpStatusCode,
+        val hasOpenApi: Boolean,
+        val hasPaths: Boolean,
+        val hasInfo: Boolean,
+    )
+
+    private data class FictionalDataDescriptionSnapshot(
+        val mentionsFictionalData: Boolean,
+        val mentionsJapaneseFictionalData: Boolean,
+    )
+
+    private data class InfectiousParameterDescriptionSnapshot(
+        val nonEmpty: Boolean,
+        val containsBooleanLiterals: Boolean,
+    )
 }

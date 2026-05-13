@@ -56,19 +56,22 @@ class DiseaseModuleAdditionalFilterTest {
             urlString = "/v1/diseases?onset_pattern=ACUTE&onset_pattern=CHRONIC&page_size=100",
         )
 
-        assertEquals(expected = HttpStatusCode.OK, actual = orResponse.status)
         val orTotal = orResponse.totalCount()
-        assertTrue(
-            actual = singleTotal in 1 until DEFAULT_DISEASE_COUNT,
-            message = "onset_pattern=ACUTE must filter total_count to 1..<80, got $singleTotal",
+        val violations = listOfNotNull(
+            "OR status must be 200 OK but was ${orResponse.status}".takeUnless {
+                orResponse.status == HttpStatusCode.OK
+            },
+            "onset_pattern=ACUTE must filter total_count to 1..<80, got $singleTotal"
+                .takeUnless { singleTotal in 1 until DEFAULT_DISEASE_COUNT },
+            "onset_pattern=ACUTE&onset_pattern=CHRONIC must filter total_count to 1..<80, got $orTotal"
+                .takeUnless { orTotal in 1 until DEFAULT_DISEASE_COUNT },
+            "OR-filtered total_count=$orTotal must be >= single ACUTE total_count=$singleTotal"
+                .takeUnless { orTotal >= singleTotal },
         )
+
         assertTrue(
-            actual = orTotal in 1 until DEFAULT_DISEASE_COUNT,
-            message = "onset_pattern=ACUTE&onset_pattern=CHRONIC must filter total_count to 1..<80, got $orTotal",
-        )
-        assertTrue(
-            actual = orTotal >= singleTotal,
-            message = "OR-filtered total_count=$orTotal must be >= single ACUTE total_count=$singleTotal",
+            actual = violations.isEmpty(),
+            message = "onset_pattern OR filter violations: $violations",
         )
     }
 
@@ -127,16 +130,20 @@ class DiseaseModuleAdditionalFilterTest {
                 urlString = "/v1/diseases?has_pharmacological_treatment=true&page_size=100",
             ).totalCount()
 
-            assertEquals(expected = HttpStatusCode.OK, actual = falseResponse.status)
             val falseTotal = falseResponse.totalCount()
-            assertTrue(
-                actual = falseTotal in 1 until DEFAULT_DISEASE_COUNT,
-                message = "has_pharmacological_treatment=false must filter total_count to 1..<80, got $falseTotal",
+            val violations = listOfNotNull(
+                "false filter status must be 200 OK but was ${falseResponse.status}".takeUnless {
+                    falseResponse.status == HttpStatusCode.OK
+                },
+                "has_pharmacological_treatment=false must filter total_count to 1..<80, got $falseTotal"
+                    .takeUnless { falseTotal in 1 until DEFAULT_DISEASE_COUNT },
+                "true and false pharmacological filters must partition the 80 default diseases"
+                    .takeUnless { trueTotal + falseTotal == DEFAULT_DISEASE_COUNT },
             )
-            assertEquals(
-                expected = DEFAULT_DISEASE_COUNT,
-                actual = trueTotal + falseTotal,
-                message = "true and false pharmacological filters must partition the 80 default diseases",
+
+            assertTrue(
+                actual = violations.isEmpty(),
+                message = "has_pharmacological_treatment=false violations: $violations",
             )
         }
 
@@ -183,17 +190,23 @@ class DiseaseModuleAdditionalFilterTest {
                 urlString = "/v1/diseases?symptom_keyword=$keyword&has_severity_grading=true&page_size=100",
             )
 
-            assertEquals(expected = HttpStatusCode.OK, actual = andResponse.status)
             val andTotal = andResponse.totalCount()
             val singleMin = minOf(a = symptomTotal, b = severityTotal)
-            assertTrue(
-                actual = andTotal <= singleMin,
-                message = "AND total_count=$andTotal must be <= min(symptom=$symptomTotal, severity=$severityTotal)",
+            val violations = listOfNotNull(
+                "AND status must be 200 OK but was ${andResponse.status}".takeUnless {
+                    andResponse.status == HttpStatusCode.OK
+                },
+                "AND total_count=$andTotal must be <= min(symptom=$symptomTotal, severity=$severityTotal)"
+                    .takeUnless { andTotal <= singleMin },
+                (
+                    "AND total_count=$andTotal must be smaller than at least one single filter " +
+                        "(symptom=$symptomTotal, severity=$severityTotal)"
+                    ).takeUnless { andTotal < symptomTotal || andTotal < severityTotal },
             )
+
             assertTrue(
-                actual = andTotal < symptomTotal || andTotal < severityTotal,
-                message = "AND total_count=$andTotal must be smaller than at least one single filter " +
-                    "(symptom=$symptomTotal, severity=$severityTotal)",
+                actual = violations.isEmpty(),
+                message = "symptom_keyword and severity AND violations: $violations",
             )
         }
 
@@ -204,21 +217,20 @@ class DiseaseModuleAdditionalFilterTest {
 
             val response = client.get(urlString = "/v1/diseases?onset_pattern=INVALID")
 
-            assertEquals(
-                expected = HttpStatusCode.BadRequest,
-                actual = response.status,
-                "contract assertion failed"
-            )
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
-            assertEquals(
-                expected = "INVALID_ONSET_PATTERN",
-                actual = body["code"]?.jsonPrimitive?.content,
-                "contract assertion failed"
-            )
             val message = body["message"]?.jsonPrimitive?.content
-            assertNotNull(actual = message, message = "ErrorResponse must include message")
-            assertTrue(
-                actual = message.contains(other = "INVALID"),
+
+            assertEquals(
+                expected = ErrorSnapshot(
+                    status = HttpStatusCode.BadRequest,
+                    code = "INVALID_ONSET_PATTERN",
+                    messageMentionsInvalid = true,
+                ),
+                actual = ErrorSnapshot(
+                    status = response.status,
+                    code = body["code"]?.jsonPrimitive?.content,
+                    messageMentionsInvalid = message?.contains(other = "INVALID") == true,
+                ),
                 message = "ErrorResponse message=$message must mention rejected value INVALID",
             )
         }

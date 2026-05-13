@@ -39,14 +39,9 @@ class DrugFixtureValidatorTest {
 
         val violations = DrugFixtureValidator.validate(drugs = withCorrupted)
 
-        assertEquals(
-            expected = 1,
-            actual = violations.size,
-            message = "expected exactly 1 violation but got $violations",
-        )
-        assertContainsFixtureViolation(
+        assertOnlyFixtureViolations(
             violations = violations,
-            expected = FixtureViolation(
+            FixtureViolation(
                 entityType = ENTITY_TYPE_DRUG,
                 entityId = corrupted.id,
                 field = "contraindications",
@@ -63,14 +58,9 @@ class DrugFixtureValidatorTest {
 
         val violations = DrugFixtureValidator.validate(drugs = withCorrupted)
 
-        assertEquals(
-            expected = 1,
-            actual = violations.size,
-            message = "expected exactly 1 violation but got $violations",
-        )
-        assertContainsFixtureViolation(
+        assertOnlyFixtureViolations(
             violations = violations,
-            expected = FixtureViolation(
+            FixtureViolation(
                 entityType = ENTITY_TYPE_DRUG,
                 entityId = corrupted.id,
                 field = "regulatoryClass",
@@ -91,23 +81,15 @@ class DrugFixtureValidatorTest {
 
         val violations = DrugFixtureValidator.validate(drugs = withCorrupted)
 
-        assertEquals(
-            expected = 2,
-            actual = violations.size,
-            message = "expected exactly 2 violations but got $violations",
-        )
-        assertContainsFixtureViolation(
+        assertOnlyFixtureViolations(
             violations = violations,
-            expected = FixtureViolation(
+            FixtureViolation(
                 entityType = ENTITY_TYPE_DRUG,
                 entityId = injection.id,
                 field = "pharmacokinetics",
                 message = "injection requires non-null pharmacokinetics",
             ),
-        )
-        assertContainsFixtureViolation(
-            violations = violations,
-            expected = FixtureViolation(
+            FixtureViolation(
                 entityType = ENTITY_TYPE_DRUG,
                 entityId = injection.id,
                 field = "administrationPrecautions",
@@ -130,14 +112,9 @@ class DrugFixtureValidatorTest {
 
         val violations = DrugFixtureValidator.validate(drugs = withCorrupted)
 
-        assertEquals(
-            expected = 1,
-            actual = violations.size,
-            message = "expected exactly 1 violation but got $violations",
-        )
-        assertContainsFixtureViolation(
+        assertOnlyFixtureViolations(
             violations = violations,
-            expected = FixtureViolation(
+            FixtureViolation(
                 entityType = ENTITY_TYPE_DRUG,
                 entityId = injection.id,
                 field = "pharmacokinetics.bloodConcentration",
@@ -161,14 +138,9 @@ class DrugFixtureValidatorTest {
 
         val violations = DrugFixtureValidator.validate(drugs = withCorrupted)
 
-        assertEquals(
-            expected = 1,
-            actual = violations.size,
-            message = "expected exactly 1 violation but got $violations",
-        )
-        assertContainsFixtureViolation(
+        assertOnlyFixtureViolations(
             violations = violations,
-            expected = FixtureViolation(
+            FixtureViolation(
                 entityType = ENTITY_TYPE_DRUG,
                 entityId = injection.id,
                 field = "pharmacokinetics.metabolism|excretion",
@@ -232,14 +204,9 @@ class DrugFixtureValidatorTest {
 
         val violations = DrugFixtureValidator.validate(drugs = withCorrupted)
 
-        assertEquals(
-            expected = 1,
-            actual = violations.size,
-            message = "expected exactly 1 violation but got $violations",
-        )
-        assertContainsFixtureViolation(
+        assertOnlyFixtureViolations(
             violations = violations,
-            expected = FixtureViolation(
+            FixtureViolation(
                 entityType = ENTITY_TYPE_DRUG,
                 entityId = poisonOrPotent.id,
                 field = "warning",
@@ -256,14 +223,9 @@ class DrugFixtureValidatorTest {
 
         val violations = DrugFixtureValidator.validate(drugs = withCorrupted)
 
-        assertEquals(
-            expected = 1,
-            actual = violations.size,
-            message = "expected exactly 1 violation but got $violations",
-        )
-        assertContainsFixtureViolation(
+        assertOnlyFixtureViolations(
             violations = violations,
-            expected = FixtureViolation(
+            FixtureViolation(
                 entityType = ENTITY_TYPE_DRUG,
                 entityId = corrupted.id,
                 field = "packages",
@@ -281,14 +243,9 @@ class DrugFixtureValidatorTest {
 
         val violations = DrugFixtureValidator.validate(drugs = withCorrupted)
 
-        assertEquals(
-            expected = 1,
-            actual = violations.size,
-            message = "expected exactly 1 violation but got $violations",
-        )
-        assertContainsFixtureViolation(
+        assertOnlyFixtureViolations(
             violations = violations,
-            expected = FixtureViolation(
+            FixtureViolation(
                 entityType = ENTITY_TYPE_DRUG,
                 entityId = external.id,
                 field = "administrationPrecautions",
@@ -306,14 +263,9 @@ class DrugFixtureValidatorTest {
 
         val violations = DrugFixtureValidator.validate(drugs = withCorrupted)
 
-        assertEquals(
-            expected = 1,
-            actual = violations.size,
-            message = "expected exactly 1 violation but got $violations",
-        )
-        assertContainsFixtureViolation(
+        assertOnlyFixtureViolations(
             violations = violations,
-            expected = FixtureViolation(
+            FixtureViolation(
                 entityType = ENTITY_TYPE_DRUG,
                 entityId = suppository.id,
                 field = "administrationPrecautions",
@@ -334,14 +286,9 @@ class DrugFixtureValidatorTest {
 
         val violations = DrugFixtureValidator.validate(drugs = withCorrupted)
 
-        assertEquals(
-            expected = 1,
-            actual = violations.size,
-            message = "expected exactly 1 violation but got $violations",
-        )
-        assertContainsFixtureViolation(
+        assertOnlyFixtureViolations(
             violations = violations,
-            expected = FixtureViolation(
+            FixtureViolation(
                 entityType = ENTITY_TYPE_DRUG,
                 entityId = base.id,
                 field = "handlingPrecautions",
@@ -362,14 +309,9 @@ class DrugFixtureValidatorTest {
 
         val violations = DrugFixtureValidator.validate(drugs = withCorrupted)
 
-        assertEquals(
-            expected = 1,
-            actual = violations.size,
-            message = "expected exactly 1 violation but got $violations",
-        )
-        assertContainsFixtureViolation(
+        assertOnlyFixtureViolations(
             violations = violations,
-            expected = FixtureViolation(
+            FixtureViolation(
                 entityType = ENTITY_TYPE_DRUG,
                 entityId = base.id,
                 field = "warning",
@@ -392,14 +334,9 @@ class DrugFixtureValidatorTest {
 
         val violations = DrugFixtureValidator.validate(drugs = withCorrupted)
 
-        assertEquals(
-            expected = 1,
-            actual = violations.size,
-            message = "expected exactly 1 violation but got $violations",
-        )
-        assertContainsFixtureViolation(
+        assertOnlyFixtureViolations(
             violations = violations,
-            expected = FixtureViolation(
+            FixtureViolation(
                 entityType = ENTITY_TYPE_DRUG,
                 entityId = controlled.id,
                 field = "insuranceNotes",
@@ -419,14 +356,9 @@ class DrugFixtureValidatorTest {
 
         val violations = DrugFixtureValidator.validate(drugs = withCorrupted)
 
-        assertEquals(
-            expected = 1,
-            actual = violations.size,
-            message = "expected exactly 1 violation but got $violations",
-        )
-        assertContainsFixtureViolation(
+        assertOnlyFixtureViolations(
             violations = violations,
-            expected = FixtureViolation(
+            FixtureViolation(
                 entityType = ENTITY_TYPE_DRUG,
                 entityId = chronic.id,
                 field = "dosageRelatedPrecautions",
@@ -443,14 +375,9 @@ class DrugFixtureValidatorTest {
 
         val violations = DrugFixtureValidator.validate(drugs = withCorrupted)
 
-        assertEquals(
-            expected = 1,
-            actual = violations.size,
-            message = "expected exactly 1 violation but got $violations",
-        )
-        assertContainsFixtureViolation(
+        assertOnlyFixtureViolations(
             violations = violations,
-            expected = FixtureViolation(
+            FixtureViolation(
                 entityType = ENTITY_TYPE_DRUG,
                 entityId = corrupted.id,
                 field = "indications",
@@ -469,6 +396,17 @@ class DrugFixtureValidatorTest {
             assertTrue(
                 actual = violations.any { violation -> violation == expected },
                 message = "expected $expected to be present but got $violations",
+            )
+        }
+
+        fun assertOnlyFixtureViolations(
+            violations: List<*>,
+            vararg expected: FixtureViolation,
+        ) {
+            assertEquals(
+                expected = expected.toList(),
+                actual = violations,
+                message = "fixture violations must match exactly",
             )
         }
 

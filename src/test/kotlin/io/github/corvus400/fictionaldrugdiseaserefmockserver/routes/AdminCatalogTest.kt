@@ -25,7 +25,7 @@ import kotlin.test.assertTrue
 
 class AdminCatalogTest {
     @Test
-    fun `catalog returns HTML with OK status`() = testApplication {
+    fun `catalog returns OK status`() = testApplication {
         application { module() }
 
         val response = client.get("/__admin/catalog")
@@ -35,9 +35,16 @@ class AdminCatalogTest {
             response.status,
             "contract assertion failed"
         )
+    }
+
+    @Test
+    fun `catalog returns HTML content type`() = testApplication {
+        application { module() }
+
+        val response = client.get("/__admin/catalog")
+
         assertTrue(
             response.headers["Content-Type"]?.contains(ContentType.Text.Html.toString()) == true,
-
             message = "contract assertion failed",
         )
     }
@@ -127,6 +134,14 @@ class AdminCatalogTest {
             title.contains("対応画面・シナリオ・Fixture概要カタログ"),
             "Title should contain 対応画面・シナリオ・Fixture概要カタログ",
         )
+    }
+
+    @Test
+    fun `catalog h1 is 対応画面・シナリオ・Fixture概要カタログ`() = testApplication {
+        application { module() }
+
+        val html = client.get("/__admin/catalog").bodyAsText()
+        val doc = parseHtml(html)
 
         val h1 = doc.assertElementExists("h1").text()
         assertEquals(
@@ -158,15 +173,19 @@ class AdminCatalogTest {
         val html = client.get("/__admin/catalog").bodyAsText()
         val doc = parseHtml(html)
 
-        doc.assertElementCount(".disclaimer-banner", 1)
         val banner = doc.assertElementExists(".disclaimer-banner")
-        assertTrue(
-            banner.text().contains("FICTIONAL DATA"),
-            "contract assertion failed"
-        )
-        assertTrue(
-            banner.text().contains("架空データ"),
-            "contract assertion failed"
+        assertEquals(
+            expected = DisclaimerBannerSnapshot(
+                count = 1,
+                mentionsFictionalData = true,
+                mentionsJapaneseFictionalData = true,
+            ),
+            actual = DisclaimerBannerSnapshot(
+                count = doc.select(".disclaimer-banner").size,
+                mentionsFictionalData = banner.text().contains("FICTIONAL DATA"),
+                mentionsJapaneseFictionalData = banner.text().contains("架空データ"),
+            ),
+            message = "contract assertion failed",
         )
     }
 
@@ -192,17 +211,13 @@ class AdminCatalogTest {
         val html = client.get("/__admin/catalog").bodyAsText()
         val doc = parseHtml(html)
 
-        val viewBtns = doc.select(".view-btn")
-        doc.assertElementCount(".view-btn", 2)
         assertEquals(
-            "画面別",
-            viewBtns[0].text(),
-            "contract assertion failed"
-        )
-        assertEquals(
-            "API別",
-            viewBtns[1].text(),
-            "contract assertion failed"
+            expected = ViewButtonsSnapshot(count = 2, labels = listOf("画面別", "API別")),
+            actual = ViewButtonsSnapshot(
+                count = doc.select(".view-btn").size,
+                labels = doc.select(".view-btn").map { it.text() },
+            ),
+            message = "contract assertion failed",
         )
     }
 
@@ -237,6 +252,17 @@ class AdminCatalogTest {
         parseHtml(client.get("/__admin/catalog").bodyAsText())
             .assertJsFunctionDefined("applyFilters")
     }
+
+    private data class DisclaimerBannerSnapshot(
+        val count: Int,
+        val mentionsFictionalData: Boolean,
+        val mentionsJapaneseFictionalData: Boolean,
+    )
+
+    private data class ViewButtonsSnapshot(
+        val count: Int,
+        val labels: List<String>,
+    )
 
     @Test
     fun `catalog JS wires search input event listener`() = testApplication {
