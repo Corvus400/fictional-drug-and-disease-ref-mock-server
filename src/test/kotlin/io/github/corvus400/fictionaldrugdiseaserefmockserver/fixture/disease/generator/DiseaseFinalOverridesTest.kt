@@ -156,13 +156,15 @@ class DiseaseFinalOverridesTest {
         val disease0079 = generateDiseases().first { it.id == "disease_0079" }
         val requiredText = disease0079.diagnosticCriteria.required.joinToString()
 
-        assertTrue(
-            requiredText.contains("全国検査"),
-            "disease_0079 diagnosticCriteria.required must reference 全国検査",
-        )
-        assertTrue(
-            requiredText.contains("魔女因子高値"),
-            "disease_0079 diagnosticCriteria.required must reference 魔女因子高値",
+        assertEquals(
+            expected = mapOf(
+                "contains全国検査" to true,
+                "contains魔女因子高値" to true,
+            ),
+            actual = mapOf(
+                "contains全国検査" to requiredText.contains("全国検査"),
+                "contains魔女因子高値" to requiredText.contains("魔女因子高値"),
+            ),
         )
     }
 

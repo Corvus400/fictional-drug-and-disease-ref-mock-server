@@ -9,8 +9,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.neste
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.SymptomInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.TreatmentInfo
 import kotlin.test.Test
-import kotlin.test.assertFalse
-import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 class DrugMetaBuildersTest {
     @Test
@@ -25,15 +24,17 @@ class DrugMetaBuildersTest {
                 "metabolism" to pk.metabolism,
                 "excretion" to pk.excretion,
             )
-        textFields.forEach { (fieldName, nullableValue) ->
-            val value = assertNotNull(nullableValue, "buildPharmacokinetics.$fieldName must be non-null")
-            assertFalse(
-                actual = "{{" in value || "}}" in value,
-                message =
-                "buildPharmacokinetics.$fieldName must contain no raw '{{...}}' after " +
-                    "Dictionary wiring; got='$value'",
-            )
+        val violations = textFields.mapNotNull { (fieldName, nullableValue) ->
+            when {
+                nullableValue == null -> "buildPharmacokinetics.$fieldName must be non-null"
+                "{{" in nullableValue || "}}" in nullableValue ->
+                    "buildPharmacokinetics.$fieldName must contain no raw '{{...}}' after " +
+                        "Dictionary wiring; got='$nullableValue'"
+                else -> null
+            }
         }
+
+        assertTrue(actual = violations.isEmpty(), message = "pharmacokinetics placeholder violations: $violations")
     }
 
     private fun buildDict(): DrugPlaceholderDictionary =

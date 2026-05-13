@@ -3,7 +3,6 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.ge
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.stableHash
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class DiseaseMedicalVocabularyTest {
@@ -36,19 +35,21 @@ class DiseaseMedicalVocabularyTest {
 
     @Test
     fun `resolve throws on unknown category-A key to catch dictionary gaps`() {
-        val error =
-            runCatching {
-                DiseaseMedicalVocabulary.resolve("unknownKey", seed = 0)
-            }.exceptionOrNull()
-        assertNotNull(
-            error,
-            "resolve must throw for an unknown category-A key so gaps fail fast",
-        )
-        assertTrue(
-            error.message.orEmpty().contains("unknownKey"),
-            "error message must mention the offending key; got: ${error.message}",
+        val error = runCatching { DiseaseMedicalVocabulary.resolve("unknownKey", seed = 0) }.exceptionOrNull()
+        assertEquals(
+            expected = UnknownKeyFailureSnapshot(throws = true, mentionsKey = true),
+            actual = UnknownKeyFailureSnapshot(
+                throws = error != null,
+                mentionsKey = error?.message.orEmpty().contains("unknownKey"),
+            ),
+            message = "resolve must fail fast and mention the offending category-A key",
         )
     }
+
+    private data class UnknownKeyFailureSnapshot(
+        val throws: Boolean,
+        val mentionsKey: Boolean,
+    )
 
     private fun categoryAKeys(): List<String> =
         DiseasePlaceholderKey.entries

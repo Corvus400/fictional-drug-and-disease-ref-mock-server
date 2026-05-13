@@ -41,19 +41,21 @@ class CountryBucketDataTest {
 
     @Test
     fun `every country has at least 10 beverage and 10 cities items`() {
-        for (country in Country.entries) {
+        val violations = Country.entries.flatMap { country ->
             val bucket = requireNotNull(CountryBucketData.BY_COUNTRY[country]) {
                 "missing bucket entry for country=$country"
             }
-            assertTrue(
-                bucket.beverage.size >= 10,
-                "beverage size < 10 for country=$country (was ${bucket.beverage.size})",
-            )
-            assertTrue(
-                bucket.cities.size >= 10,
-                "cities size < 10 for country=$country (was ${bucket.cities.size})",
+            listOfNotNull(
+                "beverage size < 10 for country=$country (was ${bucket.beverage.size})".takeIf {
+                    bucket.beverage.size < 10
+                },
+                "cities size < 10 for country=$country (was ${bucket.cities.size})".takeIf {
+                    bucket.cities.size < 10
+                },
             )
         }
+
+        assertEquals(expected = emptyList(), actual = violations)
     }
 
     @Test

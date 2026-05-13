@@ -10,8 +10,6 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.toSum
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.search.SearchDefaults
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertTrue
 
 class DiseaseListFixturesTest {
     @Test
@@ -85,16 +83,25 @@ class DiseaseListFixturesTest {
         val corrupted = diseases.first().copy(symptoms = SymptomInfo(mainSymptoms = emptyList()))
         val withCorrupted = listOf(corrupted) + diseases.drop(n = 1)
 
-        val failure = assertFailsWith<IllegalArgumentException>(
+        val failure = runCatching { DiseaseListFixtures(diseases = withCorrupted) }.exceptionOrNull()
+        assertEquals(
+            expected = ValidatorFailureSnapshot(
+                type = IllegalArgumentException::class.simpleName,
+                mentionsMainSymptomsViolation = true,
+            ),
+            actual = ValidatorFailureSnapshot(
+                type = failure?.let { it::class.simpleName },
+                mentionsMainSymptomsViolation =
+                failure?.message?.contains("mainSymptoms must have at least 1 entry") == true,
+            ),
             message = "init must reject diseases with validator violations at startup",
-        ) {
-            DiseaseListFixtures(diseases = withCorrupted)
-        }
-        assertTrue(
-            actual = failure.message?.contains("mainSymptoms must have at least 1 entry") == true,
-            message = "failure message must surface the underlying violation; got ${failure.message}",
         )
     }
+
+    private data class ValidatorFailureSnapshot(
+        val type: String?,
+        val mentionsMainSymptomsViolation: Boolean,
+    )
 
     private companion object {
         fun buildFreshGenerator(): DiseaseGenerator {

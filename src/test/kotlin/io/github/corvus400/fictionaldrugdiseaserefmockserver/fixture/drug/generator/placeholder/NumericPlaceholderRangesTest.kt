@@ -4,7 +4,6 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.stab
 import java.util.Locale
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class NumericPlaceholderRangesTest {
@@ -49,25 +48,25 @@ class NumericPlaceholderRangesTest {
         val originalLocale = Locale.getDefault()
         try {
             Locale.setDefault(Locale.GERMANY)
-            DECIMAL_BEARING_KEYS.forEach { key ->
+            val violations = DECIMAL_BEARING_KEYS.flatMap { key ->
                 val regex = requireNotNull(CATEGORY_D_FORMAT_REGEX[key]) { "regex missing for '$key'" }.toRegex()
-                repeat(LOCALE_SAMPLE_SIZE) { index ->
+                (0 until LOCALE_SAMPLE_SIZE).flatMap { index ->
                     val seed = stableHash(id = "drug_${index.toString().padStart(4, '0')}", slot = 0, index = 0)
                     val value = NumericPlaceholderRanges.resolve(key, seed)
-                    assertFalse(
-                        value.contains(','),
-                        "resolve('$key', $seed) = '$value' contains ',' — numeric formatting must be " +
-                            "locale-independent (use Locale.ROOT / String.format(Locale.ROOT, ...)); " +
-                            "otherwise Apple Container / CI in de_DE / fr_FR / similar locales emits " +
-                            "comma decimals that break regex contracts.",
-                    )
-                    assertTrue(
-                        regex.matches(value),
-                        "resolve('$key', $seed) = '$value' does not match " +
-                            "/${CATEGORY_D_FORMAT_REGEX[key]}/ under GERMANY locale",
+                    listOfNotNull(
+                        (
+                            "resolve('$key', $seed) = '$value' contains ',' — numeric formatting must be " +
+                                "locale-independent (use Locale.ROOT / String.format(Locale.ROOT, ...))"
+                            ).takeIf { value.contains(',') },
+                        (
+                            "resolve('$key', $seed) = '$value' does not match " +
+                                "/${CATEGORY_D_FORMAT_REGEX[key]}/ under GERMANY locale"
+                            ).takeIf { regex.matches(value).not() },
                     )
                 }
             }
+
+            assertTrue(actual = violations.isEmpty(), message = "locale-independent formatting violations: $violations")
         } finally {
             Locale.setDefault(originalLocale)
         }

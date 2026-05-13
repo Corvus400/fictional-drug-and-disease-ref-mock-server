@@ -37,6 +37,137 @@ fun Document.assertElementCount(
     )
 }
 
+/** CSSセレクタごとの存在有無をまとめて検証する */
+fun Document.assertElementsExist(cssSelectors: Collection<String>) {
+    val missingSelectors = cssSelectors
+        .filter { cssSelector -> select(cssSelector).isEmpty() }
+
+    assertEquals(
+        expected = emptyList(),
+        actual = missingSelectors,
+        message = "Expected elements for selectors but none found: $missingSelectors",
+    )
+}
+
+/** CSSセレクタに一致する要素数と、最初の要素が含むテキストをまとめて検証する */
+fun Document.assertElementCountAndTextContains(
+    cssSelector: String,
+    expectedCount: Int,
+    expectedText: String,
+) {
+    val elements = select(cssSelector)
+    assertEquals(
+        expected = ElementCountAndTextContainsSnapshot(
+            count = expectedCount,
+            firstElementContainsText = true,
+        ),
+        actual = ElementCountAndTextContainsSnapshot(
+            count = elements.size,
+            firstElementContainsText = elements.firstOrNull()?.text()?.contains(expectedText) == true,
+        ),
+        message = "Expected $expectedCount '$cssSelector' elements and first text to contain '$expectedText'",
+    )
+}
+
+/** CSSセレクタに一致する要素数と、最初の要素が指定テキストをすべて含むことをまとめて検証する */
+fun Document.assertElementCountAndTextContainsAll(
+    cssSelector: String,
+    expectedCount: Int,
+    expectedTexts: Collection<String>,
+) {
+    val elements = select(cssSelector)
+    val text = elements.firstOrNull()?.text().orEmpty()
+    assertEquals(
+        expected = ElementCountAndMissingTextsSnapshot(count = expectedCount, missingTexts = emptyList()),
+        actual = ElementCountAndMissingTextsSnapshot(
+            count = elements.size,
+            missingTexts = expectedTexts.filterNot { expectedText -> text.contains(expectedText) },
+        ),
+        message = "Expected $expectedCount '$cssSelector' elements and first text to contain $expectedTexts",
+    )
+}
+
+/** CSSセレクタに一致する要素数の下限と、最初の要素テキストをまとめて検証する */
+fun Document.assertElementMinimumCountAndFirstTextEquals(
+    cssSelector: String,
+    minimumCount: Int,
+    expectedFirstText: String,
+) {
+    val elements = select(cssSelector)
+    assertEquals(
+        expected = ElementMinimumCountAndFirstTextSnapshot(
+            hasAtLeastMinimumCount = true,
+            firstText = expectedFirstText,
+        ),
+        actual = ElementMinimumCountAndFirstTextSnapshot(
+            hasAtLeastMinimumCount = elements.size >= minimumCount,
+            firstText = elements.firstOrNull()?.text(),
+        ),
+        message = "Expected at least $minimumCount '$cssSelector' elements and first text '$expectedFirstText'",
+    )
+}
+
+/** CSSセレクタに一致する要素群のテキスト一覧を順序付きで検証する */
+fun Document.assertElementsTextEquals(
+    cssSelector: String,
+    expectedTexts: List<String>,
+) {
+    assertEquals(
+        expected = expectedTexts,
+        actual = select(cssSelector).map { element -> element.text() },
+        message = "Expected '$cssSelector' texts to be $expectedTexts",
+    )
+}
+
+/** CSSセレクタに一致する要素群のどれかが指定テキストを含むことを検証する */
+fun Document.assertAnyElementTextContains(
+    cssSelector: String,
+    expectedText: String,
+) {
+    val actualTexts = select(cssSelector).map { element -> element.text() }
+    assertTrue(
+        actual = actualTexts.any { actualText -> actualText.contains(expectedText) },
+        message = "Expected one '$cssSelector' text to contain '$expectedText' but was $actualTexts",
+    )
+}
+
+/** CSSセレクタに一致する最初の要素のテキストが指定文字列を含むことを検証する */
+fun Document.assertElementTextContains(
+    cssSelector: String,
+    expectedText: String,
+) {
+    val actualText = selectFirst(cssSelector)?.text()
+    assertTrue(
+        actual = actualText?.contains(expectedText) == true,
+        message = "Expected '$cssSelector' text to contain '$expectedText' but was '$actualText'",
+    )
+}
+
+/** CSSセレクタに一致する最初の要素のテキストが指定文字列と一致することを検証する */
+fun Document.assertElementTextEquals(
+    cssSelector: String,
+    expectedText: String,
+) {
+    val actualText = selectFirst(cssSelector)?.text()
+    assertEquals(
+        expected = expectedText,
+        actual = actualText,
+        message = "Expected '$cssSelector' text to be '$expectedText' but was '$actualText'",
+    )
+}
+
+/** CSSセレクタごとの存在しないことをまとめて検証する */
+fun Document.assertNoElements(cssSelectors: Collection<String>) {
+    val presentSelectors = cssSelectors
+        .filter { cssSelector -> select(cssSelector).isNotEmpty() }
+
+    assertEquals(
+        expected = emptyList(),
+        actual = presentSelectors,
+        message = "Expected no elements for selectors but found: $presentSelectors",
+    )
+}
+
 /** CSSセレクタに一致する要素が存在しないことを検証する */
 fun Document.assertNoElement(cssSelector: String) {
     val elements = select(cssSelector)
@@ -65,6 +196,50 @@ fun Element.assertHasAttribute(name: String) {
         message = "Expected attribute '$name' on <${tagName()}> but not found",
     )
 }
+
+/** CSSセレクタに一致する最初の要素が指定属性をすべて持つことを検証する */
+fun Document.assertElementHasAttributes(
+    cssSelector: String,
+    attributeNames: Collection<String>,
+) {
+    val element = selectFirst(cssSelector)
+    val missingAttributes = attributeNames
+        .filterNot { attributeName -> element?.hasAttr(attributeName) == true }
+
+    assertEquals(
+        expected = emptyList(),
+        actual = missingAttributes,
+        message = "Expected '$cssSelector' to have attributes but missing: $missingAttributes",
+    )
+}
+
+/** CSSセレクタに一致する要素群の指定属性値を順序付きで検証する */
+fun Document.assertElementsAttributeValues(
+    cssSelector: String,
+    attributeName: String,
+    expectedValues: List<String>,
+) {
+    assertEquals(
+        expected = expectedValues,
+        actual = select(cssSelector).map { element -> element.attr(attributeName) },
+        message = "Expected '$cssSelector' attribute '$attributeName' values to be $expectedValues",
+    )
+}
+
+private data class ElementCountAndTextContainsSnapshot(
+    val count: Int,
+    val firstElementContainsText: Boolean,
+)
+
+private data class ElementCountAndMissingTextsSnapshot(
+    val count: Int,
+    val missingTexts: List<String>,
+)
+
+private data class ElementMinimumCountAndFirstTextSnapshot(
+    val hasAtLeastMinimumCount: Boolean,
+    val firstText: String?,
+)
 
 /** scriptタグ内にJavaScript関数定義が存在することを検証する */
 fun Document.assertJsFunctionDefined(name: String) {

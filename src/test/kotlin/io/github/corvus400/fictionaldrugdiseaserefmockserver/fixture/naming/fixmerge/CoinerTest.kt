@@ -1,9 +1,9 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixmerge
 
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixmerge.lexicon.Pattern
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixmerge.nameslot.NameSlot
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class CoinerTest {
     @Test
@@ -12,19 +12,17 @@ class CoinerTest {
         val first = engine.coinName(slot = NameSlot.DRUG_BRAND, seed = 100L)
         val second = engine.coinName(slot = NameSlot.DRUG_BRAND, seed = 100L)
         assertEquals(
-            first.latin,
-            second.latin,
-            "coinName latin output must be deterministic for the same slot and seed",
-        )
-        assertEquals(
-            first.katakana,
-            second.katakana,
-            "coinName katakana output must be deterministic for the same slot and seed",
-        )
-        assertEquals(
-            first.pattern,
-            second.pattern,
-            "coinName pattern output must be deterministic for the same slot and seed",
+            expected = DeterministicCoinedNameSnapshot(
+                latin = first.latin,
+                katakana = first.katakana,
+                pattern = first.pattern,
+            ),
+            actual = DeterministicCoinedNameSnapshot(
+                latin = second.latin,
+                katakana = second.katakana,
+                pattern = second.pattern,
+            ),
+            message = "coinName output must be deterministic for the same slot and seed",
         )
     }
 
@@ -32,13 +30,13 @@ class CoinerTest {
     fun `coinName returns non-blank latin and katakana`() {
         val engine = FixmergeEngineFactory.default()
         val coined = engine.coinName(slot = NameSlot.DISEASE_NAME, seed = 42L)
-        assertTrue(
-            coined.latin.isNotBlank(),
-            "coinName must return non-blank latin text",
-        )
-        assertTrue(
-            coined.katakana.isNotBlank(),
-            "coinName must return non-blank katakana text",
+        assertEquals(
+            expected = NonBlankCoinedNameSnapshot(latin = true, katakana = true),
+            actual = NonBlankCoinedNameSnapshot(
+                latin = coined.latin.isNotBlank(),
+                katakana = coined.katakana.isNotBlank(),
+            ),
+            message = "coinName must return non-blank latin and katakana text",
         )
     }
 
@@ -48,14 +46,26 @@ class CoinerTest {
         val brand = engine.coinName(slot = NameSlot.DRUG_BRAND, seed = 1L)
         val generic = engine.coinName(slot = NameSlot.DRUG_GENERIC, seed = 1L)
         assertEquals(
-            NameSlot.DRUG_BRAND.defaultPattern,
-            brand.pattern,
-            "DRUG_BRAND coinName must use the slot default pattern",
-        )
-        assertEquals(
-            NameSlot.DRUG_GENERIC.defaultPattern,
-            generic.pattern,
-            "DRUG_GENERIC coinName must use the slot default pattern",
+            expected = mapOf(
+                NameSlot.DRUG_BRAND to NameSlot.DRUG_BRAND.defaultPattern,
+                NameSlot.DRUG_GENERIC to NameSlot.DRUG_GENERIC.defaultPattern,
+            ),
+            actual = mapOf(
+                NameSlot.DRUG_BRAND to brand.pattern,
+                NameSlot.DRUG_GENERIC to generic.pattern,
+            ),
+            message = "coinName must use the slot default pattern",
         )
     }
+
+    private data class DeterministicCoinedNameSnapshot(
+        val latin: String,
+        val katakana: String,
+        val pattern: Pattern,
+    )
+
+    private data class NonBlankCoinedNameSnapshot(
+        val latin: Boolean,
+        val katakana: Boolean,
+    )
 }

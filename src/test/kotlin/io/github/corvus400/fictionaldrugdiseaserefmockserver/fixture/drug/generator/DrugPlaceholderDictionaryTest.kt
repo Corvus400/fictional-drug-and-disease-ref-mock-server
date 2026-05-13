@@ -16,7 +16,6 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.neste
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.TreatmentInfo
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 class DrugPlaceholderDictionaryTest {
@@ -65,14 +64,13 @@ class DrugPlaceholderDictionaryTest {
         val dict = buildDict()
         val seed = stableHash(id = "drug_0001", slot = 0, index = 0)
         val value = dict.resolve("metabolite", seed)
-        assertTrue(
-            value.isNotBlank(),
-            "resolve('metabolite', $seed) returned blank; must return a coined katakana name",
-        )
-        assertTrue(
-            value.any { it in KATAKANA_BLOCK },
-            "resolve('metabolite', $seed) = '$value' must contain katakana " +
-                "(FixmergeNameAdapter.coin returns a katakana string)",
+        assertEquals(
+            expected = CoinedNameSnapshot(isNotBlank = true, containsKatakana = true),
+            actual = CoinedNameSnapshot(
+                isNotBlank = value.isNotBlank(),
+                containsKatakana = value.any { it in KATAKANA_BLOCK },
+            ),
+            message = "resolve('metabolite', $seed) must return a coined katakana name; got: '$value'",
         )
     }
 
@@ -98,13 +96,14 @@ class DrugPlaceholderDictionaryTest {
         val seed = stableHash(id = "drug_0001", slot = 0, index = 0)
         val template = "本剤投与により {{symptom}} と {{adverseReaction}} が発現することがある。"
         val result = dict.resolveAll(template = template, seed = seed)
-        assertTrue(
-            "{{" !in result && "}}" !in result,
-            "resolveAll must replace every '{{...}}'; got: '$result'",
-        )
-        assertTrue(
-            "本剤投与により " in result && " と " in result && " が発現することがある。" in result,
-            "resolveAll must preserve non-placeholder text; got: '$result'",
+        assertEquals(
+            expected = ResolveAllSnapshot(hasRawDelimiter = false, preservesLiteralText = true),
+            actual = ResolveAllSnapshot(
+                hasRawDelimiter = "{{" in result || "}}" in result,
+                preservesLiteralText =
+                "本剤投与により " in result && " と " in result && " が発現することがある。" in result,
+            ),
+            message = "resolveAll must replace placeholders and preserve non-placeholder text; got: '$result'",
         )
     }
 
@@ -115,11 +114,13 @@ class DrugPlaceholderDictionaryTest {
         val template = "{{symptom}} / {{symptom}} / {{symptom}}"
         val result = dict.resolveAll(template = template, seed = seed)
         val parts = result.split(" / ")
-        assertEquals(3, parts.size, "splitting 3-occurrence template must yield 3 tokens; got: '$result'")
-        assertTrue(
-            parts.toSet().size >= 2,
-            "repeated '{{symptom}}' must be driven by distinct derived seeds so the substitutions vary; " +
-                "got all-identical: '$result'",
+        assertEquals(
+            expected = RepeatedPlaceholderSnapshot(segmentCount = 3, hasVariation = true),
+            actual = RepeatedPlaceholderSnapshot(
+                segmentCount = parts.size,
+                hasVariation = parts.toSet().size >= 2,
+            ),
+            message = "repeated '{{symptom}}' must derive distinct seeds so substitutions vary; got: '$result'",
         )
     }
 
@@ -128,10 +129,13 @@ class DrugPlaceholderDictionaryTest {
         val dict = buildDict()
         val seed = stableHash(id = "drug_0001", slot = 0, index = 0)
         val rendered = dict.renderField(field = ParagraphField.STANDARD_DOSAGE, seed = seed)
-        assertTrue(rendered.isNotBlank(), "renderField must return a non-blank paragraph")
-        assertTrue(
-            "{{" !in rendered && "}}" !in rendered,
-            "renderField must contain no raw placeholder delimiter; got: '$rendered'",
+        assertEquals(
+            expected = RenderedFieldSnapshot(isNotBlank = true, hasRawDelimiter = false),
+            actual = RenderedFieldSnapshot(
+                isNotBlank = rendered.isNotBlank(),
+                hasRawDelimiter = "{{" in rendered || "}}" in rendered,
+            ),
+            message = "renderField must return a fully substituted non-blank paragraph; got: '$rendered'",
         )
     }
 
@@ -139,21 +143,19 @@ class DrugPlaceholderDictionaryTest {
     fun `resolve throws TASK ORDER VIOLATION error for unregistered placeholder key`() {
         val dict = buildDict()
         val seed = stableHash(id = "drug_0001", slot = 0, index = 0)
-        val exception =
-            assertFailsWith<IllegalStateException> {
-                dict.resolve("unknownKey", seed)
-            }
-        val message = exception.message.orEmpty()
-        listOf("TASK ORDER VIOLATION", "Correct sequence", "DO NOT bypass").forEach { keyword ->
-            assertTrue(
-                keyword in message,
-                "Unknown-placeholder error must contain '$keyword' so future contributors see the " +
-                    "ordering rule; got message: '$message'",
-            )
-        }
-        assertTrue(
-            "unknownKey" in message,
-            "Error must echo the offending key name so the callsite is traceable; got: '$message'",
+        val exception = runCatching { dict.resolve("unknownKey", seed) }.exceptionOrNull()
+        val message = exception?.message.orEmpty()
+        val requiredKeywords = listOf("TASK ORDER VIOLATION", "Correct sequence", "DO NOT bypass", "unknownKey")
+        assertEquals(
+            expected = UnknownKeyFailureSnapshot(
+                type = IllegalStateException::class.simpleName,
+                missingKeywords = emptyList(),
+            ),
+            actual = UnknownKeyFailureSnapshot(
+                type = exception?.let { it::class.simpleName },
+                missingKeywords = requiredKeywords.filterNot { keyword -> keyword in message },
+            ),
+            message = "Unknown-placeholder error must contain ordering guidance and the offending key; got: '$message'",
         )
     }
 
@@ -182,14 +184,18 @@ class DrugPlaceholderDictionaryTest {
                 diseases = emptyList(),
             )
         val seed = stableHash(id = "drug_0001", slot = 0, index = 0)
-        val exception =
-            assertFailsWith<IllegalStateException> {
-                dict.resolve("disease", seed)
-            }
-        val message = exception.message.orEmpty()
-        assertTrue(
-            "Drug must be generated after Disease" in message,
-            "Empty disease fixture list error must mention generation-order rule; got: '$message'",
+        val exception = runCatching { dict.resolve("disease", seed) }.exceptionOrNull()
+        assertEquals(
+            expected = DiseaseFixtureOrderFailureSnapshot(
+                type = IllegalStateException::class.simpleName,
+                mentionsGenerationOrderRule = true,
+            ),
+            actual = DiseaseFixtureOrderFailureSnapshot(
+                type = exception?.let { it::class.simpleName },
+                mentionsGenerationOrderRule =
+                exception?.message.orEmpty().contains("Drug must be generated after Disease"),
+            ),
+            message = "Empty disease fixture list error must mention generation-order rule",
         )
     }
 
@@ -198,16 +204,50 @@ class DrugPlaceholderDictionaryTest {
         val dict = buildDict()
         val seed = stableHash(id = "drug_0002", slot = 0, index = 0)
         val value = dict.resolve("targetMolecule", seed)
-        assertTrue(
-            value.isNotBlank(),
-            "resolve('targetMolecule', $seed) returned blank; must return katakana + suffix",
-        )
-        assertTrue(
-            TargetMoleculeSuffixes.all.any { value.endsWith(it) },
-            "resolve('targetMolecule', $seed) = '$value' must end with one of " +
-                "${TargetMoleculeSuffixes.all} (target-molecule classification noun)",
+        assertEquals(
+            expected = TargetMoleculeSnapshot(isNotBlank = true, hasRegisteredSuffix = true),
+            actual = TargetMoleculeSnapshot(
+                isNotBlank = value.isNotBlank(),
+                hasRegisteredSuffix = TargetMoleculeSuffixes.all.any { value.endsWith(it) },
+            ),
+            message = "resolve('targetMolecule', $seed) must return katakana + suffix; got: '$value'",
         )
     }
+
+    private data class CoinedNameSnapshot(
+        val isNotBlank: Boolean,
+        val containsKatakana: Boolean,
+    )
+
+    private data class ResolveAllSnapshot(
+        val hasRawDelimiter: Boolean,
+        val preservesLiteralText: Boolean,
+    )
+
+    private data class RepeatedPlaceholderSnapshot(
+        val segmentCount: Int,
+        val hasVariation: Boolean,
+    )
+
+    private data class RenderedFieldSnapshot(
+        val isNotBlank: Boolean,
+        val hasRawDelimiter: Boolean,
+    )
+
+    private data class TargetMoleculeSnapshot(
+        val isNotBlank: Boolean,
+        val hasRegisteredSuffix: Boolean,
+    )
+
+    private data class UnknownKeyFailureSnapshot(
+        val type: String?,
+        val missingKeywords: List<String>,
+    )
+
+    private data class DiseaseFixtureOrderFailureSnapshot(
+        val type: String?,
+        val mentionsGenerationOrderRule: Boolean,
+    )
 
     private fun buildDict(): DrugPlaceholderDictionary =
         DrugPlaceholderDictionary(

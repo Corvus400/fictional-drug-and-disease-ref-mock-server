@@ -9,8 +9,6 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.search.DrugSortKey
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.search.SearchDefaults
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertTrue
 
 class DrugListFixturesTest {
     @Test
@@ -86,16 +84,14 @@ class DrugListFixturesTest {
 
         val fixtures = DrugListFixtures(drugs = drugs)
 
-        assertEquals(
-            expected = drugs.size,
-            actual = fixtures.allDrugsById.size,
-            message = "allDrugsById must index every drug once",
-        )
         val firstDrug = drugs.first()
         assertEquals(
-            expected = firstDrug,
-            actual = fixtures.allDrugsById[firstDrug.id],
-            message = "allDrugsById[drug.id] must return the matching Drug",
+            expected = AllDrugsByIdSnapshot(indexedCount = drugs.size, firstDrugMatches = true),
+            actual = AllDrugsByIdSnapshot(
+                indexedCount = fixtures.allDrugsById.size,
+                firstDrugMatches = fixtures.allDrugsById[firstDrug.id] == firstDrug,
+            ),
+            message = "allDrugsById must index every drug and resolve ids to the originating Drug",
         )
     }
 
@@ -105,14 +101,28 @@ class DrugListFixturesTest {
         val corrupted = drugs.first().copy(contraindications = emptyList())
         val withCorrupted = listOf(corrupted) + drugs.drop(n = 1)
 
-        val failure = assertFailsWith<IllegalArgumentException>(
+        val failure = runCatching { DrugListFixtures(drugs = withCorrupted) }.exceptionOrNull()
+        assertEquals(
+            expected = ValidatorFailureSnapshot(
+                type = IllegalArgumentException::class.simpleName,
+                mentionsContraindicationsViolation = true,
+            ),
+            actual = ValidatorFailureSnapshot(
+                type = failure?.let { it::class.simpleName },
+                mentionsContraindicationsViolation =
+                failure?.message?.contains("contraindications size >= 1 required") == true,
+            ),
             message = "init must reject drugs with validator violations at startup",
-        ) {
-            DrugListFixtures(drugs = withCorrupted)
-        }
-        assertTrue(
-            actual = failure.message?.contains("contraindications size >= 1 required") == true,
-            message = "failure message must surface the underlying violation; got ${failure.message}",
         )
     }
+
+    private data class AllDrugsByIdSnapshot(
+        val indexedCount: Int,
+        val firstDrugMatches: Boolean,
+    )
+
+    private data class ValidatorFailureSnapshot(
+        val type: String?,
+        val mentionsContraindicationsViolation: Boolean,
+    )
 }

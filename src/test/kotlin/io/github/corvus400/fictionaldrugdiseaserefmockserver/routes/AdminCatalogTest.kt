@@ -4,14 +4,21 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.routes
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.module
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.testutil.assertAttribute
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.testutil.assertAnyElementTextContains
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.testutil.assertCssClassDefined
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.testutil.assertElementCount
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.testutil.assertElementExists
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.testutil.assertHasAttribute
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.testutil.assertElementCountAndTextContains
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.testutil.assertElementCountAndTextContainsAll
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.testutil.assertElementHasAttributes
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.testutil.assertElementMinimumCountAndFirstTextEquals
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.testutil.assertElementTextContains
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.testutil.assertElementTextEquals
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.testutil.assertElementsAttributeValues
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.testutil.assertElementsExist
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.testutil.assertElementsTextEquals
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.testutil.assertJsContains
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.testutil.assertJsFunctionDefined
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.testutil.assertNoElement
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.testutil.assertNoElements
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.testutil.assertUsedCssClassesAreDefined
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.testutil.parseHtml
 import io.ktor.client.request.get
@@ -56,14 +63,7 @@ class AdminCatalogTest {
         val html = client.get("/__admin/catalog").bodyAsText()
         val doc = parseHtml(html)
 
-        doc.assertElementExists(
-            "#main-api .tag-section",
-            "Should have at least one tag section in API view",
-        )
-        doc.assertElementExists(
-            "#main-api .endpoint",
-            "Should have at least one endpoint card in API view",
-        )
+        doc.assertElementsExist(listOf("#main-api .tag-section", "#main-api .endpoint"))
     }
 
     @Test
@@ -73,9 +73,7 @@ class AdminCatalogTest {
         val html = client.get("/__admin/catalog").bodyAsText()
         val doc = parseHtml(html)
 
-        doc.assertElementExists(".scenario-table", "Should have scenario tables")
-        doc.assertElementExists(".sc-name", "Should have scenario names")
-        doc.assertElementExists(".sc-title", "Should have scenario titles")
+        doc.assertElementsExist(listOf(".scenario-table", ".sc-name", ".sc-title"))
     }
 
     @Test
@@ -95,19 +93,7 @@ class AdminCatalogTest {
         val html = client.get("/__admin/catalog").bodyAsText()
         val doc = parseHtml(html)
 
-        val filterBtns = doc.select(".filter-btn")
-        doc.assertElementExists(".filter-btn", "Should have filter buttons (All + tags)")
-        assertTrue(
-            filterBtns.size > 1,
-            "Should have filter buttons (All + tags)"
-        )
-
-        val allBtn = filterBtns.first()
-        assertEquals(
-            "All",
-            allBtn?.text(),
-            "the first catalog filter button must be the All filter",
-        )
+        doc.assertElementMinimumCountAndFirstTextEquals(".filter-btn", minimumCount = 2, expectedFirstText = "All")
     }
 
     @Test
@@ -129,11 +115,7 @@ class AdminCatalogTest {
         val html = client.get("/__admin/catalog").bodyAsText()
         val doc = parseHtml(html)
 
-        val title = doc.assertElementExists("title").text()
-        assertTrue(
-            title.contains("対応画面・シナリオ・Fixture概要カタログ"),
-            "Title should contain 対応画面・シナリオ・Fixture概要カタログ",
-        )
+        doc.assertElementTextContains("title", "対応画面・シナリオ・Fixture概要カタログ")
     }
 
     @Test
@@ -143,12 +125,7 @@ class AdminCatalogTest {
         val html = client.get("/__admin/catalog").bodyAsText()
         val doc = parseHtml(html)
 
-        val h1 = doc.assertElementExists("h1").text()
-        assertEquals(
-            "対応画面・シナリオ・Fixture概要カタログ",
-            h1,
-            "H1 should be 対応画面・シナリオ・Fixture概要カタログ",
-        )
+        doc.assertElementTextEquals("h1", "対応画面・シナリオ・Fixture概要カタログ")
     }
 
     @Test
@@ -158,12 +135,7 @@ class AdminCatalogTest {
         val html = client.get("/__admin/catalog").bodyAsText()
         val doc = parseHtml(html)
 
-        doc.assertElementCount(".catalog-overview", 1)
-        val overview = doc.assertElementExists(".catalog-overview")
-        assertTrue(
-            overview.text().contains("Swagger UI"),
-            "Overview should mention Swagger UI",
-        )
+        doc.assertElementCountAndTextContains(".catalog-overview", expectedCount = 1, expectedText = "Swagger UI")
     }
 
     @Test
@@ -173,19 +145,10 @@ class AdminCatalogTest {
         val html = client.get("/__admin/catalog").bodyAsText()
         val doc = parseHtml(html)
 
-        val banner = doc.assertElementExists(".disclaimer-banner")
-        assertEquals(
-            expected = DisclaimerBannerSnapshot(
-                count = 1,
-                mentionsFictionalData = true,
-                mentionsJapaneseFictionalData = true,
-            ),
-            actual = DisclaimerBannerSnapshot(
-                count = doc.select(".disclaimer-banner").size,
-                mentionsFictionalData = banner.text().contains("FICTIONAL DATA"),
-                mentionsJapaneseFictionalData = banner.text().contains("架空データ"),
-            ),
-            message = "contract assertion failed",
+        doc.assertElementCountAndTextContainsAll(
+            ".disclaimer-banner",
+            expectedCount = 1,
+            expectedTexts = listOf("FICTIONAL DATA", "架空データ"),
         )
     }
 
@@ -196,12 +159,7 @@ class AdminCatalogTest {
         val html = client.get("/__admin/catalog").bodyAsText()
         val doc = parseHtml(html)
 
-        val headers = doc.select(".scenario-table th")
-        val headerTexts = headers.map { it.text() }
-        assertTrue(
-            headerTexts.contains("Fixture Description"),
-            "Should have 'Fixture Description' column header, got: $headerTexts",
-        )
+        doc.assertAnyElementTextContains(".scenario-table th", "Fixture Description")
     }
 
     @Test
@@ -211,14 +169,7 @@ class AdminCatalogTest {
         val html = client.get("/__admin/catalog").bodyAsText()
         val doc = parseHtml(html)
 
-        assertEquals(
-            expected = ViewButtonsSnapshot(count = 2, labels = listOf("画面別", "API別")),
-            actual = ViewButtonsSnapshot(
-                count = doc.select(".view-btn").size,
-                labels = doc.select(".view-btn").map { it.text() },
-            ),
-            message = "contract assertion failed",
-        )
+        doc.assertElementsTextEquals(".view-btn", listOf("画面別", "API別"))
     }
 
     @Test
@@ -253,17 +204,6 @@ class AdminCatalogTest {
             .assertJsFunctionDefined("applyFilters")
     }
 
-    private data class DisclaimerBannerSnapshot(
-        val count: Int,
-        val mentionsFictionalData: Boolean,
-        val mentionsJapaneseFictionalData: Boolean,
-    )
-
-    private data class ViewButtonsSnapshot(
-        val count: Int,
-        val labels: List<String>,
-    )
-
     @Test
     fun `catalog JS wires search input event listener`() = testApplication {
         application { module() }
@@ -276,20 +216,16 @@ class AdminCatalogTest {
     fun `catalog search input has accessibility attributes`() = testApplication {
         application { module() }
 
-        val searchInput = parseHtml(client.get("/__admin/catalog").bodyAsText())
-            .assertElementExists("#search")
-        searchInput.assertHasAttribute("aria-label")
-        searchInput.assertHasAttribute("autocomplete")
+        parseHtml(client.get("/__admin/catalog").bodyAsText())
+            .assertElementHasAttributes("#search", listOf("aria-label", "autocomplete"))
     }
 
     @Test
     fun `catalog view toggle buttons have correct data-view values`() = testApplication {
         application { module() }
 
-        val viewBtns = parseHtml(client.get("/__admin/catalog").bodyAsText())
-            .select(".view-btn")
-        viewBtns[0].assertAttribute("data-view", "screen")
-        viewBtns[1].assertAttribute("data-view", "api")
+        parseHtml(client.get("/__admin/catalog").bodyAsText())
+            .assertElementsAttributeValues(".view-btn", "data-view", listOf("screen", "api"))
     }
 
     @Test
@@ -297,8 +233,7 @@ class AdminCatalogTest {
         application { module() }
 
         val doc = parseHtml(client.get("/__admin/catalog").bodyAsText())
-        doc.assertNoElement("[data-tag='ADMIN']")
-        doc.assertNoElement("[data-tag='SYSTEM']")
+        doc.assertNoElements(listOf("[data-tag='ADMIN']", "[data-tag='SYSTEM']"))
     }
 
     @Test

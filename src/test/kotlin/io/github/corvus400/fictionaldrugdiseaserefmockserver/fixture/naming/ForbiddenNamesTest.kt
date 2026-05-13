@@ -1,6 +1,7 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming
 
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -22,13 +23,12 @@ class ForbiddenNamesTest {
 
     @Test
     fun `containsClassSuffix rejects drug class suffixes`() {
-        assertTrue(
-            ForbiddenNames.containsClassSuffix("ロサスタチン"),
-            "containsClassSuffix must reject names ending with a drug class suffix",
-        )
-        assertFalse(
-            ForbiddenNames.containsClassSuffix("カイクン"),
-            "containsClassSuffix must allow fiction names without a drug class suffix",
+        assertEquals(
+            expected = ClassSuffixSnapshot(rejectsDrugClassSuffix = true, allowsFictionName = true),
+            actual = ClassSuffixSnapshot(
+                rejectsDrugClassSuffix = ForbiddenNames.containsClassSuffix("ロサスタチン"),
+                allowsFictionName = ForbiddenNames.containsClassSuffix("カイクン").not(),
+            ),
         )
     }
 
@@ -36,4 +36,9 @@ class ForbiddenNamesTest {
     fun `all set contains at least 60 entries (30 PMDA plus 30 ICD-10)`() {
         assertTrue(ForbiddenNames.all.size >= 60)
     }
+
+    private data class ClassSuffixSnapshot(
+        val rejectsDrugClassSuffix: Boolean,
+        val allowsFictionName: Boolean,
+    )
 }
