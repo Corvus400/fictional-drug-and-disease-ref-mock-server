@@ -30,20 +30,28 @@ fun Application.configureDependencies() {
     // DiseasePlaceholderDictionary 経由で Disease 自身の name を注入する (Issue #215)。
     val adapter = FixmergeNameAdapter()
     val diseasePlaceholderDictionary = DiseasePlaceholderDictionary()
-    val diseases =
+    val diseaseBlueprints = DiseaseBlueprintFactory.build()
+    val initialDiseases =
         DiseaseGenerator(adapter = adapter, placeholderDictionary = diseasePlaceholderDictionary)
-            .generate(blueprints = DiseaseBlueprintFactory.build())
-    val diseaseListFixtures = DiseaseListFixtures(diseases = diseases)
-    val diseaseDetailFixtures = DiseaseDetailFixtures(diseases = diseases)
+            .generate(blueprints = diseaseBlueprints)
     val placeholderDictionary =
-        DrugPlaceholderDictionary(nameAdapter = adapter, diseases = diseases)
+        DrugPlaceholderDictionary(nameAdapter = adapter, diseases = initialDiseases)
     val drugs =
         DrugGenerator(
             adapter = adapter,
             placeholderDictionary = placeholderDictionary,
-            diseases = diseases,
+            diseases = initialDiseases,
         )
             .generate(blueprints = DrugBlueprintFactory.build())
+    val diseases =
+        DiseaseGenerator(
+            adapter = adapter,
+            placeholderDictionary = diseasePlaceholderDictionary,
+            drugs = drugs,
+        )
+            .generate(blueprints = diseaseBlueprints)
+    val diseaseListFixtures = DiseaseListFixtures(diseases = diseases)
+    val diseaseDetailFixtures = DiseaseDetailFixtures(diseases = diseases)
     val drugListFixtures = DrugListFixtures(drugs = drugs)
     val drugDetailFixtures = DrugDetailFixtures(drugs = drugs)
     val categoriesFixture = CategoriesFixture(drugs = drugs)

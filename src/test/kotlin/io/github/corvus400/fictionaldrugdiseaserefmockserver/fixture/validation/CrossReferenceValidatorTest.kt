@@ -18,8 +18,7 @@ import kotlin.test.assertEquals
 class CrossReferenceValidatorTest {
     @Test
     fun `validate returns no violations for the full 120 drugs and 80 diseases fixture`() {
-        val diseases = generateAllDiseases()
-        val drugs = generateAllDrugs(diseases = diseases)
+        val (diseases, drugs) = generateAllFixtures()
 
         val violations =
             CrossReferenceValidator.validate(
@@ -35,8 +34,7 @@ class CrossReferenceValidatorTest {
 
     @Test
     fun `validate detects disease-to-drug dangling reference`() {
-        val diseases = generateAllDiseases()
-        val drugs = generateAllDrugs(diseases = diseases)
+        val (diseases, drugs) = generateAllFixtures()
         val danglingDisease = diseases.first().copy(relatedDrugIds = listOf(DANGLING_DRUG_ID))
         val diseasesWithDangling = listOf(danglingDisease) + diseases.drop(1)
 
@@ -61,8 +59,7 @@ class CrossReferenceValidatorTest {
 
     @Test
     fun `validate detects disease-to-disease dangling reference`() {
-        val diseases = generateAllDiseases()
-        val drugs = generateAllDrugs(diseases = diseases)
+        val (diseases, drugs) = generateAllFixtures()
         val danglingDisease = diseases.first().copy(relatedDiseaseIds = listOf(DANGLING_DISEASE_ID))
         val diseasesWithDangling = listOf(danglingDisease) + diseases.drop(1)
 
@@ -87,8 +84,7 @@ class CrossReferenceValidatorTest {
 
     @Test
     fun `validate detects drug-to-disease dangling reference`() {
-        val diseases = generateAllDiseases()
-        val drugs = generateAllDrugs(diseases = diseases)
+        val (diseases, drugs) = generateAllFixtures()
         val danglingDrug = drugs.first().copy(relatedDiseaseIds = listOf(DANGLING_DISEASE_ID))
         val drugsWithDangling = listOf(danglingDrug) + drugs.drop(1)
 
@@ -113,8 +109,7 @@ class CrossReferenceValidatorTest {
 
     @Test
     fun `validate detects CHAPTER_V disease without a psychotropic related drug`() {
-        val diseases = generateAllDiseases()
-        val drugs = generateAllDrugs(diseases = diseases)
+        val (diseases, drugs) = generateAllFixtures()
         val nonPsychotropicDrug = drugs.first { drug ->
             drug.regulatoryClass.none { regulatoryClass ->
                 regulatoryClass in PSYCHOTROPIC_CLASSES
@@ -148,8 +143,7 @@ class CrossReferenceValidatorTest {
 
     @Test
     fun `validate detects CHAPTER_XV disease referencing pregnancy-contraindicated drug`() {
-        val diseases = generateAllDiseases()
-        val drugs = generateAllDrugs(diseases = diseases)
+        val (diseases, drugs) = generateAllFixtures()
         val pregnancyContraindicatedDrug = drugs.first { drug ->
             drug.precautionsForSpecificPopulations.any { precaution ->
                 precaution.category == PrecautionPopulationCategory.PREGNANT
@@ -192,28 +186,34 @@ class CrossReferenceValidatorTest {
                 RegulatoryClass.PSYCHOTROPIC_3,
             )
 
-        fun generateAllDiseases(): List<Disease> {
+        fun generateAllFixtures(): Pair<List<Disease>, List<Drug>> {
             val adapter = FixmergeNameAdapter()
-            val generator =
+            val diseaseBlueprints = DiseaseBlueprintFactory.build()
+            val diseaseGenerator =
                 DiseaseGenerator(
                     adapter = adapter,
                     placeholderDictionary = DiseasePlaceholderDictionary(),
                 )
-            return generator.generate(blueprints = DiseaseBlueprintFactory.build())
-        }
-
-        fun generateAllDrugs(diseases: List<Disease>): List<Drug> {
-            val adapter = FixmergeNameAdapter()
-            val generator =
+            val initialDiseases = diseaseGenerator.generate(blueprints = diseaseBlueprints)
+            val drugGenerator =
                 DrugGenerator(
                     adapter = adapter,
                     placeholderDictionary =
                     DrugPlaceholderDictionary(
                         nameAdapter = adapter,
-                        diseases = diseases,
+                        diseases = initialDiseases,
                     ),
+                    diseases = initialDiseases,
                 )
-            return generator.generate(blueprints = DrugBlueprintFactory.build())
+            val drugs = drugGenerator.generate(blueprints = DrugBlueprintFactory.build())
+            val diseases =
+                DiseaseGenerator(
+                    adapter = adapter,
+                    placeholderDictionary = DiseasePlaceholderDictionary(),
+                    drugs = drugs,
+                )
+                    .generate(blueprints = diseaseBlueprints)
+            return diseases to drugs
         }
     }
 }
