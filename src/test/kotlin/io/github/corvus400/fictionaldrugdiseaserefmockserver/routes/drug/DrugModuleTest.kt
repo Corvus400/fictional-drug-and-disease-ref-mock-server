@@ -150,16 +150,11 @@ class DrugModuleTest {
 
             val response = client.get("/v1/drugs?sort=brand_name_kana&page_size=100")
 
-            assertEquals(
-                expected = HttpStatusCode.OK,
-                actual = response.status,
-                message = "sort=brand_name_kana must return HTTP 200",
-            )
             val body = AppJson.decodeFromString<DrugListResponse>(response.bodyAsText())
             val kanas = body.items.map { summary -> summary.brandNameKana }
             assertEquals(
-                expected = kanas.sorted(),
-                actual = kanas,
+                expected = SortSnapshot(status = HttpStatusCode.OK, ordered = true),
+                actual = SortSnapshot(status = response.status, ordered = kanas == kanas.sorted()),
                 message = "sort=brand_name_kana must order items by brandNameKana ascending",
             )
         }
@@ -206,6 +201,11 @@ class DrugModuleTest {
     private data class ErrorStatusSnapshot(
         val status: HttpStatusCode,
         val code: String,
+    )
+
+    private data class SortSnapshot(
+        val status: HttpStatusCode,
+        val ordered: Boolean,
     )
 
     private companion object {

@@ -21,7 +21,6 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 private val SEVEN_TOP_LEVEL_KEYS: List<String> = listOf(
@@ -104,26 +103,55 @@ class CategoriesModuleTest {
     @Test
     fun `GET categories atc 0 has keys code, label (not a bare string)`() = categoriesEndpointTest { response ->
         val body = json.decodeFromString<JsonObject>(response.bodyAsText())
-        val atcArray = body["atc"]?.jsonArray
-        assertNotNull(atcArray, "GET /categories must expose .atc as a JSON array")
-        val first = atcArray[0].jsonObject
-        val code = first["code"]?.jsonPrimitive
-        assertNotNull(
-            actual = code,
-            message = "GET /categories .atc[0] must contain a string `code` property " +
-                "(must not be a bare string element)",
+        val first = body["atc"]?.jsonArray?.firstOrNull()?.jsonObject
+        val code = first?.get(key = "code")?.jsonPrimitive
+        val label = first?.get(key = "label")?.jsonPrimitive
+        assertEquals(
+            expected = AtcEntryShapeSnapshot(
+                hasAtcEntry = true,
+                codeIsString = true,
+                labelIsString = true,
+            ),
+            actual = AtcEntryShapeSnapshot(
+                hasAtcEntry = first != null,
+                codeIsString = code?.isString == true,
+                labelIsString = label?.isString == true,
+            ),
+            message = "GET /categories .atc[0] must be an object with string code and label",
         )
-        assertTrue(
-            actual = code.isString,
+    }
+
+    @Test
+    fun `GET categories atc first entry exposes only code and label`() = categoriesEndpointTest { response ->
+        val body = json.decodeFromString<JsonObject>(response.bodyAsText())
+        val first = body.getValue(key = "atc").jsonArray.first().jsonObject
+        assertEquals(
+            expected = setOf("code", "label"),
+            actual = first.keys,
+            message = "GET /categories .atc[0] must expose exactly code and label",
+        )
+    }
+
+    @Test
+    fun `GET categories atc first entry code is a JSON string`() = categoriesEndpointTest { response ->
+        val body = json.decodeFromString<JsonObject>(response.bodyAsText())
+        val first = body.getValue(key = "atc").jsonArray.first().jsonObject
+        val code = first["code"]?.jsonPrimitive
+        assertEquals(
+            expected = true,
+            actual = code?.isString,
             message = "GET /categories .atc[0].code must be a JSON string, not a number/bool",
         )
+    }
+
+    @Test
+    fun `GET categories atc first entry label is a JSON string`() = categoriesEndpointTest { response ->
+        val body = json.decodeFromString<JsonObject>(response.bodyAsText())
+        val first = body.getValue(key = "atc").jsonArray.first().jsonObject
         val label = first["label"]?.jsonPrimitive
-        assertNotNull(
-            actual = label,
-            message = "GET /categories .atc[0] must contain a string `label` property",
-        )
-        assertTrue(
-            actual = label.isString,
+        assertEquals(
+            expected = true,
+            actual = label?.isString,
             message = "GET /categories .atc[0].label must be a JSON string, not a number/bool",
         )
     }
@@ -131,19 +159,19 @@ class CategoriesModuleTest {
     @Test
     fun `GET categories atc has 14 entries covering A to V`() = categoriesEndpointTest { response ->
         val body = json.decodeFromString<JsonObject>(response.bodyAsText())
-        val atcArray = body["atc"]?.jsonArray
-        assertNotNull(atcArray, "GET /categories must expose .atc as a JSON array")
+        val atcArray = body.getValue(key = "atc").jsonArray
         val codes = atcArray.map { element -> element.jsonObject.getValue(key = "code").jsonPrimitive.content }
         assertEquals(
-            expected = setOf("A", "B", "C", "D", "G", "H", "J", "L", "M", "N", "P", "R", "S", "V"),
-            actual = codes.toSet(),
+            expected = AtcCoverageSnapshot(
+                codes = setOf("A", "B", "C", "D", "G", "H", "J", "L", "M", "N", "P", "R", "S", "V"),
+                size = 14,
+            ),
+            actual = AtcCoverageSnapshot(
+                codes = codes.toSet(),
+                size = codes.size,
+            ),
             message = "GET /categories .atc must cover all 14 ATC first-letter anatomical groups " +
                 "(A,B,C,D,G,H,J,L,M,N,P,R,S,V)",
-        )
-        assertEquals(
-            expected = 14,
-            actual = codes.size,
-            message = "GET /categories .atc must contain exactly 14 entries (no duplicates, no extras)",
         )
     }
 
@@ -207,16 +235,13 @@ class CategoriesModuleTest {
             for (key in enumDerivedKeys) {
                 val firstElement = body.getValue(key = key).jsonArray.first()
                 val asString = firstElement.jsonPrimitive.contentOrNull
-                assertNotNull(
-                    actual = asString,
-                    message = "GET /categories .$key[0] must be a JSON string (e.g. \"oral\"), " +
-                        "not a labeled-entry object {value,label}; was: $firstElement",
+                val violations = listOfNotNull(
+                    "GET /categories .$key[0] must be a JSON string content; was: $firstElement"
+                        .takeUnless { asString != null },
+                    "GET /categories .$key[0] must be a JSON string primitive; was: $firstElement"
+                        .takeUnless { firstElement.jsonPrimitive.isString },
                 )
-                assertTrue(
-                    actual = firstElement.jsonPrimitive.isString,
-                    message = "GET /categories .$key[0] must be a JSON string primitive, " +
-                        "not a number/bool/object; was: $firstElement",
-                )
+                assertTrue(actual = violations.isEmpty(), message = violations.joinToString())
             }
         }
 
@@ -351,15 +376,16 @@ class CategoriesModuleTest {
             contentType(type = ContentType.Application.Json)
             setBody(body = """{"state":"empty"}""")
         }
-        assertEquals(
-            expected = HttpStatusCode.OK,
-            actual = adminResponse.status,
-            message = "sanity: Admin override POST itself must succeed before evaluating /categories invariance",
-        )
         val after = client.get(urlString = "/v1/categories").bodyAsText()
         assertEquals(
-            expected = before,
-            actual = after,
+            expected = AdminCategoriesInvarianceSnapshot(
+                adminStatus = HttpStatusCode.OK,
+                categoriesBodyUnchanged = true,
+            ),
+            actual = AdminCategoriesInvarianceSnapshot(
+                adminStatus = adminResponse.status,
+                categoriesBodyUnchanged = before == after,
+            ),
             message = "/v1/categories must return a body bit-identical to the pre-override response after " +
                 "POST /__admin/configs/drugList {state:empty}; /categories must not depend on drug list scenario",
         )
@@ -380,4 +406,20 @@ class CategoriesModuleTest {
         val response = client.get("/v1/categories")
         block(response)
     }
+
+    private data class AtcEntryShapeSnapshot(
+        val hasAtcEntry: Boolean,
+        val codeIsString: Boolean,
+        val labelIsString: Boolean,
+    )
+
+    private data class AtcCoverageSnapshot(
+        val codes: Set<String>,
+        val size: Int,
+    )
+
+    private data class AdminCategoriesInvarianceSnapshot(
+        val adminStatus: HttpStatusCode,
+        val categoriesBodyUnchanged: Boolean,
+    )
 }

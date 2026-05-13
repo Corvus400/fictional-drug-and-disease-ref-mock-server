@@ -10,7 +10,6 @@ import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 
 class DiseaseListFixturesSummaryTest {
     @Test
@@ -24,35 +23,34 @@ class DiseaseListFixturesSummaryTest {
         val response = fixtures.getByScenario(scenario = "default")
 
         val envelope = Json.parseToJsonElement(AppJson.encodeToString(response)).jsonObject
-        val items = envelope["items"]?.jsonArray
-        assertNotNull(
-            items,
-            "envelope must expose items array"
-        )
-        val firstItem = items.firstOrNull()?.jsonObject
-        assertNotNull(
-            firstItem,
-            "default scenario must have at least one item"
-        )
-
+        val firstItem = envelope["items"]?.jsonArray?.firstOrNull()?.jsonObject
         assertEquals(
-            expected = 8,
-            actual = firstItem.size,
-            message = "items[0] must expose exactly 8 fields (DiseaseSummary shape), got keys=${firstItem.keys}",
-        )
-        assertEquals(
-            expected = setOf(
-                "id",
-                "name",
-                "icd10_chapter",
-                "medical_department",
-                "chronicity",
-                "infectious",
-                "name_kana",
-                "revised_at",
+            expected = SummaryShapeSnapshot(
+                hasFirstItem = true,
+                fieldCount = 8,
+                keys = setOf(
+                    "id",
+                    "name",
+                    "icd10_chapter",
+                    "medical_department",
+                    "chronicity",
+                    "infectious",
+                    "name_kana",
+                    "revised_at",
+                ),
             ),
-            actual = firstItem.keys,
-            message = "items[0] keys must match DiseaseSummary snake_case shape",
+            actual = SummaryShapeSnapshot(
+                hasFirstItem = firstItem != null,
+                fieldCount = firstItem?.size,
+                keys = firstItem?.keys,
+            ),
+            message = "items[0] must expose exactly 8 fields (DiseaseSummary shape), got keys=${firstItem?.keys}",
         )
     }
+
+    private data class SummaryShapeSnapshot(
+        val hasFirstItem: Boolean,
+        val fieldCount: Int?,
+        val keys: Set<String>?,
+    )
 }

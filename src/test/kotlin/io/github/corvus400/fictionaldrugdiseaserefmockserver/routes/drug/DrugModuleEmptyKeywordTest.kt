@@ -40,11 +40,6 @@ class DrugModuleEmptyKeywordTest {
             contentType(type = ContentType.Application.Json)
             setBody(body = """{"state":"empty"}""")
         }
-        assertEquals(
-            expected = HttpStatusCode.OK,
-            actual = configResponse.status,
-            message = "Admin API must accept drugList empty scenario override",
-        )
 
         val response = client.get(
             urlString = "/v1/drugs?keyword=whatever&keyword_target=both&keyword_match=partial",
@@ -52,8 +47,14 @@ class DrugModuleEmptyKeywordTest {
 
         val body = response.parseBody()
         assertEquals(
-            expected = EmptyEnvelopeSnapshot(status = HttpStatusCode.OK, totalCount = 0, itemsSize = 0),
+            expected = EmptyEnvelopeSnapshot(
+                configStatus = HttpStatusCode.OK,
+                status = HttpStatusCode.OK,
+                totalCount = 0,
+                itemsSize = 0,
+            ),
             actual = EmptyEnvelopeSnapshot(
+                configStatus = configResponse.status,
                 status = response.status,
                 totalCount = body.totalCountOrNull(),
                 itemsSize = body.itemsSizeOrNull(),
@@ -74,6 +75,7 @@ class DrugModuleEmptyKeywordTest {
         this["items"]?.jsonArray?.size
 
     private data class EmptyEnvelopeSnapshot(
+        val configStatus: HttpStatusCode,
         val status: HttpStatusCode,
         val totalCount: Int?,
         val itemsSize: Int?,

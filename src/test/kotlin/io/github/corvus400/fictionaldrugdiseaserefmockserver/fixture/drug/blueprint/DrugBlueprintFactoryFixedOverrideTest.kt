@@ -4,70 +4,72 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.Do
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
 
 class DrugBlueprintFactoryFixedOverrideTest {
     @Test
     fun `build assigns drug 0080 idOverride to the blueprint at index 80`() {
         val blueprints = DrugBlueprintFactory.build()
-        val target: DrugBlueprint = assertNotNull(
-            actual = blueprints.firstOrNull { it.index == 80 },
-            message = "DrugBlueprintFactory must contain the fixed override target index=80",
-        )
+        val target: DrugBlueprint? = blueprints.firstOrNull { it.index == 80 }
         assertEquals(
-            expected = "drug_0080",
-            actual = target.idOverride,
-            message = "blueprint at index=80 must carry drug_0080 as fixed idOverride",
-        )
-        assertEquals(
-            expected = DosageForm.LIQUID,
-            actual = target.dosageForm,
-            message = "drug_0080 must be assigned LIQUID dosage form",
-        )
-        assertTrue(
-            actual = RegulatoryClass.POISON in target.regulatoryClasses,
-            message = "drug_0080 must keep POISON in regulatoryClasses, " +
-                "got ${target.regulatoryClasses}",
+            expected = FixedOverrideSnapshot(
+                present = true,
+                idOverride = "drug_0080",
+                dosageForm = DosageForm.LIQUID,
+                hasRequiredRegulatoryClass = true,
+            ),
+            actual = FixedOverrideSnapshot(
+                present = target != null,
+                idOverride = target?.idOverride,
+                dosageForm = target?.dosageForm,
+                hasRequiredRegulatoryClass = target?.regulatoryClasses?.contains(RegulatoryClass.POISON) == true,
+            ),
+            message = "blueprint at index=80 must carry the drug_0080 fixed override",
         )
     }
 
     @Test
     fun `build assigns drug 0089 idOverride and fixmerge-coined name to the blueprint at index 89`() {
         val blueprints = DrugBlueprintFactory.build()
-        val target: DrugBlueprint = assertNotNull(
-            actual = blueprints.firstOrNull { it.index == 89 },
-            message = "DrugBlueprintFactory must contain the fixed override target index=89",
-        )
+        val target: DrugBlueprint? = blueprints.firstOrNull { it.index == 89 }
+        val nameOverride: NameOverride? = target?.nameOverride
         assertEquals(
-            expected = "drug_0089",
-            actual = target.idOverride,
-            message = "blueprint at index=89 must carry drug_0089 as fixed idOverride",
-        )
-        assertEquals(
-            expected = DosageForm.LIQUID,
-            actual = target.dosageForm,
-            message = "drug_0089 must be assigned LIQUID dosage form",
-        )
-        assertTrue(
-            actual = RegulatoryClass.PSYCHOTROPIC_1 in target.regulatoryClasses,
-            message = "drug_0089 must keep PSYCHOTROPIC_1 in regulatoryClasses, " +
-                "got ${target.regulatoryClasses}",
-        )
-        val nameOverride: NameOverride = assertNotNull(
-            actual = target.nameOverride,
-            message = "drug_0089 must carry a fixmerge-coined nameOverride",
-        )
-        assertTrue(
-            actual = nameOverride.brandKatakana.isNotBlank(),
-            message = "drug_0089 brandKatakana must be non-blank",
-        )
-        assertNotEquals(
-            illegal = "アリサの睡眠薬",
-            actual = nameOverride.brandKatakana,
-            message = "drug_0089 brandKatakana must be the fixmerge-coined form, " +
-                "not the raw seed token",
+            expected = Drug0089OverrideSnapshot(
+                present = true,
+                idOverride = "drug_0089",
+                dosageForm = DosageForm.LIQUID,
+                hasRequiredRegulatoryClass = true,
+                nameOverridePresent = true,
+                brandKatakanaNonBlank = true,
+                brandKatakanaAvoidsRawSeed = true,
+            ),
+            actual = Drug0089OverrideSnapshot(
+                present = target != null,
+                idOverride = target?.idOverride,
+                dosageForm = target?.dosageForm,
+                hasRequiredRegulatoryClass =
+                target?.regulatoryClasses?.contains(RegulatoryClass.PSYCHOTROPIC_1) == true,
+                nameOverridePresent = nameOverride != null,
+                brandKatakanaNonBlank = !nameOverride?.brandKatakana.isNullOrBlank(),
+                brandKatakanaAvoidsRawSeed = nameOverride?.brandKatakana != "アリサの睡眠薬",
+            ),
+            message = "blueprint at index=89 must carry the drug_0089 fixed override and coined name",
         )
     }
+
+    private data class FixedOverrideSnapshot(
+        val present: Boolean,
+        val idOverride: String?,
+        val dosageForm: DosageForm?,
+        val hasRequiredRegulatoryClass: Boolean,
+    )
+
+    private data class Drug0089OverrideSnapshot(
+        val present: Boolean,
+        val idOverride: String?,
+        val dosageForm: DosageForm?,
+        val hasRequiredRegulatoryClass: Boolean,
+        val nameOverridePresent: Boolean,
+        val brandKatakanaNonBlank: Boolean,
+        val brandKatakanaAvoidsRawSeed: Boolean,
+    )
 }

@@ -11,8 +11,6 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
 
 class DrugModuleTherapeuticCategoryTest {
     private val json = Json { ignoreUnknownKeys = true }
@@ -25,34 +23,18 @@ class DrugModuleTherapeuticCategoryTest {
             val response = client.get("/v1/drugs?therapeutic_category=ALIMENTARY_METABOLISM&page_size=100")
 
             assertEquals(
-                HttpStatusCode.OK,
-                response.status,
-                "therapeutic_category=ALIMENTARY_METABOLISM must return HTTP 200"
+                expected = FilterSnapshot(
+                    status = HttpStatusCode.OK,
+                    totalCountInRange = true,
+                    itemsSizeMatchesTotal = true,
+                    itemViolations = emptyList(),
+                ),
+                actual = filterSnapshot(
+                    response = response,
+                    expectedCategoryName = "消化器系および代謝",
+                ),
+                message = "therapeutic_category=ALIMENTARY_METABOLISM response must be filtered consistently",
             )
-            val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
-            val totalCount = body["total_count"]?.jsonPrimitive?.content?.toInt()
-            assertNotNull(totalCount, "response must include total_count")
-            assertTrue(
-                actual = totalCount in 1 until 120,
-                message = "total_count=$totalCount must be 1..<120 for therapeutic_category=ALIMENTARY_METABOLISM",
-            )
-            val items = body["items"]?.jsonArray
-            assertNotNull(items, "response must include items array")
-            assertEquals(
-                expected = totalCount,
-                actual = items.size,
-                message = "page_size=100 must contain all filtered items",
-            )
-            items.forEach { item ->
-                val id = item.jsonObject["id"]?.jsonPrimitive?.content
-                assertNotNull(id, "item must expose id")
-                val categoryNameValue = item.jsonObject["therapeutic_category_name"]?.jsonPrimitive?.content
-                assertEquals(
-                    expected = "消化器系および代謝",
-                    actual = categoryNameValue,
-                    message = "item id=$id must match therapeutic_category=ALIMENTARY_METABOLISM",
-                )
-            }
         }
 
     @Test
@@ -62,34 +44,18 @@ class DrugModuleTherapeuticCategoryTest {
         val response = client.get("/v1/drugs?therapeutic_category=NERVOUS_SYSTEM&page_size=100")
 
         assertEquals(
-            HttpStatusCode.OK,
-            response.status,
-            "therapeutic_category=NERVOUS_SYSTEM must return HTTP 200"
+            expected = FilterSnapshot(
+                status = HttpStatusCode.OK,
+                totalCountInRange = true,
+                itemsSizeMatchesTotal = true,
+                itemViolations = emptyList(),
+            ),
+            actual = filterSnapshot(
+                response = response,
+                expectedCategoryName = "神経系",
+            ),
+            message = "therapeutic_category=NERVOUS_SYSTEM response must be filtered consistently",
         )
-        val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
-        val totalCount = body["total_count"]?.jsonPrimitive?.content?.toInt()
-        assertNotNull(totalCount, "response must include total_count")
-        assertTrue(
-            actual = totalCount in 1 until 120,
-            message = "total_count=$totalCount must be 1..<120 for therapeutic_category=NERVOUS_SYSTEM",
-        )
-        val items = body["items"]?.jsonArray
-        assertNotNull(items, "response must include items array")
-        assertEquals(
-            expected = totalCount,
-            actual = items.size,
-            message = "page_size=100 must contain all filtered items",
-        )
-        items.forEach { item ->
-            val id = item.jsonObject["id"]?.jsonPrimitive?.content
-            assertNotNull(id, "item must expose id")
-            val categoryNameValue = item.jsonObject["therapeutic_category_name"]?.jsonPrimitive?.content
-            assertEquals(
-                expected = "神経系",
-                actual = categoryNameValue,
-                message = "item id=$id must match therapeutic_category=NERVOUS_SYSTEM",
-            )
-        }
     }
 
     @Test
@@ -99,22 +65,20 @@ class DrugModuleTherapeuticCategoryTest {
 
             val response = client.get("/v1/drugs?therapeutic_category=UNKNOWN_CATEGORY")
 
-            assertEquals(
-                expected = HttpStatusCode.BadRequest,
-                actual = response.status,
-                message = "invalid therapeutic_category must return 400",
-            )
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
             assertEquals(
-                expected = "INVALID_THERAPEUTIC_CATEGORY",
-                actual = body["code"]?.jsonPrimitive?.content,
-                message = "invalid therapeutic_category response must expose INVALID_THERAPEUTIC_CATEGORY",
-            )
-            val message = body["message"]?.jsonPrimitive?.content
-            assertNotNull(message, "ErrorResponse must include message")
-            assertTrue(
-                actual = message.contains(other = "UNKNOWN_CATEGORY"),
-                message = "ErrorResponse message=$message must mention rejected value UNKNOWN_CATEGORY",
+                expected = ErrorSnapshot(
+                    status = HttpStatusCode.BadRequest,
+                    code = "INVALID_THERAPEUTIC_CATEGORY",
+                    messageMentionsUnknownCategory = true,
+                ),
+                actual = ErrorSnapshot(
+                    status = response.status,
+                    code = body["code"]?.jsonPrimitive?.content,
+                    messageMentionsUnknownCategory =
+                    body["message"]?.jsonPrimitive?.content?.contains(other = "UNKNOWN_CATEGORY") == true,
+                ),
+                message = "invalid therapeutic_category response must describe the rejected value",
             )
         }
 
@@ -127,34 +91,18 @@ class DrugModuleTherapeuticCategoryTest {
         )
 
         assertEquals(
-            HttpStatusCode.OK,
-            response.status,
-            "matching therapeutic_category and category_atc filters must return HTTP 200"
+            expected = FilterSnapshot(
+                status = HttpStatusCode.OK,
+                totalCountInRange = true,
+                itemsSizeMatchesTotal = true,
+                itemViolations = emptyList(),
+            ),
+            actual = filterSnapshot(
+                response = response,
+                expectedCategoryName = "消化器系および代謝",
+            ),
+            message = "matching therapeutic_category and category_atc filters must return an intersection",
         )
-        val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
-        val totalCount = body["total_count"]?.jsonPrimitive?.content?.toInt()
-        assertNotNull(totalCount, "response must include total_count")
-        assertTrue(
-            actual = totalCount in 1 until 120,
-            message = "total_count=$totalCount must be 1..<120 for matching therapeutic_category and category_atc",
-        )
-        val items = body["items"]?.jsonArray
-        assertNotNull(items, "response must include items array")
-        assertEquals(
-            expected = totalCount,
-            actual = items.size,
-            message = "page_size=100 must contain all filtered items",
-        )
-        items.forEach { item ->
-            val id = item.jsonObject["id"]?.jsonPrimitive?.content
-            assertNotNull(id, "item must expose id")
-            val categoryNameValue = item.jsonObject["therapeutic_category_name"]?.jsonPrimitive?.content
-            assertEquals(
-                expected = "消化器系および代謝",
-                actual = categoryNameValue,
-                message = "item id=$id must satisfy therapeutic_category=ALIMENTARY_METABOLISM",
-            )
-        }
     }
 
     @Test
@@ -166,22 +114,9 @@ class DrugModuleTherapeuticCategoryTest {
         )
 
         assertEquals(
-            HttpStatusCode.OK,
-            response.status,
-            "conflicting therapeutic_category and category_atc filters must return HTTP 200 with empty results"
-        )
-        val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
-        assertEquals(
-            expected = 0,
-            actual = body["total_count"]?.jsonPrimitive?.content?.toInt(),
-            message = "conflicting therapeutic_category=ALIMENTARY_METABOLISM and category_atc=N must be empty",
-        )
-        val items = body["items"]?.jsonArray
-        assertNotNull(items, "response must include items array")
-        assertEquals(
-            expected = 0,
-            actual = items.size,
-            message = "items must be empty when therapeutic_category and category_atc conflict",
+            expected = EmptyEnvelopeSnapshot(status = HttpStatusCode.OK, totalCount = 0, itemsSize = 0),
+            actual = emptyEnvelopeSnapshot(response = response),
+            message = "conflicting therapeutic_category and category_atc filters must return an empty envelope",
         )
     }
 
@@ -192,22 +127,88 @@ class DrugModuleTherapeuticCategoryTest {
         val deprecatedResponse = client.get("/v1/drugs?category_name=消化器系および代謝&page=1")
         val unfilteredResponse = client.get("/v1/drugs?page=1")
 
-        assertEquals(
-            HttpStatusCode.OK,
-            deprecatedResponse.status,
-            "category_name query must be accepted and ignored with HTTP 200"
-        )
-        assertEquals(
-            HttpStatusCode.OK,
-            unfilteredResponse.status,
-            "unfiltered /v1/drugs baseline request must return HTTP 200"
-        )
         val deprecatedBody = json.parseToJsonElement(string = deprecatedResponse.bodyAsText()).jsonObject
         val unfilteredBody = json.parseToJsonElement(string = unfilteredResponse.bodyAsText()).jsonObject
         assertEquals(
-            expected = unfilteredBody["total_count"]?.jsonPrimitive?.content?.toInt(),
-            actual = deprecatedBody["total_count"]?.jsonPrimitive?.content?.toInt(),
+            expected = IgnoredCategoryNameSnapshot(
+                deprecatedStatus = HttpStatusCode.OK,
+                unfilteredStatus = HttpStatusCode.OK,
+                totalCountsMatch = true,
+            ),
+            actual = IgnoredCategoryNameSnapshot(
+                deprecatedStatus = deprecatedResponse.status,
+                unfilteredStatus = unfilteredResponse.status,
+                totalCountsMatch =
+                deprecatedBody["total_count"]?.jsonPrimitive?.content?.toInt() ==
+                    unfilteredBody["total_count"]?.jsonPrimitive?.content?.toInt(),
+            ),
             message = "category_name must no longer filter /v1/drugs; Ktor should silently ignore it",
         )
+    }
+
+    private suspend fun filterSnapshot(
+        response: io.ktor.client.statement.HttpResponse,
+        expectedCategoryName: String,
+    ): FilterSnapshot {
+        val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
+        val totalCount = body["total_count"]?.jsonPrimitive?.content?.toIntOrNull()
+        val items = body["items"]?.jsonArray
+        val itemViolations = items.orEmpty().mapIndexedNotNull { index, item ->
+            val obj = item.jsonObject
+            val id = obj["id"]?.jsonPrimitive?.content
+            val actualCategoryName = obj["therapeutic_category_name"]?.jsonPrimitive?.content
+            when {
+                id == null -> "items[$index] must expose id"
+                actualCategoryName != expectedCategoryName ->
+                    "item id=$id must have therapeutic_category_name=$expectedCategoryName, got $actualCategoryName"
+                else -> null
+            }
+        }
+        return FilterSnapshot(
+            status = response.status,
+            totalCountInRange = totalCount != null && totalCount in 1 until DEFAULT_DRUG_COUNT,
+            itemsSizeMatchesTotal = items != null && items.size == totalCount,
+            itemViolations = itemViolations,
+        )
+    }
+
+    private suspend fun emptyEnvelopeSnapshot(
+        response: io.ktor.client.statement.HttpResponse,
+    ): EmptyEnvelopeSnapshot {
+        val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
+        return EmptyEnvelopeSnapshot(
+            status = response.status,
+            totalCount = body["total_count"]?.jsonPrimitive?.content?.toIntOrNull(),
+            itemsSize = body["items"]?.jsonArray?.size,
+        )
+    }
+
+    private data class FilterSnapshot(
+        val status: HttpStatusCode,
+        val totalCountInRange: Boolean,
+        val itemsSizeMatchesTotal: Boolean,
+        val itemViolations: List<String>,
+    )
+
+    private data class ErrorSnapshot(
+        val status: HttpStatusCode,
+        val code: String?,
+        val messageMentionsUnknownCategory: Boolean,
+    )
+
+    private data class EmptyEnvelopeSnapshot(
+        val status: HttpStatusCode,
+        val totalCount: Int?,
+        val itemsSize: Int?,
+    )
+
+    private data class IgnoredCategoryNameSnapshot(
+        val deprecatedStatus: HttpStatusCode,
+        val unfilteredStatus: HttpStatusCode,
+        val totalCountsMatch: Boolean,
+    )
+
+    private companion object {
+        const val DEFAULT_DRUG_COUNT = 120
     }
 }

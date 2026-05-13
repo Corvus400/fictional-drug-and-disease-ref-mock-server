@@ -24,11 +24,6 @@ class DrugModuleKeywordTest {
             application { module() }
 
             val sampleBrandName = client.get(urlString = "/v1/drugs/drug_0001").extractBrandName()
-            assertTrue(
-                actual = sampleBrandName.length >= KEYWORD_PREFIX_LENGTH,
-                message = "drug_0001 brand_name must be at least $KEYWORD_PREFIX_LENGTH chars to take prefix " +
-                    "(got=\"$sampleBrandName\")",
-            )
             val keywordPrefix = sampleBrandName.take(n = KEYWORD_PREFIX_LENGTH)
             val encodedKeyword = keywordPrefix.encodeURLParameter()
 
@@ -42,12 +37,14 @@ class DrugModuleKeywordTest {
             val filtered = filteredResponse.totalCount()
             assertEquals(
                 expected = KeywordFilterSnapshot(
+                    brandNameLongEnough = true,
                     totalStatus = HttpStatusCode.OK,
                     filteredStatus = HttpStatusCode.OK,
                     total = DEFAULT_TOTAL_COUNT,
                     filteredIsNonTrivialSubset = true,
                 ),
                 actual = KeywordFilterSnapshot(
+                    brandNameLongEnough = sampleBrandName.length >= KEYWORD_PREFIX_LENGTH,
                     totalStatus = totalResponse.status,
                     filteredStatus = filteredResponse.status,
                     total = total,
@@ -80,6 +77,7 @@ class DrugModuleKeywordTest {
     }
 
     private data class KeywordFilterSnapshot(
+        val brandNameLongEnough: Boolean,
         val totalStatus: HttpStatusCode,
         val filteredStatus: HttpStatusCode,
         val total: Int,
