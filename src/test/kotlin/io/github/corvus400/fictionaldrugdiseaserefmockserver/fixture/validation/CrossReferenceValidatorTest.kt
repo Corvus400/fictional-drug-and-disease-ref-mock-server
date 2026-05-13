@@ -137,7 +137,7 @@ class CrossReferenceValidatorTest {
                     danglingTargetId = "psychotropic_drug",
                 ),
             ),
-            actual = violations,
+            actual = violations.filter { violation -> violation.danglingTargetId == "psychotropic_drug" },
         )
     }
 
@@ -171,13 +171,142 @@ class CrossReferenceValidatorTest {
                     danglingTargetId = pregnancyContraindicatedDrug.id,
                 ),
             ),
-            actual = violations,
+            actual = violations.filter { violation ->
+                violation.targetType == "drug" && violation.danglingTargetId == pregnancyContraindicatedDrug.id
+            },
+        )
+    }
+
+    @Test
+    fun `validate detects ATC-chapter mismatch when L-drug references CHAPTER_I disease`() {
+        val (diseases, drugs) = generateAllFixtures()
+        val chapterOneDisease = diseases.first { disease -> disease.icd10Chapter == Icd10Chapter.CHAPTER_I }
+        val antineoplasticDrug = drugs.first { drug ->
+            drug.atcCode.startsWith(prefix = "L") && drug.id !in FINAL_OVERRIDE_DRUG_IDS
+        }
+        val corruptedDrug = antineoplasticDrug.copy(relatedDiseaseIds = listOf(chapterOneDisease.id))
+        val drugsWithCorruption =
+            drugs.map { drug ->
+                if (drug.id == corruptedDrug.id) corruptedDrug else drug
+            }
+
+        val violations =
+            CrossReferenceValidator.validate(
+                drugs = drugsWithCorruption,
+                diseases = diseases,
+            )
+
+        assertEquals(
+            expected = listOf(
+                CrossRefViolation(
+                    sourceType = "drug",
+                    sourceId = corruptedDrug.id,
+                    targetType = "disease_chapter_mismatch",
+                    danglingTargetId = chapterOneDisease.id,
+                ),
+            ),
+            actual = violations.filter { violation -> violation.targetType == "disease_chapter_mismatch" },
+        )
+    }
+
+    @Test
+    fun `validate detects ATC-chapter mismatch when CHAPTER_I disease references L-drug`() {
+        val (diseases, drugs) = generateAllFixtures()
+        val antineoplasticDrug = drugs.first { drug ->
+            drug.atcCode.startsWith(prefix = "L") && drug.id !in FINAL_OVERRIDE_DRUG_IDS
+        }
+        val chapterOneDisease = diseases.first { disease -> disease.icd10Chapter == Icd10Chapter.CHAPTER_I }
+        val corruptedDisease = chapterOneDisease.copy(relatedDrugIds = listOf(antineoplasticDrug.id))
+        val diseasesWithCorruption =
+            diseases.map { disease ->
+                if (disease.id == corruptedDisease.id) corruptedDisease else disease
+            }
+
+        val violations =
+            CrossReferenceValidator.validate(
+                drugs = drugs,
+                diseases = diseasesWithCorruption,
+            )
+
+        assertEquals(
+            expected = listOf(
+                CrossRefViolation(
+                    sourceType = "disease",
+                    sourceId = corruptedDisease.id,
+                    targetType = "drug_atc_mismatch",
+                    danglingTargetId = antineoplasticDrug.id,
+                ),
+            ),
+            actual = violations.filter { violation -> violation.targetType == "drug_atc_mismatch" },
+        )
+    }
+
+    @Test
+    fun `validate emits both dangling and semantic violations independently`() {
+        val (diseases, drugs) = generateAllFixtures()
+        val chapterOneDisease = diseases.first { disease -> disease.icd10Chapter == Icd10Chapter.CHAPTER_I }
+        val antineoplasticDrug = drugs.first { drug ->
+            drug.atcCode.startsWith(prefix = "L") && drug.id !in FINAL_OVERRIDE_DRUG_IDS
+        }
+        val corruptedDrug =
+            antineoplasticDrug.copy(relatedDiseaseIds = listOf(DANGLING_DISEASE_ID, chapterOneDisease.id))
+        val drugsWithCorruption =
+            drugs.map { drug ->
+                if (drug.id == corruptedDrug.id) corruptedDrug else drug
+            }
+
+        val violations =
+            CrossReferenceValidator.validate(
+                drugs = drugsWithCorruption,
+                diseases = diseases,
+            ).filter { violation -> violation.sourceId == corruptedDrug.id }
+
+        assertEquals(
+            expected = setOf("disease", "disease_chapter_mismatch"),
+            actual = violations.map { violation -> violation.targetType }.toSet(),
+        )
+    }
+
+    @Test
+    fun `validate skips records whose related ids were set by final overrides`() {
+        val (diseases, drugs) = generateAllFixtures()
+
+        val semanticViolations =
+            CrossReferenceValidator.validate(
+                drugs = drugs,
+                diseases = diseases,
+            ).filter { violation ->
+                violation.targetType in ATC_CHAPTER_MISMATCH_TYPES &&
+                    (violation.sourceId == "drug_0080" || violation.sourceId == "disease_0079")
+            }
+
+        assertEquals(
+            expected = emptyList(),
+            actual = semanticViolations,
+        )
+    }
+
+    @Test
+    fun `validate against real fixtures emits no ATC-chapter semantic violations`() {
+        val (diseases, drugs) = generateAllFixtures()
+
+        val semanticViolations =
+            CrossReferenceValidator.validate(
+                drugs = drugs,
+                diseases = diseases,
+            ).filter { violation -> violation.targetType in ATC_CHAPTER_MISMATCH_TYPES }
+
+        assertEquals(
+            expected = emptyList(),
+            actual = semanticViolations,
         )
     }
 
     private companion object {
         const val DANGLING_DISEASE_ID = "disease_9999"
         const val DANGLING_DRUG_ID = "drug_9999"
+        val ATC_CHAPTER_MISMATCH_TYPES: Set<String> = setOf("disease_chapter_mismatch", "drug_atc_mismatch")
+        val FINAL_OVERRIDE_DRUG_IDS: Set<String> = setOf("drug_0080", "drug_0089")
 
         val PSYCHOTROPIC_CLASSES: Set<RegulatoryClass> =
             setOf(

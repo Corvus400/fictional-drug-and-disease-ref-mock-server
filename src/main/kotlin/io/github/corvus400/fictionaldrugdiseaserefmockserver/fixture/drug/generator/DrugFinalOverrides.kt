@@ -40,6 +40,8 @@ internal val DRUG_FINAL_OVERRIDES: Map<String, (Drug) -> Drug> =
         "drug_0089" to ::arisaSleepAidFinalOverride,
     )
 
+internal val DRUG_RELATED_DISEASE_IDS_FINAL_OVERRIDE_IDS: Set<String> = setOf("drug_0080", "drug_0089")
+
 private fun arisaSleepAidFinalOverride(generated: Drug): Drug =
     generated.copy(
         composition =

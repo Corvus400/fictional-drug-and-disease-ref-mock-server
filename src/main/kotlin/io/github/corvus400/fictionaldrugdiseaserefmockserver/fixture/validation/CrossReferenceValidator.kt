@@ -1,10 +1,14 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.validation
 
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.common.AtcIcd10Mapping
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.DISEASE_RELATED_DRUG_IDS_FINAL_OVERRIDE_IDS
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.DRUG_RELATED_DISEASE_IDS_FINAL_OVERRIDE_IDS
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.Drug
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.PrecautionPopulationCategory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.TherapeuticCategory
 
 /**
  * drug↔disease カタログ間の **edge 違反** (存在しない ID への dangling 参照) を表す。
@@ -60,6 +64,12 @@ object CrossReferenceValidator {
             drugs = drugs,
             diseases = diseases,
         ) + collectChapterFifteenWithPregnancyContraindicatedDrug(
+            drugs = drugs,
+            diseases = diseases,
+        ) + collectDrugToDiseaseSemanticMismatch(
+            drugs = drugs,
+            diseases = diseases,
+        ) + collectDiseaseToDrugSemanticMismatch(
             drugs = drugs,
             diseases = diseases,
         )
@@ -145,8 +155,66 @@ object CrossReferenceValidator {
             }
     }
 
+    private fun collectDrugToDiseaseSemanticMismatch(
+        drugs: List<Drug>,
+        diseases: List<Disease>,
+    ): List<CrossRefViolation> {
+        val diseaseById = diseases.associateBy { disease -> disease.id }
+        return drugs
+            .filterNot { drug -> drug.id in DRUG_RELATED_DISEASE_IDS_FINAL_OVERRIDE_IDS }
+            .flatMap { drug ->
+                val category = categoryOf(drug = drug) ?: return@flatMap emptyList()
+                val compatibleChapters = AtcIcd10Mapping.chaptersFor(category = category).toSet()
+                drug.relatedDiseaseIds.mapNotNull { diseaseId ->
+                    val disease = diseaseById[diseaseId] ?: return@mapNotNull null
+                    if (disease.icd10Chapter in compatibleChapters) {
+                        null
+                    } else {
+                        CrossRefViolation(
+                            sourceType = TYPE_DRUG,
+                            sourceId = drug.id,
+                            targetType = TYPE_DISEASE_CHAPTER_MISMATCH,
+                            danglingTargetId = diseaseId,
+                        )
+                    }
+                }
+            }
+    }
+
+    private fun collectDiseaseToDrugSemanticMismatch(
+        drugs: List<Drug>,
+        diseases: List<Disease>,
+    ): List<CrossRefViolation> {
+        val drugById = drugs.associateBy { drug -> drug.id }
+        return diseases
+            .filterNot { disease -> disease.id in DISEASE_RELATED_DRUG_IDS_FINAL_OVERRIDE_IDS }
+            .filter { disease -> AtcIcd10Mapping.categoriesFor(chapter = disease.icd10Chapter).isNotEmpty() }
+            .flatMap { disease ->
+                disease.relatedDrugIds.mapNotNull { drugId ->
+                    val drug = drugById[drugId] ?: return@mapNotNull null
+                    val category = categoryOf(drug = drug) ?: return@mapNotNull null
+                    val compatibleChapters = AtcIcd10Mapping.chaptersFor(category = category)
+                    if (disease.icd10Chapter in compatibleChapters) {
+                        null
+                    } else {
+                        CrossRefViolation(
+                            sourceType = TYPE_DISEASE,
+                            sourceId = disease.id,
+                            targetType = TYPE_DRUG_ATC_MISMATCH,
+                            danglingTargetId = drugId,
+                        )
+                    }
+                }
+            }
+    }
+
+    private fun categoryOf(drug: Drug): TherapeuticCategory? =
+        drug.atcCode.firstOrNull()?.let(TherapeuticCategory::fromAtcInitial)
+
     private const val TYPE_DRUG = "drug"
     private const val TYPE_DISEASE = "disease"
+    private const val TYPE_DISEASE_CHAPTER_MISMATCH = "disease_chapter_mismatch"
+    private const val TYPE_DRUG_ATC_MISMATCH = "drug_atc_mismatch"
     private const val REQUIRED_PSYCHOTROPIC_DRUG = "psychotropic_drug"
 
     private val PSYCHOTROPIC_CLASSES: Set<RegulatoryClass> =
