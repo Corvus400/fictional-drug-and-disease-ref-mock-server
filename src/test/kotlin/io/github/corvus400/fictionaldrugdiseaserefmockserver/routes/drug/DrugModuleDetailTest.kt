@@ -33,12 +33,13 @@ class DrugModuleDetailTest {
 
         val response = client.get("/v1/drugs/drug_0001")
 
-        assertEquals(HttpStatusCode.OK, response.status)
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
         assertEquals(
-            expected = "drug_0001",
-            actual = body["id"]?.jsonPrimitive?.content,
-            message = "GET /v1/drugs/{id} must return the drug fixture matching the path id",
+            expected = DetailIdentitySnapshot(status = HttpStatusCode.OK, id = "drug_0001"),
+            actual = DetailIdentitySnapshot(
+                status = response.status,
+                id = body["id"]?.jsonPrimitive?.content,
+            ),
         )
     }
 
@@ -48,17 +49,14 @@ class DrugModuleDetailTest {
 
         val response = client.get("/v1/drugs/drug_0001")
 
-        assertEquals(HttpStatusCode.OK, response.status)
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
         assertEquals(
-            expected = "drug_0001",
-            actual = body["id"]?.jsonPrimitive?.content,
-            message = "default scenario must return the drug fixture matching the path id",
-        )
-        assertEquals(
-            expected = 39,
-            actual = body.keys.size,
-            message = "default scenario must expose all 39 Drug fields (encodeDefaults=true)",
+            expected = DetailShapeSnapshot(status = HttpStatusCode.OK, id = "drug_0001", fieldCount = 39),
+            actual = DetailShapeSnapshot(
+                status = response.status,
+                id = body["id"]?.jsonPrimitive?.content,
+                fieldCount = body.keys.size,
+            ),
         )
     }
 
@@ -126,21 +124,18 @@ class DrugModuleDetailTest {
 
         val response = client.get("/v1/drugs/drug_9999")
 
-        assertEquals(
-            expected = HttpStatusCode.NotFound,
-            actual = response.status,
-            message = "GET /v1/drugs/drug_9999 must return 404 when the id has no matching fixture",
-        )
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
         assertEquals(
-            expected = "NOT_FOUND",
-            actual = body["code"]?.jsonPrimitive?.content,
-            message = "404 body must be ErrorResponse with code=NOT_FOUND, got keys=${body.keys}",
-        )
-        assertEquals(
-            expected = "Drug not found: drug_9999",
-            actual = body["message"]?.jsonPrimitive?.content,
-            message = "404 body.message must embed the requested id for debuggability",
+            expected = ErrorResponseSnapshot(
+                status = HttpStatusCode.NotFound,
+                code = "NOT_FOUND",
+                message = "Drug not found: drug_9999",
+            ),
+            actual = ErrorResponseSnapshot(
+                status = response.status,
+                code = body["code"]?.jsonPrimitive?.content,
+                message = body["message"]?.jsonPrimitive?.content,
+            ),
         )
     }
 
@@ -161,25 +156,35 @@ class DrugModuleDetailTest {
 
             val response = client.get("/v1/drugs/drug_0001")
 
-            assertEquals(
-                expected = HttpStatusCode.NotFound,
-                actual = response.status,
-                message = "status_code=404 override must flip GET /v1/drugs/drug_0001 to 404 even for an existing id",
-            )
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
             assertEquals(
-                expected = "NOT_FOUND",
-                actual = body["code"]?.jsonPrimitive?.content,
-                message =
-                "404 body must swap to ErrorResponse(code=NOT_FOUND); Drug body leaking through violates the " +
-                    "error contract (#52). got keys=${body.keys}",
-            )
-            assertEquals(
-                expected = "Drug not found: drug_0001",
-                actual = body["message"]?.jsonPrimitive?.content,
-                message =
-                "404 body.message must embed the requested id so clients can distinguish override-driven 404 " +
-                    "from hard id-miss 404 at the message level",
+                expected = ErrorResponseSnapshot(
+                    status = HttpStatusCode.NotFound,
+                    code = "NOT_FOUND",
+                    message = "Drug not found: drug_0001",
+                ),
+                actual = ErrorResponseSnapshot(
+                    status = response.status,
+                    code = body["code"]?.jsonPrimitive?.content,
+                    message = body["message"]?.jsonPrimitive?.content,
+                ),
             )
         }
+
+    private data class DetailIdentitySnapshot(
+        val status: HttpStatusCode,
+        val id: String?,
+    )
+
+    private data class DetailShapeSnapshot(
+        val status: HttpStatusCode,
+        val id: String?,
+        val fieldCount: Int,
+    )
+
+    private data class ErrorResponseSnapshot(
+        val status: HttpStatusCode,
+        val code: String?,
+        val message: String?,
+    )
 }

@@ -17,7 +17,6 @@ import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonPrimitive
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 
 class ScenarioInterceptorTest {
     private val json = Json { ignoreUnknownKeys = true }
@@ -32,31 +31,24 @@ class ScenarioInterceptorTest {
             contentType(ContentType.Application.Json)
             setBody("""{"state": "default"}""")
         }
-        assertEquals(
-            HttpStatusCode.OK,
-            adminResponse.status,
-            "contract assertion failed"
-        )
 
         val response = client.get("/v1/drugs") {
             header("X-Mock-Scenario", "empty")
         }
 
-        assertEquals(
-            HttpStatusCode.OK,
-            response.status,
-            "contract assertion failed"
-        )
         val body = json.decodeFromString<JsonObject>(response.bodyAsText())
         val items = body["items"]?.jsonArray
-        assertNotNull(
-            items,
-            "contract assertion failed"
-        )
         assertEquals(
-            expected = 0,
-            actual = items.size,
-            message = "X-Mock-Scenario=empty が Admin override(default) より優先され items は 0 件",
+            expected = HeaderScenarioSnapshot(
+                adminStatus = HttpStatusCode.OK,
+                responseStatus = HttpStatusCode.OK,
+                itemsSize = 0,
+            ),
+            actual = HeaderScenarioSnapshot(
+                adminStatus = adminResponse.status,
+                responseStatus = response.status,
+                itemsSize = items?.size,
+            ),
         )
 
         client.post("/__admin/reset")
@@ -72,24 +64,21 @@ class ScenarioInterceptorTest {
             contentType(ContentType.Application.Json)
             setBody("""{"state": "empty"}""")
         }
-        assertEquals(
-            HttpStatusCode.OK,
-            adminResponse.status,
-            "contract assertion failed"
-        )
 
         val response = client.get("/v1/drugs")
 
-        assertEquals(
-            HttpStatusCode.OK,
-            response.status,
-            "contract assertion failed"
-        )
         val body = json.decodeFromString<JsonObject>(response.bodyAsText())
         assertEquals(
-            expected = 0,
-            actual = body["total_count"]?.jsonPrimitive?.int,
-            message = "ヘッダなしリクエストは Admin override(empty) を採用し total_count=0",
+            expected = AdminScenarioSnapshot(
+                adminStatus = HttpStatusCode.OK,
+                responseStatus = HttpStatusCode.OK,
+                totalCount = 0,
+            ),
+            actual = AdminScenarioSnapshot(
+                adminStatus = adminResponse.status,
+                responseStatus = response.status,
+                totalCount = body["total_count"]?.jsonPrimitive?.int,
+            ),
         )
 
         client.post("/__admin/reset")
@@ -103,12 +92,30 @@ class ScenarioInterceptorTest {
 
         val response = client.get("/v1/drugs")
 
-        assertEquals(HttpStatusCode.OK, response.status)
         val body = json.decodeFromString<JsonObject>(response.bodyAsText())
         assertEquals(
-            expected = 120,
-            actual = body["total_count"]?.jsonPrimitive?.int,
-            message = "ヘッダ・Admin override 無しの状態は default シナリオ(total_count=120) にフォールバック",
+            expected = DefaultScenarioSnapshot(responseStatus = HttpStatusCode.OK, totalCount = 120),
+            actual = DefaultScenarioSnapshot(
+                responseStatus = response.status,
+                totalCount = body["total_count"]?.jsonPrimitive?.int,
+            ),
         )
     }
+
+    private data class HeaderScenarioSnapshot(
+        val adminStatus: HttpStatusCode,
+        val responseStatus: HttpStatusCode,
+        val itemsSize: Int?,
+    )
+
+    private data class AdminScenarioSnapshot(
+        val adminStatus: HttpStatusCode,
+        val responseStatus: HttpStatusCode,
+        val totalCount: Int?,
+    )
+
+    private data class DefaultScenarioSnapshot(
+        val responseStatus: HttpStatusCode,
+        val totalCount: Int?,
+    )
 }

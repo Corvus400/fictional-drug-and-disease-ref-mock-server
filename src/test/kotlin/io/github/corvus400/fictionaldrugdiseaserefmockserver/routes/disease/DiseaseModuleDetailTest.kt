@@ -25,12 +25,13 @@ class DiseaseModuleDetailTest {
 
         val response = client.get(urlString = "/v1/diseases/disease_0001")
 
-        assertEquals(HttpStatusCode.OK, response.status)
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
         assertEquals(
-            expected = "disease_0001",
-            actual = body["id"]?.jsonPrimitive?.content,
-            message = "GET /v1/diseases/{id} must return the disease fixture matching the path id",
+            expected = DetailIdentitySnapshot(status = HttpStatusCode.OK, id = "disease_0001"),
+            actual = DetailIdentitySnapshot(
+                status = response.status,
+                id = body["id"]?.jsonPrimitive?.content,
+            ),
         )
     }
 
@@ -40,21 +41,14 @@ class DiseaseModuleDetailTest {
 
         val response = client.get(urlString = "/v1/diseases/disease_0001")
 
-        assertEquals(
-            expected = HttpStatusCode.OK,
-            actual = response.status,
-            message = "GET /v1/diseases/disease_0001 must return 200 OK",
-        )
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
         assertEquals(
-            expected = "disease_0001",
-            actual = body["id"]?.jsonPrimitive?.content,
-            message = "GET /v1/diseases/disease_0001 body[id] must equal disease_0001",
-        )
-        assertEquals(
-            expected = 25,
-            actual = body.size,
-            message = "Disease detail envelope must expose exactly 25 snake_case fields, got keys=${body.keys}",
+            expected = DetailShapeSnapshot(status = HttpStatusCode.OK, id = "disease_0001", fieldCount = 25),
+            actual = DetailShapeSnapshot(
+                status = response.status,
+                id = body["id"]?.jsonPrimitive?.content,
+                fieldCount = body.size,
+            ),
         )
     }
 
@@ -127,22 +121,18 @@ class DiseaseModuleDetailTest {
 
             val response = client.get(urlString = "/v1/diseases/disease_0001")
 
-            assertEquals(
-                expected = HttpStatusCode.NotFound,
-                actual = response.status,
-                message = "diseaseDetail status_code=404 override must flip GET /v1/diseases/disease_0001 to 404",
-            )
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
             assertEquals(
-                expected = "NOT_FOUND",
-                actual = body["code"]?.jsonPrimitive?.content,
-                message = "status_code=404 override must replace Disease body with ErrorResponse shape, " +
-                    "got keys=${body.keys}",
-            )
-            assertEquals(
-                expected = "Disease not found: disease_0001",
-                actual = body["message"]?.jsonPrimitive?.content,
-                message = "ErrorResponse message must include the requested id even for override-driven 404",
+                expected = ErrorResponseSnapshot(
+                    status = HttpStatusCode.NotFound,
+                    code = "NOT_FOUND",
+                    message = "Disease not found: disease_0001",
+                ),
+                actual = ErrorResponseSnapshot(
+                    status = response.status,
+                    code = body["code"]?.jsonPrimitive?.content,
+                    message = body["message"]?.jsonPrimitive?.content,
+                ),
             )
         }
 
@@ -152,21 +142,35 @@ class DiseaseModuleDetailTest {
 
         val response = client.get(urlString = "/v1/diseases/disease_9999")
 
-        assertEquals(
-            expected = HttpStatusCode.NotFound,
-            actual = response.status,
-            message = "GET /v1/diseases/disease_9999 must return 404 Not Found for an unregistered id",
-        )
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
         assertEquals(
-            expected = "NOT_FOUND",
-            actual = body["code"]?.jsonPrimitive?.content,
-            message = "404 body must be ErrorResponse with code=NOT_FOUND, got keys=${body.keys}",
-        )
-        assertEquals(
-            expected = "Disease not found: disease_9999",
-            actual = body["message"]?.jsonPrimitive?.content,
-            message = "404 body must embed the missing id in the ErrorResponse message",
+            expected = ErrorResponseSnapshot(
+                status = HttpStatusCode.NotFound,
+                code = "NOT_FOUND",
+                message = "Disease not found: disease_9999",
+            ),
+            actual = ErrorResponseSnapshot(
+                status = response.status,
+                code = body["code"]?.jsonPrimitive?.content,
+                message = body["message"]?.jsonPrimitive?.content,
+            ),
         )
     }
+
+    private data class DetailIdentitySnapshot(
+        val status: HttpStatusCode,
+        val id: String?,
+    )
+
+    private data class DetailShapeSnapshot(
+        val status: HttpStatusCode,
+        val id: String?,
+        val fieldCount: Int,
+    )
+
+    private data class ErrorResponseSnapshot(
+        val status: HttpStatusCode,
+        val code: String?,
+        val message: String?,
+    )
 }

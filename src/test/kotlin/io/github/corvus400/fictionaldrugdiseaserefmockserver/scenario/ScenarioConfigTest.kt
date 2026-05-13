@@ -20,14 +20,8 @@ class ScenarioConfigTest {
         application { module() }
         val response = client.get("/__admin/configs")
         assertEquals(
-            HttpStatusCode.OK,
-            response.status,
-            "contract assertion failed"
-        )
-        assertEquals(
-            "{}",
-            response.bodyAsText(),
-            "contract assertion failed"
+            expected = ResponseSnapshot(status = HttpStatusCode.OK, body = "{}"),
+            actual = ResponseSnapshot(status = response.status, body = response.bodyAsText()),
         )
     }
 
@@ -38,25 +32,22 @@ class ScenarioConfigTest {
             contentType(ContentType.Application.Json)
             setBody("""{"state":"ServerError","delay_ms":2000,"status_code":500}""")
         }
-        assertEquals(
-            HttpStatusCode.OK,
-            setResponse.status,
-            "contract assertion failed"
-        )
 
         val getResponse = client.get("/__admin/configs")
         val body = getResponse.bodyAsText()
-        assertTrue(
-            body.contains("ServerError"),
-            "contract assertion failed"
-        )
-        assertTrue(
-            body.contains("2000"),
-            "contract assertion failed"
-        )
-        assertTrue(
-            body.contains("500"),
-            "contract assertion failed"
+        assertEquals(
+            expected = ConfigBodySnapshot(
+                setStatus = HttpStatusCode.OK,
+                containsState = true,
+                containsDelayMs = true,
+                containsStatusCode = true,
+            ),
+            actual = ConfigBodySnapshot(
+                setStatus = setResponse.status,
+                containsState = body.contains("ServerError"),
+                containsDelayMs = body.contains("2000"),
+                containsStatusCode = body.contains("500"),
+            ),
         )
     }
 
@@ -67,25 +58,22 @@ class ScenarioConfigTest {
             contentType(ContentType.Application.Json)
             setBody("""{"state":"Redirect","status_code":302,"headers":{"Location":"/dashboard"}}""")
         }
-        assertEquals(
-            HttpStatusCode.OK,
-            setResponse.status,
-            "contract assertion failed"
-        )
 
         val getResponse = client.get("/__admin/configs")
         val body = getResponse.bodyAsText()
-        assertTrue(
-            body.contains("302"),
-            "contract assertion failed"
-        )
-        assertTrue(
-            body.contains("Location"),
-            "contract assertion failed"
-        )
-        assertTrue(
-            body.contains("/dashboard"),
-            "contract assertion failed"
+        assertEquals(
+            expected = RedirectConfigSnapshot(
+                setStatus = HttpStatusCode.OK,
+                containsStatusCode = true,
+                containsLocationHeader = true,
+                containsLocationValue = true,
+            ),
+            actual = RedirectConfigSnapshot(
+                setStatus = setResponse.status,
+                containsStatusCode = body.contains("302"),
+                containsLocationHeader = body.contains("Location"),
+                containsLocationValue = body.contains("/dashboard"),
+            ),
         )
     }
 
@@ -100,18 +88,12 @@ class ScenarioConfigTest {
 
         // リセット
         val resetResponse = client.post("/__admin/reset")
-        assertEquals(
-            HttpStatusCode.OK,
-            resetResponse.status,
-            "contract assertion failed"
-        )
 
         // 空になっていることを確認
         val getResponse = client.get("/__admin/configs")
         assertEquals(
-            "{}",
-            getResponse.bodyAsText(),
-            "contract assertion failed"
+            expected = ResponseSnapshot(status = HttpStatusCode.OK, body = "{}"),
+            actual = ResponseSnapshot(status = resetResponse.status, body = getResponse.bodyAsText()),
         )
     }
 
@@ -125,30 +107,25 @@ class ScenarioConfigTest {
             contentType(ContentType.Application.Json)
             setBody("""{"state":"empty"}""")
         }
-        assertEquals(
-            HttpStatusCode.OK,
-            setResponse.status,
-            "contract assertion failed"
-        )
 
         val afterSet = client.get("/__admin/configs").bodyAsText()
-        assertTrue(
-            actual = afterSet.contains("drugList") && afterSet.contains("empty"),
-            message = "POST 後の /__admin/configs に drugList=empty が含まれている必要がある: $afterSet",
-        )
-
         val resetResponse = client.post("/__admin/reset")
-        assertEquals(
-            HttpStatusCode.OK,
-            resetResponse.status,
-            "contract assertion failed"
-        )
-
         val afterReset = client.get("/__admin/configs").bodyAsText()
         assertEquals(
-            expected = "{}",
-            actual = afterReset,
-            message = "reset 後の /__admin/configs は空オブジェクトに戻る必要がある",
+            expected = ConfigSetAndResetSnapshot(
+                setStatus = HttpStatusCode.OK,
+                afterSetContainsKey = true,
+                afterSetContainsState = true,
+                resetStatus = HttpStatusCode.OK,
+                afterResetBody = "{}",
+            ),
+            actual = ConfigSetAndResetSnapshot(
+                setStatus = setResponse.status,
+                afterSetContainsKey = afterSet.contains("drugList"),
+                afterSetContainsState = afterSet.contains("empty"),
+                resetStatus = resetResponse.status,
+                afterResetBody = afterReset,
+            ),
         )
     }
 
@@ -171,4 +148,31 @@ class ScenarioConfigTest {
 
         client.post("/__admin/reset")
     }
+
+    private data class ResponseSnapshot(
+        val status: HttpStatusCode,
+        val body: String,
+    )
+
+    private data class ConfigBodySnapshot(
+        val setStatus: HttpStatusCode,
+        val containsState: Boolean,
+        val containsDelayMs: Boolean,
+        val containsStatusCode: Boolean,
+    )
+
+    private data class RedirectConfigSnapshot(
+        val setStatus: HttpStatusCode,
+        val containsStatusCode: Boolean,
+        val containsLocationHeader: Boolean,
+        val containsLocationValue: Boolean,
+    )
+
+    private data class ConfigSetAndResetSnapshot(
+        val setStatus: HttpStatusCode,
+        val afterSetContainsKey: Boolean,
+        val afterSetContainsState: Boolean,
+        val resetStatus: HttpStatusCode,
+        val afterResetBody: String,
+    )
 }

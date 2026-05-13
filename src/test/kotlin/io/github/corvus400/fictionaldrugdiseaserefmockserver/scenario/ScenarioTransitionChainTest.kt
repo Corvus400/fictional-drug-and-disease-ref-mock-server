@@ -2,7 +2,6 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.scenario
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class ScenarioTransitionChainTest {
@@ -22,14 +21,8 @@ class ScenarioTransitionChainTest {
         )
         val advanced = chain.advance()
         assertEquals(
-            "second",
-            advanced.currentScenario,
-            "contract assertion failed"
-        )
-        assertEquals(
-            1,
-            advanced.currentIndex,
-            "contract assertion failed"
+            expected = TransitionSnapshot(currentScenario = "second", currentIndex = 1),
+            actual = advanced.snapshot(),
         )
     }
 
@@ -40,14 +33,8 @@ class ScenarioTransitionChainTest {
         )
         val advanced = chain.advance().advance()
         assertEquals(
-            "third",
-            advanced.currentScenario,
-            "contract assertion failed"
-        )
-        assertEquals(
-            2,
-            advanced.currentIndex,
-            "contract assertion failed"
+            expected = TransitionSnapshot(currentScenario = "third", currentIndex = 2),
+            actual = advanced.snapshot(),
         )
     }
 
@@ -58,14 +45,8 @@ class ScenarioTransitionChainTest {
         )
         val advanced = chain.advance().advance().advance()
         assertEquals(
-            "second",
-            advanced.currentScenario,
-            "contract assertion failed"
-        )
-        assertEquals(
-            1,
-            advanced.currentIndex,
-            "contract assertion failed"
+            expected = TransitionSnapshot(currentScenario = "second", currentIndex = 1),
+            actual = advanced.snapshot(),
         )
     }
 
@@ -74,14 +55,7 @@ class ScenarioTransitionChainTest {
         val chain = ScenarioTransitionChain(
             scenarios = listOf("first", "second", "third"),
         )
-        assertFalse(
-            chain.isAtEnd,
-            "contract assertion failed"
-        )
-        assertFalse(
-            chain.advance().isAtEnd,
-            "contract assertion failed"
-        )
+        assertEquals(listOf(false, false), listOf(chain.isAtEnd, chain.advance().isAtEnd))
     }
 
     @Test
@@ -98,25 +72,13 @@ class ScenarioTransitionChainTest {
         val chain = ScenarioTransitionChain(
             scenarios = listOf("only"),
         )
-        assertEquals(
-            "only",
-            chain.currentScenario,
-            "contract assertion failed"
-        )
-        assertTrue(
-            chain.isAtEnd,
-            "contract assertion failed"
-        )
-
         val advanced = chain.advance()
         assertEquals(
-            "only",
-            advanced.currentScenario,
-            "contract assertion failed"
-        )
-        assertTrue(
-            advanced.isAtEnd,
-            "contract assertion failed"
+            expected = listOf(
+                TransitionAtEndSnapshot(currentScenario = "only", isAtEnd = true),
+                TransitionAtEndSnapshot(currentScenario = "only", isAtEnd = true),
+            ),
+            actual = listOf(chain.atEndSnapshot(), advanced.atEndSnapshot()),
         )
     }
 
@@ -127,24 +89,27 @@ class ScenarioTransitionChainTest {
         )
         val advanced = chain.advance()
         assertEquals(
-            "first",
-            chain.currentScenario,
-            "contract assertion failed"
-        )
-        assertEquals(
-            0,
-            chain.currentIndex,
-            "contract assertion failed"
-        )
-        assertEquals(
-            "second",
-            advanced.currentScenario,
-            "contract assertion failed"
-        )
-        assertEquals(
-            1,
-            advanced.currentIndex,
-            "contract assertion failed"
+            expected = listOf(
+                TransitionSnapshot(currentScenario = "first", currentIndex = 0),
+                TransitionSnapshot(currentScenario = "second", currentIndex = 1),
+            ),
+            actual = listOf(chain.snapshot(), advanced.snapshot()),
         )
     }
+
+    private fun ScenarioTransitionChain.snapshot(): TransitionSnapshot =
+        TransitionSnapshot(currentScenario = currentScenario, currentIndex = currentIndex)
+
+    private fun ScenarioTransitionChain.atEndSnapshot(): TransitionAtEndSnapshot =
+        TransitionAtEndSnapshot(currentScenario = currentScenario, isAtEnd = isAtEnd)
+
+    private data class TransitionSnapshot(
+        val currentScenario: String,
+        val currentIndex: Int,
+    )
+
+    private data class TransitionAtEndSnapshot(
+        val currentScenario: String,
+        val isAtEnd: Boolean,
+    )
 }
