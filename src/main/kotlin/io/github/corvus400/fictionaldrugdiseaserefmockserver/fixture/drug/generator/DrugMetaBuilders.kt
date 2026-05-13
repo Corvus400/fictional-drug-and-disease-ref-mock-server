@@ -2,6 +2,9 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.gener
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.common.AtcIcd10Mapping
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.common.ValueRangeGenerator
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.BucketSeedCoiner
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.JournalSeedBuckets
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixmerge.nameslot.NameSlot
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.stableHash
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DosageForm
@@ -126,9 +129,16 @@ internal object DrugMetaBuilders {
         val countSeed = stableHash(id = id, slot = DrugFieldSlot.REFERENCE.ordinal, index = 0)
         val count = ValueRangeGenerator.pickCount(seed = countSeed, range = REFERENCE_RANGE)
         return (0 until count).map { offset ->
+            val journal =
+                BucketSeedCoiner.coin(
+                    bucket = JournalSeedBuckets.all,
+                    seed = stableHash(id = id, slot = DrugFieldSlot.REFERENCE.ordinal, index = offset + 1),
+                    slot = NameSlot.DRUG_JOURNAL,
+                    offset = offset,
+                )
             Reference(
-                citation = "架空文献 ${offset + 1}. サンプル誌, 12, 345-348.",
-                source = "サンプル誌",
+                citation = "$journal ${offset + 1}. $journal, 12, 345-348. (架空)",
+                source = journal,
             )
         }
     }

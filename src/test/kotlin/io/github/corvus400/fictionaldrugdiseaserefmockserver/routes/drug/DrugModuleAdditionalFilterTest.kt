@@ -1,5 +1,12 @@
 package io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.drug
 
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.blueprint.DiseaseBlueprintFactory
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.DiseaseGenerator
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.DiseasePlaceholderDictionary
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.blueprint.DrugBlueprintFactory
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.DrugGenerator
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.DrugPlaceholderDictionary
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.FixmergeNameAdapter
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.module
 import io.ktor.client.request.get
 import io.ktor.client.request.post
@@ -13,6 +20,8 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -39,7 +48,8 @@ class DrugModuleAdditionalFilterTest {
 
             assertTrue(
                 actual = totalCount in 1 until DEFAULT_DRUG_COUNT,
-                message = "total_count=$totalCount must be 1..<120 for adverse_reaction_keyword=重篤な副作用 2",
+                message = "total_count=$totalCount must be 1..<120 for adverse_reaction_keyword=" +
+                    adverseReactionKeyword,
             )
         }
 
@@ -52,7 +62,7 @@ class DrugModuleAdditionalFilterTest {
 
             assertTrue(
                 actual = itemsSize > 0,
-                message = "filtered items must be non-empty for adverse_reaction_keyword=重篤な副作用 2",
+                message = "filtered items must be non-empty for adverse_reaction_keyword=$adverseReactionKeyword",
             )
         }
 
@@ -304,15 +314,34 @@ class DrugModuleAdditionalFilterTest {
             ?: error("response must include items array")
 
     private fun adverseReactionKeywordUrl(): String =
-        "/v1/drugs?adverse_reaction_keyword=$ADVERSE_REACTION_KEYWORD&page_size=100"
+        "/v1/drugs?adverse_reaction_keyword=$encodedAdverseReactionKeyword&page_size=100"
 
     private fun andFilterUrl(): String =
-        "/v1/drugs?adverse_reaction_keyword=$ADVERSE_REACTION_KEYWORD&precaution_category=PREGNANT&page_size=100"
+        "/v1/drugs?adverse_reaction_keyword=$encodedAdverseReactionKeyword&precaution_category=PREGNANT&page_size=100"
+
+    private val adverseReactionKeyword: String by lazy {
+        val adapter = FixmergeNameAdapter()
+        val diseases =
+            DiseaseGenerator(
+                adapter = adapter,
+                placeholderDictionary = DiseasePlaceholderDictionary(),
+            ).generate(blueprints = DiseaseBlueprintFactory.build())
+        DrugGenerator(
+            adapter = adapter,
+            placeholderDictionary = DrugPlaceholderDictionary(nameAdapter = adapter, diseases = diseases),
+            diseases = diseases,
+        ).generate(blueprints = DrugBlueprintFactory.build())
+            .first { drug -> drug.adverseReactions.serious.size >= 2 }
+            .adverseReactions
+            .serious[1]
+            .name
+    }
+
+    private val encodedAdverseReactionKeyword: String by lazy {
+        URLEncoder.encode(adverseReactionKeyword, StandardCharsets.UTF_8)
+    }
 
     private companion object {
-        // 「重篤な副作用 2」は serious[].name に count=2 の医薬品のみが保持する文字列。
-        private const val ADVERSE_REACTION_KEYWORD =
-            "%E9%87%8D%E7%AF%A4%E3%81%AA%E5%89%AF%E4%BD%9C%E7%94%A8%202"
         private const val DEFAULT_DRUG_COUNT = 120
         private const val PREGNANT_PRECAUTION_URL = "/v1/drugs?precaution_category=PREGNANT&page_size=100"
         private const val PREGNANT_OR_GERIATRIC_URL =

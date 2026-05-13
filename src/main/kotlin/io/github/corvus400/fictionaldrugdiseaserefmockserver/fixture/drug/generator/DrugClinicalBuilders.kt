@@ -256,7 +256,11 @@ internal object DrugClinicalBuilders {
         }
     }
 
-    fun buildInteractions(id: String, dict: DrugPlaceholderDictionary): InteractionInfo {
+    fun buildInteractions(
+        id: String,
+        dict: DrugPlaceholderDictionary,
+        atcInitial: Char = DEFAULT_ATC_INITIAL,
+    ): InteractionInfo {
         val prohibitedSeed =
             stableHash(id = id, slot = DrugFieldSlot.INTERACTION_PROHIBITED.ordinal, index = 0)
         val cautionSeed =
@@ -265,7 +269,13 @@ internal object DrugClinicalBuilders {
             combinationProhibited =
             listOf(
                 InteractionEntry(
-                    displayName = "他の $DRUG_CATEGORY_PLACEHOLDER",
+                    displayName =
+                    "他の " +
+                        DrugClinicalBucketCoiner.coinedDrugCategory(
+                            atcInitial = atcInitial,
+                            seed = prohibitedSeed,
+                            offset = 0,
+                        ),
                     clinicalSymptom =
                     dict.renderField(
                         field = ParagraphField.INTERACTION_SYMPTOM,
@@ -281,7 +291,12 @@ internal object DrugClinicalBuilders {
             combinationCaution =
             listOf(
                 InteractionEntry(
-                    displayName = "$DRUG_CATEGORY_PLACEHOLDER 系薬剤",
+                    displayName =
+                    DrugClinicalBucketCoiner.coinedDrugCategory(
+                        atcInitial = atcInitial,
+                        seed = cautionSeed,
+                        offset = 1,
+                    ) + " 系薬剤",
                     clinicalSymptom =
                     dict.renderField(
                         field = ParagraphField.INTERACTION_SYMPTOM,
@@ -297,7 +312,11 @@ internal object DrugClinicalBuilders {
         )
     }
 
-    fun buildAdverseReactions(id: String, dict: DrugPlaceholderDictionary): AdverseReactionInfo {
+    fun buildAdverseReactions(
+        id: String,
+        dict: DrugPlaceholderDictionary,
+        atcInitial: Char = DEFAULT_ATC_INITIAL,
+    ): AdverseReactionInfo {
         val seriousCountSeed =
             stableHash(id = id, slot = DrugFieldSlot.ADVERSE_SERIOUS.ordinal, index = 0)
         val seriousCount =
@@ -317,7 +336,12 @@ internal object DrugClinicalBuilders {
                         index = offset + 1,
                     )
                 AdverseReaction(
-                    name = "重篤な副作用 ${offset + 1}",
+                    name =
+                    DrugClinicalBucketCoiner.coinedSeriousAdverseReaction(
+                        atcInitial = atcInitial,
+                        seed = nameSeed,
+                        offset = offset,
+                    ),
                     frequency =
                     ValueRangeGenerator.pickOne(
                         seed = freqSeed,
@@ -344,10 +368,26 @@ internal object DrugClinicalBuilders {
             serious = serious,
             other =
             AdverseReactionByFrequency(
-                over5Percent = listOf("頭痛", "めまい"),
-                between1And5Percent = listOf("悪心", "下痢"),
-                under1Percent = listOf("発疹"),
-                frequencyUnknown = listOf("倦怠感"),
+                over5Percent = DrugClinicalBucketCoiner.coinedAdverseReactionByFrequency(
+                    id = id,
+                    atcInitial = atcInitial,
+                    frequency = FrequencyBand.OVER_5_PERCENT,
+                ),
+                between1And5Percent = DrugClinicalBucketCoiner.coinedAdverseReactionByFrequency(
+                    id = id,
+                    atcInitial = atcInitial,
+                    frequency = FrequencyBand.BETWEEN_1_AND_5_PERCENT,
+                ),
+                under1Percent = DrugClinicalBucketCoiner.coinedAdverseReactionByFrequency(
+                    id = id,
+                    atcInitial = atcInitial,
+                    frequency = FrequencyBand.UNDER_1_PERCENT,
+                ),
+                frequencyUnknown = DrugClinicalBucketCoiner.coinedAdverseReactionByFrequency(
+                    id = id,
+                    atcInitial = atcInitial,
+                    frequency = FrequencyBand.UNKNOWN,
+                ),
             ),
         )
     }
@@ -445,5 +485,5 @@ internal object DrugClinicalBuilders {
     private const val PEDIATRIC_MAX_MONTHS: Int = 144
     private const val RENAL_SEVERITY_PICK_INDEX: Int = 100
     private const val HEPATIC_SEVERITY_PICK_INDEX: Int = 100
-    private const val DRUG_CATEGORY_PLACEHOLDER: String = "サンプル系薬"
+    private const val DEFAULT_ATC_INITIAL: Char = 'V'
 }

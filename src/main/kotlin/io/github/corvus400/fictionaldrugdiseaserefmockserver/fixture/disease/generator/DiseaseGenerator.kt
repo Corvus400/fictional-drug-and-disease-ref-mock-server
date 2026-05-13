@@ -126,6 +126,7 @@ class DiseaseGenerator(
             severityGrading = if (blueprint.icd10Chapter in CHAPTERS_REQUIRING_SEVERITY_GRADING) {
                 DiseaseNestedBuilders.buildSeverityGrading(
                     id = diseaseId,
+                    chapter = blueprint.icd10Chapter,
                     dict = contextualDictionary,
                     context = context,
                 )

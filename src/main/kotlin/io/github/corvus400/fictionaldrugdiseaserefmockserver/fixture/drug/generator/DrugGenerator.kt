@@ -177,9 +177,17 @@ class DrugGenerator(
                 dict = contextualDictionary,
             ),
             interactions =
-            DrugClinicalBuilders.buildInteractions(id = drugId, dict = contextualDictionary),
+            DrugClinicalBuilders.buildInteractions(
+                id = drugId,
+                dict = contextualDictionary,
+                atcInitial = blueprint.atcFirstLetter,
+            ),
             adverseReactions =
-            DrugClinicalBuilders.buildAdverseReactions(id = drugId, dict = contextualDictionary),
+            DrugClinicalBuilders.buildAdverseReactions(
+                id = drugId,
+                dict = contextualDictionary,
+                atcInitial = blueprint.atcFirstLetter,
+            ),
             effectsOnLabTests =
             DrugClinicalBuilders.buildEffectsOnLabTests(id = drugId, dict = contextualDictionary),
             overdose = DrugClinicalBuilders.buildOverdose(id = drugId, dict = contextualDictionary),
