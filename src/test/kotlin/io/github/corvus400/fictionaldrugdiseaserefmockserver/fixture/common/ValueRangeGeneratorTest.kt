@@ -42,12 +42,19 @@ class ValueRangeGeneratorTest {
     }
 
     @Test
-    fun `pickOne is deterministic and returns an element of the candidate list`() {
+    fun `pickOne is deterministic for identical seed and candidates`() {
         val candidates = listOf("x", "y", "z")
         val seed = stableHash("drug_0007", slot = 2, index = 0)
         val first = ValueRangeGenerator.pickOne(seed, candidates)
         val second = ValueRangeGenerator.pickOne(seed, candidates)
-        assertEquals(first, second)
+        assertEquals(first, second, "pickOne must return the same candidate for the same seed")
+    }
+
+    @Test
+    fun `pickOne returns an element of the candidate list`() {
+        val candidates = listOf("x", "y", "z")
+        val seed = stableHash("drug_0007", slot = 2, index = 0)
+        val first = ValueRangeGenerator.pickOne(seed, candidates)
         assertTrue(
             first in candidates,
             "pickOne returned '$first' which is not in $candidates",

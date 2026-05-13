@@ -24,13 +24,13 @@ class StatusPagesIntegrationTest {
         assertEquals(
             HttpStatusCode.NotFound,
             response.status,
-            "contract assertion failed"
+            "unknown route must return 404 before validating the error payload",
         )
         val body = json.parseToJsonElement(response.bodyAsText()).jsonObject
         assertEquals(
             Disclaimer.SHORT,
             body["disclaimer"]?.jsonPrimitive?.content,
-            "contract assertion failed"
+            "unknown route error response must include the short disclaimer",
         )
     }
 }

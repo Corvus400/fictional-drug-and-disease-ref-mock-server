@@ -26,7 +26,11 @@ class DiseaseModuleSortTest {
 
         val response = client.get("/v1/diseases?sort=name_kana&page_size=100")
 
-        assertEquals(expected = HttpStatusCode.OK, actual = response.status)
+        assertEquals(
+            expected = HttpStatusCode.OK,
+            actual = response.status,
+            message = "sort=name_kana must return HTTP 200",
+        )
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
         val items = body["items"]?.jsonArray
         assertNotNull(actual = items, message = "response body must have an items array")
@@ -45,7 +49,11 @@ class DiseaseModuleSortTest {
 
             val response = client.get("/v1/diseases?sort=icd10_chapter&page_size=100")
 
-            assertEquals(expected = HttpStatusCode.OK, actual = response.status)
+            assertEquals(
+                expected = HttpStatusCode.OK,
+                actual = response.status,
+                message = "sort=icd10_chapter must return HTTP 200",
+            )
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
             val items = body["items"]?.jsonArray
             assertNotNull(actual = items, message = "response body must have an items array")
@@ -78,7 +86,11 @@ class DiseaseModuleSortTest {
             message = "unknown sort key must surface as 400 BadRequest, got ${response.status}",
         )
         val error = json.decodeFromString<ErrorResponse>(string = response.bodyAsText())
-        assertEquals(expected = "INVALID_SORT_KEY", actual = error.code)
+        assertEquals(
+            expected = "INVALID_SORT_KEY",
+            actual = error.code,
+            message = "invalid disease sort key must expose INVALID_SORT_KEY",
+        )
     }
 
     @Test
@@ -92,20 +104,20 @@ class DiseaseModuleSortTest {
         assertEquals(
             expected = HttpStatusCode.OK,
             actual = response.status,
-            "contract assertion failed"
+            "empty scenario with sort=name_kana must return HTTP 200",
         )
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
         val totalCount = body["total_count"]?.jsonPrimitive?.content?.toIntOrNull()
         assertEquals(
             expected = 0,
             actual = totalCount,
-            "contract assertion failed"
+            "empty scenario with sort=name_kana must report total_count=0",
         )
         val items = body["items"]?.jsonArray
         assertNotNull(actual = items, message = "response body must have an items array")
         assertTrue(
             actual = items.isEmpty(),
-            "contract assertion failed"
+            "empty scenario with sort=name_kana must return an empty items array",
         )
     }
 }

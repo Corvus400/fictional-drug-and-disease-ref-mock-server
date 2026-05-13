@@ -10,13 +10,13 @@ class ApiTagTest {
         listOf(ApiTag.DRUG, ApiTag.DISEASE, ApiTag.CATEGORIES).forEach { apiTag ->
             assertTrue(
                 apiTag.description.contains("(架空データ)"),
-                "contract assertion failed"
+                "${apiTag.name} description must be marked as fictional medical data",
             )
         }
         listOf(ApiTag.ADMIN, ApiTag.SYSTEM).forEach { apiTag ->
             assertFalse(
                 apiTag.description.contains("(架空データ)"),
-                "contract assertion failed"
+                "${apiTag.name} description must not be marked as fictional medical data",
             )
         }
     }

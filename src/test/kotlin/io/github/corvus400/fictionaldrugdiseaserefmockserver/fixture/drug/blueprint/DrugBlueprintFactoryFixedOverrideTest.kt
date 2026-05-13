@@ -12,7 +12,10 @@ class DrugBlueprintFactoryFixedOverrideTest {
     @Test
     fun `build assigns drug 0080 idOverride to the blueprint at index 80`() {
         val blueprints = DrugBlueprintFactory.build()
-        val target: DrugBlueprint = assertNotNull(blueprints.firstOrNull { it.index == 80 })
+        val target: DrugBlueprint = assertNotNull(
+            actual = blueprints.firstOrNull { it.index == 80 },
+            message = "DrugBlueprintFactory must contain the fixed override target index=80",
+        )
         assertEquals(
             expected = "drug_0080",
             actual = target.idOverride,
@@ -33,7 +36,10 @@ class DrugBlueprintFactoryFixedOverrideTest {
     @Test
     fun `build assigns drug 0089 idOverride and fixmerge-coined name to the blueprint at index 89`() {
         val blueprints = DrugBlueprintFactory.build()
-        val target: DrugBlueprint = assertNotNull(blueprints.firstOrNull { it.index == 89 })
+        val target: DrugBlueprint = assertNotNull(
+            actual = blueprints.firstOrNull { it.index == 89 },
+            message = "DrugBlueprintFactory must contain the fixed override target index=89",
+        )
         assertEquals(
             expected = "drug_0089",
             actual = target.idOverride,
