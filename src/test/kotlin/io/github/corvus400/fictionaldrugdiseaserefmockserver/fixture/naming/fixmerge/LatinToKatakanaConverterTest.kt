@@ -2,6 +2,7 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fix
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixmerge.surface.LatinToKatakanaConverter
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class LatinToKatakanaConverterTest {
@@ -17,18 +18,20 @@ class LatinToKatakanaConverterTest {
         val converter = LatinToKatakanaConverter.load()
         val first = converter.convert(input = "WAirTell")
         val second = converter.convert(input = "WAirTell")
-        assertTrue(
-            first.isNotBlank(),
-            "first conversion result must be non-blank before determinism comparison",
-        )
-        assertTrue(
-            second.isNotBlank(),
-            "second conversion result must be non-blank before determinism comparison",
-        )
-        kotlin.test.assertEquals(
-            expected = first,
-            actual = second,
+        assertEquals(
+            expected = ConversionSnapshot(firstIsNotBlank = true, secondIsNotBlank = true, sameResult = true),
+            actual = ConversionSnapshot(
+                firstIsNotBlank = first.isNotBlank(),
+                secondIsNotBlank = second.isNotBlank(),
+                sameResult = first == second,
+            ),
             "LatinToKatakanaConverter must return the same katakana for the same input",
         )
     }
+
+    private data class ConversionSnapshot(
+        val firstIsNotBlank: Boolean,
+        val secondIsNotBlank: Boolean,
+        val sameResult: Boolean,
+    )
 }

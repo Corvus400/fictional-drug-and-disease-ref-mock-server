@@ -11,7 +11,6 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.PrevalenceUnit
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class DiseaseEnumCoverageTest {
@@ -50,16 +49,27 @@ class DiseaseEnumCoverageTest {
     @Test
     fun `CHAPTER_XV 妊娠分娩は sexRatio が女性優位 maleRatio 0 femaleRatio 1 以上`() {
         val ch15Diseases: List<Disease> = diseases.filter { it.icd10Chapter == Icd10Chapter.CHAPTER_XV }
-        assertTrue(actual = ch15Diseases.isNotEmpty(), message = "CHAPTER_XV の疾患が存在しません")
-        ch15Diseases.forEach { disease ->
-            val sexRatio = disease.epidemiology?.sexRatio
-            assertNotNull(actual = sexRatio, message = "${disease.id}: CHAPTER_XV は sexRatio 非 null 必須")
-            assertEquals(expected = 0, actual = sexRatio.maleRatio, message = "${disease.id}: maleRatio は 0")
-            assertTrue(
-                actual = sexRatio.femaleRatio >= 1,
-                message = "${disease.id}: femaleRatio は 1 以上 (got ${sexRatio.femaleRatio})",
-            )
+
+        val violations = buildList {
+            if (ch15Diseases.isEmpty()) {
+                add("CHAPTER_XV の疾患が存在しません")
+            }
+            ch15Diseases.forEach { disease ->
+                val sexRatio = disease.epidemiology?.sexRatio
+                if (sexRatio == null) {
+                    add("${disease.id}: CHAPTER_XV は sexRatio 非 null 必須")
+                } else {
+                    if (sexRatio.maleRatio != 0) {
+                        add("${disease.id}: maleRatio は 0 (got ${sexRatio.maleRatio})")
+                    }
+                    if (sexRatio.femaleRatio < 1) {
+                        add("${disease.id}: femaleRatio は 1 以上 (got ${sexRatio.femaleRatio})")
+                    }
+                }
+            }
         }
+
+        assertTrue(actual = violations.isEmpty(), message = "CHAPTER_XV sexRatio violations: $violations")
     }
 
     private companion object {

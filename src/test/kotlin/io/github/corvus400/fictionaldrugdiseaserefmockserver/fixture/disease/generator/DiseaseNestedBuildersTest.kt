@@ -4,6 +4,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.gen
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.placeholder.DiseaseRenderContext
 import kotlin.test.Test
 import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class DiseaseNestedBuildersTest {
     private val diseaseId: String = "disease_0000"
@@ -26,18 +27,20 @@ class DiseaseNestedBuildersTest {
             dict = dict,
             context = context,
         )
-        for (grade in info.grades) {
-            assertFalse(
-                DiseasePlaceholderDelimiter.OPEN in grade.criteria ||
-                    DiseasePlaceholderDelimiter.CLOSE in grade.criteria,
-                "grade.criteria leaks placeholder: ${grade.criteria}",
-            )
-            assertFalse(
-                DiseasePlaceholderDelimiter.OPEN in grade.recommendedAction ||
-                    DiseasePlaceholderDelimiter.CLOSE in grade.recommendedAction,
-                "grade.recommendedAction leaks placeholder: ${grade.recommendedAction}",
+        val violations = info.grades.flatMap { grade ->
+            listOfNotNull(
+                "grade.criteria leaks placeholder: ${grade.criteria}".takeIf {
+                    DiseasePlaceholderDelimiter.OPEN in grade.criteria ||
+                        DiseasePlaceholderDelimiter.CLOSE in grade.criteria
+                },
+                "grade.recommendedAction leaks placeholder: ${grade.recommendedAction}".takeIf {
+                    DiseasePlaceholderDelimiter.OPEN in grade.recommendedAction ||
+                        DiseasePlaceholderDelimiter.CLOSE in grade.recommendedAction
+                },
             )
         }
+
+        assertTrue(actual = violations.isEmpty(), message = "severity grading placeholder violations: $violations")
     }
 
     @Test

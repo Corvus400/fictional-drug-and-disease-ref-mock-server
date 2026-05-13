@@ -60,23 +60,26 @@ class DrugFixtureCoverageTest {
         val renalDoses = drugs.flatMap { drug -> drug.dosage.renalAdjustment }
 
         val normalDoses = renalDoses.filter { renalDose -> renalDose.range.severity == RenalSeverity.NORMAL }
-        assertTrue(
-            normalDoses.isNotEmpty(),
-            "NORMAL renal doses must be present"
-        )
-        assertTrue(
-            actual = normalDoses.all { renalDose -> renalDose.range.maxMlPerMin == null },
-            message = "NORMAL renal doses must have no upper CrCl bound",
-        )
-
         val endStageDoses = renalDoses.filter { renalDose -> renalDose.range.severity == RenalSeverity.END_STAGE }
+
+        val violations = buildList {
+            if (normalDoses.isEmpty()) {
+                add("NORMAL renal doses must be present")
+            }
+            if (normalDoses.any { renalDose -> renalDose.range.maxMlPerMin != null }) {
+                add("NORMAL renal doses must have no upper CrCl bound")
+            }
+            if (endStageDoses.isEmpty()) {
+                add("END_STAGE renal doses must be present")
+            }
+            if (endStageDoses.any { renalDose -> renalDose.range.minMlPerMin != null }) {
+                add("END_STAGE renal doses must have no lower CrCl bound")
+            }
+        }
+
         assertTrue(
-            endStageDoses.isNotEmpty(),
-            "END_STAGE renal doses must be present"
-        )
-        assertTrue(
-            actual = endStageDoses.all { renalDose -> renalDose.range.minMlPerMin == null },
-            message = "END_STAGE renal doses must have no lower CrCl bound",
+            actual = violations.isEmpty(),
+            message = "RenalSeverity boundary range violations: $violations",
         )
     }
 
@@ -98,13 +101,17 @@ class DrugFixtureCoverageTest {
 
         val drug87 = drugs.first { drug -> drug.id == "drug_0087" }
 
-        assertTrue(
-            RegulatoryClass.STIMULANT_PRECURSOR in drug87.regulatoryClass,
-            "drug_0087 must include STIMULANT_PRECURSOR",
-        )
-        assertTrue(
-            RegulatoryClass.PRESCRIPTION_REQUIRED in drug87.regulatoryClass,
-            "drug_0087 must keep PRESCRIPTION_REQUIRED alongside STIMULANT_PRECURSOR",
+        assertEquals(
+            expected = mapOf(
+                RegulatoryClass.STIMULANT_PRECURSOR to true,
+                RegulatoryClass.PRESCRIPTION_REQUIRED to true,
+            ),
+            actual = mapOf(
+                RegulatoryClass.STIMULANT_PRECURSOR to (RegulatoryClass.STIMULANT_PRECURSOR in drug87.regulatoryClass),
+                RegulatoryClass.PRESCRIPTION_REQUIRED to
+                    (RegulatoryClass.PRESCRIPTION_REQUIRED in drug87.regulatoryClass),
+            ),
+            message = "drug_0087 must include stimulant precursor and keep prescription-required classes",
         )
     }
 
@@ -137,17 +144,22 @@ class DrugFixtureCoverageTest {
                         )
             }
 
-        assertTrue(biologicalInjections.isNotEmpty(), "biological injection drugs must be present")
-        biologicalInjections.forEach { drug ->
-            drug.packages.forEach { pkg ->
-                assertTrue(
-                    actual =
-                    pkg.storageCondition.temperature in
-                        setOf(StorageTemperature.COLD, StorageTemperature.FROZEN),
-                    message = "biological injection ${drug.id} must be stored cold or frozen",
-                )
+        val violations = buildList {
+            if (biologicalInjections.isEmpty()) {
+                add("biological injection drugs must be present")
+            }
+            biologicalInjections.forEach { drug ->
+                drug.packages.forEach { pkg ->
+                    if (pkg.storageCondition.temperature !in
+                        setOf(StorageTemperature.COLD, StorageTemperature.FROZEN)
+                    ) {
+                        add("biological injection ${drug.id} must be stored cold or frozen")
+                    }
+                }
             }
         }
+
+        assertTrue(actual = violations.isEmpty(), message = "biological injection storage violations: $violations")
     }
 
     @Test
