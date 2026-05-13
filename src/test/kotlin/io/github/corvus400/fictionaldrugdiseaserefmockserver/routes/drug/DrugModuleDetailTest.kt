@@ -14,7 +14,6 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 import kotlin.time.measureTime
 
 /**
@@ -69,28 +68,29 @@ class DrugModuleDetailTest {
                 contentType(ContentType.Application.Json)
                 setBody("""{"state":"default","delay_ms":500}""")
             }
-            assertEquals(
-                expected = HttpStatusCode.OK,
-                actual = configureResponse.status,
-                message = "Admin API must accept drugDetail delayMs override",
-            )
 
+            var responseStatus: HttpStatusCode? = null
+            var responseId: String? = null
             val elapsed = measureTime {
                 val response = client.get("/v1/drugs/drug_0001")
-                assertEquals(
-                    expected = HttpStatusCode.OK,
-                    actual = response.status,
-                    message = "delay override must keep 200 status on default scenario",
-                )
+                responseStatus = response.status
                 val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
-                assertEquals(
-                    expected = "drug_0001",
-                    actual = body["id"]?.jsonPrimitive?.content,
-                    message = "delay override must still return the requested drug body",
-                )
+                responseId = body["id"]?.jsonPrimitive?.content
             }
-            assertTrue(
-                actual = elapsed.inWholeMilliseconds >= 500,
+
+            assertEquals(
+                expected = DetailDelaySnapshot(
+                    configStatus = HttpStatusCode.OK,
+                    responseStatus = HttpStatusCode.OK,
+                    responseId = "drug_0001",
+                    delayed = true,
+                ),
+                actual = DetailDelaySnapshot(
+                    configStatus = configureResponse.status,
+                    responseStatus = responseStatus,
+                    responseId = responseId,
+                    delayed = elapsed.inWholeMilliseconds >= 500,
+                ),
                 message = "/v1/drugs/{id} must honor Admin API delayMs=500 (observed=${elapsed.inWholeMilliseconds}ms)",
             )
         }
@@ -104,16 +104,17 @@ class DrugModuleDetailTest {
                 contentType(ContentType.Application.Json)
                 setBody("""{"state":"default","status_code":500}""")
             }
-            assertEquals(
-                expected = HttpStatusCode.OK,
-                actual = configureResponse.status,
-                message = "Admin API must accept drugDetail statusCode override",
-            )
 
             val response = client.get("/v1/drugs/drug_0001")
             assertEquals(
-                expected = HttpStatusCode.InternalServerError,
-                actual = response.status,
+                expected = StatusOverrideSnapshot(
+                    configStatus = HttpStatusCode.OK,
+                    responseStatus = HttpStatusCode.InternalServerError,
+                ),
+                actual = StatusOverrideSnapshot(
+                    configStatus = configureResponse.status,
+                    responseStatus = response.status,
+                ),
                 message = "statusCode=500 override must flip GET /v1/drugs/{id} to 500 Internal Server Error",
             )
         }
@@ -148,22 +149,19 @@ class DrugModuleDetailTest {
                 contentType(ContentType.Application.Json)
                 setBody("""{"state":"default","status_code":404}""")
             }
-            assertEquals(
-                expected = HttpStatusCode.OK,
-                actual = configureResponse.status,
-                message = "Admin API must accept drugDetail status_code=404 override",
-            )
 
             val response = client.get("/v1/drugs/drug_0001")
 
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
             assertEquals(
                 expected = ErrorResponseSnapshot(
+                    configStatus = HttpStatusCode.OK,
                     status = HttpStatusCode.NotFound,
                     code = "NOT_FOUND",
                     message = "Drug not found: drug_0001",
                 ),
                 actual = ErrorResponseSnapshot(
+                    configStatus = configureResponse.status,
                     status = response.status,
                     code = body["code"]?.jsonPrimitive?.content,
                     message = body["message"]?.jsonPrimitive?.content,
@@ -183,8 +181,21 @@ class DrugModuleDetailTest {
     )
 
     private data class ErrorResponseSnapshot(
+        val configStatus: HttpStatusCode? = null,
         val status: HttpStatusCode,
         val code: String?,
         val message: String?,
+    )
+
+    private data class DetailDelaySnapshot(
+        val configStatus: HttpStatusCode,
+        val responseStatus: HttpStatusCode?,
+        val responseId: String?,
+        val delayed: Boolean,
+    )
+
+    private data class StatusOverrideSnapshot(
+        val configStatus: HttpStatusCode,
+        val responseStatus: HttpStatusCode,
     )
 }

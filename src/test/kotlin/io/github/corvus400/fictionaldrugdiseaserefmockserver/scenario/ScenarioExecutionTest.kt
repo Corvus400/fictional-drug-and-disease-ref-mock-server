@@ -167,11 +167,6 @@ class ScenarioExecutionTest {
 
             val defaultResponse = client.get("/v1/drugs")
             val defaultBody = json.decodeFromString<JsonObject>(defaultResponse.bodyAsText())
-            assertEquals(
-                expected = 120,
-                actual = defaultBody["total_count"]?.jsonPrimitive?.int,
-                message = "default シナリオの /drugs total_count は 120",
-            )
 
             client.post("/__admin/configs/drugList") {
                 contentType(ContentType.Application.Json)
@@ -180,20 +175,20 @@ class ScenarioExecutionTest {
 
             val emptyResponse = client.get("/v1/drugs")
             val emptyBody = json.decodeFromString<JsonObject>(emptyResponse.bodyAsText())
-            assertEquals(
-                expected = 0,
-                actual = emptyBody["total_count"]?.jsonPrimitive?.int,
-                message = "empty オーバーライド後の /drugs total_count は 0",
-            )
 
             client.post("/__admin/reset")
 
             val restoredResponse = client.get("/v1/drugs")
             val restoredBody = json.decodeFromString<JsonObject>(restoredResponse.bodyAsText())
+
             assertEquals(
-                expected = 120,
-                actual = restoredBody["total_count"]?.jsonPrimitive?.int,
-                message = "reset 後の /drugs total_count は default の 120 に戻る",
+                expected = ScenarioSwitchSnapshot(defaultTotal = 120, emptyTotal = 0, restoredTotal = 120),
+                actual = ScenarioSwitchSnapshot(
+                    defaultTotal = defaultBody["total_count"]?.jsonPrimitive?.int,
+                    emptyTotal = emptyBody["total_count"]?.jsonPrimitive?.int,
+                    restoredTotal = restoredBody["total_count"]?.jsonPrimitive?.int,
+                ),
+                message = "drug list scenario switch must move default -> empty -> restored",
             )
         }
 
@@ -206,11 +201,6 @@ class ScenarioExecutionTest {
 
             val defaultResponse = client.get("/v1/diseases")
             val defaultBody = json.decodeFromString<JsonObject>(defaultResponse.bodyAsText())
-            assertEquals(
-                expected = 80,
-                actual = defaultBody["total_count"]?.jsonPrimitive?.int,
-                message = "default シナリオの /diseases total_count は 80",
-            )
 
             client.post("/__admin/configs/diseaseList") {
                 contentType(ContentType.Application.Json)
@@ -219,20 +209,20 @@ class ScenarioExecutionTest {
 
             val emptyResponse = client.get("/v1/diseases")
             val emptyBody = json.decodeFromString<JsonObject>(emptyResponse.bodyAsText())
-            assertEquals(
-                expected = 0,
-                actual = emptyBody["total_count"]?.jsonPrimitive?.int,
-                message = "empty オーバーライド後の /diseases total_count は 0",
-            )
 
             client.post("/__admin/reset")
 
             val restoredResponse = client.get("/v1/diseases")
             val restoredBody = json.decodeFromString<JsonObject>(restoredResponse.bodyAsText())
+
             assertEquals(
-                expected = 80,
-                actual = restoredBody["total_count"]?.jsonPrimitive?.int,
-                message = "reset 後の /diseases total_count は default の 80 に戻る",
+                expected = ScenarioSwitchSnapshot(defaultTotal = 80, emptyTotal = 0, restoredTotal = 80),
+                actual = ScenarioSwitchSnapshot(
+                    defaultTotal = defaultBody["total_count"]?.jsonPrimitive?.int,
+                    emptyTotal = emptyBody["total_count"]?.jsonPrimitive?.int,
+                    restoredTotal = restoredBody["total_count"]?.jsonPrimitive?.int,
+                ),
+                message = "disease list scenario switch must move default -> empty -> restored",
             )
         }
 
@@ -258,5 +248,11 @@ class ScenarioExecutionTest {
         val resetStatus: HttpStatusCode,
         val resetSuccess: Boolean?,
         val restoredStatus: HttpStatusCode,
+    )
+
+    private data class ScenarioSwitchSnapshot(
+        val defaultTotal: Int?,
+        val emptyTotal: Int?,
+        val restoredTotal: Int?,
     )
 }

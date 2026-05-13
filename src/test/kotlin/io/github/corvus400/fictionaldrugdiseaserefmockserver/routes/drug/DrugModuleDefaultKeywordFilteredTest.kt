@@ -80,12 +80,14 @@ class DrugModuleDefaultKeywordFilteredTest {
         ).totalCount()
 
         assertEquals(
-            expected = 120,
-            actual = total,
-            message = "default scenario must populate 120 drugs (total=$total)",
-        )
-        assertTrue(
-            actual = filtered in MIN_FILTERED_COUNT until total,
+            expected = KeywordFilterSnapshot(
+                total = 120,
+                filteredIsNonTrivialSubset = true,
+            ),
+            actual = KeywordFilterSnapshot(
+                total = total,
+                filteredIsNonTrivialSubset = filtered in MIN_FILTERED_COUNT until total,
+            ),
             message = "fixture-derived keyword prefix must filter default 120 to a non-trivial " +
                 "subset that contains drug_0001 plus at least one other drug " +
                 "(filtered=$filtered total=$total keywordPrefix=\"$keywordPrefix\")",
@@ -107,6 +109,11 @@ class DrugModuleDefaultKeywordFilteredTest {
          */
         const val MIN_FILTERED_COUNT: Int = 2
     }
+
+    private data class KeywordFilterSnapshot(
+        val total: Int,
+        val filteredIsNonTrivialSubset: Boolean,
+    )
 
     private suspend fun HttpResponse.totalCount(): Int {
         assertEquals(expected = HttpStatusCode.OK, actual = status)
