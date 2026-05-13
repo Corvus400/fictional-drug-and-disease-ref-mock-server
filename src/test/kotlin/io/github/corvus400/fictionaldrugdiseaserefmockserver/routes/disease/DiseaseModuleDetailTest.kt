@@ -14,7 +14,6 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class DiseaseModuleDetailTest {
     private val json = Json { ignoreUnknownKeys = true }
@@ -60,23 +59,22 @@ class DiseaseModuleDetailTest {
             contentType(type = ContentType.Application.Json)
             setBody(body = """{"state":"default","delay_ms":500}""")
         }
-        assertEquals(
-            expected = HttpStatusCode.OK,
-            actual = configResponse.status,
-            message = "POST /__admin/configs/diseaseDetail must return 200 OK",
-        )
 
         val startTime = System.currentTimeMillis()
         val response = client.get(urlString = "/v1/diseases/disease_0001")
         val elapsedMs = System.currentTimeMillis() - startTime
 
         assertEquals(
-            expected = HttpStatusCode.OK,
-            actual = response.status,
-            message = "GET /v1/diseases/disease_0001 must remain 200 OK when only delay_ms is overridden",
-        )
-        assertTrue(
-            actual = elapsedMs >= 500,
+            expected = DetailDelaySnapshot(
+                configStatus = HttpStatusCode.OK,
+                responseStatus = HttpStatusCode.OK,
+                delayed = true,
+            ),
+            actual = DetailDelaySnapshot(
+                configStatus = configResponse.status,
+                responseStatus = response.status,
+                delayed = elapsedMs >= 500,
+            ),
             message = "Expected delay of at least 500ms (diseaseDetail delay_ms override), got ${elapsedMs}ms",
         )
     }
@@ -89,17 +87,18 @@ class DiseaseModuleDetailTest {
             contentType(type = ContentType.Application.Json)
             setBody(body = """{"state":"default","status_code":500}""")
         }
-        assertEquals(
-            expected = HttpStatusCode.OK,
-            actual = configResponse.status,
-            message = "POST /__admin/configs/diseaseDetail must return 200 OK",
-        )
 
         val response = client.get(urlString = "/v1/diseases/disease_0001")
 
         assertEquals(
-            expected = HttpStatusCode.InternalServerError,
-            actual = response.status,
+            expected = StatusOverrideSnapshot(
+                configStatus = HttpStatusCode.OK,
+                responseStatus = HttpStatusCode.InternalServerError,
+            ),
+            actual = StatusOverrideSnapshot(
+                configStatus = configResponse.status,
+                responseStatus = response.status,
+            ),
             message = "GET /v1/diseases/disease_0001 must honor diseaseDetail status_code=500 override",
         )
     }
@@ -113,22 +112,19 @@ class DiseaseModuleDetailTest {
                 contentType(type = ContentType.Application.Json)
                 setBody(body = """{"state":"default","status_code":404}""")
             }
-            assertEquals(
-                expected = HttpStatusCode.OK,
-                actual = configResponse.status,
-                message = "POST /__admin/configs/diseaseDetail must return 200 OK for status_code=404 override",
-            )
 
             val response = client.get(urlString = "/v1/diseases/disease_0001")
 
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
             assertEquals(
                 expected = ErrorResponseSnapshot(
+                    configStatus = HttpStatusCode.OK,
                     status = HttpStatusCode.NotFound,
                     code = "NOT_FOUND",
                     message = "Disease not found: disease_0001",
                 ),
                 actual = ErrorResponseSnapshot(
+                    configStatus = configResponse.status,
                     status = response.status,
                     code = body["code"]?.jsonPrimitive?.content,
                     message = body["message"]?.jsonPrimitive?.content,
@@ -169,8 +165,20 @@ class DiseaseModuleDetailTest {
     )
 
     private data class ErrorResponseSnapshot(
+        val configStatus: HttpStatusCode? = null,
         val status: HttpStatusCode,
         val code: String?,
         val message: String?,
+    )
+
+    private data class DetailDelaySnapshot(
+        val configStatus: HttpStatusCode,
+        val responseStatus: HttpStatusCode,
+        val delayed: Boolean,
+    )
+
+    private data class StatusOverrideSnapshot(
+        val configStatus: HttpStatusCode,
+        val responseStatus: HttpStatusCode,
     )
 }
