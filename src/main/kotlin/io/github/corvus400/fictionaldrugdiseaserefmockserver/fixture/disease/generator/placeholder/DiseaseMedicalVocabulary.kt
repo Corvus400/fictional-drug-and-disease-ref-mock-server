@@ -36,6 +36,7 @@ object DiseaseMedicalVocabulary {
         val chapter = BucketContextChapters.pickChapter(context = context, seed = seed)
         if (chapter != null) {
             EtiologyVocabulary.resolveOrNull(key = key, chapter = chapter, seed = seed)?.let { return it }
+            DiagnosticVocabulary.resolveOrNull(key = key, chapter = chapter, seed = seed)?.let { return it }
         }
         if (key in SYMPTOM_KEYS) {
             if (chapter != null) {
