@@ -69,6 +69,81 @@ class DrugClinicalBuildersTest {
         )
     }
 
+    @Test
+    fun `buildIndications first paragraph contains the name of the first related disease`() {
+        val dict = buildDict()
+        val indications =
+            DrugClinicalBuilders.buildIndications(
+                id = SAMPLE_ID,
+                relatedDiseaseIds = listOf("disease_0007"),
+                diseaseNameResolver = { diseaseId ->
+                    if (diseaseId == "disease_0007") "テストカナ" else null
+                },
+                dict = dict,
+            )
+
+        assertTrue(actual = indications.first().content.contains("テストカナ"))
+    }
+
+    @Test
+    fun `buildIndications falls back when relatedDiseaseIds is empty`() {
+        val dict = buildDict()
+        val indications =
+            DrugClinicalBuilders.buildIndications(
+                id = SAMPLE_ID,
+                relatedDiseaseIds = emptyList(),
+                diseaseNameResolver = { "未使用カナ" },
+                dict = dict,
+            )
+
+        assertEquals(
+            expected = null,
+            actual = indications.firstOrNull { indication -> "{{" in indication.content || "}}" in indication.content },
+        )
+    }
+
+    @Test
+    fun `buildIndications falls back when diseaseNameResolver returns null`() {
+        val dict = buildDict()
+        val indications =
+            DrugClinicalBuilders.buildIndications(
+                id = SAMPLE_ID,
+                relatedDiseaseIds = listOf("disease_unknown"),
+                diseaseNameResolver = { null },
+                dict = dict,
+            )
+
+        assertEquals(
+            expected = null,
+            actual = indications.firstOrNull { indication -> "{{" in indication.content || "}}" in indication.content },
+        )
+    }
+
+    @Test
+    fun `buildIndications is deterministic for related disease name resolution`() {
+        val dict = buildDict()
+        val first =
+            DrugClinicalBuilders.buildIndications(
+                id = SAMPLE_ID,
+                relatedDiseaseIds = listOf("disease_0007"),
+                diseaseNameResolver = { diseaseId ->
+                    if (diseaseId == "disease_0007") "テストカナ" else null
+                },
+                dict = dict,
+            )
+        val second =
+            DrugClinicalBuilders.buildIndications(
+                id = SAMPLE_ID,
+                relatedDiseaseIds = listOf("disease_0007"),
+                diseaseNameResolver = { diseaseId ->
+                    if (diseaseId == "disease_0007") "テストカナ" else null
+                },
+                dict = dict,
+            )
+
+        assertEquals(expected = first, actual = second)
+    }
+
     private fun buildDict(): DrugPlaceholderDictionary =
         DrugPlaceholderDictionary(
             nameAdapter = FixmergeNameAdapter(),
