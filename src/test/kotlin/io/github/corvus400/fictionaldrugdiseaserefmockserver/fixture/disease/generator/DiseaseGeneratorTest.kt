@@ -119,17 +119,9 @@ class DiseaseGeneratorTest {
             )
         val diseases = generator.generate(blueprints = blueprints)
         assertEquals(
-            3,
-            diseases.size,
-            "contract assertion failed"
+            expected = listOf("disease_0000", "disease_0001", "disease_0002"),
+            actual = diseases.map { disease -> disease.id },
         )
-        for ((i, disease) in diseases.withIndex()) {
-            assertEquals(
-                "disease_${i.toString().padStart(4, '0')}",
-                disease.id,
-                "contract assertion failed"
-            )
-        }
     }
 
     @Test
@@ -143,33 +135,19 @@ class DiseaseGeneratorTest {
             adapter = FixmergeNameAdapter(),
             placeholderDictionary = DiseasePlaceholderDictionary(),
         ).generate(blueprints = blueprints)
-        assertEquals(
-            blueprints.size,
-            first.size,
-            "contract assertion failed"
-        )
-        assertEquals(
-            first,
-            second,
-            "contract assertion failed"
-        )
-        assertEquals(
-            first.size,
-            first.map {
-                it.id
-            }.toSet().size,
-            "disease ids are not unique"
-        )
-        for (disease in first) {
-            assertTrue(
-                disease.name.isNotBlank(),
-                "name blank for ${disease.id}"
-            )
-            assertTrue(
-                disease.nameKana.isNotBlank(),
-                "nameKana blank for ${disease.id}"
-            )
+        val violations = buildList {
+            addIf("expected ${blueprints.size} diseases but got ${first.size}") { first.size != blueprints.size }
+            addIf("fresh generators produced different disease inventories") { first != second }
+            addIf("disease ids are not unique") { first.map { it.id }.toSet().size != first.size }
+            first.forEach { disease ->
+                addIf("name blank for ${disease.id}") { disease.name.isBlank() }
+                addIf("nameKana blank for ${disease.id}") { disease.nameKana.isBlank() }
+            }
         }
+        assertTrue(
+            actual = violations.isEmpty(),
+            message = "full inventory determinism/populated-field violations: $violations",
+        )
     }
 
     // Red-1: 全 25 フィールド populated (sample blueprint + 80 件全件)

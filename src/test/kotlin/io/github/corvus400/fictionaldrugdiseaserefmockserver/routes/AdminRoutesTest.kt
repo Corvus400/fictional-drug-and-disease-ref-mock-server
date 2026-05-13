@@ -17,7 +17,6 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 
 class AdminRoutesTest {
     private val json = Json { ignoreUnknownKeys = true }
@@ -44,16 +43,11 @@ class AdminRoutesTest {
         val response = client.get("/__admin/configs")
 
         assertEquals(
-            HttpStatusCode.OK,
-            response.status,
-            "contract assertion failed"
+            expected = HttpStatusCode.OK,
+            actual = response.status,
+            message = "GET /__admin/configs must return 200 and decode as a JSON object",
         )
-        val body = json.decodeFromString<JsonObject>(response.bodyAsText())
-        // 初期状態では空のオブジェクトまたは設定されたオーバーライドが返る
-        assertNotNull(
-            body,
-            "contract assertion failed"
-        )
+        json.decodeFromString<JsonObject>(response.bodyAsText())
     }
 
     @Test
@@ -166,11 +160,12 @@ class AdminRoutesTest {
         val response = client.get("/__admin/configs")
         val body = json.decodeFromString<JsonObject>(response.bodyAsText())
         val drugListEntry = body["drugList"]?.jsonObject
-        assertNotNull(drugListEntry)
         assertEquals(
-            expected = "empty",
-            actual = drugListEntry["state"]?.jsonPrimitive?.content,
-            message = "GET /__admin/configs に drugList=empty が反映されている必要がある",
+            expected = DrugListConfigSnapshot(entryExists = true, state = "empty"),
+            actual = DrugListConfigSnapshot(
+                entryExists = drugListEntry != null,
+                state = drugListEntry?.get("state")?.jsonPrimitive?.content,
+            ),
         )
 
         client.post("/__admin/reset")
@@ -192,5 +187,10 @@ class AdminRoutesTest {
         val emptyTotalCount: Int?,
         val resetStatus: HttpStatusCode,
         val restoredTotalCount: Int?,
+    )
+
+    private data class DrugListConfigSnapshot(
+        val entryExists: Boolean,
+        val state: String?,
     )
 }

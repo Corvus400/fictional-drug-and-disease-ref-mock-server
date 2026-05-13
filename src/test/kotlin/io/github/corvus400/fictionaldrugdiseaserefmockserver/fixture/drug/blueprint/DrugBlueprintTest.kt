@@ -19,34 +19,15 @@ class DrugBlueprintTest {
                 dosageForm = DosageForm.TABLET,
             )
         assertEquals(
-            0,
-            blueprint.index,
-            "contract assertion failed"
-        )
-        assertEquals(
-            'A',
-            blueprint.atcFirstLetter,
-            "contract assertion failed"
-        )
-        assertEquals(
-            DosageForm.TABLET,
-            blueprint.dosageForm,
-            "contract assertion failed"
-        )
-        assertEquals(
-            setOf(RegulatoryClass.PRESCRIPTION_REQUIRED),
-            blueprint.regulatoryClasses,
-            "contract assertion failed"
-        )
-        assertEquals(
-            false,
-            blueprint.isBiological,
-            "contract assertion failed"
-        )
-        assertEquals(
-            true,
-            blueprint.isChronicPrescription,
-            "contract assertion failed"
+            expected = DrugBlueprintSnapshot(
+                index = 0,
+                atcFirstLetter = 'A',
+                dosageForm = DosageForm.TABLET,
+                regulatoryClasses = setOf(RegulatoryClass.PRESCRIPTION_REQUIRED),
+                isBiological = false,
+                isChronicPrescription = true,
+            ),
+            actual = blueprint.snapshot(),
         )
     }
 
@@ -116,24 +97,18 @@ class DrugBlueprintTest {
                 ),
             )
         assertEquals(
-            "drug_0080",
-            blueprint.idOverride,
-            "contract assertion failed"
-        )
-        assertEquals(
-            "トレデキム",
-            blueprint.nameOverride?.brandKatakana,
-            "contract assertion failed"
-        )
-        assertEquals(
-            "tredecim",
-            blueprint.nameOverride?.genericLatin,
-            "contract assertion failed"
-        )
-        assertEquals(
-            "無色澄明の液体である。",
-            blueprint.textOverride?.originalSubstanceDescription,
-            "contract assertion failed"
+            expected = DrugBlueprintOverrideSnapshot(
+                idOverride = "drug_0080",
+                brandKatakana = "トレデキム",
+                genericLatin = "tredecim",
+                originalSubstanceDescription = "無色澄明の液体である。",
+            ),
+            actual = DrugBlueprintOverrideSnapshot(
+                idOverride = blueprint.idOverride,
+                brandKatakana = blueprint.nameOverride?.brandKatakana,
+                genericLatin = blueprint.nameOverride?.genericLatin,
+                originalSubstanceDescription = blueprint.textOverride?.originalSubstanceDescription,
+            ),
         )
     }
 
@@ -149,19 +124,48 @@ class DrugBlueprintTest {
                 dosageForm = DosageForm.TABLET,
             )
         assertEquals(
-            null,
-            blueprint.idOverride,
-            "contract assertion failed"
-        )
-        assertEquals(
-            null,
-            blueprint.nameOverride,
-            "contract assertion failed"
-        )
-        assertEquals(
-            null,
-            blueprint.textOverride,
-            "contract assertion failed"
+            expected = DrugBlueprintDefaultOverrideSnapshot(
+                idOverride = null,
+                nameOverride = null,
+                textOverride = null,
+            ),
+            actual = DrugBlueprintDefaultOverrideSnapshot(
+                idOverride = blueprint.idOverride,
+                nameOverride = blueprint.nameOverride,
+                textOverride = blueprint.textOverride,
+            ),
         )
     }
+
+    private fun DrugBlueprint.snapshot(): DrugBlueprintSnapshot =
+        DrugBlueprintSnapshot(
+            index = index,
+            atcFirstLetter = atcFirstLetter,
+            dosageForm = dosageForm,
+            regulatoryClasses = regulatoryClasses,
+            isBiological = isBiological,
+            isChronicPrescription = isChronicPrescription,
+        )
+
+    private data class DrugBlueprintSnapshot(
+        val index: Int,
+        val atcFirstLetter: Char,
+        val dosageForm: DosageForm,
+        val regulatoryClasses: Set<RegulatoryClass>,
+        val isBiological: Boolean,
+        val isChronicPrescription: Boolean,
+    )
+
+    private data class DrugBlueprintOverrideSnapshot(
+        val idOverride: String?,
+        val brandKatakana: String?,
+        val genericLatin: String?,
+        val originalSubstanceDescription: String?,
+    )
+
+    private data class DrugBlueprintDefaultOverrideSnapshot(
+        val idOverride: String?,
+        val nameOverride: NameOverride?,
+        val textOverride: FixedDrugTextOverride?,
+    )
 }

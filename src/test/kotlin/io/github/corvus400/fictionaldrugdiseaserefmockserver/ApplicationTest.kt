@@ -23,14 +23,8 @@ class ApplicationTest {
         application { module() }
         val response = client.get("/health")
         assertEquals(
-            HttpStatusCode.OK,
-            response.status,
-            "contract assertion failed"
-        )
-        assertEquals(
-            """{"status":"ok"}""",
-            response.bodyAsText(),
-            "contract assertion failed"
+            expected = ResponseSnapshot(status = HttpStatusCode.OK, body = """{"status":"ok"}"""),
+            actual = ResponseSnapshot(status = response.status, body = response.bodyAsText()),
         )
     }
 
@@ -39,14 +33,8 @@ class ApplicationTest {
         application { module() }
         val response = client.get("/__admin/configs")
         assertEquals(
-            HttpStatusCode.OK,
-            response.status,
-            "contract assertion failed"
-        )
-        assertEquals(
-            "{}",
-            response.bodyAsText(),
-            "contract assertion failed"
+            expected = ResponseSnapshot(status = HttpStatusCode.OK, body = "{}"),
+            actual = ResponseSnapshot(status = response.status, body = response.bodyAsText()),
         )
     }
 
@@ -58,19 +46,16 @@ class ApplicationTest {
             contentType(ContentType.Application.Json)
             setBody("""{"state":"TestState"}""")
         }
-        assertEquals(
-            HttpStatusCode.OK,
-            setResponse.status,
-            "contract assertion failed"
-        )
 
         // Get configs
         val getResponse = client.get("/__admin/configs")
         val body = json.decodeFromString<JsonObject>(getResponse.bodyAsText())
         assertEquals(
-            "TestState",
-            body["test"]?.jsonObject?.get("state")?.jsonPrimitive?.content,
-            "contract assertion failed"
+            expected = ConfigSetSnapshot(setStatus = HttpStatusCode.OK, storedState = "TestState"),
+            actual = ConfigSetSnapshot(
+                setStatus = setResponse.status,
+                storedState = body["test"]?.jsonObject?.get("state")?.jsonPrimitive?.content,
+            ),
         )
     }
 
@@ -80,7 +65,11 @@ class ApplicationTest {
             application { module() }
 
             val response = client.get("/v1/drugs")
-            assertEquals(HttpStatusCode.OK, response.status)
+            assertEquals(
+                expected = HttpStatusCode.OK,
+                actual = response.status,
+                message = "module startup must keep /v1/drugs available with current fixtures",
+            )
         }
 
     @Test
@@ -94,18 +83,22 @@ class ApplicationTest {
 
         // Reset
         val resetResponse = client.post("/__admin/reset")
-        assertEquals(
-            HttpStatusCode.OK,
-            resetResponse.status,
-            "contract assertion failed"
-        )
 
         // Verify empty
         val getResponse = client.get("/__admin/configs")
         assertEquals(
-            "{}",
-            getResponse.bodyAsText(),
-            "contract assertion failed"
+            expected = ResponseSnapshot(status = HttpStatusCode.OK, body = "{}"),
+            actual = ResponseSnapshot(status = resetResponse.status, body = getResponse.bodyAsText()),
         )
     }
+
+    private data class ResponseSnapshot(
+        val status: HttpStatusCode,
+        val body: String,
+    )
+
+    private data class ConfigSetSnapshot(
+        val setStatus: HttpStatusCode,
+        val storedState: String?,
+    )
 }

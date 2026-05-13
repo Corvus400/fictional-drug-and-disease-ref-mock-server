@@ -129,17 +129,9 @@ class DrugGeneratorTest {
         )
         val drugs = generator.generate(blueprints = blueprints)
         assertEquals(
-            3,
-            drugs.size,
-            "contract assertion failed"
+            expected = listOf("drug_0000", "drug_0001", "drug_0002"),
+            actual = drugs.map { drug -> drug.id },
         )
-        for ((i, drug) in drugs.withIndex()) {
-            assertEquals(
-                "drug_${i.toString().padStart(4, '0')}",
-                drug.id,
-                "contract assertion failed"
-            )
-        }
     }
 
     @Test
@@ -161,37 +153,20 @@ class DrugGeneratorTest {
         val blueprints = DrugBlueprintFactory.build()
         val first = buildFreshGenerator().generate(blueprints = blueprints)
         val second = buildFreshGenerator().generate(blueprints = blueprints)
-        assertEquals(
-            blueprints.size,
-            first.size,
-            "contract assertion failed"
-        )
-        assertEquals(
-            first,
-            second,
-            "contract assertion failed"
-        )
-        assertEquals(
-            first.size,
-            first.map {
-                it.id
-            }.toSet().size,
-            "drug ids are not unique"
-        )
-        for (drug in first) {
-            assertTrue(
-                drug.brandName.isNotBlank(),
-                "brandName blank for ${drug.id}"
-            )
-            assertTrue(
-                drug.genericName.isNotBlank(),
-                "genericName blank for ${drug.id}"
-            )
-            assertTrue(
-                drug.manufacturer.isNotBlank(),
-                "manufacturer blank for ${drug.id}"
-            )
+        val violations = buildList {
+            addIf("expected ${blueprints.size} drugs but got ${first.size}") { first.size != blueprints.size }
+            addIf("fresh generators produced different drug inventories") { first != second }
+            addIf("drug ids are not unique") { first.map { it.id }.toSet().size != first.size }
+            first.forEach { drug ->
+                addIf("brandName blank for ${drug.id}") { drug.brandName.isBlank() }
+                addIf("genericName blank for ${drug.id}") { drug.genericName.isBlank() }
+                addIf("manufacturer blank for ${drug.id}") { drug.manufacturer.isBlank() }
+            }
         }
+        assertTrue(
+            actual = violations.isEmpty(),
+            message = "full inventory determinism/populated-field violations: $violations",
+        )
     }
 
     @Test
@@ -239,17 +214,16 @@ class DrugGeneratorTest {
         val drug = generator.generate(blueprint = injectionBlueprint)
 
         assertEquals(
-            RouteOfAdministration.INJECTION_ROUTE,
-            drug.routeOfAdministration,
-            "contract assertion failed"
-        )
-        assertNotNull(
-            drug.pharmacokinetics,
-            "pharmacokinetics must be non-null for injection"
-        )
-        assertTrue(
-            drug.administrationPrecautions.isNotEmpty(),
-            "administrationPrecautions must be non-empty for injection",
+            expected = InjectionDrugSnapshot(
+                routeOfAdministration = RouteOfAdministration.INJECTION_ROUTE,
+                pharmacokineticsPresent = true,
+                administrationPrecautionsNonEmpty = true,
+            ),
+            actual = InjectionDrugSnapshot(
+                routeOfAdministration = drug.routeOfAdministration,
+                pharmacokineticsPresent = drug.pharmacokinetics != null,
+                administrationPrecautionsNonEmpty = drug.administrationPrecautions.isNotEmpty(),
+            ),
         )
     }
 
@@ -610,4 +584,10 @@ class DrugGeneratorTest {
                 revisedAt = "2026-01-01",
             )
     }
+
+    private data class InjectionDrugSnapshot(
+        val routeOfAdministration: RouteOfAdministration,
+        val pharmacokineticsPresent: Boolean,
+        val administrationPrecautionsNonEmpty: Boolean,
+    )
 }
