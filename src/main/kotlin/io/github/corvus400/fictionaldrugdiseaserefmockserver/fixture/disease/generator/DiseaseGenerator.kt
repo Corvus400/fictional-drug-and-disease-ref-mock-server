@@ -148,7 +148,10 @@ class DiseaseGenerator(
                 dict = contextualDictionary,
                 context = context,
             ),
-            prevention = DiseaseNestedBuilders.buildPrevention(id = diseaseId),
+            prevention = DiseaseNestedBuilders.buildPrevention(
+                id = diseaseId,
+                chapter = blueprint.icd10Chapter,
+            ),
             relatedDrugIds = DiseaseNestedBuilders.buildRelatedDrugIds(
                 id = diseaseId,
                 chapter = blueprint.icd10Chapter,

@@ -7,6 +7,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.genera
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.BucketSeedCoiner
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.ExamFindingSeedBucketRepository
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.GradingSystemSeedBucketRepository
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.PreventionSeedBuckets
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.RiskFactorSeedBuckets
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.SeverityGradeSeedBucketRepository
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.TreatmentNonPharmaSeedBucketRepository
@@ -415,7 +416,10 @@ internal object DiseaseNestedBuilders {
         )
     }
 
-    fun buildPrevention(id: String): List<String> {
+    fun buildPrevention(
+        id: String,
+        chapter: Icd10Chapter,
+    ): List<String> {
         val countSeed = stableHash(id = id, slot = DiseaseFieldSlot.PREVENTION_COUNT.ordinal, index = 0)
         val count = ValueRangeGenerator.pickCount(seed = countSeed, range = PREVENTION_RANGE)
         return (0 until count).map { offset ->
@@ -424,7 +428,10 @@ internal object DiseaseNestedBuilders {
                 slot = DiseaseFieldSlot.PREVENTION_ITEM.ordinal,
                 index = offset,
             )
-            ValueRangeGenerator.pickOne(seed = seed, candidates = PREVENTION_VOCAB)
+            ValueRangeGenerator.pickOne(
+                seed = seed,
+                candidates = PreventionSeedBuckets.preventionFor(chapter = chapter),
+            )
         }
     }
 
@@ -694,8 +701,6 @@ internal object DiseaseNestedBuilders {
         listOf("悪心", "下痢", "便秘", "めまい", "不眠", "発汗", "浮腫")
     private val EXAM_NAME_VOCAB: List<String> =
         listOf("血液生化学検査", "心電図", "単純X線撮影", "CT検査", "MRI検査", "内視鏡検査", "問診票")
-    private val PREVENTION_VOCAB: List<String> =
-        listOf("定期健診の受診", "適切な手指衛生", "バランスの取れた食事", "十分な睡眠", "適度な運動")
     private val NONPHARMA_HEADINGS: List<String> =
         listOf("食事療法", "運動療法", "理学療法", "生活指導")
 }
