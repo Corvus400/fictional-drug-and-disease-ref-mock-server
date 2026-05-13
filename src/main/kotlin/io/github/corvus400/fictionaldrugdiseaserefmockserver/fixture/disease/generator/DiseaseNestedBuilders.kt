@@ -5,6 +5,13 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.common.Valu
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.InfectionRouteRiskFactors
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.placeholder.DiseaseRenderContext
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.DrugClinicalBuilders
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.BucketSeedCoiner
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.ExamFindingSeedBucketRepository
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.GradingSystemSeedBucketRepository
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.SeverityGradeSeedBucketRepository
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.TreatmentNonPharmaSeedBucketRepository
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.TreatmentPharmaSeedBucketRepository
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixmerge.nameslot.NameSlot
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.stableHash
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.ExamCategory
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter
@@ -201,8 +208,24 @@ internal object DiseaseNestedBuilders {
             Exam(
                 name = ValueRangeGenerator.pickOne(seed = nameSeed, candidates = EXAM_NAME_VOCAB),
                 category = category,
-                typicalFinding = "典型所見 ${offset + 1} (架空)",
-                referenceRange = "基準値 ${offset + 1} (架空)",
+                typicalFinding =
+                BucketSeedCoiner.coin(
+                    bucket = ExamFindingSeedBucketRepository.typical(chapter = chapter),
+                    seed = nameSeed,
+                    slot = NameSlot.DISEASE_EXAM_FINDING,
+                    offset = offset,
+                ) + " (架空)",
+                referenceRange =
+                BucketSeedCoiner.coin(
+                    bucket = ExamFindingSeedBucketRepository.range(chapter = chapter),
+                    seed = stableHash(
+                        id = id,
+                        slot = DiseaseFieldSlot.REQUIRED_EXAM_REFERENCE.ordinal,
+                        index = offset,
+                    ),
+                    slot = NameSlot.DISEASE_EXAM_FINDING,
+                    offset = offset,
+                ) + " (架空)",
             )
         }
         return ensureImagingForCardiovascular(chapter = chapter, exams = exams)
@@ -210,13 +233,24 @@ internal object DiseaseNestedBuilders {
 
     fun buildSeverityGrading(
         id: String,
+        chapter: Icd10Chapter = Icd10Chapter.CHAPTER_II,
         dict: DiseasePlaceholderDictionary,
         context: DiseaseRenderContext,
     ): SeverityInfo {
         val countSeed = stableHash(id = id, slot = DiseaseFieldSlot.SEVERITY_GRADE_COUNT.ordinal, index = 0)
         val count = ValueRangeGenerator.pickCount(seed = countSeed, range = SEVERITY_GRADE_RANGE)
         val grades = (0 until count).map { offset ->
-            val label = "Grade ${offset + 1}"
+            val label =
+                BucketSeedCoiner.coin(
+                    bucket = SeverityGradeSeedBucketRepository.get(chapter = chapter),
+                    seed = stableHash(
+                        id = id,
+                        slot = DiseaseFieldSlot.SEVERITY_GRADE_LABEL.ordinal,
+                        index = offset,
+                    ),
+                    slot = NameSlot.DISEASE_SEVERITY_GRADE,
+                    offset = offset,
+                )
             val criteria = dict.renderField(
                 field = DiseaseParagraphField.SEVERITY_DESCRIPTION,
                 seed = stableHash(
@@ -238,7 +272,12 @@ internal object DiseaseNestedBuilders {
             Grade(label = label, criteria = criteria, recommendedAction = action)
         }
         return SeverityInfo(
-            gradingSystem = GRADING_SYSTEM_LABEL,
+            gradingSystem =
+            BucketSeedCoiner.coin(
+                bucket = GradingSystemSeedBucketRepository.get(chapter = chapter),
+                seed = stableHash(id = id, slot = DiseaseFieldSlot.SEVERITY_SYSTEM.ordinal, index = 0),
+                slot = NameSlot.DISEASE_SEVERITY_SYSTEM,
+            ),
             grades = grades,
         )
     }
@@ -265,7 +304,17 @@ internal object DiseaseNestedBuilders {
         )
         val pharmacological = (0 until pharmaCount).map { offset ->
             PharmaTreatment(
-                drugCategory = "架空薬効群 ${offset + 1}",
+                drugCategory =
+                BucketSeedCoiner.coin(
+                    bucket = TreatmentPharmaSeedBucketRepository.get(chapter = chapter),
+                    seed = stableHash(
+                        id = id,
+                        slot = DiseaseFieldSlot.TREATMENT_PHARMA_CATEGORY.ordinal,
+                        index = offset,
+                    ),
+                    slot = NameSlot.DISEASE_DRUG_CATEGORY,
+                    offset = offset,
+                ),
                 drugIds = emptyList(),
                 indication = dict.renderField(
                     field = DiseaseParagraphField.TREATMENT_DESCRIPTION,
@@ -299,7 +348,19 @@ internal object DiseaseNestedBuilders {
         val nonPharmacological = (0 until nonPharmaCount).map { offset ->
             TreatmentSection(
                 heading = NONPHARMA_HEADINGS[offset % NONPHARMA_HEADINGS.size],
-                items = listOf("項目 1", "項目 2"),
+                items =
+                (0 until NONPHARMA_ITEM_COUNT).map { itemOffset ->
+                    BucketSeedCoiner.coin(
+                        bucket = TreatmentNonPharmaSeedBucketRepository.get(chapter = chapter),
+                        seed = stableHash(
+                            id = id,
+                            slot = DiseaseFieldSlot.TREATMENT_NONPHARMA_ITEM.ordinal,
+                            index = offset * NONPHARMA_ITEM_INDEX_STRIDE + itemOffset,
+                        ),
+                        slot = NameSlot.DISEASE_NON_PHARMA_ITEM,
+                        offset = itemOffset,
+                    )
+                },
                 description = dict.renderField(
                     field = DiseaseParagraphField.TREATMENT_DESCRIPTION,
                     seed = stableHash(
@@ -625,12 +686,12 @@ internal object DiseaseNestedBuilders {
     private const val ID_PAD_LENGTH: Int = 4
     private const val CHAPTER_V_PSYCHOTROPIC_DRUG_ID: String = "drug_0089"
     private const val ONSET_AGE_SPAN: Int = 10
+    private const val NONPHARMA_ITEM_COUNT: Int = 2
+    private const val NONPHARMA_ITEM_INDEX_STRIDE: Int = 10
     private const val DENOMINATOR_PER_BIRTH: Int = 1_000
     private const val DENOMINATOR_PER_PATIENT: Int = 100
     private const val DENOMINATOR_PER_POPULATION: Int = 100_000
     private const val SEX_RATIO_BASE: Int = 1
-    private const val GRADING_SYSTEM_LABEL: String = "架空重症度分類"
-
     private val MAIN_SYMPTOM_VOCAB: List<String> =
         listOf("倦怠感", "発熱", "頭痛", "食欲不振", "体重減少", "疼痛", "動悸", "息切れ")
     private val ASSOCIATED_SYMPTOM_VOCAB: List<String> =

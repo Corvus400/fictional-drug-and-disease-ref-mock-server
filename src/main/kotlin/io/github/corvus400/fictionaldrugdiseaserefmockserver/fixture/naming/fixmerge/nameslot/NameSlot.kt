@@ -19,4 +19,10 @@ enum class NameSlot(val defaultPattern: Pattern) {
     DRUG_EFFECT(defaultPattern = Pattern.C),
     DRUG_ENZYME(defaultPattern = Pattern.A),
     DISEASE_COMORBIDITY(defaultPattern = Pattern.C),
+    DISEASE_SEVERITY_GRADE(defaultPattern = Pattern.A),
+    DISEASE_SEVERITY_SYSTEM(defaultPattern = Pattern.C),
+    DISEASE_DRUG_CATEGORY(defaultPattern = Pattern.A),
+    DISEASE_NON_PHARMA_ITEM(defaultPattern = Pattern.B),
+    DRUG_JOURNAL(defaultPattern = Pattern.C),
+    DISEASE_EXAM_FINDING(defaultPattern = Pattern.A),
 }

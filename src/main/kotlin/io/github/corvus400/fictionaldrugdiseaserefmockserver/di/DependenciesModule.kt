@@ -16,6 +16,8 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.bluepr
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.DrugGenerator
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.DrugPlaceholderDictionary
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.FixmergeNameAdapter
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.BucketEntryValidator
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.Phase6BucketRegistry
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.Drug
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.scenario.ScenarioManager
@@ -24,6 +26,7 @@ import io.ktor.server.plugins.di.dependencies
 
 fun Application.configureDependencies() {
     val config = loadMockServerConfig()
+    BucketEntryValidator.requireValid(buckets = Phase6BucketRegistry.all)
     // `FixmergeNameAdapter` は drug/disease で共有する singleton。
     // disease → drug の順で生成し、{{disease}} placeholder が参照する
     // 疾患 fixture 一覧を DrugPlaceholderDictionary 経由で DrugGenerator に注入する
