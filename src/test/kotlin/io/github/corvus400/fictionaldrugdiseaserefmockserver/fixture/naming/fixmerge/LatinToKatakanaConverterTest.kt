@@ -17,8 +17,18 @@ class LatinToKatakanaConverterTest {
         val converter = LatinToKatakanaConverter.load()
         val first = converter.convert(input = "WAirTell")
         val second = converter.convert(input = "WAirTell")
-        assertTrue(first.isNotBlank())
-        assertTrue(second.isNotBlank())
-        kotlin.test.assertEquals(expected = first, actual = second)
+        assertTrue(
+            first.isNotBlank(),
+            "contract assertion failed"
+        )
+        assertTrue(
+            second.isNotBlank(),
+            "contract assertion failed"
+        )
+        kotlin.test.assertEquals(
+            expected = first,
+            actual = second,
+            "contract assertion failed"
+        )
     }
 }

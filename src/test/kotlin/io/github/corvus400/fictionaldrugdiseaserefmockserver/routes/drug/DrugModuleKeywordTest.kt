@@ -38,8 +38,16 @@ class DrugModuleKeywordTest {
                     "&keyword_target=brand&keyword_match=partial&page_size=100",
             )
 
-            assertEquals(expected = HttpStatusCode.OK, actual = totalResponse.status)
-            assertEquals(expected = HttpStatusCode.OK, actual = filteredResponse.status)
+            assertEquals(
+                expected = HttpStatusCode.OK,
+                actual = totalResponse.status,
+                "contract assertion failed"
+            )
+            assertEquals(
+                expected = HttpStatusCode.OK,
+                actual = filteredResponse.status,
+                "contract assertion failed"
+            )
             val total = totalResponse.totalCount()
             val filtered = filteredResponse.totalCount()
             assertEquals(

@@ -22,8 +22,16 @@ class DosageFormImageRoutesTest {
 
         val response = client.get("/v1/images/dosage-forms/tablet?size=Original")
 
-        assertEquals(HttpStatusCode.OK, response.status)
-        assertEquals(ContentType.Image.PNG, response.contentType()?.withoutParameters())
+        assertEquals(
+            HttpStatusCode.OK,
+            response.status,
+            "contract assertion failed"
+        )
+        assertEquals(
+            ContentType.Image.PNG,
+            response.contentType()?.withoutParameters(),
+            "contract assertion failed"
+        )
     }
 
     @Test
@@ -32,8 +40,16 @@ class DosageFormImageRoutesTest {
 
         val response = client.get("/v1/images/drugs/drug_0089?size=Original")
 
-        assertEquals(HttpStatusCode.OK, response.status)
-        assertEquals(ContentType.Image.PNG, response.contentType()?.withoutParameters())
+        assertEquals(
+            HttpStatusCode.OK,
+            response.status,
+            "contract assertion failed"
+        )
+        assertEquals(
+            ContentType.Image.PNG,
+            response.contentType()?.withoutParameters(),
+            "contract assertion failed"
+        )
     }
 
     @Test
@@ -42,8 +58,16 @@ class DosageFormImageRoutesTest {
 
         val response = client.get("/v1/images/dosage-forms/tablet?size=Original")
 
-        assertEquals(HttpStatusCode.OK, response.status)
-        assertEquals(ContentType.Image.PNG, response.contentType()?.withoutParameters())
+        assertEquals(
+            HttpStatusCode.OK,
+            response.status,
+            "contract assertion failed"
+        )
+        assertEquals(
+            ContentType.Image.PNG,
+            response.contentType()?.withoutParameters(),
+            "contract assertion failed"
+        )
     }
 
     @Test
@@ -91,8 +115,16 @@ class DosageFormImageRoutesTest {
         val explicitOriginal = decodeImage(client.get("/v1/images/dosage-forms/tablet?size=Original").bodyAsBytes())
         val defaultOriginal = decodeImage(client.get("/v1/images/dosage-forms/tablet").bodyAsBytes())
 
-        assertEquals(explicitOriginal.width, defaultOriginal.width)
-        assertEquals(explicitOriginal.height, defaultOriginal.height)
+        assertEquals(
+            explicitOriginal.width,
+            defaultOriginal.width,
+            "contract assertion failed"
+        )
+        assertEquals(
+            explicitOriginal.height,
+            defaultOriginal.height,
+            "contract assertion failed"
+        )
     }
 
     @Test
@@ -146,8 +178,16 @@ class DosageFormImageRoutesTest {
 
         val response = client.get("/v1/images/drugs/drug_0089?size=Original")
 
-        assertEquals(HttpStatusCode.OK, response.status)
-        assertEquals(ContentType.Image.PNG, response.contentType()?.withoutParameters())
+        assertEquals(
+            HttpStatusCode.OK,
+            response.status,
+            "contract assertion failed"
+        )
+        assertEquals(
+            ContentType.Image.PNG,
+            response.contentType()?.withoutParameters(),
+            "contract assertion failed"
+        )
     }
 
     @Test
@@ -176,8 +216,16 @@ class DosageFormImageRoutesTest {
 
         val original = decodeImage(client.get("/v1/images/drugs/drug_0080?size=Original").bodyAsBytes())
 
-        assertEquals(512, original.width)
-        assertEquals(768, original.height)
+        assertEquals(
+            512,
+            original.width,
+            "contract assertion failed"
+        )
+        assertEquals(
+            768,
+            original.height,
+            "contract assertion failed"
+        )
     }
 
     @Test

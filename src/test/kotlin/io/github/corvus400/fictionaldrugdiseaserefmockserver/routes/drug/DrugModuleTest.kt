@@ -28,8 +28,15 @@ class DrugModuleTest {
 
         val response = client.get("/v1/drugs")
 
-        assertEquals(HttpStatusCode.OK, response.status)
-        assertTrue(response.bodyAsText().contains("drug_0001"))
+        assertEquals(
+            HttpStatusCode.OK,
+            response.status,
+            "contract assertion failed"
+        )
+        assertTrue(
+            response.bodyAsText().contains("drug_0001"),
+            "contract assertion failed"
+        )
     }
 
     @Test
@@ -38,17 +45,39 @@ class DrugModuleTest {
 
         val response = client.get("/v1/drugs/drug_0001")
 
-        assertEquals(HttpStatusCode.OK, response.status)
+        assertEquals(
+            HttpStatusCode.OK,
+            response.status,
+            "contract assertion failed"
+        )
         val body = json.decodeFromString<JsonObject>(response.bodyAsText())
         val brandName = body["brand_name"]?.jsonPrimitive?.content
         val genericName = body["generic_name"]?.jsonPrimitive?.content
         val manufacturer = body["manufacturer"]?.jsonPrimitive?.content
-        assertNotNull(brandName)
-        assertTrue(brandName.isNotBlank(), "brandName must be non-blank")
-        assertNotNull(genericName)
-        assertTrue(genericName.isNotBlank(), "genericName must be non-blank")
-        assertNotNull(manufacturer)
-        assertTrue(manufacturer.isNotBlank(), "manufacturer must be non-blank")
+        assertNotNull(
+            brandName,
+            "contract assertion failed"
+        )
+        assertTrue(
+            brandName.isNotBlank(),
+            "brandName must be non-blank"
+        )
+        assertNotNull(
+            genericName,
+            "contract assertion failed"
+        )
+        assertTrue(
+            genericName.isNotBlank(),
+            "genericName must be non-blank"
+        )
+        assertNotNull(
+            manufacturer,
+            "contract assertion failed"
+        )
+        assertTrue(
+            manufacturer.isNotBlank(),
+            "manufacturer must be non-blank"
+        )
     }
 
     @Test
@@ -57,8 +86,15 @@ class DrugModuleTest {
 
         val response = client.get("/v1/drugs")
 
-        assertEquals(HttpStatusCode.OK, response.status)
-        assertTrue(response.bodyAsText().contains("drug_0001"))
+        assertEquals(
+            HttpStatusCode.OK,
+            response.status,
+            "contract assertion failed"
+        )
+        assertTrue(
+            response.bodyAsText().contains("drug_0001"),
+            "contract assertion failed"
+        )
     }
 
     @Test
@@ -68,10 +104,17 @@ class DrugModuleTest {
 
             val response = client.get("/v1/drugs")
 
-            assertEquals(HttpStatusCode.OK, response.status)
+            assertEquals(
+                HttpStatusCode.OK,
+                response.status,
+                "contract assertion failed"
+            )
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
             val items = body["items"]?.jsonArray
-            assertNotNull(items, "response body must have an items array")
+            assertNotNull(
+                items,
+                "response body must have an items array"
+            )
             assertTrue(
                 items.isNotEmpty(),
                 "default scenario first page must expose non-empty items array",
@@ -110,10 +153,17 @@ class DrugModuleTest {
             }
         }
 
-        assertEquals(HttpStatusCode.OK, response.status)
+        assertEquals(
+            HttpStatusCode.OK,
+            response.status,
+            "contract assertion failed"
+        )
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
         val items = body["items"]?.jsonArray
-        assertNotNull(items, "empty scenario must still expose an items array")
+        assertNotNull(
+            items,
+            "empty scenario must still expose an items array"
+        )
         assertEquals(
             expected = 0,
             actual = items.size,
@@ -131,10 +181,21 @@ class DrugModuleTest {
             }
         }
 
-        assertEquals(HttpStatusCode.OK, response.status)
+        assertEquals(
+            HttpStatusCode.OK,
+            response.status,
+            "contract assertion failed"
+        )
         val body = AppJson.decodeFromString<DrugListResponse>(response.bodyAsText())
-        assertEquals(0, body.totalCount)
-        assertTrue(body.items.isEmpty())
+        assertEquals(
+            0,
+            body.totalCount,
+            "contract assertion failed"
+        )
+        assertTrue(
+            body.items.isEmpty(),
+            "contract assertion failed"
+        )
     }
 
     @Test
@@ -160,8 +221,16 @@ class DrugModuleTest {
 
         val response = client.get("/v1/drugs?sort=invalid_key")
 
-        assertEquals(HttpStatusCode.BadRequest, response.status)
+        assertEquals(
+            HttpStatusCode.BadRequest,
+            response.status,
+            "contract assertion failed"
+        )
         val error = AppJson.decodeFromString<ErrorResponse>(response.bodyAsText())
-        assertEquals("INVALID_SORT_KEY", error.code)
+        assertEquals(
+            "INVALID_SORT_KEY",
+            error.code,
+            "contract assertion failed"
+        )
     }
 }

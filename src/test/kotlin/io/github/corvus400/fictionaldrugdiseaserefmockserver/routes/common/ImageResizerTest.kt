@@ -14,56 +14,84 @@ class ImageResizerTest {
     fun `ORIGINAL では元画像と同じ解像度を返す`() {
         val resized = ImageResizer.resize(testImage(width = 12, height = 8), ImageSize.ORIGINAL)
 
-        assertEquals(12, resized.width)
-        assertEquals(8, resized.height)
+        assertEquals(12, resized.width, "contract assertion failed")
+        assertEquals(8, resized.height, "contract assertion failed")
     }
 
     @Test
     fun `正方形 8x8 画像の S は 1x1 を返す`() {
         val resized = ImageResizer.resize(testImage(width = 8, height = 8), ImageSize.S)
 
-        assertEquals(1, resized.width)
-        assertEquals(1, resized.height)
+        assertEquals(1, resized.width, "contract assertion failed")
+        assertEquals(1, resized.height, "contract assertion failed")
     }
 
     @Test
     fun `正方形 32x32 画像の M は 8x8 を返す`() {
         val resized = ImageResizer.resize(testImage(width = 32, height = 32), ImageSize.M)
 
-        assertEquals(8, resized.width)
-        assertEquals(8, resized.height)
+        assertEquals(8, resized.width, "contract assertion failed")
+        assertEquals(8, resized.height, "contract assertion failed")
     }
 
     @Test
     fun `横長 800x400 画像の S は 100x50 を返す`() {
         val resized = ImageResizer.resize(testImage(width = 800, height = 400), ImageSize.S)
 
-        assertEquals(100, resized.width)
-        assertEquals(50, resized.height)
+        assertEquals(
+            100,
+            resized.width,
+            "contract assertion failed"
+        )
+        assertEquals(
+            50,
+            resized.height,
+            "contract assertion failed"
+        )
     }
 
     @Test
     fun `縦長 200x800 画像の S は 25x100 を返す`() {
         val resized = ImageResizer.resize(testImage(width = 200, height = 800), ImageSize.S)
 
-        assertEquals(25, resized.width)
-        assertEquals(100, resized.height)
+        assertEquals(
+            25,
+            resized.width,
+            "contract assertion failed"
+        )
+        assertEquals(
+            100,
+            resized.height,
+            "contract assertion failed"
+        )
     }
 
     @Test
     fun `縦長 200x800 画像の M は 50x200 を返す`() {
         val resized = ImageResizer.resize(testImage(width = 200, height = 800), ImageSize.M)
 
-        assertEquals(50, resized.width)
-        assertEquals(200, resized.height)
+        assertEquals(
+            50,
+            resized.width,
+            "contract assertion failed"
+        )
+        assertEquals(
+            200,
+            resized.height,
+            "contract assertion failed"
+        )
     }
 
     @Test
     fun `極小画像の S は 0 を生まず最小 1x1 を返す`() {
         val resized = ImageResizer.resize(testImage(width = 4, height = 2), ImageSize.S)
 
-        assertEquals(1, resized.width)
-        assertEquals(1, resized.height)
+        assertEquals(1, resized.width, "contract assertion failed")
+        assertEquals(
+            1,
+            resized.height,
+            "contract assertion failed"
+        )
     }
 
     private fun testImage(

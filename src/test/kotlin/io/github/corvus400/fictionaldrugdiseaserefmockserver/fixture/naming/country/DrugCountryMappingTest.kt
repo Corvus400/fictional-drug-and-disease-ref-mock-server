@@ -24,10 +24,18 @@ class DrugCountryMappingTest {
 
     @Test
     fun `all 14 ATC first letters map to the expected country`() {
-        assertEquals(14, expectedByAtcFirstLetter.size)
+        assertEquals(
+            14,
+            expectedByAtcFirstLetter.size,
+            "contract assertion failed"
+        )
         for ((atc, expected) in expectedByAtcFirstLetter) {
             val actual = DrugCountryMapping.of(atcFirstLetter = atc)
-            assertEquals(expected, actual, "atcFirstLetter=$atc")
+            assertEquals(
+                expected,
+                actual,
+                "atcFirstLetter=$atc"
+            )
         }
     }
 }

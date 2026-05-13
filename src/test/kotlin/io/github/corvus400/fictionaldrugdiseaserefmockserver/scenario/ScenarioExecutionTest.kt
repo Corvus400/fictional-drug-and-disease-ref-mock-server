@@ -35,13 +35,21 @@ class ScenarioExecutionTest {
             contentType(ContentType.Application.Json)
             setBody("""{"state":"default","delay_ms":500}""")
         }
-        assertEquals(HttpStatusCode.OK, configResponse.status)
+        assertEquals(
+            HttpStatusCode.OK,
+            configResponse.status,
+            "contract assertion failed"
+        )
 
         val startTime = System.currentTimeMillis()
         val response = client.get("/v1/drugs")
         val elapsed = System.currentTimeMillis() - startTime
 
-        assertEquals(HttpStatusCode.OK, response.status)
+        assertEquals(
+            HttpStatusCode.OK,
+            response.status,
+            "contract assertion failed"
+        )
         assertTrue(
             actual = elapsed >= 500,
             message = "Expected delay of at least 500ms, but got ${elapsed}ms",
@@ -56,11 +64,19 @@ class ScenarioExecutionTest {
             contentType(ContentType.Application.Json)
             setBody("""{"state":"default","status_code":500}""")
         }
-        assertEquals(HttpStatusCode.OK, configResponse.status)
+        assertEquals(
+            HttpStatusCode.OK,
+            configResponse.status,
+            "contract assertion failed"
+        )
 
         val response = client.get("/v1/drugs")
 
-        assertEquals(HttpStatusCode.InternalServerError, response.status)
+        assertEquals(
+            HttpStatusCode.InternalServerError,
+            response.status,
+            "contract assertion failed"
+        )
     }
 
     @Test
@@ -71,12 +87,24 @@ class ScenarioExecutionTest {
             contentType(ContentType.Application.Json)
             setBody("""{"state":"default","headers":{"X-Custom-Header":"custom-value"}}""")
         }
-        assertEquals(HttpStatusCode.OK, configResponse.status)
+        assertEquals(
+            HttpStatusCode.OK,
+            configResponse.status,
+            "contract assertion failed"
+        )
 
         val response = client.get("/v1/drugs")
 
-        assertEquals(HttpStatusCode.OK, response.status)
-        assertEquals("custom-value", response.headers["X-Custom-Header"])
+        assertEquals(
+            HttpStatusCode.OK,
+            response.status,
+            "contract assertion failed"
+        )
+        assertEquals(
+            "custom-value",
+            response.headers["X-Custom-Header"],
+            "contract assertion failed"
+        )
     }
 
     @Test
@@ -89,15 +117,30 @@ class ScenarioExecutionTest {
         }
 
         val errorResponse = client.get("/v1/drugs")
-        assertEquals(HttpStatusCode.InternalServerError, errorResponse.status)
+        assertEquals(
+            HttpStatusCode.InternalServerError,
+            errorResponse.status,
+            "contract assertion failed"
+        )
 
         val resetResponse = client.post("/__admin/reset")
-        assertEquals(HttpStatusCode.OK, resetResponse.status)
+        assertEquals(
+            HttpStatusCode.OK,
+            resetResponse.status,
+            "contract assertion failed"
+        )
         val body = json.decodeFromString<JsonObject>(resetResponse.bodyAsText())
-        assertTrue(body["success"]?.jsonPrimitive?.boolean == true)
+        assertTrue(
+            body["success"]?.jsonPrimitive?.boolean == true,
+            "contract assertion failed"
+        )
 
         val normalResponse = client.get("/v1/drugs")
-        assertEquals(HttpStatusCode.OK, normalResponse.status)
+        assertEquals(
+            HttpStatusCode.OK,
+            normalResponse.status,
+            "contract assertion failed"
+        )
     }
 
     @Test
@@ -108,13 +151,21 @@ class ScenarioExecutionTest {
             contentType(ContentType.Application.Json)
             setBody("""{"state":"default","delay_ms":300,"status_code":503}""")
         }
-        assertEquals(HttpStatusCode.OK, configResponse.status)
+        assertEquals(
+            HttpStatusCode.OK,
+            configResponse.status,
+            "contract assertion failed"
+        )
 
         val startTime = System.currentTimeMillis()
         val response = client.get("/v1/drugs")
         val elapsed = System.currentTimeMillis() - startTime
 
-        assertEquals(HttpStatusCode.ServiceUnavailable, response.status)
+        assertEquals(
+            HttpStatusCode.ServiceUnavailable,
+            response.status,
+            "contract assertion failed"
+        )
         assertTrue(
             actual = elapsed >= 300,
             message = "Expected delay of at least 300ms, but got ${elapsed}ms",

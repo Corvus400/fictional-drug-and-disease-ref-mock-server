@@ -3,19 +3,26 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
-import kotlin.test.assertNull
 
 class TherapeuticCategoryTest {
     @Test
     fun `entries expose Japanese displayName and ATC initial`() {
         assertEquals(
-            expected = "消化器系および代謝",
-            actual = TherapeuticCategory.ALIMENTARY_METABOLISM.displayName,
+            expected = mapOf(
+                TherapeuticCategory.ALIMENTARY_METABOLISM to ("消化器系および代謝" to 'A'),
+                TherapeuticCategory.NERVOUS_SYSTEM to ("神経系" to 'N'),
+            ),
+            actual = mapOf(
+                TherapeuticCategory.ALIMENTARY_METABOLISM to
+                    (
+                        TherapeuticCategory.ALIMENTARY_METABOLISM.displayName to
+                            TherapeuticCategory.ALIMENTARY_METABOLISM.atcInitial
+                        ),
+                TherapeuticCategory.NERVOUS_SYSTEM to
+                    (TherapeuticCategory.NERVOUS_SYSTEM.displayName to TherapeuticCategory.NERVOUS_SYSTEM.atcInitial),
+            ),
+            message = "TherapeuticCategory displayName and ATC initial contract must stay pinned",
         )
-        assertEquals(expected = 'A', actual = TherapeuticCategory.ALIMENTARY_METABOLISM.atcInitial)
-
-        assertEquals(expected = "神経系", actual = TherapeuticCategory.NERVOUS_SYSTEM.displayName)
-        assertEquals(expected = 'N', actual = TherapeuticCategory.NERVOUS_SYSTEM.atcInitial)
     }
 
     @Test
@@ -38,10 +45,13 @@ class TherapeuticCategoryTest {
     @Test
     fun `fromAtcInitial resolves ATC first letter or null`() {
         assertEquals(
-            expected = TherapeuticCategory.ALIMENTARY_METABOLISM,
-            actual = TherapeuticCategory.fromAtcInitial(initial = 'A'),
+            expected = mapOf(
+                'A' to TherapeuticCategory.ALIMENTARY_METABOLISM,
+                'N' to TherapeuticCategory.NERVOUS_SYSTEM,
+                'Z' to null,
+            ),
+            actual = listOf('A', 'N', 'Z').associateWith { TherapeuticCategory.fromAtcInitial(it) },
+            message = "TherapeuticCategory.fromAtcInitial must resolve known ATC initials and reject unknown initials",
         )
-        assertEquals(expected = TherapeuticCategory.NERVOUS_SYSTEM, actual = TherapeuticCategory.fromAtcInitial('N'))
-        assertNull(actual = TherapeuticCategory.fromAtcInitial(initial = 'Z'))
     }
 }

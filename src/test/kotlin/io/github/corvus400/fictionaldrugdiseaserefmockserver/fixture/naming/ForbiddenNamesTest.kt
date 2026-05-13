@@ -22,8 +22,14 @@ class ForbiddenNamesTest {
 
     @Test
     fun `containsClassSuffix rejects drug class suffixes`() {
-        assertTrue(ForbiddenNames.containsClassSuffix("ロサスタチン"))
-        assertFalse(ForbiddenNames.containsClassSuffix("カイクン"))
+        assertTrue(
+            ForbiddenNames.containsClassSuffix("ロサスタチン"),
+            "contract assertion failed"
+        )
+        assertFalse(
+            ForbiddenNames.containsClassSuffix("カイクン"),
+            "contract assertion failed"
+        )
     }
 
     @Test

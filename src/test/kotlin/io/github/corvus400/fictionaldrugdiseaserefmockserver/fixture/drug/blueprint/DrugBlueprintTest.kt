@@ -18,12 +18,36 @@ class DrugBlueprintTest {
                 isChronicPrescription = true,
                 dosageForm = DosageForm.TABLET,
             )
-        assertEquals(0, blueprint.index)
-        assertEquals('A', blueprint.atcFirstLetter)
-        assertEquals(DosageForm.TABLET, blueprint.dosageForm)
-        assertEquals(setOf(RegulatoryClass.PRESCRIPTION_REQUIRED), blueprint.regulatoryClasses)
-        assertEquals(false, blueprint.isBiological)
-        assertEquals(true, blueprint.isChronicPrescription)
+        assertEquals(
+            0,
+            blueprint.index,
+            "contract assertion failed"
+        )
+        assertEquals(
+            'A',
+            blueprint.atcFirstLetter,
+            "contract assertion failed"
+        )
+        assertEquals(
+            DosageForm.TABLET,
+            blueprint.dosageForm,
+            "contract assertion failed"
+        )
+        assertEquals(
+            setOf(RegulatoryClass.PRESCRIPTION_REQUIRED),
+            blueprint.regulatoryClasses,
+            "contract assertion failed"
+        )
+        assertEquals(
+            false,
+            blueprint.isBiological,
+            "contract assertion failed"
+        )
+        assertEquals(
+            true,
+            blueprint.isChronicPrescription,
+            "contract assertion failed"
+        )
     }
 
     @Test
@@ -91,10 +115,26 @@ class DrugBlueprintTest {
                     originalSubstanceDescription = "無色澄明の液体である。",
                 ),
             )
-        assertEquals("drug_0080", blueprint.idOverride)
-        assertEquals("トレデキム", blueprint.nameOverride?.brandKatakana)
-        assertEquals("tredecim", blueprint.nameOverride?.genericLatin)
-        assertEquals("無色澄明の液体である。", blueprint.textOverride?.originalSubstanceDescription)
+        assertEquals(
+            "drug_0080",
+            blueprint.idOverride,
+            "contract assertion failed"
+        )
+        assertEquals(
+            "トレデキム",
+            blueprint.nameOverride?.brandKatakana,
+            "contract assertion failed"
+        )
+        assertEquals(
+            "tredecim",
+            blueprint.nameOverride?.genericLatin,
+            "contract assertion failed"
+        )
+        assertEquals(
+            "無色澄明の液体である。",
+            blueprint.textOverride?.originalSubstanceDescription,
+            "contract assertion failed"
+        )
     }
 
     @Test
@@ -108,8 +148,20 @@ class DrugBlueprintTest {
                 isChronicPrescription = false,
                 dosageForm = DosageForm.TABLET,
             )
-        assertEquals(null, blueprint.idOverride)
-        assertEquals(null, blueprint.nameOverride)
-        assertEquals(null, blueprint.textOverride)
+        assertEquals(
+            null,
+            blueprint.idOverride,
+            "contract assertion failed"
+        )
+        assertEquals(
+            null,
+            blueprint.nameOverride,
+            "contract assertion failed"
+        )
+        assertEquals(
+            null,
+            blueprint.textOverride,
+            "contract assertion failed"
+        )
     }
 }

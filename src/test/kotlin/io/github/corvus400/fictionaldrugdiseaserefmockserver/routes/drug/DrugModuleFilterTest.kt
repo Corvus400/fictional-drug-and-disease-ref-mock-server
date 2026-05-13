@@ -23,7 +23,11 @@ class DrugModuleFilterTest {
 
         val response = client.get("/v1/drugs?category_atc=A&page_size=100")
 
-        assertEquals(HttpStatusCode.OK, response.status)
+        assertEquals(
+            HttpStatusCode.OK,
+            response.status,
+            "contract assertion failed"
+        )
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
         assertEquals(
             expected = 20,
@@ -31,7 +35,10 @@ class DrugModuleFilterTest {
             message = "ATC A 群は 120 件中 20 件 (医薬品モデル仕様の組合せ数計算)",
         )
         val items = body["items"]?.jsonArray
-        assertNotNull(items, "response must include items array")
+        assertNotNull(
+            items,
+            "response must include items array"
+        )
         assertEquals(
             expected = 20,
             actual = items.size,
@@ -39,12 +46,22 @@ class DrugModuleFilterTest {
         )
         items.forEach { item ->
             val id = item.jsonObject["id"]?.jsonPrimitive?.content
-            assertNotNull(id, "item must expose id")
+            assertNotNull(
+                id,
+                "item must expose id"
+            )
             val detailResponse = client.get("/v1/drugs/$id")
-            assertEquals(HttpStatusCode.OK, detailResponse.status, "detail GET must succeed for id=$id")
+            assertEquals(
+                HttpStatusCode.OK,
+                detailResponse.status,
+                "detail GET must succeed for id=$id"
+            )
             val detail = json.parseToJsonElement(string = detailResponse.bodyAsText()).jsonObject
             val atcCode = detail["atc_code"]?.jsonPrimitive?.content
-            assertNotNull(atcCode, "drug $id must expose atc_code")
+            assertNotNull(
+                atcCode,
+                "drug $id must expose atc_code"
+            )
             assertTrue(
                 actual = atcCode.startsWith(prefix = "A"),
                 message = "item id=$id has atc_code=$atcCode; must start with 'A' under category_atc=A filter",
@@ -59,25 +76,41 @@ class DrugModuleFilterTest {
 
             val response = client.get("/v1/drugs?regulatory_class=prescription_required&page_size=100")
 
-            assertEquals(HttpStatusCode.OK, response.status)
+            assertEquals(
+                HttpStatusCode.OK,
+                response.status,
+                "contract assertion failed"
+            )
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
             val totalCount = body["total_count"]?.jsonPrimitive?.content?.toInt()
-            assertNotNull(totalCount, "response must include total_count")
+            assertNotNull(
+                totalCount,
+                "response must include total_count"
+            )
             assertTrue(
                 actual = totalCount in 1 until 120,
                 message = "total_count=$totalCount must be 1..<120 for regulatory_class=prescription_required",
             )
             val items = body["items"]?.jsonArray
-            assertNotNull(items, "response must include items array")
+            assertNotNull(
+                items,
+                "response must include items array"
+            )
             assertTrue(
                 actual = items.isNotEmpty(),
                 message = "filtered items must be non-empty for regulatory_class=prescription_required",
             )
             items.forEach { item ->
                 val id = item.jsonObject["id"]?.jsonPrimitive?.content
-                assertNotNull(id, "item must expose id")
+                assertNotNull(
+                    id,
+                    "item must expose id"
+                )
                 val regClasses = item.jsonObject["regulatory_class"]?.jsonArray
-                assertNotNull(regClasses, "item id=$id must expose regulatory_class list")
+                assertNotNull(
+                    regClasses,
+                    "item id=$id must expose regulatory_class list"
+                )
                 val values = regClasses.map { element -> element.jsonPrimitive.content }
                 assertTrue(
                     actual = values.contains(element = "prescription_required"),
@@ -94,25 +127,42 @@ class DrugModuleFilterTest {
 
         val response = client.get("/v1/drugs?route=oral&page_size=100")
 
-        assertEquals(HttpStatusCode.OK, response.status)
+        assertEquals(
+            HttpStatusCode.OK,
+            response.status,
+            "contract assertion failed"
+        )
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
         val totalCount = body["total_count"]?.jsonPrimitive?.content?.toInt()
-        assertNotNull(totalCount, "response must include total_count")
+        assertNotNull(
+            totalCount,
+            "response must include total_count"
+        )
         assertTrue(
             actual = totalCount in 1 until 120,
             message = "total_count=$totalCount must be 1..<120 for route=oral",
         )
         val items = body["items"]?.jsonArray
-        assertNotNull(items, "response must include items array")
+        assertNotNull(
+            items,
+            "response must include items array"
+        )
         assertTrue(
             actual = items.isNotEmpty(),
             message = "filtered items must be non-empty for route=oral",
         )
         items.forEach { item ->
             val id = item.jsonObject["id"]?.jsonPrimitive?.content
-            assertNotNull(id, "item must expose id")
+            assertNotNull(
+                id,
+                "item must expose id"
+            )
             val detailResponse = client.get("/v1/drugs/$id")
-            assertEquals(HttpStatusCode.OK, detailResponse.status, "detail GET must succeed for id=$id")
+            assertEquals(
+                HttpStatusCode.OK,
+                detailResponse.status,
+                "detail GET must succeed for id=$id"
+            )
             val detail = json.parseToJsonElement(string = detailResponse.bodyAsText()).jsonObject
             val routeValue = detail["route_of_administration"]?.jsonPrimitive?.content
             assertEquals(
@@ -129,25 +179,42 @@ class DrugModuleFilterTest {
 
         val response = client.get("/v1/drugs?dosage_form=tablet&page_size=100")
 
-        assertEquals(HttpStatusCode.OK, response.status)
+        assertEquals(
+            HttpStatusCode.OK,
+            response.status,
+            "contract assertion failed"
+        )
         val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
         val totalCount = body["total_count"]?.jsonPrimitive?.content?.toInt()
-        assertNotNull(totalCount, "response must include total_count")
+        assertNotNull(
+            totalCount,
+            "response must include total_count"
+        )
         assertTrue(
             actual = totalCount in 1 until 120,
             message = "total_count=$totalCount must be 1..<120 for dosage_form=tablet",
         )
         val items = body["items"]?.jsonArray
-        assertNotNull(items, "response must include items array")
+        assertNotNull(
+            items,
+            "response must include items array"
+        )
         assertTrue(
             actual = items.isNotEmpty(),
             message = "filtered items must be non-empty for dosage_form=tablet",
         )
         items.forEach { item ->
             val id = item.jsonObject["id"]?.jsonPrimitive?.content
-            assertNotNull(id, "item must expose id")
+            assertNotNull(
+                id,
+                "item must expose id"
+            )
             val detailResponse = client.get("/v1/drugs/$id")
-            assertEquals(HttpStatusCode.OK, detailResponse.status, "detail GET must succeed for id=$id")
+            assertEquals(
+                HttpStatusCode.OK,
+                detailResponse.status,
+                "detail GET must succeed for id=$id"
+            )
             val detail = json.parseToJsonElement(string = detailResponse.bodyAsText()).jsonObject
             val dosageFormValue = detail["dosage_form"]?.jsonPrimitive?.content
             assertEquals(
@@ -168,7 +235,11 @@ class DrugModuleFilterTest {
         val formOnly = client.get("/v1/drugs?dosage_form=tablet&page_size=100")
         val intersection = client.get("/v1/drugs?category_atc=A&dosage_form=tablet&page_size=100")
 
-        assertEquals(HttpStatusCode.OK, intersection.status)
+        assertEquals(
+            HttpStatusCode.OK,
+            intersection.status,
+            "contract assertion failed"
+        )
         val atcBody = json.parseToJsonElement(string = atcOnly.bodyAsText()).jsonObject
         val formBody = json.parseToJsonElement(string = formOnly.bodyAsText()).jsonObject
         val intersectionBody = json.parseToJsonElement(string = intersection.bodyAsText()).jsonObject
@@ -176,25 +247,47 @@ class DrugModuleFilterTest {
         val atcTotal = atcBody["total_count"]?.jsonPrimitive?.content?.toInt()
         val formTotal = formBody["total_count"]?.jsonPrimitive?.content?.toInt()
         val intersectionTotal = intersectionBody["total_count"]?.jsonPrimitive?.content?.toInt()
-        assertNotNull(atcTotal, "atc-only response must include total_count")
-        assertNotNull(formTotal, "form-only response must include total_count")
-        assertNotNull(intersectionTotal, "intersection response must include total_count")
+        assertNotNull(
+            atcTotal,
+            "atc-only response must include total_count"
+        )
+        assertNotNull(
+            formTotal,
+            "form-only response must include total_count"
+        )
+        assertNotNull(
+            intersectionTotal,
+            "intersection response must include total_count"
+        )
         assertTrue(
             actual = intersectionTotal <= atcTotal && intersectionTotal <= formTotal,
             message = "intersection total=$intersectionTotal must be <= min(atc=$atcTotal, form=$formTotal)",
         )
 
         val items = intersectionBody["items"]?.jsonArray
-        assertNotNull(items, "intersection response must include items array")
+        assertNotNull(
+            items,
+            "intersection response must include items array"
+        )
         items.forEach { item ->
             val id = item.jsonObject["id"]?.jsonPrimitive?.content
-            assertNotNull(id, "item must expose id")
+            assertNotNull(
+                id,
+                "item must expose id"
+            )
             val detailResponse = client.get("/v1/drugs/$id")
-            assertEquals(HttpStatusCode.OK, detailResponse.status, "detail GET must succeed for id=$id")
+            assertEquals(
+                HttpStatusCode.OK,
+                detailResponse.status,
+                "detail GET must succeed for id=$id"
+            )
             val detail = json.parseToJsonElement(string = detailResponse.bodyAsText()).jsonObject
             val atcCode = detail["atc_code"]?.jsonPrimitive?.content
             val dosageFormValue = detail["dosage_form"]?.jsonPrimitive?.content
-            assertNotNull(atcCode, "item id=$id must expose atc_code")
+            assertNotNull(
+                atcCode,
+                "item id=$id must expose atc_code"
+            )
             assertEquals(
                 expected = "tablet",
                 actual = dosageFormValue,

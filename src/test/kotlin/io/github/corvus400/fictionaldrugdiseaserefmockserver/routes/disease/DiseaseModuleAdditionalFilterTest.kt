@@ -204,9 +204,17 @@ class DiseaseModuleAdditionalFilterTest {
 
             val response = client.get(urlString = "/v1/diseases?onset_pattern=INVALID")
 
-            assertEquals(expected = HttpStatusCode.BadRequest, actual = response.status)
+            assertEquals(
+                expected = HttpStatusCode.BadRequest,
+                actual = response.status,
+                "contract assertion failed"
+            )
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
-            assertEquals(expected = "INVALID_ONSET_PATTERN", actual = body["code"]?.jsonPrimitive?.content)
+            assertEquals(
+                expected = "INVALID_ONSET_PATTERN",
+                actual = body["code"]?.jsonPrimitive?.content,
+                "contract assertion failed"
+            )
             val message = body["message"]?.jsonPrimitive?.content
             assertNotNull(actual = message, message = "ErrorResponse must include message")
             assertTrue(

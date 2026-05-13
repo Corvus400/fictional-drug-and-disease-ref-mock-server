@@ -31,11 +31,24 @@ class OpenApiDocTest {
     fun `openapi json is generated and parseable`() = testApplication {
         application { module() }
         val response = client.get("/openapi.json")
-        assertEquals(HttpStatusCode.OK, response.status)
+        assertEquals(
+            HttpStatusCode.OK,
+            response.status,
+            "contract assertion failed"
+        )
         val spec = json.decodeFromString<JsonObject>(response.bodyAsText())
-        assertTrue(spec.containsKey("openapi"), "OpenAPI仕様にopenapiフィールドが存在する")
-        assertTrue(spec.containsKey("paths"), "OpenAPI仕様にpathsフィールドが存在する")
-        assertTrue(spec.containsKey("info"), "OpenAPI仕様にinfoフィールドが存在する")
+        assertTrue(
+            spec.containsKey("openapi"),
+            "OpenAPI仕様にopenapiフィールドが存在する"
+        )
+        assertTrue(
+            spec.containsKey("paths"),
+            "OpenAPI仕様にpathsフィールドが存在する"
+        )
+        assertTrue(
+            spec.containsKey("info"),
+            "OpenAPI仕様にinfoフィールドが存在する"
+        )
     }
 
     @Test
@@ -147,8 +160,14 @@ class OpenApiDocTest {
         val spec = json.decodeFromString<JsonObject>(response.bodyAsText())
         val description = spec["info"]?.jsonObject?.get("description")?.jsonPrimitive?.content.orEmpty()
 
-        assertTrue(description.contains("FICTIONAL DATA"))
-        assertTrue(description.contains("架空データ"))
+        assertTrue(
+            description.contains("FICTIONAL DATA"),
+            "contract assertion failed"
+        )
+        assertTrue(
+            description.contains("架空データ"),
+            "contract assertion failed"
+        )
     }
 
     @Test

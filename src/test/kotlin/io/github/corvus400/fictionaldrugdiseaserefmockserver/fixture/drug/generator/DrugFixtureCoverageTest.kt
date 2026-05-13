@@ -60,14 +60,20 @@ class DrugFixtureCoverageTest {
         val renalDoses = drugs.flatMap { drug -> drug.dosage.renalAdjustment }
 
         val normalDoses = renalDoses.filter { renalDose -> renalDose.range.severity == RenalSeverity.NORMAL }
-        assertTrue(normalDoses.isNotEmpty(), "NORMAL renal doses must be present")
+        assertTrue(
+            normalDoses.isNotEmpty(),
+            "NORMAL renal doses must be present"
+        )
         assertTrue(
             actual = normalDoses.all { renalDose -> renalDose.range.maxMlPerMin == null },
             message = "NORMAL renal doses must have no upper CrCl bound",
         )
 
         val endStageDoses = renalDoses.filter { renalDose -> renalDose.range.severity == RenalSeverity.END_STAGE }
-        assertTrue(endStageDoses.isNotEmpty(), "END_STAGE renal doses must be present")
+        assertTrue(
+            endStageDoses.isNotEmpty(),
+            "END_STAGE renal doses must be present"
+        )
         assertTrue(
             actual = endStageDoses.all { renalDose -> renalDose.range.minMlPerMin == null },
             message = "END_STAGE renal doses must have no lower CrCl bound",
@@ -92,8 +98,14 @@ class DrugFixtureCoverageTest {
 
         val drug87 = drugs.first { drug -> drug.id == "drug_0087" }
 
-        assertTrue(RegulatoryClass.STIMULANT_PRECURSOR in drug87.regulatoryClass)
-        assertTrue(RegulatoryClass.PRESCRIPTION_REQUIRED in drug87.regulatoryClass)
+        assertTrue(
+            RegulatoryClass.STIMULANT_PRECURSOR in drug87.regulatoryClass,
+            "contract assertion failed"
+        )
+        assertTrue(
+            RegulatoryClass.PRESCRIPTION_REQUIRED in drug87.regulatoryClass,
+            "contract assertion failed"
+        )
     }
 
     @Test

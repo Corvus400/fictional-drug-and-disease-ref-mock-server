@@ -13,9 +13,18 @@ class FixmergeNameAdapterTest {
     fun `coin returns a non-empty CoinedName for every NameSlot`() {
         for (slot in NameSlot.entries) {
             val result = adapter.coin(slot = slot, seed = 0L)
-            assertTrue(result.latin.isNotBlank(), "latin is blank for slot=$slot")
-            assertTrue(result.katakana.isNotBlank(), "katakana is blank for slot=$slot")
-            assertTrue(result.mixedSurface.isNotBlank(), "mixedSurface is blank for slot=$slot")
+            assertTrue(
+                result.latin.isNotBlank(),
+                "latin is blank for slot=$slot"
+            )
+            assertTrue(
+                result.katakana.isNotBlank(),
+                "katakana is blank for slot=$slot"
+            )
+            assertTrue(
+                result.mixedSurface.isNotBlank(),
+                "mixedSurface is blank for slot=$slot"
+            )
         }
     }
 

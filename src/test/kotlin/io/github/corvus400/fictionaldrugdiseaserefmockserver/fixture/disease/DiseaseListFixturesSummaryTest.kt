@@ -25,9 +25,15 @@ class DiseaseListFixturesSummaryTest {
 
         val envelope = Json.parseToJsonElement(AppJson.encodeToString(response)).jsonObject
         val items = envelope["items"]?.jsonArray
-        assertNotNull(items, "envelope must expose items array")
+        assertNotNull(
+            items,
+            "envelope must expose items array"
+        )
         val firstItem = items.firstOrNull()?.jsonObject
-        assertNotNull(firstItem, "default scenario must have at least one item")
+        assertNotNull(
+            firstItem,
+            "default scenario must have at least one item"
+        )
 
         assertEquals(
             expected = 8,
