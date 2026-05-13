@@ -2,12 +2,12 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.ge
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.common.AtcIcd10Mapping
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.common.ValueRangeGenerator
-import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.InfectionRouteRiskFactors
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.disease.generator.placeholder.DiseaseRenderContext
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.generator.DrugClinicalBuilders
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.BucketSeedCoiner
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.ExamFindingSeedBucketRepository
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.GradingSystemSeedBucketRepository
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.RiskFactorSeedBuckets
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.SeverityGradeSeedBucketRepository
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.TreatmentNonPharmaSeedBucketRepository
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.TreatmentPharmaSeedBucketRepository
@@ -469,20 +469,16 @@ internal object DiseaseNestedBuilders {
                 slot = DiseaseFieldSlot.EPIDEMIOLOGY_RISK_ITEM.ordinal,
                 index = offset,
             )
-            ValueRangeGenerator.pickOne(seed = seed, candidates = RISK_FACTOR_VOCAB)
-        }
-        val chapterRiskFactors = if (chapter == Icd10Chapter.CHAPTER_I &&
-            riskFactors.none(InfectionRouteRiskFactors::containsKeyword)
-        ) {
-            listOf(InfectionRouteRiskFactors.DEFAULT_CHAPTER_I_RISK_FACTOR) + riskFactors.drop(n = 1)
-        } else {
-            riskFactors
+            ValueRangeGenerator.pickOne(
+                seed = seed,
+                candidates = RiskFactorSeedBuckets.riskFactorsFor(chapter = chapter),
+            )
         }
         return EpidemiologyInfo(
             prevalence = prevalence,
             onsetAgeRange = onsetAgeRange,
             sexRatio = sexRatio,
-            riskFactors = chapterRiskFactors,
+            riskFactors = riskFactors,
         )
     }
 
@@ -700,8 +696,6 @@ internal object DiseaseNestedBuilders {
         listOf("血液生化学検査", "心電図", "単純X線撮影", "CT検査", "MRI検査", "内視鏡検査", "問診票")
     private val PREVENTION_VOCAB: List<String> =
         listOf("定期健診の受診", "適切な手指衛生", "バランスの取れた食事", "十分な睡眠", "適度な運動")
-    private val RISK_FACTOR_VOCAB: List<String> =
-        listOf("家族歴", "喫煙", "肥満", "運動不足", "長時間の接触", "飛沫伝播", "媒介生物への曝露")
     private val NONPHARMA_HEADINGS: List<String> =
         listOf("食事療法", "運動療法", "理学療法", "生活指導")
 }
