@@ -148,7 +148,7 @@ object DrugParagraphTemplates {
         ParagraphField.PHARMACOKINETICS_BLOOD to listOf(
             "健康成人に {{doseAmount}} を単回経口投与したとき、Cmax は {{cmax}}、T1/2 は {{halfLife}} であった。 (架空)",
             "反復経口投与において {{durationDays}} 日目に定常状態に達し、AUC は {{auc}} を示した。 (架空)",
-            "投与後の血中濃度推移は {{modelType}} コンパートメントモデルで良好に記述される。 (架空)",
+            "投与後の血中濃度推移は {{modelType}}モデルで良好に記述される。 (架空)",
         ),
         ParagraphField.PHARMACOKINETICS_ABSORPTION to listOf(
             "経口投与後、速やかに消化管から吸収され、{{tmax}} で最高血中濃度に到達する。 (架空)",
@@ -177,11 +177,11 @@ object DrugParagraphTemplates {
         ),
         ParagraphField.PHARMACOLOGY_MECHANISM to listOf(
             "本剤は {{targetMolecule}} に選択的に結合し、その {{action}} を介して薬理作用を発揮する。 (架空)",
-            "本剤は {{pathway}} 経路を抑制することで {{effect}} を示すと考えられる。 (架空)",
+            "本剤は {{pathway}}を抑制することで {{effect}} を示すと考えられる。 (架空)",
             "本剤は {{mechanism}} を介した作用により、{{disease}} の病態進行を抑制する。 (架空)",
         ),
         ParagraphField.PHARMACOLOGY_EFFECT to listOf(
-            "動物試験において、本剤は {{modelName}} モデルで用量依存的に {{effect}} を示した。 (架空)",
+            "動物試験において、本剤は {{modelName}}で用量依存的に {{effect}} を示した。 (架空)",
             "In vitro において {{targetMolecule}} に対する IC50 は {{ic50}} であった。 (架空)",
             "ヒト由来 {{tissueType}} を用いた試験では、本剤は {{effect}} を濃度依存的に増強した。 (架空)",
         ),
