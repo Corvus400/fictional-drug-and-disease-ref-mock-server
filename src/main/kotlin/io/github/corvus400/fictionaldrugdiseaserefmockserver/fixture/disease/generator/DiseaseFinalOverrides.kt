@@ -24,6 +24,8 @@ internal val DISEASE_FINAL_OVERRIDES: Map<String, (Disease) -> Disease> =
         "disease_0022" to ::insomniaOverride,
     )
 
+internal val DISEASE_RELATED_DRUG_IDS_FINAL_OVERRIDE_IDS: Set<String> = setOf("disease_0022", "disease_0079")
+
 private fun insomniaOverride(generated: Disease): Disease =
     generated.copy(
         name = "不眠症",
