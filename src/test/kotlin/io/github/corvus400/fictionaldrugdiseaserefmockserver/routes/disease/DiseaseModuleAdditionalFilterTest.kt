@@ -47,30 +47,48 @@ class DiseaseModuleAdditionalFilterTest {
         }
 
     @Test
-    fun `GET diseases with onset_pattern ACUTE and CHRONIC returns OR-filtered items`() = testApplication {
+    fun `GET diseases with onset_pattern ACUTE and CHRONIC returns 200 OK`() = testApplication {
         application { module() }
 
-        val singleTotal = client.get(urlString = "/v1/diseases?onset_pattern=ACUTE&page_size=100").totalCount()
-        val orResponse = client.get(
-            urlString = "/v1/diseases?onset_pattern=ACUTE&onset_pattern=CHRONIC&page_size=100",
-        )
+        val response = client.get(urlString = ONSET_PATTERN_ACUTE_OR_CHRONIC_URL)
 
-        val orTotal = orResponse.totalCount()
-        val violations = listOfNotNull(
-            "OR status must be 200 OK but was ${orResponse.status}".takeUnless {
-                orResponse.status == HttpStatusCode.OK
-            },
-            "onset_pattern=ACUTE must filter total_count to 1..<80, got $singleTotal"
-                .takeUnless { singleTotal in 1 until DEFAULT_DISEASE_COUNT },
-            "onset_pattern=ACUTE&onset_pattern=CHRONIC must filter total_count to 1..<80, got $orTotal"
-                .takeUnless { orTotal in 1 until DEFAULT_DISEASE_COUNT },
-            "OR-filtered total_count=$orTotal must be >= single ACUTE total_count=$singleTotal"
-                .takeUnless { orTotal >= singleTotal },
-        )
+        assertEquals(expected = HttpStatusCode.OK, actual = response.status)
+    }
+
+    @Test
+    fun `GET diseases with onset_pattern ACUTE filters total_count to strict subset`() = testApplication {
+        application { module() }
+
+        val singleTotal = client.get(urlString = ONSET_PATTERN_ACUTE_URL).totalCount()
 
         assertTrue(
-            actual = violations.isEmpty(),
-            message = "onset_pattern OR filter violations: $violations",
+            actual = singleTotal in 1 until DEFAULT_DISEASE_COUNT,
+            message = "onset_pattern=ACUTE must filter total_count to 1..<80, got $singleTotal",
+        )
+    }
+
+    @Test
+    fun `GET diseases with onset_pattern ACUTE and CHRONIC filters total_count to strict subset`() = testApplication {
+        application { module() }
+
+        val orTotal = client.get(urlString = ONSET_PATTERN_ACUTE_OR_CHRONIC_URL).totalCount()
+
+        assertTrue(
+            actual = orTotal in 1 until DEFAULT_DISEASE_COUNT,
+            message = "onset_pattern=ACUTE&onset_pattern=CHRONIC must filter total_count to 1..<80, got $orTotal",
+        )
+    }
+
+    @Test
+    fun `GET diseases with onset_pattern ACUTE and CHRONIC total_count is at least ACUTE only`() = testApplication {
+        application { module() }
+
+        val singleTotal = client.get(urlString = ONSET_PATTERN_ACUTE_URL).totalCount()
+        val orTotal = client.get(urlString = ONSET_PATTERN_ACUTE_OR_CHRONIC_URL).totalCount()
+
+        assertTrue(
+            actual = orTotal >= singleTotal,
+            message = "OR-filtered total_count=$orTotal must be >= single ACUTE total_count=$singleTotal",
         )
     }
 
@@ -116,31 +134,40 @@ class DiseaseModuleAdditionalFilterTest {
         }
 
     @Test
-    fun `GET diseases with has_pharmacological_treatment false returns items with empty pharmacological`() =
+    fun `GET diseases with has_pharmacological_treatment false returns 200 OK`() =
         testApplication {
             application { module() }
 
-            val falseResponse = client.get(
-                urlString = "/v1/diseases?has_pharmacological_treatment=false&page_size=100",
-            )
-            val trueTotal = client.get(
-                urlString = "/v1/diseases?has_pharmacological_treatment=true&page_size=100",
-            ).totalCount()
+            val response = client.get(urlString = HAS_PHARMACOLOGICAL_TREATMENT_FALSE_URL)
 
-            val falseTotal = falseResponse.totalCount()
-            val violations = listOfNotNull(
-                "false filter status must be 200 OK but was ${falseResponse.status}".takeUnless {
-                    falseResponse.status == HttpStatusCode.OK
-                },
-                "has_pharmacological_treatment=false must filter total_count to 1..<80, got $falseTotal"
-                    .takeUnless { falseTotal in 1 until DEFAULT_DISEASE_COUNT },
-                "true and false pharmacological filters must partition the 80 default diseases"
-                    .takeUnless { trueTotal + falseTotal == DEFAULT_DISEASE_COUNT },
-            )
+            assertEquals(expected = HttpStatusCode.OK, actual = response.status)
+        }
+
+    @Test
+    fun `GET diseases with has_pharmacological_treatment false filters total_count to strict subset`() =
+        testApplication {
+            application { module() }
+
+            val falseTotal = client.get(urlString = HAS_PHARMACOLOGICAL_TREATMENT_FALSE_URL).totalCount()
 
             assertTrue(
-                actual = violations.isEmpty(),
-                message = "has_pharmacological_treatment=false violations: $violations",
+                actual = falseTotal in 1 until DEFAULT_DISEASE_COUNT,
+                message = "has_pharmacological_treatment=false must filter total_count to 1..<80, got $falseTotal",
+            )
+        }
+
+    @Test
+    fun `GET diseases with has_pharmacological_treatment true and false partition default diseases`() =
+        testApplication {
+            application { module() }
+
+            val trueTotal = client.get(urlString = HAS_PHARMACOLOGICAL_TREATMENT_TRUE_URL).totalCount()
+            val falseTotal = client.get(urlString = HAS_PHARMACOLOGICAL_TREATMENT_FALSE_URL).totalCount()
+
+            assertEquals(
+                expected = DEFAULT_DISEASE_COUNT,
+                actual = trueTotal + falseTotal,
+                message = "true and false pharmacological filters must partition the 80 default diseases",
             )
         }
 
@@ -171,38 +198,47 @@ class DiseaseModuleAdditionalFilterTest {
         }
 
     @Test
-    fun `GET diseases with symptom_keyword X and has_severity_grading true returns AND intersection`() =
+    fun `GET diseases with symptom_keyword X and has_severity_grading true returns 200 OK`() =
         testApplication {
             application { module() }
 
             val keyword = "発熱".encodeURLParameter()
-            val symptomTotal = client.get(
-                urlString = "/v1/diseases?symptom_keyword=$keyword&page_size=100",
-            ).totalCount()
-            val severityTotal = client.get(
-                urlString = "/v1/diseases?has_severity_grading=true&page_size=100",
-            ).totalCount()
-            val andResponse = client.get(
-                urlString = "/v1/diseases?symptom_keyword=$keyword&has_severity_grading=true&page_size=100",
-            )
+            val response = client.get(urlString = symptomAndSeverityUrl(keyword = keyword))
 
-            val andTotal = andResponse.totalCount()
+            assertEquals(expected = HttpStatusCode.OK, actual = response.status)
+        }
+
+    @Test
+    fun `GET diseases with symptom_keyword X and severity total_count is no larger than single filters`() =
+        testApplication {
+            application { module() }
+
+            val keyword = "発熱".encodeURLParameter()
+            val symptomTotal = client.get(urlString = symptomKeywordUrl(keyword = keyword)).totalCount()
+            val severityTotal = client.get(urlString = HAS_SEVERITY_GRADING_TRUE_URL).totalCount()
+            val andTotal = client.get(urlString = symptomAndSeverityUrl(keyword = keyword)).totalCount()
             val singleMin = minOf(a = symptomTotal, b = severityTotal)
-            val violations = listOfNotNull(
-                "AND status must be 200 OK but was ${andResponse.status}".takeUnless {
-                    andResponse.status == HttpStatusCode.OK
-                },
-                "AND total_count=$andTotal must be <= min(symptom=$symptomTotal, severity=$severityTotal)"
-                    .takeUnless { andTotal <= singleMin },
-                (
-                    "AND total_count=$andTotal must be smaller than at least one single filter " +
-                        "(symptom=$symptomTotal, severity=$severityTotal)"
-                    ).takeUnless { andTotal < symptomTotal || andTotal < severityTotal },
-            )
 
             assertTrue(
-                actual = violations.isEmpty(),
-                message = "symptom_keyword and severity AND violations: $violations",
+                actual = andTotal <= singleMin,
+                message = "AND total_count=$andTotal must be <= min(symptom=$symptomTotal, severity=$severityTotal)",
+            )
+        }
+
+    @Test
+    fun `GET diseases with symptom_keyword X and severity total_count is smaller than a single filter`() =
+        testApplication {
+            application { module() }
+
+            val keyword = "発熱".encodeURLParameter()
+            val symptomTotal = client.get(urlString = symptomKeywordUrl(keyword = keyword)).totalCount()
+            val severityTotal = client.get(urlString = HAS_SEVERITY_GRADING_TRUE_URL).totalCount()
+            val andTotal = client.get(urlString = symptomAndSeverityUrl(keyword = keyword)).totalCount()
+
+            assertTrue(
+                actual = andTotal < symptomTotal || andTotal < severityTotal,
+                message = "AND total_count=$andTotal must be smaller than at least one single filter " +
+                    "(symptom=$symptomTotal, severity=$severityTotal)",
             )
         }
 
@@ -303,5 +339,19 @@ class DiseaseModuleAdditionalFilterTest {
 
     private companion object {
         const val DEFAULT_DISEASE_COUNT = 80
+        const val ONSET_PATTERN_ACUTE_URL = "/v1/diseases?onset_pattern=ACUTE&page_size=100"
+        const val ONSET_PATTERN_ACUTE_OR_CHRONIC_URL =
+            "/v1/diseases?onset_pattern=ACUTE&onset_pattern=CHRONIC&page_size=100"
+        const val HAS_PHARMACOLOGICAL_TREATMENT_TRUE_URL =
+            "/v1/diseases?has_pharmacological_treatment=true&page_size=100"
+        const val HAS_PHARMACOLOGICAL_TREATMENT_FALSE_URL =
+            "/v1/diseases?has_pharmacological_treatment=false&page_size=100"
+        const val HAS_SEVERITY_GRADING_TRUE_URL = "/v1/diseases?has_severity_grading=true&page_size=100"
     }
+
+    private fun symptomKeywordUrl(keyword: String): String =
+        "/v1/diseases?symptom_keyword=$keyword&page_size=100"
+
+    private fun symptomAndSeverityUrl(keyword: String): String =
+        "/v1/diseases?symptom_keyword=$keyword&has_severity_grading=true&page_size=100"
 }

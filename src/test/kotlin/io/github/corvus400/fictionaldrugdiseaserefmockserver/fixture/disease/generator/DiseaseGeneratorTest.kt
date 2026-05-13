@@ -36,17 +36,14 @@ class DiseaseGeneratorTest {
     @Test
     fun `generate returns a Disease with non-blank required name fields`() {
         val disease = generator.generate(blueprint = sampleBlueprint)
-        val violations = buildList {
-            addIf("id blank") { disease.id.isBlank() }
-            addIf("name blank") { disease.name.isBlank() }
-            addIf("nameKana blank") { disease.nameKana.isBlank() }
-            addIf("nameEnglish blank or null") { disease.nameEnglish.isNullOrBlank() }
-        }
+        val firstViolation = listOfNotNull(
+            "id blank".takeIf { disease.id.isBlank() },
+            "name blank".takeIf { disease.name.isBlank() },
+            "nameKana blank".takeIf { disease.nameKana.isBlank() },
+            "nameEnglish blank or null".takeIf { disease.nameEnglish.isNullOrBlank() },
+        ).firstOrNull()
 
-        assertTrue(
-            actual = violations.isEmpty(),
-            message = "Generated disease required name field violations: $violations",
-        )
+        assertEquals(expected = null, actual = firstViolation)
     }
 
     @Test
@@ -137,18 +134,17 @@ class DiseaseGeneratorTest {
             adapter = FixmergeNameAdapter(),
             placeholderDictionary = DiseasePlaceholderDictionary(),
         ).generate(blueprints = blueprints)
-        val violations = buildList {
-            addIf("expected ${blueprints.size} diseases but got ${first.size}") { first.size != blueprints.size }
-            addIf("fresh generators produced different disease inventories") { first != second }
-            addIf("disease ids are not unique") { first.map { it.id }.toSet().size != first.size }
-            first.forEach { disease ->
-                addIf("name blank for ${disease.id}") { disease.name.isBlank() }
-                addIf("nameKana blank for ${disease.id}") { disease.nameKana.isBlank() }
-            }
-        }
+        val firstViolation = listOfNotNull(
+            "expected ${blueprints.size} diseases but got ${first.size}".takeIf { first.size != blueprints.size },
+            "fresh generators produced different disease inventories".takeIf { first != second },
+            "disease ids are not unique".takeIf { first.map { disease -> disease.id }.toSet().size != first.size },
+            first.firstOrNull { disease -> disease.name.isBlank() }?.let { disease -> "name blank for ${disease.id}" },
+            first.firstOrNull { disease -> disease.nameKana.isBlank() }
+                ?.let { disease -> "nameKana blank for ${disease.id}" },
+        ).firstOrNull()
         assertTrue(
-            actual = violations.isEmpty(),
-            message = "full inventory determinism/populated-field violations: $violations",
+            actual = firstViolation == null,
+            message = firstViolation ?: "full inventory determinism/populated-field contract passed",
         )
     }
 
@@ -159,13 +155,12 @@ class DiseaseGeneratorTest {
 
         val blueprints = DiseaseBlueprintFactory.build()
         val diseases = generator.generate(blueprints = blueprints)
-        val violations = populatedFieldViolations(disease = disease) +
-            diseases.flatMap { generated -> populatedFieldViolations(disease = generated) }
+        val firstViolation = (
+            populatedFieldViolations(disease = disease) +
+                diseases.flatMap { generated -> populatedFieldViolations(disease = generated) }
+            ).firstOrNull()
 
-        assertTrue(
-            actual = violations.isEmpty(),
-            message = "Generated disease populated-field violations: $violations",
-        )
+        assertEquals(expected = null, actual = firstViolation)
     }
 
     // Red-2: Ch.I 感染症・寄生虫症 条件必須
@@ -173,26 +168,22 @@ class DiseaseGeneratorTest {
     fun `generate for CHAPTER_I blueprints populates infectious epidemiology riskFactors and prevention`() {
         val blueprints =
             DiseaseBlueprintFactory.build().filter { it.icd10Chapter == Icd10Chapter.CHAPTER_I }
-        val violations = mutableListOf<String>().apply {
-            addIf("no CHAPTER_I blueprint present in factory") { blueprints.isEmpty() }
-        }
-        for (blueprint in blueprints) {
-            val disease = generator.generate(blueprint = blueprint)
-            violations.addIf("CHAPTER_I disease ${disease.id} must be infectious") { !disease.infectious }
-            violations.addIf("CHAPTER_I disease ${disease.id} must have epidemiology") {
-                disease.epidemiology == null
+        val firstViolation = "no CHAPTER_I blueprint present in factory".takeIf { blueprints.isEmpty() }
+            ?: blueprints.firstNotNullOfOrNull { blueprint ->
+                val disease = generator.generate(blueprint = blueprint)
+                listOfNotNull(
+                    "CHAPTER_I disease ${disease.id} must be infectious".takeIf { !disease.infectious },
+                    "CHAPTER_I disease ${disease.id} must have epidemiology".takeIf { disease.epidemiology == null },
+                    "CHAPTER_I disease ${disease.id} must have epidemiology.riskFactors"
+                        .takeIf { disease.epidemiology?.riskFactors.isNullOrEmpty() },
+                    "CHAPTER_I disease ${disease.id} must have prevention items".takeIf {
+                        disease.prevention.isEmpty()
+                    },
+                    "CHAPTER_I disease ${disease.id} must have symptoms.onsetPattern"
+                        .takeIf { disease.symptoms.onsetPattern == null },
+                ).firstOrNull()
             }
-            violations.addIf("CHAPTER_I disease ${disease.id} must have epidemiology.riskFactors") {
-                disease.epidemiology?.riskFactors.isNullOrEmpty()
-            }
-            violations.addIf("CHAPTER_I disease ${disease.id} must have prevention items") {
-                disease.prevention.isEmpty()
-            }
-            violations.addIf("CHAPTER_I disease ${disease.id} must have symptoms.onsetPattern") {
-                disease.symptoms.onsetPattern == null
-            }
-        }
-        assertTrue(actual = violations.isEmpty(), message = "CHAPTER_I disease violations: $violations")
+        assertEquals(expected = null, actual = firstViolation)
     }
 
     // Red-3: Ch.II 新生物 条件必須
@@ -200,19 +191,17 @@ class DiseaseGeneratorTest {
     fun `generate for CHAPTER_II blueprints populates severityGrading and prognosis`() {
         val blueprints =
             DiseaseBlueprintFactory.build().filter { it.icd10Chapter == Icd10Chapter.CHAPTER_II }
-        val violations = mutableListOf<String>().apply {
-            addIf("no CHAPTER_II blueprint present in factory") { blueprints.isEmpty() }
-        }
-        for (blueprint in blueprints) {
-            val disease = generator.generate(blueprint = blueprint)
-            violations.addIf("CHAPTER_II disease ${disease.id} must have severityGrading") {
-                disease.severityGrading == null
+        val firstViolation = "no CHAPTER_II blueprint present in factory".takeIf { blueprints.isEmpty() }
+            ?: blueprints.firstNotNullOfOrNull { blueprint ->
+                val disease = generator.generate(blueprint = blueprint)
+                listOfNotNull(
+                    "CHAPTER_II disease ${disease.id} must have severityGrading"
+                        .takeIf { disease.severityGrading == null },
+                    "CHAPTER_II disease ${disease.id} prognosis must be non-blank"
+                        .takeIf { disease.prognosis.isNullOrBlank() },
+                ).firstOrNull()
             }
-            violations.addIf("CHAPTER_II disease ${disease.id} prognosis must be non-blank") {
-                disease.prognosis.isNullOrBlank()
-            }
-        }
-        assertTrue(actual = violations.isEmpty(), message = "CHAPTER_II disease violations: $violations")
+        assertEquals(expected = null, actual = firstViolation)
     }
 
     // Red-4: Ch.IV 内分泌・栄養・代謝疾患 条件必須 (慢性)
@@ -222,22 +211,19 @@ class DiseaseGeneratorTest {
             .filter {
                 it.icd10Chapter == Icd10Chapter.CHAPTER_IV && it.chronicity == Chronicity.CHRONIC
             }
-        val violations = mutableListOf<String>().apply {
-            addIf("no CHAPTER_IV + CHRONIC blueprint present in factory") { blueprints.isEmpty() }
-        }
-        for (blueprint in blueprints) {
-            val disease = generator.generate(blueprint = blueprint)
-            violations.addIf("CHAPTER_IV+CHRONIC disease ${disease.id} must have pharmacological treatments") {
-                disease.treatments.pharmacological.isEmpty()
+        val firstViolation = "no CHAPTER_IV + CHRONIC blueprint present in factory".takeIf { blueprints.isEmpty() }
+            ?: blueprints.firstNotNullOfOrNull { blueprint ->
+                val disease = generator.generate(blueprint = blueprint)
+                listOfNotNull(
+                    "CHAPTER_IV+CHRONIC disease ${disease.id} must have pharmacological treatments"
+                        .takeIf { disease.treatments.pharmacological.isEmpty() },
+                    (
+                        "CHAPTER_IV+CHRONIC disease ${disease.id} must have at least " +
+                            "$MIN_CHAPTER_IV_EXAM_COUNT requiredExams, got ${disease.requiredExams.size}"
+                        ).takeIf { disease.requiredExams.size < MIN_CHAPTER_IV_EXAM_COUNT },
+                ).firstOrNull()
             }
-            violations.addIf(
-                "CHAPTER_IV+CHRONIC disease ${disease.id} must have at least " +
-                    "$MIN_CHAPTER_IV_EXAM_COUNT requiredExams, got ${disease.requiredExams.size}",
-            ) {
-                disease.requiredExams.size < MIN_CHAPTER_IV_EXAM_COUNT
-            }
-        }
-        assertTrue(actual = violations.isEmpty(), message = "CHAPTER_IV+CHRONIC disease violations: $violations")
+        assertEquals(expected = null, actual = firstViolation)
     }
 
     // Red-5: Ch.V 精神・行動の障害 条件必須
@@ -245,25 +231,21 @@ class DiseaseGeneratorTest {
     fun `generate for CHAPTER_V blueprints populates diagnosticCriteria and at least three mainSymptoms`() {
         val blueprints =
             DiseaseBlueprintFactory.build().filter { it.icd10Chapter == Icd10Chapter.CHAPTER_V }
-        val violations = mutableListOf<String>().apply {
-            addIf("no CHAPTER_V blueprint present in factory") { blueprints.isEmpty() }
-        }
-        for (blueprint in blueprints) {
-            val disease = generator.generate(blueprint = blueprint)
-            violations.addIf("CHAPTER_V disease ${disease.id} must have diagnosticCriteria.required") {
-                disease.diagnosticCriteria.required.isEmpty()
+        val firstViolation = "no CHAPTER_V blueprint present in factory".takeIf { blueprints.isEmpty() }
+            ?: blueprints.firstNotNullOfOrNull { blueprint ->
+                val disease = generator.generate(blueprint = blueprint)
+                listOfNotNull(
+                    "CHAPTER_V disease ${disease.id} must have diagnosticCriteria.required"
+                        .takeIf { disease.diagnosticCriteria.required.isEmpty() },
+                    (
+                        "CHAPTER_V disease ${disease.id} must have at least " +
+                            "$MIN_CHAPTER_V_MAIN_SYMPTOMS mainSymptoms, got ${disease.symptoms.mainSymptoms.size}"
+                        ).takeIf { disease.symptoms.mainSymptoms.size < MIN_CHAPTER_V_MAIN_SYMPTOMS },
+                    "CHAPTER_V disease ${disease.id} must have relatedDrugIds"
+                        .takeIf { disease.relatedDrugIds.isEmpty() },
+                ).firstOrNull()
             }
-            violations.addIf(
-                "CHAPTER_V disease ${disease.id} must have at least " +
-                    "$MIN_CHAPTER_V_MAIN_SYMPTOMS mainSymptoms, got ${disease.symptoms.mainSymptoms.size}",
-            ) {
-                disease.symptoms.mainSymptoms.size < MIN_CHAPTER_V_MAIN_SYMPTOMS
-            }
-            violations.addIf("CHAPTER_V disease ${disease.id} must have relatedDrugIds") {
-                disease.relatedDrugIds.isEmpty()
-            }
-        }
-        assertTrue(actual = violations.isEmpty(), message = "CHAPTER_V disease violations: $violations")
+        assertEquals(expected = null, actual = firstViolation)
     }
 
     // Red-6: Ch.IX 循環器系疾患 条件必須
@@ -271,19 +253,17 @@ class DiseaseGeneratorTest {
     fun `generate for CHAPTER_IX blueprints populates severityGrading and imaging requiredExams`() {
         val blueprints =
             DiseaseBlueprintFactory.build().filter { it.icd10Chapter == Icd10Chapter.CHAPTER_IX }
-        val violations = mutableListOf<String>().apply {
-            addIf("no CHAPTER_IX blueprint present in factory") { blueprints.isEmpty() }
-        }
-        for (blueprint in blueprints) {
-            val disease = generator.generate(blueprint = blueprint)
-            violations.addIf("CHAPTER_IX disease ${disease.id} must have severityGrading") {
-                disease.severityGrading == null
+        val firstViolation = "no CHAPTER_IX blueprint present in factory".takeIf { blueprints.isEmpty() }
+            ?: blueprints.firstNotNullOfOrNull { blueprint ->
+                val disease = generator.generate(blueprint = blueprint)
+                listOfNotNull(
+                    "CHAPTER_IX disease ${disease.id} must have severityGrading"
+                        .takeIf { disease.severityGrading == null },
+                    "CHAPTER_IX disease ${disease.id} must include at least one IMAGING exam"
+                        .takeIf { disease.requiredExams.none { exam -> exam.category == ExamCategory.IMAGING } },
+                ).firstOrNull()
             }
-            violations.addIf("CHAPTER_IX disease ${disease.id} must include at least one IMAGING exam") {
-                disease.requiredExams.none { it.category == ExamCategory.IMAGING }
-            }
-        }
-        assertTrue(actual = violations.isEmpty(), message = "CHAPTER_IX disease violations: $violations")
+        assertEquals(expected = null, actual = firstViolation)
     }
 
     // Red-7: Ch.XV 妊娠・分娩・産褥 条件必須
@@ -291,22 +271,18 @@ class DiseaseGeneratorTest {
     fun `generate for CHAPTER_XV blueprints populates epidemiology onsetAgeRange and sexRatio`() {
         val blueprints =
             DiseaseBlueprintFactory.build().filter { it.icd10Chapter == Icd10Chapter.CHAPTER_XV }
-        val violations = mutableListOf<String>().apply {
-            addIf("no CHAPTER_XV blueprint present in factory") { blueprints.isEmpty() }
-        }
-        for (blueprint in blueprints) {
-            val disease = generator.generate(blueprint = blueprint)
-            violations.addIf("CHAPTER_XV disease ${disease.id} must have epidemiology") {
-                disease.epidemiology == null
+        val firstViolation = "no CHAPTER_XV blueprint present in factory".takeIf { blueprints.isEmpty() }
+            ?: blueprints.firstNotNullOfOrNull { blueprint ->
+                val disease = generator.generate(blueprint = blueprint)
+                listOfNotNull(
+                    "CHAPTER_XV disease ${disease.id} must have epidemiology".takeIf { disease.epidemiology == null },
+                    "CHAPTER_XV disease ${disease.id} must have epidemiology.onsetAgeRange"
+                        .takeIf { disease.epidemiology?.onsetAgeRange == null },
+                    "CHAPTER_XV disease ${disease.id} must have epidemiology.sexRatio"
+                        .takeIf { disease.epidemiology?.sexRatio == null },
+                ).firstOrNull()
             }
-            violations.addIf("CHAPTER_XV disease ${disease.id} must have epidemiology.onsetAgeRange") {
-                disease.epidemiology?.onsetAgeRange == null
-            }
-            violations.addIf("CHAPTER_XV disease ${disease.id} must have epidemiology.sexRatio") {
-                disease.epidemiology?.sexRatio == null
-            }
-        }
-        assertTrue(actual = violations.isEmpty(), message = "CHAPTER_XV disease violations: $violations")
+        assertEquals(expected = null, actual = firstViolation)
     }
 
     private fun MutableList<String>.addIf(message: String, predicate: () -> Boolean) {
