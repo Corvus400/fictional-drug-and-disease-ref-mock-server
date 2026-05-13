@@ -22,7 +22,6 @@ import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
-import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class DrugGeneratorTest {
@@ -92,34 +91,37 @@ class DrugGeneratorTest {
     @Test
     fun `manufacturer ends with 製薬 and contains no beverage raw token`() {
         val drug = generator.generate(blueprint = sampleBlueprint)
-        assertTrue(
-            drug.manufacturer.endsWith(suffix = "製薬"),
-            "manufacturer does not end with 製薬: '${drug.manufacturer}'",
-        )
         val country = DrugCountryMapping.of(atcFirstLetter = sampleBlueprint.atcFirstLetter)
         val beverageBucket = CountryBucketRepository.of(country = country).beverage
-        for (raw in beverageBucket) {
-            assertFalse(
-                drug.manufacturer.contains(other = raw),
-                "manufacturer '${drug.manufacturer}' leaks beverage raw token '$raw'",
-            )
+        val violations = mutableListOf<String>().apply {
+            addIf("manufacturer does not end with 製薬: '${drug.manufacturer}'") {
+                !drug.manufacturer.endsWith(suffix = "製薬")
+            }
         }
+        for (raw in beverageBucket) {
+            violations.addIf("manufacturer '${drug.manufacturer}' leaks beverage raw token '$raw'") {
+                drug.manufacturer.contains(other = raw)
+            }
+        }
+        assertTrue(actual = violations.isEmpty(), message = "manufacturer violations: $violations")
     }
 
     @Test
     fun `physicochemicalProperties genericNameEnglish pairs with genericName via same coined name`() {
         val drug = generator.generate(blueprint = sampleBlueprint)
-        val physicochemical = assertNotNull(
-            actual = drug.physicochemicalProperties,
-            message = "generated drug must include physicochemicalProperties",
-        )
-        assertTrue(
-            physicochemical.genericNameEnglish.isNotBlank(),
-            "genericNameEnglish is blank",
-        )
-        assertFalse(
-            physicochemical.genericNameEnglish == drug.genericName,
-            "genericNameEnglish should not equal genericName (one is latin, the other katakana)",
+        assertEquals(
+            expected = GenericNameEnglishSnapshot(
+                physicochemicalPresent = true,
+                genericNameEnglishNonBlank = true,
+                genericNameEnglishDiffersFromGenericName = true,
+            ),
+            actual = GenericNameEnglishSnapshot(
+                physicochemicalPresent = drug.physicochemicalProperties != null,
+                genericNameEnglishNonBlank = !drug.physicochemicalProperties?.genericNameEnglish.isNullOrBlank(),
+                genericNameEnglishDiffersFromGenericName =
+                drug.physicochemicalProperties?.genericNameEnglish != drug.genericName,
+            ),
+            message = "genericNameEnglish must be present and distinct from genericName",
         )
     }
 
@@ -176,26 +178,33 @@ class DrugGeneratorTest {
     fun `generate uses fictional ATC 99ZZ namespace for the full inventory`() {
         val drugs = buildFreshGenerator().generate(blueprints = DrugBlueprintFactory.build())
 
-        drugs.forEach { drug ->
-            assertTrue(
-                drug.atcCode.matches(Regex("^[A-V]99ZZ\\d{2}$")),
-                "atcCode must use fictional 99ZZ namespace: ${drug.id}=${drug.atcCode}",
-            )
-            assertFalse(drug.atcCode.contains("01AA"), "atcCode must not use real 01AA namespace")
+        val violations = buildList {
+            drugs.forEach { drug ->
+                addIf("atcCode must use fictional 99ZZ namespace: ${drug.id}=${drug.atcCode}") {
+                    !drug.atcCode.matches(Regex("^[A-V]99ZZ\\d{2}$"))
+                }
+                addIf("atcCode must not use real 01AA namespace: ${drug.id}=${drug.atcCode}") {
+                    drug.atcCode.contains("01AA")
+                }
+            }
         }
+        assertTrue(actual = violations.isEmpty(), message = "fictional ATC namespace violations: $violations")
     }
 
     @Test
     fun `generate uses fictional YJ 999 prefix for the full inventory`() {
         val drugs = buildFreshGenerator().generate(blueprints = DrugBlueprintFactory.build())
 
-        drugs.forEach { drug ->
-            val yjCode = assertNotNull(drug.yjCode, "yjCode null for ${drug.id}")
-            assertTrue(
-                yjCode.matches(Regex("^999\\d{9}$")),
-                "yjCode must be 12 digits with fictional 999 prefix: ${drug.id}=$yjCode",
-            )
+        val violations = buildList {
+            drugs.forEach { drug ->
+                val yjCode = drug.yjCode
+                addIf("yjCode null for ${drug.id}") { yjCode == null }
+                addIf("yjCode must be 12 digits with fictional 999 prefix: ${drug.id}=$yjCode") {
+                    yjCode?.matches(Regex("^999\\d{9}$")) != true
+                }
+            }
         }
+        assertTrue(actual = violations.isEmpty(), message = "fictional YJ prefix violations: $violations")
     }
 
     @Test
@@ -243,13 +252,13 @@ class DrugGeneratorTest {
             DrugBlueprintFactory.build().first { it.dosageForm in externalForms }
         val drug = generator.generate(blueprint = externalBlueprint)
 
-        assertTrue(
-            drug.dosageForm in externalForms,
-            "dosageForm '${drug.dosageForm}' is not an external form",
-        )
-        assertTrue(
-            drug.administrationPrecautions.isNotEmpty(),
-            "administrationPrecautions must be non-empty for external",
+        assertEquals(
+            expected = ExternalDrugSnapshot(isExternalForm = true, administrationPrecautionsNonEmpty = true),
+            actual = ExternalDrugSnapshot(
+                isExternalForm = drug.dosageForm in externalForms,
+                administrationPrecautionsNonEmpty = drug.administrationPrecautions.isNotEmpty(),
+            ),
+            message = "external dosage forms must populate administrationPrecautions",
         )
     }
 
@@ -259,11 +268,14 @@ class DrugGeneratorTest {
             DrugBlueprintFactory.build().first { it.atcFirstLetter == 'L' && it.isBiological }
         val drug = generator.generate(blueprint = biologicalBlueprint)
 
-        assertTrue(
-            drug.handlingPrecautions.isNotEmpty(),
-            "handlingPrecautions must be non-empty for biological",
+        assertEquals(
+            expected = BiologicalDrugSnapshot(handlingPrecautionsNonEmpty = true, warningNonEmpty = true),
+            actual = BiologicalDrugSnapshot(
+                handlingPrecautionsNonEmpty = drug.handlingPrecautions.isNotEmpty(),
+                warningNonEmpty = drug.warning.isNotEmpty(),
+            ),
+            message = "biological L-group drugs must populate handlingPrecautions and warning",
         )
-        assertTrue(drug.warning.isNotEmpty(), "warning must be non-empty for biological")
     }
 
     @Test
@@ -338,91 +350,83 @@ class DrugGeneratorTest {
     @Test
     fun `physicochemical description has at least 30 unique values across the 120 drug inventory`() {
         val drugs = generator.generate(blueprints = DrugBlueprintFactory.build())
+        val violations = drugs.mapNotNull { drug ->
+            "${drug.id} must include physicochemicalProperties".takeIf { drug.physicochemicalProperties == null }
+        }
         val uniqueDescriptions: Set<String> =
-            drugs
-                .map { drug ->
-                    val info = assertNotNull(
-                        actual = drug.physicochemicalProperties,
-                        message = "${drug.id} must include physicochemicalProperties",
-                    )
-                    info.description
-                }
-                .toSet()
-        assertTrue(
-            actual = uniqueDescriptions.size >= DESCRIPTION_UNIQUE_FLOOR,
-            message = "expected at least $DESCRIPTION_UNIQUE_FLOOR unique description values " +
-                "across 120 drugs, got ${uniqueDescriptions.size}",
+            drugs.mapNotNull { drug -> drug.physicochemicalProperties?.description }.toSet()
+        assertEquals(
+            expected = DescriptionDiversitySnapshot(
+                missingPhysicochemicalProperties = emptyList(),
+                uniqueDescriptionFloorSatisfied = true,
+            ),
+            actual = DescriptionDiversitySnapshot(
+                missingPhysicochemicalProperties = violations,
+                uniqueDescriptionFloorSatisfied = uniqueDescriptions.size >= DESCRIPTION_UNIQUE_FLOOR,
+            ),
+            message = "physicochemical descriptions must be populated and diverse",
         )
     }
 
     @Test
     fun `composition appearance for each non-overridden drug belongs to its dosageForm variants`() {
         val drugs = generator.generate(blueprints = DrugBlueprintFactory.build())
-        drugs
+        val violations = drugs
             .filterNot { drug -> drug.id in FIXED_TEXT_OVERRIDE_IDS }
-            .forEach { drug ->
+            .mapNotNull { drug ->
                 val expected: String =
                     DosageFormAppearance.pickAppearance(form = drug.dosageForm, drugId = drug.id)
-                assertEquals(
-                    expected = expected,
-                    actual = drug.composition.appearance,
-                    message = "drug ${drug.id} (${drug.dosageForm}) appearance mismatch: " +
-                        "expected '$expected', got '${drug.composition.appearance}'",
-                )
+                (
+                    "drug ${drug.id} (${drug.dosageForm}) appearance mismatch: " +
+                        "expected '$expected', got '${drug.composition.appearance}'"
+                    ).takeUnless { drug.composition.appearance == expected }
             }
+        assertTrue(actual = violations.isEmpty(), message = "appearance variant violations: $violations")
     }
 
     @Test
     fun `physicochemical description for each non-overridden drug belongs to its dosageForm variants`() {
         val drugs = generator.generate(blueprints = DrugBlueprintFactory.build())
-        drugs
+        val violations = drugs
             .filterNot { drug -> drug.id in FIXED_TEXT_OVERRIDE_IDS }
-            .forEach { drug ->
+            .flatMap { drug ->
                 val expected: String =
                     DosageFormAppearance.pickOriginalSubstanceDescription(
                         form = drug.dosageForm,
                         drugId = drug.id,
                     ) + " (架空)"
-                val info = assertNotNull(
-                    actual = drug.physicochemicalProperties,
-                    message = "${drug.id} must include physicochemicalProperties",
-                )
-                assertEquals(
-                    expected = expected,
-                    actual = info.description,
-                    message = "drug ${drug.id} (${drug.dosageForm}) description mismatch: " +
-                        "expected '$expected', got '${info.description}'",
+                val info = drug.physicochemicalProperties
+                listOfNotNull(
+                    "${drug.id} must include physicochemicalProperties".takeIf { info == null },
+                    (
+                        "drug ${drug.id} (${drug.dosageForm}) description mismatch: " +
+                            "expected '$expected', got '${info?.description}'"
+                        ).takeUnless { info?.description == expected },
                 )
             }
+        assertTrue(actual = violations.isEmpty(), message = "description variant violations: $violations")
     }
 
     @Test
     fun `generate maps drug 0080 idOverride and nameOverride to Drug id and brand name and english`() {
         val blueprints = DrugBlueprintFactory.build()
         val drugs = generator.generate(blueprints = blueprints)
-        val tredecim =
-            assertNotNull(
-                actual = drugs.firstOrNull { it.id == "drug_0080" },
-                message = "drug_0080 must be present in the generated drug list",
-            )
+        val tredecim = drugs.firstOrNull { it.id == "drug_0080" }
+
         assertEquals(
-            expected = "トレデキム",
-            actual = tredecim.brandName,
-            message = "drug_0080 brand_name must equal 'トレデキム'",
-        )
-        assertEquals(
-            expected = "トレデキム",
-            actual = tredecim.brandNameKana,
-            message = "drug_0080 brand_name_kana must equal 'トレデキム'",
-        )
-        val physicochemical = assertNotNull(
-            actual = tredecim.physicochemicalProperties,
-            message = "drug_0080 must include physicochemicalProperties for generic_name_english override",
-        )
-        assertEquals(
-            expected = "tredecim",
-            actual = physicochemical.genericNameEnglish,
-            message = "drug_0080 generic_name_english must equal 'tredecim'",
+            expected = Drug0080NameOverrideSnapshot(
+                present = true,
+                brandName = "トレデキム",
+                brandNameKana = "トレデキム",
+                genericNameEnglish = "tredecim",
+            ),
+            actual = Drug0080NameOverrideSnapshot(
+                present = tredecim != null,
+                brandName = tredecim?.brandName,
+                brandNameKana = tredecim?.brandNameKana,
+                genericNameEnglish = tredecim?.physicochemicalProperties?.genericNameEnglish,
+            ),
+            message = "drug_0080 name override must map to id, brandName, brandNameKana, and genericNameEnglish",
         )
     }
 
@@ -430,24 +434,20 @@ class DrugGeneratorTest {
     fun `generate maps drug 0080 textOverride to appearance and description`() {
         val blueprints = DrugBlueprintFactory.build()
         val drugs = generator.generate(blueprints = blueprints)
-        val tredecim =
-            assertNotNull(
-                actual = drugs.firstOrNull { it.id == "drug_0080" },
-                message = "drug_0080 must be present in the generated drug list",
-            )
-        assertTrue(
-            actual = tredecim.composition.appearance.contains(other = "「13」"),
-            message = "drug_0080 appearance must contain '「13」', got " +
-                "'${tredecim.composition.appearance}'",
-        )
-        val physicochemical = assertNotNull(
-            actual = tredecim.physicochemicalProperties,
-            message = "drug_0080 must include physicochemicalProperties for description override",
-        )
+        val tredecim = drugs.firstOrNull { it.id == "drug_0080" }
+
         assertEquals(
-            expected = "無色澄明の液体である。 (架空)",
-            actual = physicochemical.description,
-            message = "drug_0080 description must equal overridden fictional marker text",
+            expected = Drug0080TextOverrideSnapshot(
+                present = true,
+                appearanceContainsMarker = true,
+                description = "無色澄明の液体である。 (架空)",
+            ),
+            actual = Drug0080TextOverrideSnapshot(
+                present = tredecim != null,
+                appearanceContainsMarker = tredecim?.composition?.appearance?.contains(other = "「13」") == true,
+                description = tredecim?.physicochemicalProperties?.description,
+            ),
+            message = "drug_0080 text override must map to appearance and description",
         )
     }
 
@@ -604,5 +604,39 @@ class DrugGeneratorTest {
         val routeOfAdministration: RouteOfAdministration,
         val pharmacokineticsPresent: Boolean,
         val administrationPrecautionsNonEmpty: Boolean,
+    )
+
+    private data class GenericNameEnglishSnapshot(
+        val physicochemicalPresent: Boolean,
+        val genericNameEnglishNonBlank: Boolean,
+        val genericNameEnglishDiffersFromGenericName: Boolean,
+    )
+
+    private data class ExternalDrugSnapshot(
+        val isExternalForm: Boolean,
+        val administrationPrecautionsNonEmpty: Boolean,
+    )
+
+    private data class BiologicalDrugSnapshot(
+        val handlingPrecautionsNonEmpty: Boolean,
+        val warningNonEmpty: Boolean,
+    )
+
+    private data class DescriptionDiversitySnapshot(
+        val missingPhysicochemicalProperties: List<String>,
+        val uniqueDescriptionFloorSatisfied: Boolean,
+    )
+
+    private data class Drug0080NameOverrideSnapshot(
+        val present: Boolean,
+        val brandName: String?,
+        val brandNameKana: String?,
+        val genericNameEnglish: String?,
+    )
+
+    private data class Drug0080TextOverrideSnapshot(
+        val present: Boolean,
+        val appearanceContainsMarker: Boolean,
+        val description: String?,
     )
 }

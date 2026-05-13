@@ -58,18 +58,8 @@ class DrugModuleDefaultKeywordFilteredTest {
             contentType(type = ContentType.Application.Json)
             setBody(body = """{"state":"default"}""")
         }
-        assertEquals(
-            expected = HttpStatusCode.OK,
-            actual = configResponse.status,
-            message = "Admin API must accept drugList default scenario override",
-        )
 
         val sampleBrandName = client.get(urlString = "/v1/drugs/drug_0001").extractBrandName()
-        assertTrue(
-            actual = sampleBrandName.length >= KEYWORD_PREFIX_LENGTH,
-            message = "drug_0001 brand_name must be at least $KEYWORD_PREFIX_LENGTH chars to take prefix " +
-                "(got=\"$sampleBrandName\")",
-        )
         val keywordPrefix = sampleBrandName.take(n = KEYWORD_PREFIX_LENGTH)
         val encodedKeyword = keywordPrefix.encodeURLParameter()
 
@@ -81,10 +71,14 @@ class DrugModuleDefaultKeywordFilteredTest {
 
         assertEquals(
             expected = KeywordFilterSnapshot(
+                configStatus = HttpStatusCode.OK,
+                brandNameLongEnough = true,
                 total = 120,
                 filteredIsNonTrivialSubset = true,
             ),
             actual = KeywordFilterSnapshot(
+                configStatus = configResponse.status,
+                brandNameLongEnough = sampleBrandName.length >= KEYWORD_PREFIX_LENGTH,
                 total = total,
                 filteredIsNonTrivialSubset = filtered in MIN_FILTERED_COUNT until total,
             ),
@@ -111,6 +105,8 @@ class DrugModuleDefaultKeywordFilteredTest {
     }
 
     private data class KeywordFilterSnapshot(
+        val configStatus: HttpStatusCode,
+        val brandNameLongEnough: Boolean,
         val total: Int,
         val filteredIsNonTrivialSubset: Boolean,
     )

@@ -8,19 +8,17 @@ class DiseaseSortKeyFromQueryTest {
     @Test
     fun `fromQuery maps canonical query strings to matching enum values`() {
         assertEquals(
-            DiseaseSortKey.REVISED_AT_DESC,
-            DiseaseSortKey.fromQuery("-revised_at"),
-            "fromQuery must map -revised_at to REVISED_AT_DESC",
-        )
-        assertEquals(
-            DiseaseSortKey.NAME_KANA_ASC,
-            DiseaseSortKey.fromQuery("name_kana"),
-            "fromQuery must map name_kana to NAME_KANA_ASC",
-        )
-        assertEquals(
-            DiseaseSortKey.ICD10_CHAPTER_ASC,
-            DiseaseSortKey.fromQuery("icd10_chapter"),
-            "fromQuery must map icd10_chapter to ICD10_CHAPTER_ASC",
+            expected = mapOf(
+                "-revised_at" to DiseaseSortKey.REVISED_AT_DESC,
+                "name_kana" to DiseaseSortKey.NAME_KANA_ASC,
+                "icd10_chapter" to DiseaseSortKey.ICD10_CHAPTER_ASC,
+            ),
+            actual = mapOf(
+                "-revised_at" to DiseaseSortKey.fromQuery("-revised_at"),
+                "name_kana" to DiseaseSortKey.fromQuery("name_kana"),
+                "icd10_chapter" to DiseaseSortKey.fromQuery("icd10_chapter"),
+            ),
+            "fromQuery must map canonical disease sort query strings",
         )
     }
 

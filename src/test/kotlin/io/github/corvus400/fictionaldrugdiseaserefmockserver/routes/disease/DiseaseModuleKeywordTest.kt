@@ -48,13 +48,9 @@ class DiseaseModuleKeywordTest {
                     "&keyword_target=name&keyword_match=partial&page_size=100",
             ).totalCount()
 
-        assertTrue(
-            actual = total > 0,
-            message = "precondition: default scenario must populate diseases (total=$total)",
-        )
         assertEquals(
-            expected = 0,
-            actual = filtered,
+            expected = NonMatchingKeywordSnapshot(defaultScenarioPopulated = true, filteredCount = 0),
+            actual = NonMatchingKeywordSnapshot(defaultScenarioPopulated = total > 0, filteredCount = filtered),
             message = "non-matching keyword must filter total to 0 (filtered=$filtered total=$total)",
         )
     }
@@ -119,26 +115,25 @@ class DiseaseModuleKeywordTest {
         }
 
         val unfilteredCount = client.get(urlString = "/v1/diseases?page_size=100").totalCount()
-        assertEquals(
-            expected = DEFAULT_TOTAL_COUNT,
-            actual = unfilteredCount,
-            message = "precondition: default シナリオは $DEFAULT_TOTAL_COUNT 件であるべき (got $unfilteredCount)",
-        )
-
         val keyword = knownDiseaseKeyword(client = client)
         val encodedKeyword = URLEncoder.encode(keyword, Charsets.UTF_8)
         val response = client.get(
             urlString = "/v1/diseases?keyword=$encodedKeyword" +
                 "&keyword_target=name&keyword_match=partial&page_size=100",
         )
-        assertEquals(
-            expected = HttpStatusCode.OK,
-            actual = response.status,
-            message = "keyword search under default scenario must return HTTP 200",
-        )
         val filteredCount = response.totalCount()
-        assertTrue(
-            actual = filteredCount in MIN_FILTERED_COUNT until DEFAULT_TOTAL_COUNT,
+
+        assertEquals(
+            expected = PositiveKeywordSnapshot(
+                unfilteredCount = DEFAULT_TOTAL_COUNT,
+                responseStatus = HttpStatusCode.OK,
+                filteredCountInRange = true,
+            ),
+            actual = PositiveKeywordSnapshot(
+                unfilteredCount = unfilteredCount,
+                responseStatus = response.status,
+                filteredCountInRange = filteredCount in MIN_FILTERED_COUNT until DEFAULT_TOTAL_COUNT,
+            ),
             message = "keyword=$keyword must filter default scenario count to " +
                 "$MIN_FILTERED_COUNT until $DEFAULT_TOTAL_COUNT (got $filteredCount)",
         )
@@ -224,5 +219,16 @@ class DiseaseModuleKeywordTest {
         val status: HttpStatusCode,
         val totalCount: Int?,
         val itemsSize: Int?,
+    )
+
+    private data class NonMatchingKeywordSnapshot(
+        val defaultScenarioPopulated: Boolean,
+        val filteredCount: Int,
+    )
+
+    private data class PositiveKeywordSnapshot(
+        val unfilteredCount: Int,
+        val responseStatus: HttpStatusCode,
+        val filteredCountInRange: Boolean,
     )
 }

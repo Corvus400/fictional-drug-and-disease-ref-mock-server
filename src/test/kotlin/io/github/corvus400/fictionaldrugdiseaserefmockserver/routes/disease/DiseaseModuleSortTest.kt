@@ -14,8 +14,6 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
 
 class DiseaseModuleSortTest {
     private val json = Json { ignoreUnknownKeys = true }
@@ -27,17 +25,8 @@ class DiseaseModuleSortTest {
         val response = client.get("/v1/diseases?sort=name_kana&page_size=100")
 
         assertEquals(
-            expected = HttpStatusCode.OK,
-            actual = response.status,
-            message = "sort=name_kana must return HTTP 200",
-        )
-        val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
-        val items = body["items"]?.jsonArray
-        assertNotNull(actual = items, message = "response body must have an items array")
-        val kanas = items.map { it.jsonObject["name_kana"]?.jsonPrimitive?.content.orEmpty() }
-        assertEquals(
-            expected = kanas.sorted(),
-            actual = kanas,
+            expected = SortSnapshot(status = HttpStatusCode.OK, hasItems = true, ordered = true),
+            actual = sortSnapshot(response = response, valueSelector = "name_kana"),
             message = "items must be ordered by name_kana ascending when sort=name_kana",
         )
     }
@@ -49,27 +38,24 @@ class DiseaseModuleSortTest {
 
             val response = client.get("/v1/diseases?sort=icd10_chapter&page_size=100")
 
-            assertEquals(
-                expected = HttpStatusCode.OK,
-                actual = response.status,
-                message = "sort=icd10_chapter must return HTTP 200",
-            )
             val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
-            val items = body["items"]?.jsonArray
-            assertNotNull(actual = items, message = "response body must have an items array")
             val chapterDescriptor = Icd10Chapter.serializer().descriptor
             val chapterOrder = (0 until chapterDescriptor.elementsCount).associate { index ->
                 chapterDescriptor.getElementName(index = index) to index
             }
-            val ordinals = items.map { item ->
+            val ordinals = body["items"]?.jsonArray.orEmpty().map { item ->
                 val serialName = item.jsonObject["icd10_chapter"]?.jsonPrimitive?.content
                 checkNotNull(chapterOrder[serialName]) {
                     "items[${item.jsonObject}] must expose a known icd10_chapter serialName, got $serialName"
                 }
             }
             assertEquals(
-                expected = ordinals.sorted(),
-                actual = ordinals,
+                expected = SortSnapshot(status = HttpStatusCode.OK, hasItems = true, ordered = true),
+                actual = SortSnapshot(
+                    status = response.status,
+                    hasItems = body["items"]?.jsonArray?.isNotEmpty() == true,
+                    ordered = ordinals == ordinals.sorted(),
+                ),
                 message = "items must be ordered by icd10_chapter ascending when sort=icd10_chapter",
             )
         }
@@ -80,15 +66,10 @@ class DiseaseModuleSortTest {
 
         val response = client.get("/v1/diseases?sort=invalid_key")
 
-        assertEquals(
-            expected = HttpStatusCode.BadRequest,
-            actual = response.status,
-            message = "unknown sort key must surface as 400 BadRequest, got ${response.status}",
-        )
         val error = json.decodeFromString<ErrorResponse>(string = response.bodyAsText())
         assertEquals(
-            expected = "INVALID_SORT_KEY",
-            actual = error.code,
+            expected = ErrorSnapshot(status = HttpStatusCode.BadRequest, code = "INVALID_SORT_KEY"),
+            actual = ErrorSnapshot(status = response.status, code = error.code),
             message = "invalid disease sort key must expose INVALID_SORT_KEY",
         )
     }
@@ -102,22 +83,51 @@ class DiseaseModuleSortTest {
         }
 
         assertEquals(
-            expected = HttpStatusCode.OK,
-            actual = response.status,
-            "empty scenario with sort=name_kana must return HTTP 200",
-        )
-        val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
-        val totalCount = body["total_count"]?.jsonPrimitive?.content?.toIntOrNull()
-        assertEquals(
-            expected = 0,
-            actual = totalCount,
-            "empty scenario with sort=name_kana must report total_count=0",
-        )
-        val items = body["items"]?.jsonArray
-        assertNotNull(actual = items, message = "response body must have an items array")
-        assertTrue(
-            actual = items.isEmpty(),
-            "empty scenario with sort=name_kana must return an empty items array",
+            expected = EmptyEnvelopeSnapshot(status = HttpStatusCode.OK, totalCount = 0, itemsSize = 0),
+            actual = emptyEnvelopeSnapshot(response = response),
+            message = "empty scenario with sort=name_kana must return an empty envelope",
         )
     }
+
+    private suspend fun sortSnapshot(
+        response: io.ktor.client.statement.HttpResponse,
+        valueSelector: String,
+    ): SortSnapshot {
+        val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
+        val values = body["items"]?.jsonArray.orEmpty()
+            .map { it.jsonObject[valueSelector]?.jsonPrimitive?.content.orEmpty() }
+        return SortSnapshot(
+            status = response.status,
+            hasItems = values.isNotEmpty(),
+            ordered = values == values.sorted(),
+        )
+    }
+
+    private suspend fun emptyEnvelopeSnapshot(
+        response: io.ktor.client.statement.HttpResponse,
+    ): EmptyEnvelopeSnapshot {
+        val body = json.parseToJsonElement(string = response.bodyAsText()).jsonObject
+        return EmptyEnvelopeSnapshot(
+            status = response.status,
+            totalCount = body["total_count"]?.jsonPrimitive?.content?.toIntOrNull(),
+            itemsSize = body["items"]?.jsonArray?.size,
+        )
+    }
+
+    private data class SortSnapshot(
+        val status: HttpStatusCode,
+        val hasItems: Boolean,
+        val ordered: Boolean,
+    )
+
+    private data class ErrorSnapshot(
+        val status: HttpStatusCode,
+        val code: String,
+    )
+
+    private data class EmptyEnvelopeSnapshot(
+        val status: HttpStatusCode,
+        val totalCount: Int?,
+        val itemsSize: Int?,
+    )
 }
