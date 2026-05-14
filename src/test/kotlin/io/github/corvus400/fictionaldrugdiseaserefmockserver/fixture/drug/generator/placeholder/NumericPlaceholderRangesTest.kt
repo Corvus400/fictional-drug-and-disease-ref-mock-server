@@ -100,6 +100,7 @@ class NumericPlaceholderRangesTest {
                 "cmax",
                 "cnsRatio",
                 "doseAmount",
+                "doseCount",
                 "dosePerKg",
                 "durationDays",
                 "durationWeeks",
@@ -136,6 +137,7 @@ class NumericPlaceholderRangesTest {
                 "cmax" to """^\d+(\.\d+)?\s?(ng/mL|μg/mL)$""",
                 "cnsRatio" to """^\d+(\.\d+)?\s?%$""",
                 "doseAmount" to """^\d+(\.\d+)?\s?(μg|mg|g)$""",
+                "doseCount" to """^\d+$""",
                 "dosePerKg" to """^\d+(\.\d+)?\s?mg/kg$""",
                 "durationDays" to """^\d+\s?日間?$""",
                 "durationWeeks" to """^\d+\s?週間$""",
@@ -166,8 +168,8 @@ class NumericPlaceholderRangesTest {
             )
 
         init {
-            check(CATEGORY_D_KEYS.size == 32) {
-                "CATEGORY_D_KEYS must contain exactly 32 keys; got ${CATEGORY_D_KEYS.size}"
+            check(CATEGORY_D_KEYS.size == 33) {
+                "CATEGORY_D_KEYS must contain exactly 33 keys; got ${CATEGORY_D_KEYS.size}"
             }
             check(CATEGORY_D_FORMAT_REGEX.keys == CATEGORY_D_KEYS.toSet()) {
                 "CATEGORY_D_FORMAT_REGEX keys must equal CATEGORY_D_KEYS set"

@@ -61,24 +61,25 @@ object DrugParagraphTemplates {
             "投与に先立ち、標準的な{{exam}}を実施して適応を慎重に判断すること。 (架空)",
         ),
         ParagraphField.STANDARD_DOSAGE to listOf(
-            "通常、成人には**1 回 {{doseAmount}}** を 1 日 {{frequency}} 回食後経口投与する。 (架空)",
-            "通常、成人には 1 日 {{totalDailyDose}} を {{frequency}} 回に分けて経口投与する。症状により適宜増減する。 (架空)",
-            "通常、成人には {{doseAmount}} を {{interval}} ごとに投与する。年齢・症状により適宜調整する。 (架空)",
+            "通常、成人には**1 回 {{doseCount}} {{packagingUnit}}** を 1 日 {{frequency}} 回食後経口投与する。 (架空)",
+            "通常、成人には 1 日 {{doseCount}} {{packagingUnit}} を {{frequency}} 回に分けて経口投与する。症状により適宜増減する。 (架空)",
+            "通常、成人には {{doseCount}} {{packagingUnit}} を {{interval}} ごとに投与する。年齢・症状により適宜調整する。 (架空)",
         ),
         ParagraphField.AGE_DOSE to listOf(
-            "{{ageGroup}}には、通常 1 回 {{doseAmount}} を 1 日 {{frequency}} 回投与する。 (架空)",
-            "{{ageGroup}}では体重に応じて**1 回 {{dosePerKg}}** を 1 日 {{frequency}} 回投与する。 (架空)",
-            "{{ageGroup}}への投与量は {{referenceRange}} を基準に適宜調節する。 (架空)",
+            "{{ageGroup}}には、通常 1 回 {{doseCount}} {{packagingUnit}} を 1 日 {{frequency}} 回投与する。 (架空)",
+            "{{ageGroup}}では症状に応じて**1 回 {{doseCount}} {{packagingUnit}}** を 1 日 {{frequency}} 回投与する。 (架空)",
+            "{{ageGroup}}への投与量は {{doseCount}} {{packagingUnit}} を基準に適宜調節する。 (架空)",
         ),
         ParagraphField.RENAL_DOSE to listOf(
-            "{{renalLevel}} では 1 回投与量を通常量の {{reductionRatio}} とし、{{interval}} ごとに投与する。 (架空)",
-            "{{renalLevel}} の患者には {{doseAmount}} を {{interval}} ごとに投与し、{{exam}} でモニターすること。 (架空)",
-            "{{renalLevel}} には原則投与を推奨しない。やむを得ず投与する場合は {{exam}} を管理しながら慎重に投与する。 (架空)",
+            "{{renalLevel}} では 1 回投与量を {{doseCount}} {{packagingUnit}} とし、{{interval}} ごとに投与する。 (架空)",
+            "{{renalLevel}} の患者には {{doseCount}} {{packagingUnit}} を {{interval}} ごとに投与し、{{exam}} でモニターすること。 (架空)",
+            "{{renalLevel}} には原則投与を推奨しない。やむを得ず投与する場合は {{doseCount}} {{packagingUnit}} を {{exam}} で管理しながら慎重に投与する。 (架空)",
         ),
         ParagraphField.HEPATIC_DOSE to listOf(
-            "{{hepaticLevel}} では初回用量を通常量の {{reductionRatio}} に減量する。 (架空)",
-            "{{hepaticLevel}} では**1 回 {{doseAmount}}** を 1 日 {{frequency}} 回に減量し、{{exam}} 値を観察する。 (架空)",
-            "{{hepaticLevel}} には原則投与を推奨しない。代謝遅延による {{adverseReaction}} のおそれがある。 (架空)",
+            "{{hepaticLevel}} では初回用量を {{doseCount}} {{packagingUnit}} に減量する。 (架空)",
+            "{{hepaticLevel}} では**1 回 {{doseCount}} {{packagingUnit}}** を " +
+                "1 日 {{frequency}} 回に減量し、{{exam}} 値を観察する。 (架空)",
+            "{{hepaticLevel}} には {{doseCount}} {{packagingUnit}} を上限として投与し、代謝遅延による {{adverseReaction}} のおそれに注意する。 (架空)",
         ),
         ParagraphField.DOSAGE_RELATED_PRECAUTION to listOf(
             "- {{exam}} の結果に応じて投与量を調整すること。 (架空)",

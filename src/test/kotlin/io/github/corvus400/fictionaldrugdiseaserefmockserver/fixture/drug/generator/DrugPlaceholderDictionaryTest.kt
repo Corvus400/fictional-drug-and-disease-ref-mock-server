@@ -14,13 +14,14 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.DiagnosticCriteriaInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.SymptomInfo
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.TreatmentInfo
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DosageForm
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class DrugPlaceholderDictionaryTest {
     @Test
-    fun `PlaceholderKey enum contains exactly 64 keys`() {
+    fun `PlaceholderKey enum contains exactly 66 keys`() {
         assertEquals(
             PLACEHOLDER_KEY_COUNT,
             PlaceholderKey.entries.size,
@@ -31,7 +32,7 @@ class DrugPlaceholderDictionaryTest {
 
     @Test
     fun `resolve returns non-blank value for every placeholder key`() {
-        val dict = buildDict()
+        val dict = buildDict().withDosageForm(form = DosageForm.TABLET)
         PlaceholderKey.entries.forEach { key ->
             val seed = stableHash(id = "drug_0001", slot = 0, index = 0)
             val value = dict.resolve(key.jsonKey, seed)
@@ -45,7 +46,7 @@ class DrugPlaceholderDictionaryTest {
 
     @Test
     fun `resolve delegates every category-A key to MedicalVocabularyDictionary`() {
-        val dict = buildDict()
+        val dict = buildDict().withDosageForm(form = DosageForm.TABLET)
         val seed = stableHash(id = "drug_0001", slot = 0, index = 0)
         PlaceholderKey.entries
             .filter { it.category == PlaceholderCategory.A_MEDICAL_VOCABULARY }
@@ -126,7 +127,7 @@ class DrugPlaceholderDictionaryTest {
 
     @Test
     fun `renderField returns a fully substituted paragraph string`() {
-        val dict = buildDict()
+        val dict = buildDict().withDosageForm(form = DosageForm.TABLET)
         val seed = stableHash(id = "drug_0001", slot = 0, index = 0)
         val rendered = dict.renderField(field = ParagraphField.STANDARD_DOSAGE, seed = seed)
         assertEquals(
@@ -283,7 +284,7 @@ class DrugPlaceholderDictionaryTest {
         )
 
     private companion object {
-        const val PLACEHOLDER_KEY_COUNT = 64
+        const val PLACEHOLDER_KEY_COUNT = 66
         val KATAKANA_BLOCK: CharRange = '゠'..'ヿ'
     }
 }
