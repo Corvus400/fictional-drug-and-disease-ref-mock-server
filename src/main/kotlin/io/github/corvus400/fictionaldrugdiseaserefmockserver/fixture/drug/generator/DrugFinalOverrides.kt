@@ -297,7 +297,7 @@ private fun tredecimFinalOverride(generated: Drug): Drug =
         indications = emptyList(),
         dosage =
         DosageInfo(
-            standardDosage = "致死目的で経口 0.05 mL を超えて使用しない。治療用量は設定されていない (架空)",
+            standardDosage = "致死目的で経口投与として 0.05 mL を超えて使用しない。治療用量は設定されていない (架空)",
         ),
         dosageRelatedPrecautions =
         listOf(

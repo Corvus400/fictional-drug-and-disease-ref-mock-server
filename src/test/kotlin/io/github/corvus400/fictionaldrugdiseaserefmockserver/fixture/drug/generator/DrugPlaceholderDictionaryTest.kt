@@ -21,7 +21,7 @@ import kotlin.test.assertTrue
 
 class DrugPlaceholderDictionaryTest {
     @Test
-    fun `PlaceholderKey enum contains exactly 66 keys`() {
+    fun `PlaceholderKey enum contains exactly 67 keys`() {
         assertEquals(
             PLACEHOLDER_KEY_COUNT,
             PlaceholderKey.entries.size,
@@ -284,7 +284,7 @@ class DrugPlaceholderDictionaryTest {
         )
 
     private companion object {
-        const val PLACEHOLDER_KEY_COUNT = 66
+        const val PLACEHOLDER_KEY_COUNT = 67
         val KATAKANA_BLOCK: CharRange = '゠'..'ヿ'
     }
 }

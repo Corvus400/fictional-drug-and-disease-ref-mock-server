@@ -118,8 +118,9 @@ class DrugPlaceholderDictionary(
     private fun resolveDosageFormPlaceholder(key: PlaceholderKey): String {
         val form = dosageForm ?: error("Dosage form is required to resolve '${key.jsonKey}' placeholder")
         return when (key) {
+            PlaceholderKey.ADMINISTRATION_VERB -> DosageFormDoseTextUnit.administrationVerb(form = form)
             PlaceholderKey.PACKAGING_UNIT -> DosageFormDoseTextUnit.unitFor(form = form)
-            else -> error("Unreachable: category E_DOSAGE_FORM contains only PACKAGING_UNIT, got $key")
+            else -> error("Unreachable: category E_DOSAGE_FORM contains only dosage form placeholders, got $key")
         }
     }
 

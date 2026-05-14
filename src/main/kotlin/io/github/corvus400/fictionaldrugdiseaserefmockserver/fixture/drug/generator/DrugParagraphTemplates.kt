@@ -61,13 +61,14 @@ object DrugParagraphTemplates {
             "投与に先立ち、標準的な{{exam}}を実施して適応を慎重に判断すること。 (架空)",
         ),
         ParagraphField.STANDARD_DOSAGE to listOf(
-            "通常、成人には**1 回 {{doseCount}} {{packagingUnit}}** を 1 日 {{frequency}} 回食後経口投与する。 (架空)",
-            "通常、成人には 1 日 {{doseCount}} {{packagingUnit}} を {{frequency}} 回に分けて経口投与する。症状により適宜増減する。 (架空)",
-            "通常、成人には {{doseCount}} {{packagingUnit}} を {{interval}} ごとに投与する。年齢・症状により適宜調整する。 (架空)",
+            "通常、成人には**1 回 {{doseCount}} {{packagingUnit}}** を 1 日 {{frequency}} 回食後{{administrationVerb}}。 (架空)",
+            "通常、成人には 1 日 {{doseCount}} {{packagingUnit}} を {{frequency}} 回に分けて{{administrationVerb}}。症状により適宜増減する。 (架空)",
+            "通常、成人には {{doseCount}} {{packagingUnit}} を {{interval}} ごとに{{administrationVerb}}。年齢・症状により適宜調整する。 (架空)",
         ),
         ParagraphField.AGE_DOSE to listOf(
-            "{{ageGroup}}には、通常 1 回 {{doseCount}} {{packagingUnit}} を 1 日 {{frequency}} 回投与する。 (架空)",
-            "{{ageGroup}}では症状に応じて**1 回 {{doseCount}} {{packagingUnit}}** を 1 日 {{frequency}} 回投与する。 (架空)",
+            "{{ageGroup}}には、通常 1 回 {{doseCount}} {{packagingUnit}} を 1 日 {{frequency}} 回{{administrationVerb}}。 (架空)",
+            "{{ageGroup}}では症状に応じて**1 回 {{doseCount}} {{packagingUnit}}** を " +
+                "1 日 {{frequency}} 回{{administrationVerb}}。 (架空)",
             "{{ageGroup}}への投与量は {{doseCount}} {{packagingUnit}} を基準に適宜調節する。 (架空)",
         ),
         ParagraphField.RENAL_DOSE to listOf(
@@ -79,7 +80,8 @@ object DrugParagraphTemplates {
             "{{hepaticLevel}} では初回用量を {{doseCount}} {{packagingUnit}} に減量する。 (架空)",
             "{{hepaticLevel}} では**1 回 {{doseCount}} {{packagingUnit}}** を " +
                 "1 日 {{frequency}} 回に減量し、{{exam}} 値を観察する。 (架空)",
-            "{{hepaticLevel}} には {{doseCount}} {{packagingUnit}} を上限として投与し、代謝遅延による {{adverseReaction}} のおそれに注意する。 (架空)",
+            "{{hepaticLevel}} には {{doseCount}} {{packagingUnit}} を上限として{{administrationVerb}}、" +
+                "代謝遅延による {{adverseReaction}} のおそれに注意する。 (架空)",
         ),
         ParagraphField.DOSAGE_RELATED_PRECAUTION to listOf(
             "- {{exam}} の結果に応じて投与量を調整すること。 (架空)",

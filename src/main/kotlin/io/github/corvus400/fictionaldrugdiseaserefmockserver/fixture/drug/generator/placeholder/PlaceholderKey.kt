@@ -81,6 +81,7 @@ enum class PlaceholderKey(
     URINARY_EXCRETION_RATIO("urinaryExcretionRatio", PlaceholderCategory.D_NUMERIC_RANGE),
     VOLUME_OF_DISTRIBUTION("volumeOfDistribution", PlaceholderCategory.D_NUMERIC_RANGE),
 
+    ADMINISTRATION_VERB("administrationVerb", PlaceholderCategory.E_DOSAGE_FORM),
     PACKAGING_UNIT("packagingUnit", PlaceholderCategory.E_DOSAGE_FORM),
     ;
 

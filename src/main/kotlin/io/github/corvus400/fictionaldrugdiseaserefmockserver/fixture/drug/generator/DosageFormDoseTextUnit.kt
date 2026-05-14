@@ -19,4 +19,24 @@ object DosageFormDoseTextUnit {
             DosageForm.INHALER -> "噴霧"
             DosageForm.NASAL_SPRAY -> "噴霧"
         }
+
+    fun administrationVerb(form: DosageForm): String =
+        when (form) {
+            DosageForm.TABLET,
+            DosageForm.CAPSULE,
+            DosageForm.POWDER,
+            DosageForm.GRANULE,
+            DosageForm.LIQUID,
+            -> "経口投与する"
+            DosageForm.INJECTION_FORM -> "投与する"
+            DosageForm.OINTMENT,
+            DosageForm.CREAM,
+            -> "塗布する"
+            DosageForm.PATCH -> "貼付する"
+            DosageForm.EYE_DROPS -> "点眼する"
+            DosageForm.SUPPOSITORY -> "挿入する"
+            DosageForm.INHALER,
+            DosageForm.NASAL_SPRAY,
+            -> "吸入する"
+        }
 }
