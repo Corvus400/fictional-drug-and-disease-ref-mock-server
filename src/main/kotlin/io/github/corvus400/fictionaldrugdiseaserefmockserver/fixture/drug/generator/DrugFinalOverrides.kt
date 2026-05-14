@@ -258,9 +258,9 @@ private fun arisaSleepAidFinalOverride(generated: Drug): Drug =
         ),
         references =
         listOf(
-            Reference(citation = "青色液剤型催眠薬の服薬管理に関する架空研究", source = "架空睡眠薬研究"),
-            Reference(citation = "不眠症に対する短時間作用型催眠薬の架空比較試験", source = "架空臨床睡眠誌"),
-            Reference(citation = "睡眠薬過量服用時の 24 時間管理に関する架空報告", source = "架空救急薬理"),
+            Reference(citation = "ナギサ. 青色液剤型催眠薬の服薬管理に関する架空研究. 架空睡眠薬研究, 12, 345-348. (架空)", source = "架空睡眠薬研究"),
+            Reference(citation = "ミハシ. 不眠症に対する短時間作用型催眠薬の架空比較試験. 架空臨床睡眠誌, 12, 345-348. (架空)", source = "架空臨床睡眠誌"),
+            Reference(citation = "コウメ. 睡眠薬過量服用時の 24 時間管理に関する架空報告. 架空救急薬理, 12, 345-348. (架空)", source = "架空救急薬理"),
         ),
         insuranceNotes =
         listOf(

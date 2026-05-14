@@ -2,8 +2,10 @@ package io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.drug.gener
 
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.common.AtcIcd10Mapping
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.common.ValueRangeGenerator
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.AuthorSeedBuckets
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.BucketSeedCoiner
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.JournalSeedBuckets
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.bucket.TitleSeedBuckets
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixmerge.nameslot.NameSlot
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.stableHash
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
@@ -123,15 +125,30 @@ internal object DrugMetaBuilders {
         val countSeed = stableHash(id = id, slot = DrugFieldSlot.REFERENCE.ordinal, index = 0)
         val count = ValueRangeGenerator.pickCount(seed = countSeed, range = REFERENCE_RANGE)
         return (0 until count).map { offset ->
+            val authorSeed = stableHash(
+                id = "$id:author:$offset",
+                slot = DrugFieldSlot.REFERENCE.ordinal,
+                index =
+                offset + 1
+            )
+            val titleStemSeed =
+                stableHash(id = "$id:titleStem:$offset", slot = DrugFieldSlot.REFERENCE.ordinal, index = offset + 1)
+            val titleSuffixSeed =
+                stableHash(id = "$id:titleSuffix:$offset", slot = DrugFieldSlot.REFERENCE.ordinal, index = offset + 1)
+            val journalSeed =
+                stableHash(id = "$id:journal:$offset", slot = DrugFieldSlot.REFERENCE.ordinal, index = offset + 1)
+            val author = ValueRangeGenerator.pickOne(seed = authorSeed, candidates = AuthorSeedBuckets.all)
+            val titleStem = ValueRangeGenerator.pickOne(seed = titleStemSeed, candidates = TitleSeedBuckets.all)
+            val titleSuffix = ValueRangeGenerator.pickOne(seed = titleSuffixSeed, candidates = TITLE_SUFFIXES)
             val journal =
                 BucketSeedCoiner.coin(
                     bucket = JournalSeedBuckets.all,
-                    seed = stableHash(id = id, slot = DrugFieldSlot.REFERENCE.ordinal, index = offset + 1),
+                    seed = journalSeed,
                     slot = NameSlot.DRUG_JOURNAL,
                     offset = offset,
                 )
             Reference(
-                citation = "$journal ${offset + 1}. $journal, 12, 345-348. (架空)",
+                citation = "$author. $titleStem$titleSuffix. $journal, 12, 345-348. (架空)",
                 source = journal,
             )
         }
@@ -287,6 +304,8 @@ internal object DrugMetaBuilders {
     private val DISEASE_INDEX_RANGE: IntRange = 0..79
     private val YJ_SUFFIX_RANGE: IntRange = 0..999_999_999
     private val EXPIRATION_RANGE: IntRange = 24..60
+    private val TITLE_SUFFIXES: List<String> =
+        listOf("研究", "報告", "検討", "評価", "解析", "調査", "試験", "観察", "比較", "検証")
 
     private const val YJ_FICTIONAL_PREFIX: String = "999"
     private const val YJ_SUFFIX_LENGTH: Int = 9
