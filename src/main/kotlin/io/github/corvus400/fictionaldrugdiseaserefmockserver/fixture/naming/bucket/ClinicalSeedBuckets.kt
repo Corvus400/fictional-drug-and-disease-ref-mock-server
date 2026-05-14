@@ -135,6 +135,8 @@ object ClinicalSeedBucketRegistry {
                 put("treatmentNonPharma:$chapter", entries)
             }
             GradingSystemSeedBuckets.byChapter.forEach { (chapter, entries) -> put("gradingSystem:$chapter", entries) }
+            put("author", AuthorSeedBuckets.all)
+            put("titleStem", TitleSeedBuckets.all)
             put("journal", JournalSeedBuckets.all)
             ExamFindingSeedBuckets.typicalByChapter.forEach { (chapter, entries) ->
                 put("examTypical:$chapter", entries)
