@@ -111,7 +111,6 @@ class NumericPlaceholderRangesTest {
                 "halfLife",
                 "ic50",
                 "interval",
-                "maxDailyDose",
                 "meltingPoint",
                 "packageSize",
                 "patientCount",
@@ -148,7 +147,6 @@ class NumericPlaceholderRangesTest {
                 "halfLife" to """^\d+(\.\d+)?\s?時間$""",
                 "ic50" to """^\d+(\.\d+)?\s?nM$""",
                 "interval" to """^\d+\s?時間$""",
-                "maxDailyDose" to """^\d+(\.\d+)?\s?(mg|g)$""",
                 "meltingPoint" to """^\d+\s?℃$""",
                 "packageSize" to """^\d+\s?(錠|包|本)$""",
                 "patientCount" to """^\d+\s?例$""",
@@ -168,8 +166,8 @@ class NumericPlaceholderRangesTest {
             )
 
         init {
-            check(CATEGORY_D_KEYS.size == 33) {
-                "CATEGORY_D_KEYS must contain exactly 33 keys; got ${CATEGORY_D_KEYS.size}"
+            check(CATEGORY_D_KEYS.size == 32) {
+                "CATEGORY_D_KEYS must contain exactly 32 keys; got ${CATEGORY_D_KEYS.size}"
             }
             check(CATEGORY_D_FORMAT_REGEX.keys == CATEGORY_D_KEYS.toSet()) {
                 "CATEGORY_D_FORMAT_REGEX keys must equal CATEGORY_D_KEYS set"

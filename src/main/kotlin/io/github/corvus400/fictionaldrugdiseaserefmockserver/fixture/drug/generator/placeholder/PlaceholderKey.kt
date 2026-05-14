@@ -63,7 +63,6 @@ enum class PlaceholderKey(
     HALF_LIFE("halfLife", PlaceholderCategory.D_NUMERIC_RANGE),
     IC50("ic50", PlaceholderCategory.D_NUMERIC_RANGE),
     INTERVAL("interval", PlaceholderCategory.D_NUMERIC_RANGE),
-    MAX_DAILY_DOSE("maxDailyDose", PlaceholderCategory.D_NUMERIC_RANGE),
     MELTING_POINT("meltingPoint", PlaceholderCategory.D_NUMERIC_RANGE),
     PACKAGE_SIZE("packageSize", PlaceholderCategory.D_NUMERIC_RANGE),
     PATIENT_COUNT("patientCount", PlaceholderCategory.D_NUMERIC_RANGE),
@@ -82,6 +81,7 @@ enum class PlaceholderKey(
     VOLUME_OF_DISTRIBUTION("volumeOfDistribution", PlaceholderCategory.D_NUMERIC_RANGE),
 
     ADMINISTRATION_VERB("administrationVerb", PlaceholderCategory.E_DOSAGE_FORM),
+    MAX_DAILY_DOSE("maxDailyDose", PlaceholderCategory.E_DOSAGE_FORM),
     PACKAGING_UNIT("packagingUnit", PlaceholderCategory.E_DOSAGE_FORM),
     ;
 

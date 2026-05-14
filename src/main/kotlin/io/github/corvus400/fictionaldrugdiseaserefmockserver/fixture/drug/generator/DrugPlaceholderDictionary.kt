@@ -68,7 +68,7 @@ class DrugPlaceholderDictionary(
             PlaceholderCategory.B_COINED_NAME -> resolveCoinedName(placeholderKey, seed)
             PlaceholderCategory.C_DISEASE_REFERENCE -> resolveDiseaseReference(seed)
             PlaceholderCategory.D_NUMERIC_RANGE -> numericRanges.resolve(key, seed)
-            PlaceholderCategory.E_DOSAGE_FORM -> resolveDosageFormPlaceholder(placeholderKey)
+            PlaceholderCategory.E_DOSAGE_FORM -> resolveDosageFormPlaceholder(placeholderKey, seed)
         }
     }
 
@@ -115,10 +115,14 @@ class DrugPlaceholderDictionary(
         return ValueRangeGenerator.pickOne(seed, diseases).name
     }
 
-    private fun resolveDosageFormPlaceholder(key: PlaceholderKey): String {
+    private fun resolveDosageFormPlaceholder(
+        key: PlaceholderKey,
+        seed: Long,
+    ): String {
         val form = dosageForm ?: error("Dosage form is required to resolve '${key.jsonKey}' placeholder")
         return when (key) {
             PlaceholderKey.ADMINISTRATION_VERB -> DosageFormDoseTextUnit.administrationVerb(form = form)
+            PlaceholderKey.MAX_DAILY_DOSE -> DosageFormDoseTextUnit.maxDailyDose(form = form, seed = seed)
             PlaceholderKey.PACKAGING_UNIT -> DosageFormDoseTextUnit.unitFor(form = form)
             else -> error("Unreachable: category E_DOSAGE_FORM contains only dosage form placeholders, got $key")
         }

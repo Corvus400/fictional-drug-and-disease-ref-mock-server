@@ -193,10 +193,14 @@ internal object DrugClinicalBuilders {
         )
     }
 
-    fun buildDosageRelatedPrecautions(id: String, dict: DrugPlaceholderDictionary): List<NumberedParagraph> {
+    fun buildDosageRelatedPrecautions(
+        id: String,
+        dict: DrugPlaceholderDictionary,
+        dosageForm: DosageForm,
+    ): List<NumberedParagraph> {
         return buildNumberedParagraphs(
             id = id,
-            dict = dict,
+            dict = dict.withDosageForm(form = dosageForm),
             slot = DrugFieldSlot.DOSAGE_RELATED_PRECAUTION,
             field = ParagraphField.DOSAGE_RELATED_PRECAUTION,
             countRange = SHORT_LIST_COUNT_RANGE,

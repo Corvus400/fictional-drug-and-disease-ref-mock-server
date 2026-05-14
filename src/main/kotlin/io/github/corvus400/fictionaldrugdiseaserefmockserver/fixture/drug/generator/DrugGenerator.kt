@@ -177,7 +177,11 @@ class DrugGenerator(
                 dosageForm = blueprint.dosageForm,
             ),
             dosageRelatedPrecautions =
-            DrugClinicalBuilders.buildDosageRelatedPrecautions(id = drugId, dict = contextualDictionary),
+            DrugClinicalBuilders.buildDosageRelatedPrecautions(
+                id = drugId,
+                dict = contextualDictionary,
+                dosageForm = blueprint.dosageForm,
+            ),
             importantPrecautions =
             DrugClinicalBuilders.buildImportantPrecautions(id = drugId, dict = contextualDictionary),
             precautionsForSpecificPopulations =
