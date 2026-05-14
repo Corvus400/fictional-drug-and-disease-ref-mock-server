@@ -121,7 +121,7 @@ object NumericPlaceholderRanges {
             "efficacyRate" to DoubleFormatter(range = 100..999, scaleFactor = 0.1, units = listOf("%")),
             "fecalExcretionRatio" to DoubleFormatter(range = 0..990, scaleFactor = 0.1, units = listOf("%")),
             "foodEffectRatio" to DoubleFormatter(range = 5..30, scaleFactor = 0.1, units = listOf("倍")),
-            "frequency" to IntFormatter(range = 1..4, units = listOf("回")),
+            "frequency" to IntFormatter(range = 1..4, units = emptyList()),
             "halfLife" to DoubleFormatter(range = 2..48, scaleFactor = 0.5, units = listOf("時間")),
             "ic50" to DoubleFormatter(range = 1..1000, scaleFactor = 0.1, units = listOf("nM")),
             "interval" to IntFormatter(range = 1..6, multiplier = 4, units = listOf("時間")),

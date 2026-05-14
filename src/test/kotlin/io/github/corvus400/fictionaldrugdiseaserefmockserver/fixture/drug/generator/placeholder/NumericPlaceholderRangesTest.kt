@@ -144,7 +144,7 @@ class NumericPlaceholderRangesTest {
                 "efficacyRate" to """^\d+(\.\d+)?\s?%$""",
                 "fecalExcretionRatio" to """^\d+(\.\d+)?\s?%$""",
                 "foodEffectRatio" to """^\d+(\.\d+)?\s?倍$""",
-                "frequency" to """^\d+\s?回$""",
+                "frequency" to """^\d+$""",
                 "halfLife" to """^\d+(\.\d+)?\s?時間$""",
                 "ic50" to """^\d+(\.\d+)?\s?nM$""",
                 "interval" to """^\d+\s?時間$""",
