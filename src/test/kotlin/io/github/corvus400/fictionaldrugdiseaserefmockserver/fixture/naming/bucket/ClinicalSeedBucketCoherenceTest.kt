@@ -144,6 +144,7 @@ class ClinicalSeedBucketCoherenceTest {
                 Regex("""[\p{IsHan}\p{IsKatakana}A-Za-z0-9（）()・]+チャネル チャネル"""),
                 Regex("""[\p{IsHan}\p{IsKatakana}A-Za-z0-9（）()・]+受容体 受容体"""),
                 Regex("""[\p{IsHan}\p{IsKatakana}A-Za-z0-9（）()・]+酵素 酵素"""),
+                Regex("""\d+\s*回\s+回"""),
                 Regex("""([\p{IsHan}\p{IsKatakana}A-Za-z0-9（）()・]+) \d+\. \1,"""),
             )
     }
