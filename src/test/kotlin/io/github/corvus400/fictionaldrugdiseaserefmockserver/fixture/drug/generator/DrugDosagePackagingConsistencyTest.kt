@@ -91,6 +91,17 @@ class DrugDosagePackagingConsistencyTest {
         assertEquals(expected = null, actual = firstViolation)
     }
 
+    @Test
+    fun `dosage paragraphs do not duplicate frequency suffix`() {
+        val firstViolation =
+            generateDrugs()
+                .firstNotNullOfOrNull { drug ->
+                    frequencySuffixDuplicationViolation(drug = drug)
+                }
+
+        assertEquals(expected = null, actual = firstViolation)
+    }
+
     private fun dosageUnitViolation(
         drug: Drug,
         sourceField: String,
@@ -123,6 +134,30 @@ class DrugDosagePackagingConsistencyTest {
         }
     }
 
+    private fun frequencySuffixDuplicationViolation(drug: Drug): FrequencySuffixDuplicationViolation? =
+        dosageParagraphs(drug = drug)
+            .firstOrNull { paragraph -> duplicatedFrequencySuffix.containsMatchIn(paragraph.text) }
+            ?.let { paragraph ->
+                FrequencySuffixDuplicationViolation(
+                    drugId = drug.id,
+                    form = drug.dosageForm,
+                    sourceField = paragraph.sourceField,
+                    actualText = paragraph.text,
+                )
+            }
+
+    private fun dosageParagraphs(drug: Drug): List<DosageParagraph> =
+        listOf(DosageParagraph(sourceField = "standardDosage", text = drug.dosage.standardDosage)) +
+            drug.dosage.ageSpecificDosage.map { dosage ->
+                DosageParagraph(sourceField = "ageSpecificDosage", text = dosage.dose)
+            } +
+            drug.dosage.renalAdjustment.map { dosage ->
+                DosageParagraph(sourceField = "renalAdjustment", text = dosage.dose)
+            } +
+            drug.dosage.hepaticAdjustment.map { dosage ->
+                DosageParagraph(sourceField = "hepaticAdjustment", text = dosage.dose)
+            }
+
     private fun generateDrugs(): List<Drug> {
         val adapter = FixmergeNameAdapter()
         val diseasePlaceholderDictionary = DiseasePlaceholderDictionary()
@@ -151,7 +186,21 @@ class DrugDosagePackagingConsistencyTest {
         val actualText: String,
     )
 
+    private data class FrequencySuffixDuplicationViolation(
+        val drugId: String,
+        val form: DosageForm,
+        val sourceField: String,
+        val actualText: String,
+    )
+
+    private data class DosageParagraph(
+        val sourceField: String,
+        val text: String,
+    )
+
     private companion object {
+        val duplicatedFrequencySuffix: Regex = Regex("""\d+\s*回\s+回""")
+
         val expectedAdministrationVerbs: Map<DosageForm, String> =
             mapOf(
                 DosageForm.TABLET to "経口投与",
