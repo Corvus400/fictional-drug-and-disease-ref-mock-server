@@ -96,9 +96,10 @@ internal object DrugClinicalBuilders {
         val hepaticSeed = stableHash(id = id, slot = DrugFieldSlot.DOSAGE_HEPATIC.ordinal, index = 0)
         val renalSeverity = pickRenalSeverity(drugId = id)
         val renalRange = rangeOf(severity = renalSeverity)
+        val dosageDictionary = dict.withDosageForm(form = dosageForm)
         return DosageInfo(
             standardDosage =
-            dict.renderField(
+            dosageDictionary.renderField(
                 field = ParagraphField.STANDARD_DOSAGE,
                 seed = standardSeed,
             ),
@@ -108,7 +109,7 @@ internal object DrugClinicalBuilders {
                     range =
                     DrugSeedDerivedValues.pediatricAgeRange(id = id, form = dosageForm),
                     dose =
-                    dict.renderField(
+                    dosageDictionary.renderField(
                         field = ParagraphField.AGE_DOSE,
                         seed = ageSeed,
                     ),
@@ -125,7 +126,7 @@ internal object DrugClinicalBuilders {
                         label = renalRange.label,
                     ),
                     dose =
-                    dict.renderField(
+                    dosageDictionary.renderField(
                         field = ParagraphField.RENAL_DOSE,
                         seed = renalSeed,
                     ),
@@ -136,7 +137,7 @@ internal object DrugClinicalBuilders {
                 HepaticDose(
                     severity = pickHepaticSeverity(drugId = id),
                     dose =
-                    dict.renderField(
+                    dosageDictionary.renderField(
                         field = ParagraphField.HEPATIC_DOSE,
                         seed = hepaticSeed,
                     ),

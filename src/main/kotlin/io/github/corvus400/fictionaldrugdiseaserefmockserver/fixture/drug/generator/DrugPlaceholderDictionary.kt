@@ -13,6 +13,7 @@ import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.buck
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.fixmerge.nameslot.NameSlot
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.fixture.naming.stableHash
 import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease
+import io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DosageForm
 
 class DrugPlaceholderDictionary(
     private val medicalVocabulary: MedicalVocabularyDictionary = MedicalVocabularyDictionary,
@@ -21,6 +22,7 @@ class DrugPlaceholderDictionary(
     private val diseases: List<Disease>,
     private val defaultContext: BucketContextKey = BucketContextKey.Global,
     private val diseaseNameOverride: String? = null,
+    private val dosageForm: DosageForm? = null,
 ) {
     fun withContext(context: BucketContextKey): DrugPlaceholderDictionary =
         DrugPlaceholderDictionary(
@@ -30,6 +32,7 @@ class DrugPlaceholderDictionary(
             diseases = diseases,
             defaultContext = context,
             diseaseNameOverride = diseaseNameOverride,
+            dosageForm = dosageForm,
         )
 
     fun withDiseaseNameOverride(diseaseName: String): DrugPlaceholderDictionary =
@@ -40,6 +43,18 @@ class DrugPlaceholderDictionary(
             diseases = diseases,
             defaultContext = defaultContext,
             diseaseNameOverride = diseaseName,
+            dosageForm = dosageForm,
+        )
+
+    fun withDosageForm(form: DosageForm): DrugPlaceholderDictionary =
+        DrugPlaceholderDictionary(
+            medicalVocabulary = medicalVocabulary,
+            numericRanges = numericRanges,
+            nameAdapter = nameAdapter,
+            diseases = diseases,
+            defaultContext = defaultContext,
+            diseaseNameOverride = diseaseNameOverride,
+            dosageForm = form,
         )
 
     fun resolve(
@@ -53,6 +68,7 @@ class DrugPlaceholderDictionary(
             PlaceholderCategory.B_COINED_NAME -> resolveCoinedName(placeholderKey, seed)
             PlaceholderCategory.C_DISEASE_REFERENCE -> resolveDiseaseReference(seed)
             PlaceholderCategory.D_NUMERIC_RANGE -> numericRanges.resolve(key, seed)
+            PlaceholderCategory.E_DOSAGE_FORM -> resolveDosageFormPlaceholder(placeholderKey)
         }
     }
 
@@ -97,6 +113,14 @@ class DrugPlaceholderDictionary(
                 "so that {{disease}} placeholder can reference an existing disease fixture."
         }
         return ValueRangeGenerator.pickOne(seed, diseases).name
+    }
+
+    private fun resolveDosageFormPlaceholder(key: PlaceholderKey): String {
+        val form = dosageForm ?: error("Dosage form is required to resolve '${key.jsonKey}' placeholder")
+        return when (key) {
+            PlaceholderKey.PACKAGING_UNIT -> DosageFormDoseTextUnit.unitFor(form = form)
+            else -> error("Unreachable: category E_DOSAGE_FORM contains only PACKAGING_UNIT, got $key")
+        }
     }
 
     private fun resolveCoinedName(

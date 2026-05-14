@@ -90,7 +90,7 @@ private fun arisaSleepAidFinalOverride(generated: Drug): Drug =
                         severity = RenalSeverity.SEVERE,
                         label = "30 mL/min 未満、重度腎機能低下",
                     ),
-                    dose = "投与間隔を延長し、過鎮静に注意する (架空)",
+                    dose = "1 回 1 mL の投与間隔を延長し、過鎮静に注意する (架空)",
                 ),
             ),
             hepaticAdjustment =

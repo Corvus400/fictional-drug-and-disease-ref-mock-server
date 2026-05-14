@@ -5,6 +5,7 @@ enum class PlaceholderCategory {
     B_COINED_NAME,
     C_DISEASE_REFERENCE,
     D_NUMERIC_RANGE,
+    E_DOSAGE_FORM,
 }
 
 enum class PlaceholderKey(
@@ -51,6 +52,7 @@ enum class PlaceholderKey(
     CMAX("cmax", PlaceholderCategory.D_NUMERIC_RANGE),
     CNS_RATIO("cnsRatio", PlaceholderCategory.D_NUMERIC_RANGE),
     DOSE_AMOUNT("doseAmount", PlaceholderCategory.D_NUMERIC_RANGE),
+    DOSE_COUNT("doseCount", PlaceholderCategory.D_NUMERIC_RANGE),
     DOSE_PER_KG("dosePerKg", PlaceholderCategory.D_NUMERIC_RANGE),
     DURATION_DAYS("durationDays", PlaceholderCategory.D_NUMERIC_RANGE),
     DURATION_WEEKS("durationWeeks", PlaceholderCategory.D_NUMERIC_RANGE),
@@ -78,6 +80,8 @@ enum class PlaceholderKey(
     TOTAL_DAILY_DOSE("totalDailyDose", PlaceholderCategory.D_NUMERIC_RANGE),
     URINARY_EXCRETION_RATIO("urinaryExcretionRatio", PlaceholderCategory.D_NUMERIC_RANGE),
     VOLUME_OF_DISTRIBUTION("volumeOfDistribution", PlaceholderCategory.D_NUMERIC_RANGE),
+
+    PACKAGING_UNIT("packagingUnit", PlaceholderCategory.E_DOSAGE_FORM),
     ;
 
     companion object {

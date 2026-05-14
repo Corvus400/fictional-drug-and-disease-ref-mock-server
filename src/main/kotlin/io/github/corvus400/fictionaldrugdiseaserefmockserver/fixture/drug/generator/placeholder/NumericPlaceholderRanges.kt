@@ -30,7 +30,7 @@ private class IntFormatter(
 ) : NumericFormatter {
     override fun render(seed: Long): String {
         val value = offset + ValueRangeGenerator.pickInRange(seed, range) * multiplier
-        return "$value ${pickUnit(seed, units)}"
+        return if (units.isEmpty()) value.toString() else "$value ${pickUnit(seed, units)}"
     }
 }
 
@@ -101,7 +101,7 @@ object NumericPlaceholderRanges {
             FORMATTERS[key]
                 ?: error(
                     "Unknown category-D placeholder key '$key'. " +
-                        "NumericPlaceholderRanges covers only the 32 category-D numeric keys. " +
+                        "NumericPlaceholderRanges covers only the 33 category-D numeric keys. " +
                         "Other categories (A/B/C) are resolved by DrugPlaceholderDictionary.",
                 )
         return formatter.render(seed)
@@ -114,6 +114,7 @@ object NumericPlaceholderRanges {
             "cmax" to DoubleFormatter(range = 1..200, scaleFactor = 0.5, units = listOf("ng/mL", "μg/mL")),
             "cnsRatio" to DoubleFormatter(range = 1..500, scaleFactor = 0.1, units = listOf("%")),
             "doseAmount" to IntFormatter(range = 1..100, multiplier = 5, units = listOf("μg", "mg", "g")),
+            "doseCount" to IntFormatter(range = 1..3, units = emptyList()),
             "dosePerKg" to DoubleFormatter(range = 1..200, scaleFactor = 0.1, units = listOf("mg/kg")),
             "durationDays" to IntFormatter(range = 1..90, units = listOf("日", "日間")),
             "durationWeeks" to IntFormatter(range = 1..52, units = listOf("週間")),
