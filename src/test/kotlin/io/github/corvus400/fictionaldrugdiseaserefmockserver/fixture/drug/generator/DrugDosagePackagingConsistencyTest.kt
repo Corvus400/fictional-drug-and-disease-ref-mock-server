@@ -77,6 +77,20 @@ class DrugDosagePackagingConsistencyTest {
         assertEquals(expected = null, actual = firstViolation)
     }
 
+    @Test
+    fun `standardDosage administration verb is consistent with dosage form`() {
+        val firstViolation =
+            generateDrugs()
+                .firstNotNullOfOrNull { drug ->
+                    administrationVerbViolation(
+                        drug = drug,
+                        actualText = drug.dosage.standardDosage,
+                    )
+                }
+
+        assertEquals(expected = null, actual = firstViolation)
+    }
+
     private fun dosageUnitViolation(
         drug: Drug,
         sourceField: String,
@@ -89,6 +103,21 @@ class DrugDosagePackagingConsistencyTest {
                 form = drug.dosageForm,
                 expectedUnit = expectedUnit,
                 sourceField = sourceField,
+                actualText = actualText,
+            )
+        }
+    }
+
+    private fun administrationVerbViolation(
+        drug: Drug,
+        actualText: String,
+    ): AdministrationVerbViolation? {
+        val expectedVerb = expectedAdministrationVerbs.getValue(drug.dosageForm)
+        return actualText.takeUnless { text -> expectedVerb in text }?.let {
+            AdministrationVerbViolation(
+                drugId = drug.id,
+                form = drug.dosageForm,
+                expectedVerb = expectedVerb,
                 actualText = actualText,
             )
         }
@@ -114,4 +143,30 @@ class DrugDosagePackagingConsistencyTest {
         val sourceField: String,
         val actualText: String,
     )
+
+    private data class AdministrationVerbViolation(
+        val drugId: String,
+        val form: DosageForm,
+        val expectedVerb: String,
+        val actualText: String,
+    )
+
+    private companion object {
+        val expectedAdministrationVerbs: Map<DosageForm, String> =
+            mapOf(
+                DosageForm.TABLET to "経口投与",
+                DosageForm.CAPSULE to "経口投与",
+                DosageForm.POWDER to "経口投与",
+                DosageForm.GRANULE to "経口投与",
+                DosageForm.LIQUID to "経口投与",
+                DosageForm.INJECTION_FORM to "投与",
+                DosageForm.OINTMENT to "塗布",
+                DosageForm.CREAM to "塗布",
+                DosageForm.PATCH to "貼付",
+                DosageForm.EYE_DROPS to "点眼",
+                DosageForm.SUPPOSITORY to "挿入",
+                DosageForm.INHALER to "吸入",
+                DosageForm.NASAL_SPRAY to "吸入",
+            )
+    }
 }
