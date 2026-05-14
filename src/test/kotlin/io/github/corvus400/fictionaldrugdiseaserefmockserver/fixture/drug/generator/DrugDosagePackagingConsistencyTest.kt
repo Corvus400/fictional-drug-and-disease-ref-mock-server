@@ -102,6 +102,17 @@ class DrugDosagePackagingConsistencyTest {
         assertEquals(expected = null, actual = firstViolation)
     }
 
+    @Test
+    fun `max daily dose unit matches standardDosage body unit per drug`() {
+        val firstViolation =
+            generateDrugs()
+                .firstNotNullOfOrNull { drug ->
+                    maxDailyDoseUnitViolation(drug = drug)
+                }
+
+        assertEquals(expected = null, actual = firstViolation)
+    }
+
     private fun dosageUnitViolation(
         drug: Drug,
         sourceField: String,
@@ -146,6 +157,24 @@ class DrugDosagePackagingConsistencyTest {
                 )
             }
 
+    private fun maxDailyDoseUnitViolation(drug: Drug): MaxDailyDoseUnitViolation? {
+        val standardUnit = dosageTextUnit.find(drug.dosage.standardDosage)?.groupValues?.get(1) ?: return null
+        val upperBoundParagraph =
+            drug.dosageRelatedPrecautions
+                .firstOrNull { paragraph -> maxDailyDoseUnit.containsMatchIn(paragraph.content) }
+                ?: return null
+        val upperBoundUnit = maxDailyDoseUnit.find(upperBoundParagraph.content)?.groupValues?.get(1) ?: return null
+        return upperBoundUnit.takeUnless { unit -> unit == standardUnit }?.let {
+            MaxDailyDoseUnitViolation(
+                drugId = drug.id,
+                form = drug.dosageForm,
+                standardUnit = standardUnit,
+                upperBoundUnit = upperBoundUnit,
+                sampleText = upperBoundParagraph.content,
+            )
+        }
+    }
+
     private fun dosageParagraphs(drug: Drug): List<DosageParagraph> =
         listOf(DosageParagraph(sourceField = "standardDosage", text = drug.dosage.standardDosage)) +
             drug.dosage.ageSpecificDosage.map { dosage ->
@@ -186,6 +215,14 @@ class DrugDosagePackagingConsistencyTest {
         val actualText: String,
     )
 
+    private data class MaxDailyDoseUnitViolation(
+        val drugId: String,
+        val form: DosageForm,
+        val standardUnit: String,
+        val upperBoundUnit: String,
+        val sampleText: String,
+    )
+
     private data class FrequencySuffixDuplicationViolation(
         val drugId: String,
         val form: DosageForm,
@@ -200,6 +237,8 @@ class DrugDosagePackagingConsistencyTest {
 
     private companion object {
         val duplicatedFrequencySuffix: Regex = Regex("""\d+\s*回\s+回""")
+        val dosageTextUnit: Regex = Regex("""\d+(?:\.\d+)?\s*(錠|カプセル|包|g|mL|枚|滴|噴霧|個|mg|本|袋)""")
+        val maxDailyDoseUnit: Regex = Regex("""1 日 \d+(?:\.\d+)?\s*(錠|カプセル|包|g|mL|枚|滴|噴霧|個|mg|本|袋) を超えないこと""")
 
         val expectedAdministrationVerbs: Map<DosageForm, String> =
             mapOf(
