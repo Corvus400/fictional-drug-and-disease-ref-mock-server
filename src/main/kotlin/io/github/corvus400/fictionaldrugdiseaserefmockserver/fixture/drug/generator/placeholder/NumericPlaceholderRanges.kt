@@ -101,7 +101,7 @@ object NumericPlaceholderRanges {
             FORMATTERS[key]
                 ?: error(
                     "Unknown category-D placeholder key '$key'. " +
-                        "NumericPlaceholderRanges covers only the 33 category-D numeric keys. " +
+                        "NumericPlaceholderRanges covers only the 32 category-D numeric keys. " +
                         "Other categories (A/B/C) are resolved by DrugPlaceholderDictionary.",
                 )
         return formatter.render(seed)
@@ -125,7 +125,6 @@ object NumericPlaceholderRanges {
             "halfLife" to DoubleFormatter(range = 2..48, scaleFactor = 0.5, units = listOf("時間")),
             "ic50" to DoubleFormatter(range = 1..1000, scaleFactor = 0.1, units = listOf("nM")),
             "interval" to IntFormatter(range = 1..6, multiplier = 4, units = listOf("時間")),
-            "maxDailyDose" to IntFormatter(range = 1..30, multiplier = 100, units = listOf("mg", "g")),
             "meltingPoint" to IntFormatter(range = 80..300, units = listOf("℃")),
             "packageSize" to IntFormatter(range = 1..10, multiplier = 10, units = listOf("錠", "包", "本")),
             "patientCount" to IntFormatter(range = 1..20, multiplier = 100, units = listOf("例")),
