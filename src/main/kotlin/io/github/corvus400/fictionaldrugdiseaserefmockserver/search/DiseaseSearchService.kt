@@ -55,6 +55,14 @@ object DiseaseSearchService {
             DiseaseKeywordTarget.NAME -> listOf(disease.name, disease.nameKana)
             DiseaseKeywordTarget.NAME_ENGLISH -> listOfNotNull(disease.nameEnglish)
             DiseaseKeywordTarget.SYNONYMS -> disease.synonyms
+            DiseaseKeywordTarget.ALL -> listOfNotNull(
+                disease.name,
+                disease.nameKana,
+                disease.nameEnglish,
+                disease.icd10Chapter.serialName,
+                disease.icd10Chapter.chapterKey,
+                disease.icd10Chapter.codeRange,
+            ) + disease.synonyms + disease.symptoms.mainSymptoms
         }
 
     /**

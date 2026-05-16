@@ -203,6 +203,15 @@ class OpenApiDocTest {
     }
 
     @Test
+    fun `drug keyword_target description documents all target including code fields`() = testApplication {
+        application { module() }
+        val description = fetchParameterDescription(path = "/v1/drugs", parameterName = "keyword_target")
+        assertTrue(description.contains("all"), "keyword_target description に all が含まれていない: $description")
+        assertTrue(description.contains("ATC"), "keyword_target description に ATC が含まれていない: $description")
+        assertTrue(description.contains("YJ"), "keyword_target description に YJ が含まれていない: $description")
+    }
+
+    @Test
     fun `disease icd10_chapter parameter has description`() = testApplication {
         application { module() }
         val description = fetchParameterDescription(path = "/v1/diseases", parameterName = "icd10_chapter")
@@ -215,6 +224,16 @@ class OpenApiDocTest {
             message = "icd10_chapter description must include english SerialName 'chapter_i': $description",
         )
     }
+
+    @Test
+    fun `disease keyword_target description documents all target including symptom and ICD-10 fields`() =
+        testApplication {
+            application { module() }
+            val description = fetchParameterDescription(path = "/v1/diseases", parameterName = "keyword_target")
+            assertTrue(description.contains("all"), "keyword_target description に all が含まれていない: $description")
+            assertTrue(description.contains("症状"), "keyword_target description に症状が含まれていない: $description")
+            assertTrue(description.contains("ICD-10"), "keyword_target description に ICD-10 が含まれていない: $description")
+        }
 
     private data class ParameterDescriptionSnapshot(
         val isNotEmpty: Boolean,

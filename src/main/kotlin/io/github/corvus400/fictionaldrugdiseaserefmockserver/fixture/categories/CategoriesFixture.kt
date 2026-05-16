@@ -38,7 +38,7 @@ class CategoriesFixture(
     private fun buildIcd10Chapters(): List<Icd10ChapterEntry> = Icd10Chapter.entries.map { chapter ->
         Icd10ChapterEntry(
             roman = chapter.chapterKey,
-            code = ICD10_CHAPTER_CODES.getValue(key = chapter),
+            code = chapter.codeRange,
             label = ICD10_CHAPTER_LABELS_JA.getValue(key = chapter),
         )
     }
@@ -64,34 +64,6 @@ class CategoriesFixture(
 
         private fun String.toTherapeuticCategory(): TherapeuticCategory? =
             TherapeuticCategory.fromDisplayName(displayName = this)
-
-        /**
-         * ICD-10 章別の標準コード範囲。WHO ICD-10 の章コード仕様に揃える。
-         */
-        private val ICD10_CHAPTER_CODES: Map<Icd10Chapter, String> = mapOf(
-            Icd10Chapter.CHAPTER_I to "A00-B99",
-            Icd10Chapter.CHAPTER_II to "C00-D48",
-            Icd10Chapter.CHAPTER_III to "D50-D89",
-            Icd10Chapter.CHAPTER_IV to "E00-E90",
-            Icd10Chapter.CHAPTER_V to "F00-F99",
-            Icd10Chapter.CHAPTER_VI to "G00-G99",
-            Icd10Chapter.CHAPTER_VII to "H00-H59",
-            Icd10Chapter.CHAPTER_VIII to "H60-H95",
-            Icd10Chapter.CHAPTER_IX to "I00-I99",
-            Icd10Chapter.CHAPTER_X to "J00-J99",
-            Icd10Chapter.CHAPTER_XI to "K00-K93",
-            Icd10Chapter.CHAPTER_XII to "L00-L99",
-            Icd10Chapter.CHAPTER_XIII to "M00-M99",
-            Icd10Chapter.CHAPTER_XIV to "N00-N99",
-            Icd10Chapter.CHAPTER_XV to "O00-O99",
-            Icd10Chapter.CHAPTER_XVI to "P00-P96",
-            Icd10Chapter.CHAPTER_XVII to "Q00-Q99",
-            Icd10Chapter.CHAPTER_XVIII to "R00-R99",
-            Icd10Chapter.CHAPTER_XIX to "S00-T98",
-            Icd10Chapter.CHAPTER_XX to "V01-Y98",
-            Icd10Chapter.CHAPTER_XXI to "Z00-Z99",
-            Icd10Chapter.CHAPTER_XXII to "U00-U85",
-        )
 
         /**
          * ICD-10 全 22 章の日本語名 (UI 表示用)。`atc[].label` (日本語治療領域名) や

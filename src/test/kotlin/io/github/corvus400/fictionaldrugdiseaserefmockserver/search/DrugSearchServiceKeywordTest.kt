@@ -94,6 +94,49 @@ class DrugSearchServiceKeywordTest {
     }
 
     @Test
+    fun `applyKeyword with target ALL matches atcCode and yjCode`() {
+        val items = listOf(
+            stubDrug(id = "drug_0001", atcCode = "A99ZZ00", yjCode = "999612426256"),
+            stubDrug(id = "drug_0002", atcCode = "N99ZZ90", yjCode = "999000000000"),
+        )
+        val byAtc = DrugSearchService.applyKeyword(
+            items = items,
+            keyword = "A99ZZ00",
+            match = KeywordMatch.PARTIAL,
+            target = DrugKeywordTarget.ALL,
+        )
+        val byYj = DrugSearchService.applyKeyword(
+            items = items,
+            keyword = "999612426256",
+            match = KeywordMatch.PARTIAL,
+            target = DrugKeywordTarget.ALL,
+        )
+        assertEquals(listOf("drug_0001"), byAtc.map { it.id })
+        assertEquals(listOf("drug_0001"), byYj.map { it.id })
+    }
+
+    @Test
+    fun `applyKeyword with target BOTH does not match code fields`() {
+        val items = listOf(
+            stubDrug(id = "drug_0001", atcCode = "A99ZZ00", yjCode = "999612426256"),
+        )
+        val byAtc = DrugSearchService.applyKeyword(
+            items = items,
+            keyword = "A99ZZ00",
+            match = KeywordMatch.PARTIAL,
+            target = DrugKeywordTarget.BOTH,
+        )
+        val byYj = DrugSearchService.applyKeyword(
+            items = items,
+            keyword = "999612426256",
+            match = KeywordMatch.PARTIAL,
+            target = DrugKeywordTarget.BOTH,
+        )
+        assertEquals(emptyList(), byAtc.map { it.id })
+        assertEquals(emptyList(), byYj.map { it.id })
+    }
+
+    @Test
     fun `applyKeyword with two space-separated tokens requires each token matched by at least one target field`() {
         val items = listOf(
             stubDrug(id = "drug_0001", genericName = "サンプルチン", brandName = "スーパー錠", brandNameKana = "スーパージョウ"),
@@ -178,13 +221,16 @@ class DrugSearchServiceKeywordTest {
         genericName: String = "テスト一般名",
         brandName: String = "テスト販売名",
         brandNameKana: String = "テストハンバイメイ",
+        atcCode: String = "N02BE01",
+        yjCode: String? = null,
     ): Drug =
         Drug(
             id = id,
             genericName = genericName,
             brandName = brandName,
             brandNameKana = brandNameKana,
-            atcCode = "N02BE01",
+            atcCode = atcCode,
+            yjCode = yjCode,
             therapeuticCategoryName = "経口鎮痛薬",
             regulatoryClass = listOf(RegulatoryClass.PRESCRIPTION_REQUIRED),
             dosageForm = DosageForm.TABLET,
