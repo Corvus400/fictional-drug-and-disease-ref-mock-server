@@ -4,6 +4,7 @@ enum class DrugKeywordTarget {
     GENERIC,
     BRAND,
     BOTH,
+    ALL,
     ;
 
     companion object {
@@ -19,6 +20,7 @@ enum class DrugKeywordTarget {
             "generic" -> GENERIC
             "brand" -> BRAND
             "both" -> BOTH
+            "all" -> ALL
             else -> BOTH
         }
     }

@@ -189,7 +189,8 @@ fun Application.diseaseModule(scenarioManager: ScenarioManager) {
                             }
                             queryParameter<String>("keyword_target") {
                                 description = "検索対象 `name` (既定、`name` + `name_kana`) / `name_english` / " +
-                                    "`synonyms` (lower-case 厳密)。未指定 / 空文字 / 不正値は既定値 `name` " +
+                                    "`synonyms` / `all` (名称 + 英語名 + 別名 + 症状 + ICD-10 章コード・範囲) " +
+                                    "(lower-case 厳密)。未指定 / 空文字 / 不正値は既定値 `name` " +
                                     "にフォールバック。"
                                 required = false
                             }

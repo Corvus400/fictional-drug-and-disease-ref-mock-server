@@ -160,6 +160,42 @@ class DiseaseModuleKeywordTest {
         client.post(urlString = "/__admin/reset")
     }
 
+    @Test
+    fun `GET diseases with keyword target all can find disease by symptom and ICD-10 fields`() = testApplication {
+        application { module() }
+
+        val detail = client.get(urlString = "/v1/diseases/disease_0001").diseaseKeywordAllSourceSnapshot()
+        val symptomKeyword = URLEncoder.encode(detail.mainSymptom.orEmpty(), Charsets.UTF_8)
+        val symptomResponse = client.get(
+            urlString = "/v1/diseases?keyword=$symptomKeyword" +
+                "&keyword_target=all&keyword_match=partial&page_size=100",
+        )
+        val icdKeyword = URLEncoder.encode(detail.icd10Chapter.orEmpty(), Charsets.UTF_8)
+        val icdResponse = client.get(
+            urlString = "/v1/diseases?keyword=$icdKeyword" +
+                "&keyword_target=all&keyword_match=partial&page_size=100",
+        )
+
+        assertEquals(
+            expected = DiseaseKeywordAllRouteSnapshot(
+                detailStatus = HttpStatusCode.OK,
+                sourceFieldsPresent = true,
+                symptomStatus = HttpStatusCode.OK,
+                icdStatus = HttpStatusCode.OK,
+                symptomContainsDisease0001 = true,
+                icdContainsDisease0001 = true,
+            ),
+            actual = DiseaseKeywordAllRouteSnapshot(
+                detailStatus = detail.status,
+                sourceFieldsPresent = !detail.mainSymptom.isNullOrBlank() && !detail.icd10Chapter.isNullOrBlank(),
+                symptomStatus = symptomResponse.status,
+                icdStatus = icdResponse.status,
+                symptomContainsDisease0001 = symptomResponse.itemIds().contains(element = "disease_0001"),
+                icdContainsDisease0001 = icdResponse.itemIds().contains(element = "disease_0001"),
+            ),
+        )
+    }
+
     /**
      * Phase 11-12b の検証テスト (#113): `configs/diseaseList` で `empty` シナリオに切替えた
      * 状態で keyword クエリ付き `/diseases` を呼んでも 200 OK + items 0 件 + total_count=0 が
@@ -223,6 +259,30 @@ class DiseaseModuleKeywordTest {
         return TotalCountSnapshot(status = status, totalCount = totalCount)
     }
 
+    private suspend fun HttpResponse.itemIds(): List<String> {
+        val body = json.parseToJsonElement(string = bodyAsText()).jsonObject
+        return body["items"]
+            ?.jsonArray
+            .orEmpty()
+            .mapNotNull { item -> item.jsonObject["id"]?.jsonPrimitive?.content }
+    }
+
+    private suspend fun HttpResponse.diseaseKeywordAllSourceSnapshot(): DiseaseKeywordAllSourceSnapshot {
+        val body = json.parseToJsonElement(string = bodyAsText()).jsonObject
+        val mainSymptom = body["symptoms"]
+            ?.jsonObject
+            ?.get(key = "main_symptoms")
+            ?.jsonArray
+            ?.firstOrNull()
+            ?.jsonPrimitive?.content
+        val icd10Chapter = body["icd10_chapter"]?.jsonPrimitive?.content
+        return DiseaseKeywordAllSourceSnapshot(
+            status = status,
+            mainSymptom = mainSymptom,
+            icd10Chapter = icd10Chapter,
+        )
+    }
+
     companion object {
         private const val KEYWORD_PREFIX_LENGTH: Int = 2
         private const val MIN_FILTERED_COUNT: Int = 2
@@ -261,6 +321,21 @@ class DiseaseModuleKeywordTest {
         val status: HttpStatusCode,
         val firstName: String?,
         val keyword: String?,
+    )
+
+    private data class DiseaseKeywordAllSourceSnapshot(
+        val status: HttpStatusCode,
+        val mainSymptom: String?,
+        val icd10Chapter: String?,
+    )
+
+    private data class DiseaseKeywordAllRouteSnapshot(
+        val detailStatus: HttpStatusCode,
+        val sourceFieldsPresent: Boolean,
+        val symptomStatus: HttpStatusCode,
+        val icdStatus: HttpStatusCode,
+        val symptomContainsDisease0001: Boolean,
+        val icdContainsDisease0001: Boolean,
     )
 
     private data class TotalCountSnapshot(

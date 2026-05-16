@@ -191,7 +191,8 @@ fun Application.drugModule(scenarioManager: ScenarioManager) {
                             }
                             queryParameter<String>("keyword_target") {
                                 description = "キーワード検索対象。`generic` (一般名) / `brand` (販売名 + " +
-                                    "販売名カナ) / `both` (既定。両方)。"
+                                    "販売名カナ) / `both` (既定。両方) / " +
+                                    "`all` (一般名 + 販売名 + 販売名カナ + ATC コード + YJ コード)。"
                                 required = false
                             }
                             queryParameter<String>("sort") {

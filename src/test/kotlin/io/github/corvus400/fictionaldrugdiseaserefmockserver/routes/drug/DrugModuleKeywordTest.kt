@@ -8,6 +8,8 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.encodeURLParameter
 import io.ktor.server.testing.testApplication
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlin.test.Test
@@ -58,6 +60,40 @@ class DrugModuleKeywordTest {
             )
         }
 
+    @Test
+    fun `GET drugs with keyword target all can find drug by ATC and YJ codes`() = testApplication {
+        application { module() }
+
+        val codeSnapshot = client.get(urlString = "/v1/drugs/drug_0001").drugCodeSnapshot()
+        val atcResponse = client.get(
+            urlString = "/v1/drugs?keyword=${codeSnapshot.atcCode.orEmpty().encodeURLParameter()}" +
+                "&keyword_target=all&keyword_match=partial&page_size=100",
+        )
+        val yjResponse = client.get(
+            urlString = "/v1/drugs?keyword=${codeSnapshot.yjCode.orEmpty().encodeURLParameter()}" +
+                "&keyword_target=all&keyword_match=partial&page_size=100",
+        )
+
+        assertEquals(
+            expected = CodeKeywordRouteSnapshot(
+                detailStatus = HttpStatusCode.OK,
+                codeFieldsPresent = true,
+                atcStatus = HttpStatusCode.OK,
+                yjStatus = HttpStatusCode.OK,
+                atcContainsDrug0001 = true,
+                yjContainsDrug0001 = true,
+            ),
+            actual = CodeKeywordRouteSnapshot(
+                detailStatus = codeSnapshot.status,
+                codeFieldsPresent = !codeSnapshot.atcCode.isNullOrBlank() && !codeSnapshot.yjCode.isNullOrBlank(),
+                atcStatus = atcResponse.status,
+                yjStatus = yjResponse.status,
+                atcContainsDrug0001 = atcResponse.itemIds().contains(element = "drug_0001"),
+                yjContainsDrug0001 = yjResponse.itemIds().contains(element = "drug_0001"),
+            ),
+        )
+    }
+
     private companion object {
         /**
          * `brand_name` から取り出すキーワード接頭辞長。`DrugModuleDefaultKeywordFilteredTest`
@@ -92,9 +128,30 @@ class DrugModuleKeywordTest {
         val brandName: String?,
     )
 
+    private data class DrugCodeSnapshot(
+        val status: HttpStatusCode,
+        val atcCode: String?,
+        val yjCode: String?,
+    )
+
+    private data class CodeKeywordRouteSnapshot(
+        val detailStatus: HttpStatusCode,
+        val codeFieldsPresent: Boolean,
+        val atcStatus: HttpStatusCode,
+        val yjStatus: HttpStatusCode,
+        val atcContainsDrug0001: Boolean,
+        val yjContainsDrug0001: Boolean,
+    )
+
     private suspend fun HttpResponse.totalCount(): Int? {
         val body = json.parseToJsonElement(string = bodyAsText()).jsonObject
         return body["total_count"]?.jsonPrimitive?.content?.toIntOrNull()
+    }
+
+    private suspend fun HttpResponse.itemIds(): List<String> {
+        val body = json.parseToJsonElement(string = bodyAsText()).jsonObject
+        val items = body["items"]?.jsonArray ?: JsonArray(content = emptyList())
+        return items.mapNotNull { item -> item.jsonObject["id"]?.jsonPrimitive?.content }
     }
 
     private suspend fun HttpResponse.brandNameSnapshot(): BrandNameSnapshot {
@@ -102,6 +159,15 @@ class DrugModuleKeywordTest {
         return BrandNameSnapshot(
             status = status,
             brandName = body["brand_name"]?.jsonPrimitive?.content,
+        )
+    }
+
+    private suspend fun HttpResponse.drugCodeSnapshot(): DrugCodeSnapshot {
+        val body = json.parseToJsonElement(string = bodyAsText()).jsonObject
+        return DrugCodeSnapshot(
+            status = status,
+            atcCode = body["atc_code"]?.jsonPrimitive?.content,
+            yjCode = body["yj_code"]?.jsonPrimitive?.content,
         )
     }
 }

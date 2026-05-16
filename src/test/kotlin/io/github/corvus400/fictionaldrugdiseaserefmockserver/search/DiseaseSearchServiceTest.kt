@@ -127,6 +127,89 @@ class DiseaseSearchServiceTest {
     }
 
     @Test
+    fun `applyKeyword with target ALL matches main symptoms`() {
+        val items =
+            listOf(
+                sampleDisease(
+                    id = "disease_0001"
+                ).copy(symptoms = sampleDisease(id = "disease_0001").symptoms.copy(mainSymptoms = listOf("発熱", "咳嗽"))),
+                sampleDisease(
+                    id = "disease_0002"
+                ).copy(symptoms = sampleDisease(id = "disease_0002").symptoms.copy(mainSymptoms = listOf("頭痛"))),
+            )
+        val result =
+            DiseaseSearchService.applyKeyword(
+                items = items,
+                keyword = "発熱",
+                match = KeywordMatch.PARTIAL,
+                target = DiseaseKeywordTarget.ALL,
+            )
+        assertEquals(listOf("disease_0001"), result.map { it.id })
+    }
+
+    @Test
+    fun `applyKeyword with target ALL matches ICD-10 serial key and code range`() {
+        val items =
+            listOf(
+                diseaseWith(id = "disease_0001", icd10Chapter = Icd10Chapter.CHAPTER_IX),
+                diseaseWith(id = "disease_0002", icd10Chapter = Icd10Chapter.CHAPTER_I),
+            )
+
+        val bySerialName =
+            DiseaseSearchService.applyKeyword(
+                items = items,
+                keyword = "chapter_ix",
+                match = KeywordMatch.PARTIAL,
+                target = DiseaseKeywordTarget.ALL,
+            )
+        val byChapterKey =
+            DiseaseSearchService.applyKeyword(
+                items = items,
+                keyword = "IX",
+                match = KeywordMatch.PARTIAL,
+                target = DiseaseKeywordTarget.ALL,
+            )
+        val byCodeRange =
+            DiseaseSearchService.applyKeyword(
+                items = items,
+                keyword = "I00-I99",
+                match = KeywordMatch.PARTIAL,
+                target = DiseaseKeywordTarget.ALL,
+            )
+
+        assertEquals(listOf("disease_0001"), bySerialName.map { it.id })
+        assertEquals(listOf("disease_0001"), byChapterKey.map { it.id })
+        assertEquals(listOf("disease_0001"), byCodeRange.map { it.id })
+    }
+
+    @Test
+    fun `applyKeyword with target NAME does not match symptoms or ICD-10 fields`() {
+        val items =
+            listOf(
+                sampleDisease(
+                    id = "disease_0001"
+                ).copy(symptoms = sampleDisease(id = "disease_0001").symptoms.copy(mainSymptoms = listOf("発熱"))),
+                diseaseWith(id = "disease_0002", icd10Chapter = Icd10Chapter.CHAPTER_IX),
+            )
+        val bySymptom =
+            DiseaseSearchService.applyKeyword(
+                items = items,
+                keyword = "発熱",
+                match = KeywordMatch.PARTIAL,
+                target = DiseaseKeywordTarget.NAME,
+            )
+        val byIcd =
+            DiseaseSearchService.applyKeyword(
+                items = items,
+                keyword = "chapter_ix",
+                match = KeywordMatch.PARTIAL,
+                target = DiseaseKeywordTarget.NAME,
+            )
+        assertEquals(emptyList(), bySymptom.map { it.id })
+        assertEquals(emptyList(), byIcd.map { it.id })
+    }
+
+    @Test
     fun `applyKeyword with two tokens requires each matched by at least one target field (disease)`() {
         val items =
             listOf(

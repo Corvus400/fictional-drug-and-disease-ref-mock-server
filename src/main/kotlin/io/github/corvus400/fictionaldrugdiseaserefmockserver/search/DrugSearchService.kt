@@ -56,6 +56,13 @@ object DrugSearchService {
         DrugKeywordTarget.GENERIC -> listOf(drug.genericName)
         DrugKeywordTarget.BRAND -> listOf(drug.brandName, drug.brandNameKana)
         DrugKeywordTarget.BOTH -> listOf(drug.genericName, drug.brandName, drug.brandNameKana)
+        DrugKeywordTarget.ALL -> listOfNotNull(
+            drug.genericName,
+            drug.brandName,
+            drug.brandNameKana,
+            drug.atcCode,
+            drug.yjCode,
+        )
     }
 
     /**

@@ -116,6 +116,35 @@ enum class Icd10Chapter {
     val chapterKey: String
         get() = name.removePrefix(prefix = "CHAPTER_")
 
+    /**
+     * ICD-10 章別の標準コード範囲。`/categories` の code とキーワード検索対象で共有する。
+     */
+    val codeRange: String
+        get() = when (this) {
+            CHAPTER_I -> "A00-B99"
+            CHAPTER_II -> "C00-D48"
+            CHAPTER_III -> "D50-D89"
+            CHAPTER_IV -> "E00-E90"
+            CHAPTER_V -> "F00-F99"
+            CHAPTER_VI -> "G00-G99"
+            CHAPTER_VII -> "H00-H59"
+            CHAPTER_VIII -> "H60-H95"
+            CHAPTER_IX -> "I00-I99"
+            CHAPTER_X -> "J00-J99"
+            CHAPTER_XI -> "K00-K93"
+            CHAPTER_XII -> "L00-L99"
+            CHAPTER_XIII -> "M00-M99"
+            CHAPTER_XIV -> "N00-N99"
+            CHAPTER_XV -> "O00-O99"
+            CHAPTER_XVI -> "P00-P96"
+            CHAPTER_XVII -> "Q00-Q99"
+            CHAPTER_XVIII -> "R00-R99"
+            CHAPTER_XIX -> "S00-T98"
+            CHAPTER_XX -> "V01-Y98"
+            CHAPTER_XXI -> "Z00-Z99"
+            CHAPTER_XXII -> "U00-U85"
+        }
+
     companion object {
         /**
          * `@SerialName` 値 (snake_case `chapter_i` 〜 `chapter_xxii`) から列挙子を逆引きする。
